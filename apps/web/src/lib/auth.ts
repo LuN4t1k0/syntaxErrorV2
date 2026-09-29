@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
@@ -8,8 +8,12 @@ import { accounts, users } from "@syntaxerror/db/schema";
 import type { AuditAction } from "@syntaxerror/db/audit";
 import { normalizeEmail } from "@/app/api/auth/register/service";
 import { recordAuditEvent } from "./audit";
-import { verifyPassword } from "./password";
-import { checkRateLimit } from "./rate-limit";
+import { getClientIp } from "./client-ip";
+import { authorizeCredentials } from "./credentials";
+
+class RateLimitedSignin extends CredentialsSignin {
+  code = "rate_limited";
+}
 
 async function recordAuthEvent(input: { actorId: string | null; actorEmail: string | null; action: AuditAction }) {
   try {
@@ -34,21 +38,13 @@ const providers = [
       const password = credentials?.password as string | undefined;
       if (!email || !password) return null;
 
-      const normalizedEmail = normalizeEmail(email);
-      const ip = request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? "unknown";
-      const [emailLimit, ipLimit] = await Promise.all([
-        checkRateLimit("login-email", normalizedEmail),
-        checkRateLimit("login-ip", ip),
-      ]);
-      if (!emailLimit.allowed || !ipLimit.allowed) return null;
-
-      const [user] = await getDb().select().from(users).where(eq(users.email, normalizedEmail));
-      if (!user?.passwordHash || !(await verifyPassword(password, user.passwordHash))) {
-        await recordAuthEvent({ actorId: null, actorEmail: normalizedEmail, action: "login_failed" });
+      const result = await authorizeCredentials(getDb(), { email, password, ip: getClientIp(request.headers) });
+      if (result.status === "rate_limited") throw new RateLimitedSignin();
+      if (result.status === "invalid") {
+        await recordAuthEvent({ actorId: null, actorEmail: normalizeEmail(email), action: "login_failed" });
         return null;
       }
-
-      return { id: user.id, name: user.name, email: user.email, role: user.role };
+      return result.user;
     },
   }),
 ];

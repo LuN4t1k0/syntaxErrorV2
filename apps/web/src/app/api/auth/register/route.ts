@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@syntaxerror/db/client";
+import { getClientIp } from "@/lib/client-ip";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { registerUser } from "./service";
 
@@ -11,7 +12,7 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? "unknown";
+  const ip = getClientIp(request.headers);
   const limit = await checkRateLimit("register-ip", ip);
   if (!limit.allowed) {
     return NextResponse.json(

@@ -33,3 +33,12 @@ test("el login acepta el email con otras mayúsculas", async ({ page, request })
   await page.getByRole("button", { name: "Entrar", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard/);
 });
+
+test("el login muestra un error con la clave incorrecta", async ({ page }) => {
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(`nadie-${Date.now()}@correo.cl`);
+  await page.locator('input[name="password"]').fill("clave-incorrecta");
+  await page.getByRole("button", { name: "Entrar", exact: true }).click();
+  await expect(page.getByText("Email o password incorrectos.")).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+});

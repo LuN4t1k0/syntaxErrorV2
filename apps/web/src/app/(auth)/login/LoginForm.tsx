@@ -32,8 +32,13 @@ export function LoginForm() {
         callbackUrl,
       });
 
-      if (!result?.ok) {
-        setError("Email o password incorrectos.");
+      // next-auth responde ok: true aunque las credenciales fallen; el fallo viene en error/code.
+      if (!result || result.error) {
+        setError(
+          result?.code === "rate_limited"
+            ? "Demasiados intentos fallidos. Espera unos minutos y vuelve a intentar."
+            : "Email o password incorrectos."
+        );
         return;
       }
 

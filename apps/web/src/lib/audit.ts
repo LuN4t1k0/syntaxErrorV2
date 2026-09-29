@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import type { DbClient } from "@syntaxerror/db/client";
 import { insertAuditLogEntry, type AuditAction, type AuditTargetType } from "@syntaxerror/db/audit";
+import { getClientIp } from "./client-ip";
 
 export async function recordAuditEvent(
   db: DbClient,
@@ -16,7 +17,7 @@ export async function recordAuditEvent(
   const headerList = await headers();
   await insertAuditLogEntry(db, {
     ...input,
-    ipAddress: headerList.get("x-forwarded-for") ?? headerList.get("x-real-ip"),
+    ipAddress: getClientIp(headerList),
     userAgent: headerList.get("user-agent"),
   });
 }

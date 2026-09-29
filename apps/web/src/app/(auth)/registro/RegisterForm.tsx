@@ -56,7 +56,7 @@ export function RegisterForm() {
 
     setLoading(false);
 
-    if (!result?.ok) {
+    if (!result || result.error) {
       router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
       return;
     }
