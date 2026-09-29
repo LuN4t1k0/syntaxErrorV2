@@ -1,0 +1,15 @@
+{
+  "name": "syntaxerror-v2",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "dev": "docker compose up -d --build --remove-orphans && docker compose logs -f web worker",
+    "stop": "docker compose down",
+    "reset": "docker compose down -v --remove-orphans",
+    "logs": "docker compose logs -f",
+    "sh": "docker compose run --rm tools bash",
+    "test": "docker compose run --rm tools pnpm -r --if-present test",
+    "test:e2e": "docker compose --profile e2e run --rm e2e",
+    "db:generate": "docker compose run --rm tools pnpm --filter @syntaxerror/db generate"
+  }
+}

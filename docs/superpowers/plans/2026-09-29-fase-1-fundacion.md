@@ -1,6 +1,6 @@
-# Fase 1: Fundación. Plan de implementación
+@# Fase 1: Fundación. Plan de implementación
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Dejar el monorepo de syntaxError v2 corriendo 100% en Docker con `npm run dev` / `npm run stop`, con base de datos, identidad visual, sitio público, registro, login (credenciales y Google) y un worker listo para recibir colas.
 
@@ -48,7 +48,7 @@
   - ancla YAML `x-node`, que reutilizan `deps`, `tools`, `db-setup`, `web` y `worker`;
   - URLs internas: `postgres:5432/platform_dev`, `postgres-test:5432/platform_test` y `redis:6379`.
 
-- [ ] **Step 1: Crear `package.json` raíz**
+- [x] **Step 1: Crear `package.json` raíz**
 
 ```json
 {
@@ -68,7 +68,7 @@
 }
 ```
 
-- [ ] **Step 2: Crear `pnpm-workspace.yaml`**
+- [x] **Step 2: Crear `pnpm-workspace.yaml`**
 
 ```yaml
 packages:
@@ -84,7 +84,7 @@ allowBuilds:
   sharp: true
 ```
 
-- [ ] **Step 3: Crear `.gitignore`, `.dockerignore`, `.env.example` y `tsconfig.base.json`**
+- [x] **Step 3: Crear `.gitignore`, `.dockerignore`, `.env.example` y `tsconfig.base.json`**
 
 `.gitignore`:
 ```
@@ -139,7 +139,7 @@ SEED_ADMIN_PASSWORD=admin123456
 }
 ```
 
-- [ ] **Step 4: Crear `docker/dev.Dockerfile`**
+- [x] **Step 4: Crear `docker/dev.Dockerfile`**
 
 ```dockerfile
 FROM node:22-bookworm-slim
@@ -151,7 +151,7 @@ RUN npm install -g corepack@latest && corepack enable && corepack prepare pnpm@1
 WORKDIR /app
 ```
 
-- [ ] **Step 5: Crear `docker-compose.yml`**
+- [x] **Step 5: Crear `docker-compose.yml`**
 
 ```yaml
 name: syntaxerror
@@ -237,12 +237,12 @@ volumes:
   pnpm_store:
 ```
 
-- [ ] **Step 6: Generar el lockfile dentro del contenedor**
+- [x] **Step 6: Generar el lockfile dentro del contenedor**
 
 Run: `docker compose build && docker compose run --rm --no-deps tools pnpm install`
 Expected: crea `pnpm-lock.yaml` y termina con código 0.
 
-- [ ] **Step 7: Verificar la infraestructura**
+- [x] **Step 7: Verificar la infraestructura**
 
 Run: `docker compose up -d postgres postgres-test redis mailpit && docker compose ps`
 Expected: `postgres`, `postgres-test` y `redis` aparecen `healthy`, y `mailpit` aparece `running`.
@@ -252,7 +252,7 @@ Expected: `11.9.0` (el servicio `deps` corre primero y termina bien).
 
 Run: `docker compose down`
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add package.json pnpm-workspace.yaml pnpm-lock.yaml .gitignore .dockerignore .env.example tsconfig.base.json docker docker-compose.yml
@@ -286,7 +286,7 @@ git commit -m "chore: monorepo pnpm y entorno docker base"
   - `@syntaxerror/db/migrate`: `runMigrations(url: string): Promise<void>`.
   - Script `pnpm --filter @syntaxerror/db migrate`, que migra `DATABASE_URL`.
 
-- [ ] **Step 1: Crear `packages/db/package.json`, `tsconfig.json`, `drizzle.config.ts` y `vitest.config.ts`**
+- [x] **Step 1: Crear `packages/db/package.json`, `tsconfig.json`, `drizzle.config.ts` y `vitest.config.ts`**
 
 ```json
 {
@@ -358,7 +358,7 @@ y en `volumes:` (al final del archivo):
   db_node_modules:
 ```
 
-- [ ] **Step 2: Crear `src/schema.ts`** (portado de `$V1/packages/db/src/schema.ts`: `users`, `accounts` y `auditLog`, sin cambios de columnas)
+- [x] **Step 2: Crear `src/schema.ts`** (portado de `$V1/packages/db/src/schema.ts`: `users`, `accounts` y `auditLog`, sin cambios de columnas)
 
 ```ts
 import {
@@ -431,7 +431,7 @@ export const auditLog = pgTable(
 );
 ```
 
-- [ ] **Step 3: Crear `src/client.ts`, `src/migrate.ts`, `src/migrate-cli.ts`, `src/testing.ts` y `src/global-setup.ts`**
+- [x] **Step 3: Crear `src/client.ts`, `src/migrate.ts`, `src/migrate-cli.ts`, `src/testing.ts` y `src/global-setup.ts`**
 
 `src/client.ts`:
 ```ts
@@ -522,7 +522,7 @@ export default async function setup() {
 }
 ```
 
-- [ ] **Step 4: Escribir el test que falla, `src/audit.test.ts`**
+- [x] **Step 4: Escribir el test que falla, `src/audit.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -557,7 +557,7 @@ describe("insertAuditLogEntry", () => {
 });
 ```
 
-- [ ] **Step 5: Generar la migración y verificar que el test falla**
+- [x] **Step 5: Generar la migración y verificar que el test falla**
 
 Run: `docker compose build && npm run db:generate`
 Expected: crea `packages/db/drizzle/0000_<nombre>.sql` con `CREATE TABLE "users"`, `"accounts"` y `"audit_log"`.
@@ -565,7 +565,7 @@ Expected: crea `packages/db/drizzle/0000_<nombre>.sql` con `CREATE TABLE "users"
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/db test`
 Expected: FAIL, porque no se puede resolver `./audit`.
 
-- [ ] **Step 6: Crear `src/audit.ts`**
+- [x] **Step 6: Crear `src/audit.ts`**
 
 ```ts
 import type { DbClient } from "./client";
@@ -604,12 +604,12 @@ export async function insertAuditLogEntry(
 }
 ```
 
-- [ ] **Step 7: Correr los tests**
+- [x] **Step 7: Correr los tests**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/db test`
 Expected: PASS (1 test).
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/db docker-compose.yml pnpm-lock.yaml
@@ -637,7 +637,7 @@ git commit -m "feat(db): schema base, cliente, migraciones y utilidades de test"
   - `@syntaxerror/ui/components/label`: `Label`;
   - `@syntaxerror/ui/components/badge`: `Badge`.
 
-- [ ] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
+- [x] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
 
 ```json
 {
@@ -689,7 +689,7 @@ export default defineConfig({
 
 En `docker-compose.yml`, agregar a `x-node.volumes` `- ui_node_modules:/app/packages/ui/node_modules`, y en `volumes:` agregar `ui_node_modules:`.
 
-- [ ] **Step 2: Copiar tokens, estilos y componentes desde la v1, y crear `cn.ts`**
+- [x] **Step 2: Copiar tokens, estilos y componentes desde la v1, y crear `cn.ts`**
 
 ```bash
 mkdir -p packages/ui/src/components
@@ -715,7 +715,7 @@ Verifica que ningún archivo siga importando desde `@/`:
 Run: `grep -rn '@/' packages/ui/src`
 Expected: sin resultados.
 
-- [ ] **Step 3: Escribir el test `src/components/button.test.tsx`**
+- [x] **Step 3: Escribir el test `src/components/button.test.tsx`**
 
 ```tsx
 import { renderToStaticMarkup } from "react-dom/server";
@@ -744,12 +744,12 @@ describe("Button", () => {
 });
 ```
 
-- [ ] **Step 4: Instalar y correr los tests**
+- [x] **Step 4: Instalar y correr los tests**
 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter @syntaxerror/ui test`
 Expected: PASS (3 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/ui docker-compose.yml pnpm-lock.yaml
@@ -778,7 +778,7 @@ git commit -m "feat(ui): identidad visual y componentes base portados desde la v
   - `SiteHeader`, al que la Task 6 le agrega la sesión;
   - alias `@/` que apunta a `apps/web/src`.
 
-- [ ] **Step 1: Crear `apps/web/package.json`, `tsconfig.json`, `postcss.config.mjs`, `vitest.config.ts` y `next-env.d.ts`**
+- [x] **Step 1: Crear `apps/web/package.json`, `tsconfig.json`, `postcss.config.mjs`, `vitest.config.ts` y `next-env.d.ts`**
 
 ```json
 {
@@ -868,7 +868,7 @@ export default defineConfig({
 /// <reference types="next/image-types/global" />
 ```
 
-- [ ] **Step 2: Escribir el test que falla, `src/lib/health.test.ts`**
+- [x] **Step 2: Escribir el test que falla, `src/lib/health.test.ts`**
 
 ```ts
 import { afterAll, describe, expect, it } from "vitest";
@@ -892,7 +892,7 @@ describe("checkHealth", () => {
 });
 ```
 
-- [ ] **Step 3: Agregar `web` a `docker-compose.yml`, instalar y ver fallar el test**
+- [x] **Step 3: Agregar `web` a `docker-compose.yml`, instalar y ver fallar el test**
 
 Agregar a `x-node.volumes`:
 ```yaml
@@ -922,7 +922,7 @@ Agregar a `volumes:` `web_node_modules:` y `web_next:`. Agregar el servicio (la 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter web test`
 Expected: FAIL, porque no se puede resolver `./health`.
 
-- [ ] **Step 4: Crear `src/lib/redis.ts` y `src/lib/health.ts`**
+- [x] **Step 4: Crear `src/lib/redis.ts` y `src/lib/health.ts`**
 
 `src/lib/redis.ts`:
 ```ts
@@ -973,12 +973,12 @@ export async function checkHealth(deps: {
 }
 ```
 
-- [ ] **Step 5: Correr el test**
+- [x] **Step 5: Correr el test**
 
 Run: `docker compose run --rm tools pnpm --filter web test`
 Expected: PASS (2 tests).
 
-- [ ] **Step 6: Crear `next.config.ts` y la ruta de health**
+- [x] **Step 6: Crear `next.config.ts` y la ruta de health**
 
 `next.config.ts`:
 ```ts
@@ -1029,7 +1029,7 @@ export async function GET() {
 }
 ```
 
-- [ ] **Step 7: Portar layout, estilos y componentes de marca**
+- [x] **Step 7: Portar layout, estilos y componentes de marca**
 
 ```bash
 mkdir -p apps/web/src/components apps/web/src/app/'(marketing)'/privacidad apps/web/src/app/'(marketing)'/terminos
@@ -1064,7 +1064,7 @@ Revisa que ningún archivo portado importe algo inexistente:
 Run: `grep -rn 'from "@/' apps/web/src | grep -v -E '@/(components/(theme-provider|theme-toggle|site-header|site-footer|terminal-window|error-glitch|not-found-glitch)|lib/(seo|health|redis))"'`
 Expected: sin resultados.
 
-- [ ] **Step 8: Crear el layout raíz, el header, la home y las páginas de error**
+- [x] **Step 8: Crear el layout raíz, el header, la home y las páginas de error**
 
 `src/app/layout.tsx`:
 ```tsx
@@ -1272,7 +1272,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
 
 Sentry se integra en la fase 5. Por eso `error.tsx` y `global-error.tsx` no lo importan todavía.
 
-- [ ] **Step 9: Levantar el web y verificar**
+- [x] **Step 9: Levantar el web y verificar**
 
 Run: `docker compose up -d --build web && sleep 20 && curl -s localhost:3000/api/health && curl -s -o /dev/null -w "%{http_code}\n" localhost:3000/ && curl -s -o /dev/null -w "%{http_code}\n" localhost:3000/privacidad && curl -s -o /dev/null -w "%{http_code}\n" localhost:3000/no-existe`
 Expected: `{"ok":true,"db":true,"redis":true}`, luego `200`, `200` y `404`.
@@ -1282,7 +1282,7 @@ Expected: sin errores.
 
 Run: `docker compose down`
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add apps/web docker-compose.yml pnpm-lock.yaml
@@ -1307,7 +1307,7 @@ git commit -m "feat(web): sitio público con identidad syntaxError, páginas leg
   - `isAllowedOrigin(origin: string | null): origin is string`;
   - `isRequestOriginAllowed(request): boolean`.
 
-- [ ] **Step 1: Copiar los tests de la v1 y agregar el caso "Redis caído"**
+- [x] **Step 1: Copiar los tests de la v1 y agregar el caso "Redis caído"**
 
 ```bash
 cp "$V1/apps/web/src/lib/rate-limit.test.ts" apps/web/src/lib/rate-limit.test.ts
@@ -1338,12 +1338,12 @@ describe("consumeLimiter con Redis caído", () => {
 });
 ```
 
-- [ ] **Step 2: Correr los tests y verificar que fallan**
+- [x] **Step 2: Correr los tests y verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/rate-limit.test.ts src/lib/csrf.test.ts`
 Expected: FAIL, porque no se pueden resolver `./rate-limit` ni `./csrf`.
 
-- [ ] **Step 3: Crear `cors.ts` y `csrf.ts`**
+- [x] **Step 3: Crear `cors.ts` y `csrf.ts`**
 
 ```bash
 cp "$V1/apps/web/src/lib/cors.ts" apps/web/src/lib/cors.ts
@@ -1351,7 +1351,7 @@ cp "$V1/apps/web/src/lib/csrf.ts" apps/web/src/lib/csrf.ts
 ```
 Los dos archivos se usan sin cambios: solo dependen de `next/server` y entre ellos.
 
-- [ ] **Step 4: Crear `rate-limit.ts`**
+- [x] **Step 4: Crear `rate-limit.ts`**
 
 ```ts
 import { RateLimiterMemory, RateLimiterRedis, type RateLimiterRes } from "rate-limiter-flexible";
@@ -1403,7 +1403,7 @@ export async function checkRateLimit(key: RateLimitKey, identifier: string): Pro
 }
 ```
 
-- [ ] **Step 5: Crear `apps/web/middleware.ts`**
+- [x] **Step 5: Crear `apps/web/middleware.ts`**
 
 ```ts
 import { NextResponse, type NextRequest } from "next/server";
@@ -1427,12 +1427,12 @@ export function middleware(request: NextRequest) {
 
 La ruta `/api/auth/register` sí pasa por la verificación de origen: es un endpoint propio, no de Auth.js.
 
-- [ ] **Step 6: Correr los tests**
+- [x] **Step 6: Correr los tests**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/rate-limit.test.ts src/lib/csrf.test.ts`
 Expected: PASS (5 casos de rate limit y 6 de csrf).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/web
@@ -1464,7 +1464,7 @@ git commit -m "feat(web): rate limiting con redis que falla rápido y protecció
   - `auth()`, `handlers`, `signIn` y `signOut` en `@/lib/auth`;
   - `session.user.id` y `session.user.role` (`"student" | "teacher" | "admin"`).
 
-- [ ] **Step 1: Escribir los tests que fallan**
+- [x] **Step 1: Escribir los tests que fallan**
 
 ```bash
 cp "$V1/apps/web/src/lib/password.test.ts" apps/web/src/lib/password.test.ts
@@ -1560,12 +1560,12 @@ describe("POST /api/auth/register", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que fallan**
+- [x] **Step 2: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/password.test.ts src/app/api/auth/register`
 Expected: FAIL, porque no se pueden resolver `./password`, `./service` ni `./route`.
 
-- [ ] **Step 3: Implementar password, registro y ruta**
+- [x] **Step 3: Implementar password, registro y ruta**
 
 ```bash
 cp "$V1/apps/web/src/lib/password.ts" apps/web/src/lib/password.ts
@@ -1640,12 +1640,12 @@ export async function POST(request: Request) {
 }
 ```
 
-- [ ] **Step 4: Correr los tests**
+- [x] **Step 4: Correr los tests**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/password.test.ts src/app/api/auth/register`
 Expected: PASS (2 + 3 + 4 tests).
 
-- [ ] **Step 5: Implementar Auth.js**
+- [x] **Step 5: Implementar Auth.js**
 
 ```bash
 mkdir -p apps/web/src/types
@@ -1784,7 +1784,7 @@ import { handlers } from "@/lib/auth";
 export const { GET, POST } = handlers;
 ```
 
-- [ ] **Step 6: Portar las páginas de login y registro**
+- [x] **Step 6: Portar las páginas de login y registro**
 
 ```bash
 mkdir -p apps/web/src/app/'(auth)'/login apps/web/src/app/'(auth)'/registro
@@ -1804,7 +1804,7 @@ Edita `apps/web/src/app/(auth)/registro/RegisterForm.tsx` para quitar el código
 Run: `grep -n "joinCode\|registerResult\|classJoin" apps/web/src/app/'(auth)'/registro/RegisterForm.tsx`
 Expected: sin resultados.
 
-- [ ] **Step 7: Crear el dashboard y actualizar el header con la sesión**
+- [x] **Step 7: Crear el dashboard y actualizar el header con la sesión**
 
 `src/app/(dashboard)/layout.tsx`:
 ```tsx
@@ -1920,7 +1920,7 @@ export async function SiteHeader() {
 }
 ```
 
-- [ ] **Step 8: Verificar con typecheck, tests y flujo manual**
+- [x] **Step 8: Verificar con typecheck, tests y flujo manual**
 
 Run: `docker compose run --rm tools pnpm --filter web exec tsc --noEmit && docker compose run --rm tools pnpm --filter web test`
 Expected: sin errores de tipos y todos los tests en PASS.
@@ -1934,7 +1934,7 @@ Luego abre `http://localhost:3000/registro`, crea una cuenta y verifica que:
 
 Run: `docker compose down`
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add apps/web
@@ -1954,7 +1954,7 @@ git commit -m "feat(web): registro, login con credenciales y Google, sesión con
 - Consumes: `hashPassword` (Task 6), `normalizeEmail` (Task 6), `users` (Task 2).
 - Produces: `seedAdmin(db: AppDb, input: { email: string; password: string }): Promise<{ id: string }>`, idempotente.
 
-- [ ] **Step 1: Escribir el test que falla, `src/db/seed.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/db/seed.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -1987,12 +1987,12 @@ describe("seedAdmin", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/db/seed.test.ts`
 Expected: FAIL, porque no se puede resolver `./seed`.
 
-- [ ] **Step 3: Implementar `seed.ts` y `seed-cli.ts`**
+- [x] **Step 3: Implementar `seed.ts` y `seed-cli.ts`**
 
 `src/db/seed.ts`:
 ```ts
@@ -2042,12 +2042,12 @@ main(url, password).catch((error) => {
 
 `tsx` resuelve los alias `@/` a partir del `tsconfig.json` de `apps/web`, que es el directorio de trabajo de `pnpm --filter web db:seed`. El script `db:seed` de la Task 4 queda igual.
 
-- [ ] **Step 4: Correr el test**
+- [x] **Step 4: Correr el test**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/db/seed.test.ts`
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Agregar `db-setup` a `docker-compose.yml` y hacer que `web` dependa de él**
+- [x] **Step 5: Agregar `db-setup` a `docker-compose.yml` y hacer que `web` dependa de él**
 
 ```yaml
   db-setup:
@@ -2068,7 +2068,7 @@ En el servicio `web`, agrega a `depends_on`:
       db-setup: { condition: service_completed_successfully }
 ```
 
-- [ ] **Step 6: Verificar que es idempotente de punta a punta**
+- [x] **Step 6: Verificar que es idempotente de punta a punta**
 
 Run: `docker compose up -d --build web && docker compose logs db-setup && docker compose down && docker compose up -d web && docker compose logs db-setup`
 Expected: las dos veces se ven `[db] migraciones aplicadas` y `[seed] admin listo: admin@local.test`, y `db-setup` termina con código 0 (`docker compose ps -a db-setup` muestra `Exited (0)`).
@@ -2077,7 +2077,7 @@ Entra en `http://localhost:3000/login` con `admin@local.test` / `admin123456`: e
 
 Run: `docker compose down`
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/web docker-compose.yml
@@ -2099,7 +2099,7 @@ git commit -m "feat: seed idempotente del admin y servicio db-setup previo al we
   - `createWorkerServer(deps: { redis: { ping: () => Promise<unknown> }; corsOrigin: string }): { httpServer: http.Server; io: SocketIOServer }`, con `GET /health` que responde `200 {"ok":true}` o `503 {"ok":false}`;
   - `getRedis(): IORedis` del worker, con `maxRetriesPerRequest: null` porque BullMQ lo exige para sus workers (fase 3).
 
-- [ ] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
+- [x] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
 
 ```json
 {
@@ -2139,7 +2139,7 @@ export default defineConfig({ test: { environment: "node" } });
 
 En `docker-compose.yml`, agrega a `x-node.volumes` `- worker_node_modules:/app/apps/worker/node_modules`, y en `volumes:` agrega `worker_node_modules:`.
 
-- [ ] **Step 2: Escribir el test que falla, `src/server.test.ts`**
+- [x] **Step 2: Escribir el test que falla, `src/server.test.ts`**
 
 ```ts
 import type { AddressInfo } from "node:net";
@@ -2173,12 +2173,12 @@ describe("worker /health", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que falla**
+- [x] **Step 3: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter worker test`
 Expected: FAIL, porque no se puede resolver `./server`.
 
-- [ ] **Step 4: Implementar `server.ts`, `redis.ts` e `index.ts`**
+- [x] **Step 4: Implementar `server.ts`, `redis.ts` e `index.ts`**
 
 `src/server.ts`:
 ```ts
@@ -2253,12 +2253,12 @@ process.on("SIGTERM", () => void shutdown("SIGTERM"));
 process.on("SIGINT", () => void shutdown("SIGINT"));
 ```
 
-- [ ] **Step 5: Correr los tests y el typecheck**
+- [x] **Step 5: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools pnpm --filter worker test && docker compose run --rm tools pnpm --filter worker typecheck`
 Expected: PASS (2 tests) y sin errores de tipos.
 
-- [ ] **Step 6: Agregar el servicio `worker` a `docker-compose.yml`**
+- [x] **Step 6: Agregar el servicio `worker` a `docker-compose.yml`**
 
 ```yaml
   worker:
@@ -2277,7 +2277,7 @@ Expected: PASS (2 tests) y sin errores de tipos.
 Run: `docker compose up -d --build worker && sleep 8 && curl -s localhost:4001/health && docker compose down`
 Expected: `{"ok":true}`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/worker docker-compose.yml pnpm-lock.yaml
@@ -2296,7 +2296,7 @@ git commit -m "feat(worker): servidor socket.io con health, listo para colas"
 **Interfaces:**
 - Consumes: todo lo anterior. La página `/registro` usa los campos `name`, `email` y `password` (formularios portados de la v1), y el botón "Crear y entrar".
 
-- [ ] **Step 1: Crear el paquete e2e**
+- [x] **Step 1: Crear el paquete e2e**
 
 `e2e/package.json`:
 ```json
@@ -2320,7 +2320,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 2: Escribir el test `e2e/tests/auth.spec.ts`**
+- [x] **Step 2: Escribir el test `e2e/tests/auth.spec.ts`**
 
 ```ts
 import { expect, test } from "@playwright/test";
@@ -2362,7 +2362,7 @@ test("el login acepta el email con otras mayúsculas", async ({ page, request })
 
 Los textos de los botones vienen de los archivos portados de la v1: "Crear y entrar" (registro), "Entrar" (login; el de Google tiene otro texto, por eso `exact: true`) y "Cerrar sesion" (`sign-out-button.tsx`, sin tilde en la v1).
 
-- [ ] **Step 3: Agregar el servicio `e2e` a `docker-compose.yml`**
+- [x] **Step 3: Agregar el servicio `e2e` a `docker-compose.yml`**
 
 ```yaml
   e2e:
@@ -2381,13 +2381,13 @@ Los textos de los botones vienen de los archivos portados de la v1: "Crear y ent
 
 Agrega también `- e2e_node_modules:/app/e2e/node_modules` a `x-node.volumes`, para que `deps` instale ahí, y `e2e_node_modules:` en `volumes:`. Con `network_mode: "service:web"`, `localhost:3000` dentro del contenedor e2e es el web, así que las redirecciones de Auth.js a `AUTH_URL=http://localhost:3000` funcionan.
 
-- [ ] **Step 4: Correr el e2e**
+- [x] **Step 4: Correr el e2e**
 
 Run: `docker compose run --rm tools pnpm install && npm run dev` (en otra terminal, o con Ctrl+C para salir de los logs, ya que los contenedores siguen arriba). Espera a ver `Ready` en los logs de `web`.
 Run: `npm run test:e2e`
 Expected: `2 passed`.
 
-- [ ] **Step 5: Escribir `README.md`**
+- [x] **Step 5: Escribir `README.md`**
 
 ````markdown
 # syntaxError.cl v2
@@ -2421,7 +2421,7 @@ Solo Docker (con Compose v2.24+) y npm. Todo lo demás corre en contenedores.
 Agrega su volumen `node_modules` en `x-node.volumes` de `docker-compose.yml` y en `volumes:`. Luego corre `docker compose run --rm tools pnpm install`.
 ````
 
-- [ ] **Step 6: Verificación completa desde cero (Review Focus 4 y 5)**
+- [x] **Step 6: Verificación completa desde cero (Review Focus 4 y 5)**
 
 Run: `npm run reset && rm -f .env && npm run dev`
 Expected:
@@ -2447,7 +2447,7 @@ Expected: los datos del primer arranque siguen ahí (la cuenta creada en el e2e 
 
 Run: `npm run stop`
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add e2e README.md docker-compose.yml pnpm-lock.yaml

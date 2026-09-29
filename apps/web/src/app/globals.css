@@ -1,0 +1,845 @@
+@import "tailwindcss";
+@import "@syntaxerror/ui/tokens.css";
+@import "@syntaxerror/ui/components.css";
+
+@source "../**/*.{ts,tsx}";
+@source "../../../../packages/ui/src/**/*.{ts,tsx}";
+
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button,
+  summary {
+    cursor: pointer;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+}
+
+@layer components {
+  .nav-link {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.65rem;
+    color: var(--muted-foreground);
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .nav-link:hover {
+    color: var(--foreground);
+    background: var(--surface-raised);
+  }
+
+  .page-container {
+    width: min(100% - 2rem, 80rem);
+    margin-inline: auto;
+  }
+
+  .section-kicker {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.75rem;
+    font-weight: 900;
+    line-height: 1rem;
+    text-transform: uppercase;
+  }
+
+  .page-title {
+    margin: 0;
+    max-width: 18ch;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-weight: 900;
+    line-height: 0.98;
+  }
+
+  .leak-course-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    border-color: color-mix(in srgb, var(--primary) 22%, var(--border));
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--primary) 4%, transparent),
+        transparent 48%
+      ),
+      var(--surface);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary) 7%, transparent);
+  }
+
+  .leak-course-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0 10px,
+      color-mix(in srgb, var(--foreground) 5%, transparent) 11px 12px
+    );
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .leak-course-card::after {
+    content: "";
+    position: absolute;
+    inset: -30% 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      color-mix(in srgb, var(--primary) 12%, transparent),
+      transparent
+    );
+    opacity: 0;
+    animation: leak-scan 6.8s steps(1, end) infinite;
+    pointer-events: none;
+  }
+
+  .upcoming-leak-meta,
+  .upcoming-leak-fragment {
+    color: color-mix(in srgb, var(--primary) 82%, var(--foreground));
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.62rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .upcoming-leak-fragment {
+    max-width: 100%;
+    color: var(--muted-foreground);
+    opacity: 0.72;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .typographic-glitch {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    color: var(--foreground);
+    font-weight: 900;
+    line-height: inherit;
+    isolation: isolate;
+    overflow-wrap: anywhere;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--primary) 14%, transparent);
+  }
+
+  .typographic-glitch::before,
+  .typographic-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .typographic-glitch::before {
+    color: #00d7ff;
+    text-shadow: -1px 0 #00d7ff;
+    animation: glitch-cyan-burst 6.8s steps(1, end) infinite;
+  }
+
+  .typographic-glitch::after {
+    color: #ff2f9f;
+    text-shadow: 1px 0 #ff2f9f;
+    animation: glitch-magenta-burst 6.8s steps(1, end) infinite;
+  }
+
+  .leak-course-title {
+    font-size: clamp(1rem, 2.1vw, 1.3rem);
+    line-height: 1.08;
+    animation: glitch-primary-burst 6.8s steps(1, end) infinite;
+  }
+
+  .subtle-glitch::before {
+    animation-duration: 8.8s;
+    opacity: 0;
+  }
+
+  .subtle-glitch::after {
+    animation-duration: 8.8s;
+    opacity: 0;
+  }
+
+  .error-glitch-shell {
+    --error-panel-bg: color-mix(in srgb, var(--surface) 92%, var(--background));
+    --error-panel-fg: var(--foreground);
+    --error-panel-muted: var(--muted-foreground);
+    --error-panel-scanline: color-mix(
+      in srgb,
+      var(--foreground) 6%,
+      transparent
+    );
+    position: relative;
+    display: grid;
+    min-height: min(42rem, calc(100svh - 8rem));
+    gap: 2rem;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--primary) 24%, var(--border));
+    border-radius: var(--radius-lg);
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 11px,
+        var(--error-panel-scanline) 12px 13px
+      ),
+      radial-gradient(
+        circle at 78% 24%,
+        color-mix(in srgb, var(--primary) 18%, transparent),
+        transparent 34%
+      ),
+      var(--error-panel-bg);
+    padding: clamp(1.5rem, 5vw, 4rem);
+    color: var(--error-panel-fg);
+    isolation: isolate;
+  }
+
+  .error-glitch-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(
+        90deg,
+        color-mix(in srgb, #00d7ff 8%, transparent),
+        transparent 28%,
+        color-mix(in srgb, #ff2f9f 7%, transparent) 74%,
+        transparent
+      );
+    opacity: 0.75;
+    pointer-events: none;
+  }
+
+  .error-glitch-copy {
+    max-width: 40rem;
+  }
+
+  .error-glitch-code {
+    display: grid;
+    gap: 0.75rem;
+    align-content: center;
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+  }
+
+  .error-glitch-status,
+  .error-glitch-trace,
+  .error-glitch-cursor {
+    color: color-mix(in srgb, var(--primary) 78%, var(--error-panel-fg));
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    font-weight: 900;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .error-glitch-number {
+    width: max-content;
+    max-width: 100%;
+    color: var(--error-panel-fg);
+    font-size: clamp(7rem, 26vw, 18rem);
+    line-height: 0.82;
+    text-shadow:
+      0 0 22px color-mix(in srgb, var(--primary) 20%, transparent),
+      0 0 1px var(--error-panel-fg);
+    animation: glitch-primary-burst 6.8s steps(1, end) infinite;
+  }
+
+  .error-glitch-trace {
+    color: color-mix(
+      in srgb,
+      var(--error-panel-fg) 72%,
+      var(--error-panel-muted)
+    );
+    text-transform: none;
+    overflow-wrap: anywhere;
+  }
+
+  .error-glitch-cursor {
+    display: inline-flex;
+    width: max-content;
+    max-width: 100%;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--error-panel-fg);
+  }
+
+  :root:not([data-theme="light"]) .error-glitch-shell {
+    --error-panel-bg: #050507;
+    --error-panel-fg: #ffffff;
+    --error-panel-muted: #a1a1aa;
+    --error-panel-scanline: color-mix(in srgb, white 5%, transparent);
+  }
+
+  .user-message-notice-shell {
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    padding: 1.1rem;
+    box-shadow: 0 14px 40px color-mix(in srgb, black 8%, transparent);
+  }
+
+  .user-message-notice-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .user-message-notice-kicker,
+  .user-message-glitch-kicker {
+    margin: 0;
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 950;
+    line-height: 1rem;
+    text-transform: uppercase;
+  }
+
+  .user-message-notice-title {
+    margin: 0.15rem 0 0;
+    color: var(--foreground);
+    font-size: 1.05rem;
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .user-message-notice-count {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    color: var(--primary);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+    font-weight: 950;
+  }
+
+  .user-message-achievement-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .user-message-achievement-button {
+    display: inline-flex;
+    min-height: 3.8rem;
+    align-items: center;
+    gap: 0.8rem;
+    border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+    border-radius: var(--radius-md);
+    background: var(--background);
+    color: var(--foreground);
+    padding: 0.75rem 0.9rem;
+    text-align: left;
+    box-shadow: 0 8px 24px color-mix(in srgb, black 7%, transparent);
+  }
+
+  .user-message-achievement-button--compact {
+    width: min(100%, 24rem);
+  }
+
+  .user-message-achievement-button:hover {
+    border-color: color-mix(in srgb, var(--primary) 58%, transparent);
+    background: color-mix(in srgb, var(--primary) 7%, var(--background));
+  }
+
+  .user-message-achievement-icon {
+    display: grid;
+    width: 2.4rem;
+    height: 2.4rem;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: var(--radius-md);
+    background: #36f59f;
+    color: #06110c;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+    font-weight: 950;
+  }
+
+  .user-message-glitch-modal {
+    width: min(100% - 2rem, 72rem);
+    max-height: min(90vh, 54rem);
+    margin: auto;
+    overflow: auto;
+    border: 0;
+    background: transparent;
+    color: white;
+    padding: 0;
+  }
+
+  .user-message-glitch-modal::backdrop {
+    background: rgb(7 10 13 / 0.48);
+    backdrop-filter: blur(12px) saturate(0.72);
+  }
+
+  .user-message-glitch-stage {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, #36f59f 34%, transparent);
+    border-radius: 0.75rem;
+    background:
+      radial-gradient(
+        circle at 18% 12%,
+        rgb(54 245 159 / 0.12),
+        transparent 24rem
+      ),
+      radial-gradient(
+        circle at 82% 18%,
+        rgb(0 215 255 / 0.1),
+        transparent 24rem
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 11px,
+        rgb(255 255 255 / 0.045) 12px 13px
+      ),
+      linear-gradient(
+        115deg,
+        rgb(0 215 255 / 0.08),
+        transparent 24%
+      ),
+      linear-gradient(
+        245deg,
+        rgb(255 47 159 / 0.07),
+        transparent 28%
+      ),
+      #0e1517;
+    color: white;
+    box-shadow:
+      0 24px 90px rgb(0 0 0 / 0.42),
+      inset 0 0 0 1px rgb(54 245 159 / 0.08);
+    isolation: isolate;
+  }
+
+  .user-message-glitch-stage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      90deg,
+      rgb(0 215 255 / 0.1),
+      transparent 32%,
+      rgb(255 47 159 / 0.08) 74%,
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  .user-message-glitch-stage::after {
+    content: "";
+    position: absolute;
+    inset: -60% 0;
+    z-index: -1;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      rgb(54 245 159 / 0.16),
+      transparent
+    );
+    animation: leak-scan 7.2s steps(1, end) infinite;
+    pointer-events: none;
+  }
+
+  .user-message-glitch-stage-header {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.85rem;
+    padding: clamp(1rem, 3vw, 1.6rem) clamp(1rem, 3vw, 1.7rem);
+    color: rgb(243 247 245);
+  }
+
+  .user-message-glitch-stage-header > span:last-child {
+    color: rgb(154 168 164);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.72rem;
+    font-weight: 900;
+  }
+
+  .user-message-glitch-showcase {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-height: min(54vh, 28rem);
+    grid-template-columns: minmax(0, 1.08fr) minmax(20rem, 0.92fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3.25rem);
+    margin: 0 clamp(1rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem);
+    border: 1px solid rgb(54 245 159 / 0.28);
+    border-radius: 0.75rem;
+    background: rgb(7 12 14 / 0.34);
+    padding: clamp(1.125rem, 3.5vw, 2.75rem);
+  }
+
+  .user-message-glitch-copy {
+    max-width: 36rem;
+  }
+
+  .user-message-glitch-copy p:last-child {
+    margin: 1.125rem 0 0;
+    max-width: 31rem;
+    color: #9aa8a4;
+    font-size: clamp(0.95rem, 1.45vw, 1.03rem);
+    font-weight: 760;
+    line-height: 1.75;
+  }
+
+  .user-message-glitch-hero {
+    max-width: 11ch;
+    margin: 0.875rem 0 0;
+    color: white;
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+    font-weight: 950;
+    line-height: 0.94;
+    text-wrap: balance;
+  }
+
+  .user-message-glitch-hero .typographic-glitch {
+    display: inline;
+    color: white;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .user-message-glitch-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgb(54 245 159 / 0.24);
+    border-radius: 0.625rem;
+    background:
+      linear-gradient(
+        180deg,
+        rgb(54 245 159 / 0.07),
+        transparent 44%
+      ),
+      rgb(7 12 14 / 0.84);
+    box-shadow:
+      0 18px 50px rgb(0 0 0 / 0.36),
+      inset 0 0 0 1px rgb(255 255 255 / 0.04);
+  }
+
+  .user-message-glitch-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0 9px,
+      rgb(255 255 255 / 0.04) 10px 11px
+    );
+    pointer-events: none;
+  }
+
+  .user-message-glitch-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid rgb(255 255 255 / 0.1);
+    background: rgb(255 255 255 / 0.04);
+    color: #9aa8a4;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.72rem;
+    font-weight: 900;
+    line-height: 1.2;
+    padding: 0.875rem 1rem;
+  }
+
+  .user-message-glitch-close {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(255 255 255 / 0.16);
+    border-radius: var(--radius-md);
+    background: rgb(255 255 255 / 0.05);
+    color: white;
+  }
+
+  .user-message-glitch-dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .user-message-glitch-dots span {
+    display: block;
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 999px;
+  }
+
+  .user-message-glitch-body {
+    position: relative;
+    padding: clamp(1.125rem, 3vw, 1.75rem);
+  }
+
+  .user-message-glitch-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+  }
+
+  .user-message-glitch-badges span {
+    border: 1px solid rgb(54 245 159 / 0.26);
+    border-radius: 999px;
+    background: rgb(54 245 159 / 0.08);
+    color: #36f59f;
+    padding: 0.375rem 0.625rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+      "Liberation Mono", "Courier New", monospace;
+    font-size: 0.6875rem;
+    font-weight: 950;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .user-message-glitch-subject {
+    color: white;
+    font-size: clamp(1.5rem, 3vw, 2.15rem);
+    line-height: 1.04;
+  }
+
+  .user-message-glitch-subject.typographic-glitch {
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .user-message-glitch-primary-action {
+    border-color: transparent;
+    background: #36f59f;
+    color: #04120b;
+  }
+
+  .user-message-glitch-primary-action:hover {
+    background: #20d989;
+  }
+
+  .user-message-glitch-secondary-action {
+    border-color: color-mix(in srgb, white 18%, transparent);
+    background: color-mix(in srgb, white 8%, transparent);
+    color: white;
+  }
+
+  .user-message-glitch-secondary-action:hover {
+    background: color-mix(in srgb, white 14%, transparent);
+  }
+
+  :root[data-theme="light"] .user-message-notice-shell {
+    box-shadow: 0 18px 46px rgb(24 24 27 / 0.06);
+  }
+
+  :root[data-theme="light"] .user-message-achievement-button {
+    background: #ffffff;
+  }
+
+  :root[data-theme="light"] .user-message-glitch-modal::backdrop {
+    background: rgb(7 10 13 / 0.42);
+  }
+
+  :root:not([data-theme="light"]) .user-message-notice-shell {
+    box-shadow: 0 18px 46px rgb(0 0 0 / 0.18);
+  }
+
+  :root:not([data-theme="light"]) .user-message-achievement-button {
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 8px,
+        color-mix(in srgb, white 4%, transparent) 9px 10px
+      ),
+      color-mix(in srgb, black 38%, var(--surface));
+  }
+
+  @media (min-width: 900px) {
+    .error-glitch-shell {
+      grid-template-columns: minmax(0, 0.9fr) minmax(20rem, 0.8fr);
+    }
+  }
+
+  @media (max-width: 820px) {
+    .user-message-glitch-stage-header {
+      grid-template-columns: auto 1fr;
+    }
+
+    .user-message-glitch-stage-header > span:last-child {
+      display: none;
+    }
+
+    .user-message-glitch-showcase {
+      min-height: 0;
+      grid-template-columns: 1fr;
+      padding: 1.25rem;
+    }
+
+    .user-message-glitch-hero {
+      font-size: clamp(2.6rem, 15vw, 4.5rem);
+    }
+  }
+}
+
+@keyframes leak-scan {
+  0%,
+  68%,
+  82%,
+  100% {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+  70% {
+    opacity: 0.75;
+    transform: translateY(-18%);
+  }
+  73% {
+    opacity: 0.2;
+    transform: translateY(28%);
+  }
+}
+
+@keyframes glitch-cyan-burst {
+  0%,
+  67%,
+  78%,
+  100% {
+    opacity: 0;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+  68% {
+    opacity: 0.95;
+    clip-path: inset(0 0 72% 0);
+    transform: translateX(-2px);
+  }
+  69% {
+    opacity: 0.75;
+    clip-path: inset(42% 0 38% 0);
+    transform: translateX(-5px);
+  }
+  70% {
+    opacity: 0;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+  72% {
+    opacity: 0.85;
+    clip-path: inset(18% 0 58% 0);
+    transform: translateX(3px);
+  }
+  73% {
+    opacity: 0.9;
+    clip-path: inset(68% 0 8% 0);
+    transform: translateX(-4px);
+  }
+  74% {
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-magenta-burst {
+  0%,
+  67%,
+  78%,
+  100% {
+    opacity: 0;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+  68% {
+    opacity: 0.78;
+    clip-path: inset(62% 0 18% 0);
+    transform: translateX(3px);
+  }
+  69% {
+    opacity: 0.9;
+    clip-path: inset(10% 0 68% 0);
+    transform: translateX(5px);
+  }
+  70% {
+    opacity: 0;
+    clip-path: inset(0);
+    transform: translateX(0);
+  }
+  72% {
+    opacity: 0.7;
+    clip-path: inset(36% 0 40% 0);
+    transform: translateX(-2px);
+  }
+  73% {
+    opacity: 0.86;
+    clip-path: inset(78% 0 0 0);
+    transform: translateX(4px);
+  }
+  74% {
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-primary-burst {
+  0%,
+  68%,
+  78%,
+  100% {
+    transform: translateX(0);
+    filter: none;
+  }
+  69% {
+    transform: translateX(1px);
+    filter: contrast(1.12);
+  }
+  70% {
+    transform: translateX(-1px);
+  }
+  73% {
+    transform: translateX(2px);
+  }
+  74% {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leak-course-card::after,
+  .user-message-glitch-stage::before,
+  .user-message-glitch-stage::after,
+  .typographic-glitch,
+  .typographic-glitch::before,
+  .typographic-glitch::after {
+    animation: none;
+  }
+}
