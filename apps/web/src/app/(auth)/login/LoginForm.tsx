@@ -85,6 +85,9 @@ export function LoginForm() {
           required
         />
       </Label>
+      <Link className="-mt-2 w-fit text-sm font-bold text-primary hover:underline" href="/recuperar-clave">
+        ¿Olvidaste tu contraseña?
+      </Link>
       {error ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm font-bold text-destructive">
           {error}

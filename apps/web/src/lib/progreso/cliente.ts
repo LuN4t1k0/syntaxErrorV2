@@ -3,7 +3,14 @@ import type { EstadoMision } from "./servicio";
 
 export type Almacen = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 export type Dependencias = { fetch: typeof fetch; almacen: Almacen | null };
-export type ProgresoVisible = { sesion: boolean; misiones: Record<string, EstadoMision>; entregable: string | null; completo: boolean };
+export type CertificadoVisible = { codigo: string; tipo: "caso" | "ruta"; titulo: string };
+export type ProgresoVisible = {
+  sesion: boolean;
+  misiones: Record<string, EstadoMision>;
+  entregable: string | null;
+  completo: boolean;
+  certificados: CertificadoVisible[];
+};
 
 type Pendiente = Omit<IntentoTarea, "aprobada">;
 const CLAVE = "syntaxerror:progreso-pendiente";
@@ -79,7 +86,13 @@ export async function cargarProgreso(caso: string, tareasPorMision: Record<strin
     if (!delServidor && aprobadas.size === 0) continue;
     misiones[mision] = { estado: tareas.length > 0 && tareas.every((tarea) => aprobadas.has(tarea)) ? "aprobada" : "en_curso", tareasAprobadas: [...aprobadas] };
   }
-  return { sesion: servidor !== null, misiones, entregable: servidor?.entregable ?? null, completo: servidor?.completo ?? false };
+  return {
+    sesion: servidor !== null,
+    misiones,
+    entregable: servidor?.entregable ?? null,
+    completo: servidor?.completo ?? false,
+    certificados: servidor?.certificados ?? [],
+  };
 }
 
 export function dependenciasNavegador(): Dependencias {

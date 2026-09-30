@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@syntaxerror/db/client";
 import { getClientIp } from "@/lib/client-ip";
+import { enviarVerificacion } from "@/lib/cuenta/verificacion";
+import { encolarSinFallar } from "@/lib/emails";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { registerUser } from "./service";
 
@@ -28,6 +30,10 @@ export async function POST(request: Request) {
 
   try {
     const result = await registerUser(getDb(), parsed.data);
+    // El registro no falla si no se pudo preparar el email: la alumna puede pedirlo de nuevo desde su panel.
+    await enviarVerificacion(getDb(), { id: result.id, email: result.email, name: parsed.data.name }, encolarSinFallar).catch(
+      (error) => console.error("[registro] no se pudo preparar la verificación", error)
+    );
     return NextResponse.json(result, { status: 201 });
   } catch (err) {
     if (err instanceof Error && err.message === "email_taken") {

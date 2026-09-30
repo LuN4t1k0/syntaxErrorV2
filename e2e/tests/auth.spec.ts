@@ -1,4 +1,4 @@
-import { expect, ipDeLaCorrida, test } from "./fixtures";
+import { expect, test } from "./fixtures";
 
 test("una alumna se registra, entra al dashboard y cierra sesión", async ({ page }) => {
   const email = `alumna-${Date.now()}@correo.cl`;
@@ -19,10 +19,10 @@ test("una alumna se registra, entra al dashboard y cierra sesión", async ({ pag
   await expect(page).toHaveURL(/\/login\?callbackUrl=%2Fdashboard|\/login\?callbackUrl=\/dashboard/);
 });
 
-test("el login acepta el email con otras mayúsculas", async ({ page, request }) => {
+test("el login acepta el email con otras mayúsculas", async ({ page, request, ip }) => {
   const email = `mayus-${Date.now()}@correo.cl`;
   const res = await request.post("/api/auth/register", {
-    headers: { Origin: "http://localhost:3000", "x-forwarded-for": ipDeLaCorrida },
+    headers: { Origin: "http://localhost:3000", "x-forwarded-for": ip },
     data: { name: "Diego", email, password: "clave-segura-123" },
   });
   expect(res.status()).toBe(201);

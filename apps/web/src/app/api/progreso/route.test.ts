@@ -3,6 +3,7 @@ import { casos, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 
 vi.mock("@/lib/sesion", () => ({ obtenerUsuarioId: vi.fn() }));
+vi.mock("@/lib/emails", () => ({ encolarEmail: vi.fn(async () => {}), encolarSinFallar: vi.fn(async () => {}) }));
 
 const { GET, POST } = await import("./route");
 const { POST: SINCRONIZAR } = await import("./sync/route");
@@ -53,7 +54,7 @@ describe("/api/progreso", () => {
     await iniciarSesion();
     const respuesta = await enviar(POST, aprobado);
     expect(respuesta.status).toBe(200);
-    expect(await respuesta.json()).toEqual({ misionAprobada: true, casoCompleto: false });
+    expect(await respuesta.json()).toEqual({ misionAprobada: true, casoCompleto: false, certificados: [] });
     expect(await (await consultar("ventas")).json()).toEqual({
       misiones: { m1: { estado: "aprobada", tareasAprobadas: ["t1"] } },
       entregable: null,
@@ -71,6 +72,6 @@ describe("/api/progreso", () => {
   it("sync aplica el lote y cuenta los rechazados", async () => {
     await iniciarSesion();
     const respuesta = await enviar(SINCRONIZAR, { intentos: [aprobado, { ...aprobado, caso: "otro" }] });
-    expect(await respuesta.json()).toEqual({ aplicados: 1, rechazados: 1 });
+    expect(await respuesta.json()).toEqual({ aplicados: 1, rechazados: 1, certificados: [] });
   });
 });

@@ -15,6 +15,13 @@
       "when": 1790729263289,
       "tag": "0001_spooky_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790778187042,
+      "tag": "0002_messy_outlaw_kid",
+      "breakpoints": true
     }
   ]
 }

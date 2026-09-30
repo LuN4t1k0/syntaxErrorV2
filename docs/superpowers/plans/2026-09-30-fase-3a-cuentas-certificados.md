@@ -88,7 +88,7 @@ e2e/tests/cuenta.spec.ts, e2e/tests/mailpit.ts
   - `crearColaEmails(url: string, opciones?: { nombre?: string; limiteMs?: number }): ColaEmails`: 5 reintentos con espera exponencial, y rechaza si Redis no responde en `limiteMs` (3 s por defecto);
   - `conexionWorker(url: string): ConnectionOptions` (con `maxRetriesPerRequest: null`, como exige BullMQ).
 
-- [ ] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
+- [x] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
 
 `packages/queue/package.json`:
 ```json
@@ -128,7 +128,7 @@ export default defineConfig({
 
 En `docker-compose.yml`, agregar a `x-node.volumes` `- queue_node_modules:/app/packages/queue/node_modules`, y en `volumes:` agregar `queue_node_modules:`.
 
-- [ ] **Step 2: Escribir el test que falla, `src/emails.test.ts`**
+- [x] **Step 2: Escribir el test que falla, `src/emails.test.ts`**
 
 ```ts
 import { Queue } from "bullmq";
@@ -165,12 +165,12 @@ describe("crearColaEmails", () => {
 });
 ```
 
-- [ ] **Step 3: Instalar y ver fallar el test**
+- [x] **Step 3: Instalar y ver fallar el test**
 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter @syntaxerror/queue test`
 Expected: FAIL, porque no se puede resolver `./emails`.
 
-- [ ] **Step 4: Crear `src/emails.ts`**
+- [x] **Step 4: Crear `src/emails.ts`**
 
 ```ts
 import { Queue, type ConnectionOptions } from "bullmq";
@@ -254,12 +254,12 @@ export function crearColaEmails(
 }
 ```
 
-- [ ] **Step 5: Correr los tests y el typecheck**
+- [x] **Step 5: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/queue test && cd packages/queue && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (2 tests) y `tsc` sin errores.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/queue docker-compose.yml pnpm-lock.yaml
@@ -294,7 +294,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `buscarEmail(para: string): Promise<{ ID; Subject; Text; HTML }>`: helper de tests contra la API de Mailpit.
   - El worker consume la cola `emails` al arrancar.
 
-- [ ] **Step 1: Dependencias y variables de entorno**
+- [x] **Step 1: Dependencias y variables de entorno**
 
 Run: `docker compose run --rm tools pnpm --filter worker add "@syntaxerror/queue@workspace:*" "bullmq@^5.34.0" "nodemailer@^6.9.16" && docker compose run --rm tools pnpm --filter worker add -D "@types/nodemailer@^6.4.16"`
 
@@ -315,7 +315,7 @@ En `docker-compose.yml`:
 
 3. En `worker`, agregar al `environment` `RESEND_API_KEY: ${RESEND_API_KEY:-}` y a `depends_on` `mailpit: { condition: service_started }`.
 
-- [ ] **Step 2: Crear el helper de Mailpit y escribir los tests que fallan**
+- [x] **Step 2: Crear el helper de Mailpit y escribir los tests que fallan**
 
 `src/testing/mailpit.ts`:
 ```ts
@@ -505,12 +505,12 @@ describe("crearProcesadorEmails", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que fallan**
+- [x] **Step 3: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter worker test`
 Expected: FAIL, porque no se pueden resolver `./plantilla`, `./mensajes`, `./enviar` ni `./procesar`.
 
-- [ ] **Step 4: Crear `src/emails/plantilla.ts`** (portada de `$V1/apps/worker/src/lib/syntax-error-email.ts`, con el enlace como botón)
+- [x] **Step 4: Crear `src/emails/plantilla.ts`** (portada de `$V1/apps/worker/src/lib/syntax-error-email.ts`, con el enlace como botón)
 
 ```ts
 export type LineaEstado = { etiqueta: "INFO" | "WARNING" | "ERROR"; mensaje: string };
@@ -618,7 +618,7 @@ export function plantillaSyntaxError(entrada: EntradaPlantilla): EmailListo {
 }
 ```
 
-- [ ] **Step 5: Crear `src/emails/mensajes.ts`**
+- [x] **Step 5: Crear `src/emails/mensajes.ts`**
 
 ```ts
 import type { TrabajoEmail } from "@syntaxerror/queue/emails";
@@ -704,7 +704,7 @@ export function construirEmail(trabajo: TrabajoEmail): EmailListo {
 }
 ```
 
-- [ ] **Step 6: Crear `src/emails/enviar.ts` y `src/emails/procesar.ts`** (el envío está portado de `$V1/apps/worker/src/lib/mailer.ts`)
+- [x] **Step 6: Crear `src/emails/enviar.ts` y `src/emails/procesar.ts`** (el envío está portado de `$V1/apps/worker/src/lib/mailer.ts`)
 
 `src/emails/enviar.ts`:
 ```ts
@@ -762,7 +762,7 @@ export function crearProcesadorEmails(enviar: (email: EmailSaliente) => Promise<
 }
 ```
 
-- [ ] **Step 7: Consumir la cola al arrancar el worker**
+- [x] **Step 7: Consumir la cola al arrancar el worker**
 
 Reemplazar `apps/worker/src/index.ts` por:
 ```ts
@@ -804,7 +804,7 @@ process.on("SIGTERM", () => void shutdown("SIGTERM"));
 process.on("SIGINT", () => void shutdown("SIGINT"));
 ```
 
-- [ ] **Step 8: Correr los tests y el typecheck**
+- [x] **Step 8: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter worker test && cd apps/worker && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (los 3 de `server.test.ts` más 17 nuevos) y `tsc` sin errores.
@@ -814,7 +814,7 @@ Expected: `[worker] escuchando en :4001`, sin errores de conexión.
 
 Run: `docker compose down`
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add apps/worker docker-compose.yml pnpm-lock.yaml
@@ -841,7 +841,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `certificadosLegacy`: `codigo` (clave), `nombreAlumno`, `titulo`, `tipo` (`"curso"` o `"ruta"`), `emitidoEn`.
 - Produce en `@syntaxerror/db/audit` las acciones nuevas `email_verified`, `profile_updated`, `password_changed`, `email_change_requested`, `email_changed`, `data_exported`, `account_deleted` y `portfolio_updated`.
 
-- [ ] **Step 1: Agregar columnas a `users`**
+- [x] **Step 1: Agregar columnas a `users`**
 
 En `packages/db/src/schema.ts`, dentro de las columnas de `users`, después de `abandonmentEmailsOptOut`, agregar:
 ```ts
@@ -854,7 +854,7 @@ Y cambiar los índices de `users` por:
   (table) => [uniqueIndex("users_email_idx").on(table.email), uniqueIndex("users_usuario_idx").on(table.usuario)]
 ```
 
-- [ ] **Step 2: Agregar las tablas nuevas** (al final de `schema.ts`)
+- [x] **Step 2: Agregar las tablas nuevas** (al final de `schema.ts`)
 
 ```ts
 export const tokensEmail = pgTable(
@@ -906,7 +906,7 @@ export const certificadosLegacy = pgTable("certificados_legacy", {
 });
 ```
 
-- [ ] **Step 3: Agregar las acciones de auditoría**
+- [x] **Step 3: Agregar las acciones de auditoría**
 
 En `packages/db/src/audit.ts`, reemplazar `AUDIT_ACTIONS` por:
 ```ts
@@ -925,7 +925,7 @@ export const AUDIT_ACTIONS = [
 ] as const;
 ```
 
-- [ ] **Step 4: Generar la migración y correr los tests**
+- [x] **Step 4: Generar la migración y correr los tests**
 
 Run: `npm run db:generate`
 Expected: crea `packages/db/drizzle/0002_<nombre>.sql`, que:
@@ -935,7 +935,7 @@ Expected: crea `packages/db/drizzle/0002_<nombre>.sql`, que:
 Run: `docker compose run --rm tools sh -c "pnpm -r --if-present test && cd packages/db && pnpm exec tsc --noEmit -p ."`
 Expected: PASS en todos los paquetes (la migración se aplica en `postgres-test` desde el `globalSetup`) y `tsc` sin errores.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add packages/db
@@ -971,7 +971,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Rate limits nuevos: `cuenta-clave` (5 cada 15 min), `cuenta-email` (5 por hora) y `reenviar-verificacion` (3 por hora), todos por usuario.
   - Al registrarse se envía el email `verificar-email`. El panel muestra el aviso `Confirma tu email: ...` con el botón `Reenviar email`, y `/verificar-email` tiene el botón `Confirmar email`.
 
-- [ ] **Step 1: Dependencias, configuración y rate limits**
+- [x] **Step 1: Dependencias, configuración y rate limits**
 
 Run: `docker compose run --rm tools pnpm --filter web add "@syntaxerror/queue@workspace:*" "bullmq@^5.34.0"`
 
@@ -998,7 +998,7 @@ export type RateLimitKey = "login-email" | "login-ip" | "register-ip" | "cuenta-
   "reenviar-verificacion": { points: 3, duration: 3600 },
 ```
 
-- [ ] **Step 2: Escribir los tests que fallan**
+- [x] **Step 2: Escribir los tests que fallan**
 
 `src/lib/emails.test.ts`:
 ```ts
@@ -1219,12 +1219,12 @@ describe("verificación por API", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que fallan**
+- [x] **Step 3: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/emails.test.ts src/lib/cuenta src/app/api/cuenta`
 Expected: FAIL, porque no se pueden resolver `./emails`, `./tokens`, `./verificacion` ni las rutas.
 
-- [ ] **Step 4: Crear `src/lib/emails.ts` y `src/lib/errores-db.ts`**
+- [x] **Step 4: Crear `src/lib/emails.ts` y `src/lib/errores-db.ts`**
 
 `src/lib/emails.ts`:
 ```ts
@@ -1264,7 +1264,7 @@ export function esViolacionUnica(error: unknown): boolean {
 }
 ```
 
-- [ ] **Step 5: Crear `tokens.ts`, `enlaces.ts`, `meta.ts` y `verificacion.ts`**
+- [x] **Step 5: Crear `tokens.ts`, `enlaces.ts`, `meta.ts` y `verificacion.ts`**
 
 `src/lib/cuenta/tokens.ts`:
 ```ts
@@ -1407,7 +1407,7 @@ export async function necesitaVerificar(db: AppDb, userId: string): Promise<bool
 }
 ```
 
-- [ ] **Step 6: Crear las rutas y enviar la verificación al registrarse**
+- [x] **Step 6: Crear las rutas y enviar la verificación al registrarse**
 
 `src/app/api/cuenta/verificar-email/route.ts`:
 ```ts
@@ -1481,7 +1481,7 @@ En `src/app/api/auth/register/route.test.ts`, agregar después del `vi.mock` de 
 vi.mock("@/lib/emails", () => ({ encolarEmail: vi.fn(async () => {}), encolarSinFallar: vi.fn(async () => {}) }));
 ```
 
-- [ ] **Step 7: Crear el helper de formularios, el layout de cuenta, la página de confirmación y el aviso del panel**
+- [x] **Step 7: Crear el helper de formularios, el layout de cuenta, la página de confirmación y el aviso del panel**
 
 `src/lib/cuenta/cliente.ts`:
 ```ts
@@ -1680,12 +1680,12 @@ import { necesitaVerificar } from "@/lib/cuenta/verificacion";
       {verificar ? <AvisoVerificacion /> : null}
 ```
 
-- [ ] **Step 8: Correr los tests y el typecheck**
+- [x] **Step 8: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (15 tests nuevos) y `tsc` sin errores.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add apps/web pnpm-lock.yaml
@@ -1715,7 +1715,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `eliminarCuenta(db, userId, confirmacion, { encolar, meta })`, que devuelve `{ ok: true }` o `{ ok: false; motivo: "clave_incorrecta" | "confirmacion_incorrecta" }`. La confirmación es la contraseña, o el email si la cuenta no tiene contraseña.
   - Cada acción deja su registro en la bitácora. El de la cuenta eliminada se conserva: `audit_log` no tiene clave foránea a `users`.
 
-- [ ] **Step 1: Escribir el test que falla, `src/lib/cuenta/perfil.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/lib/cuenta/perfil.test.ts`**
 
 ```ts
 import { eq } from "drizzle-orm";
@@ -1910,12 +1910,12 @@ describe("eliminarCuenta", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/cuenta/perfil.test.ts`
 Expected: FAIL, porque no se puede resolver `./perfil`.
 
-- [ ] **Step 3: Crear `src/lib/cuenta/perfil.ts`**
+- [x] **Step 3: Crear `src/lib/cuenta/perfil.ts`**
 
 ```ts
 import { and, eq, ne } from "drizzle-orm";
@@ -2187,12 +2187,12 @@ export async function eliminarCuenta(
 }
 ```
 
-- [ ] **Step 4: Correr el test y el typecheck**
+- [x] **Step 4: Correr el test y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test -- src/lib/cuenta/perfil.test.ts && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (13 tests) y `tsc` sin errores.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/web
@@ -2225,7 +2225,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `Seccion` (componente de servidor) con un `h2` y `aria-labelledby`: la Task 9 agrega ahí `Portafolio público`.
   - Textos que usan los e2e: los campos `Nuevo email`, `Contraseña actual`, `Contraseña nueva` y `Escribe tu contraseña para confirmar` (o `Escribe tu email para confirmar`); los botones `Enviar confirmación`, `Cambiar contraseña`, `Eliminar mi cuenta` y `Confirmar nuevo email`; y los mensajes `Tu contraseña cambió.` y `Tu email cambió.`.
 
-- [ ] **Step 1: Escribir el test que falla, `src/app/api/cuenta/route.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/app/api/cuenta/route.test.ts`**
 
 ```ts
 import { eq } from "drizzle-orm";
@@ -2337,12 +2337,12 @@ describe("/api/cuenta", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/app/api/cuenta/route.test.ts`
 Expected: FAIL, porque no se pueden resolver las rutas.
 
-- [ ] **Step 3: Agregar `cerrarSesion` y crear las rutas**
+- [x] **Step 3: Agregar `cerrarSesion` y crear las rutas**
 
 Reemplazar `src/lib/sesion.ts` por:
 ```ts
@@ -2512,7 +2512,7 @@ export async function GET() {
 Run: `docker compose run --rm tools pnpm --filter web test -- src/app/api/cuenta/route.test.ts`
 Expected: PASS (8 tests).
 
-- [ ] **Step 4: Crear los componentes del perfil**
+- [x] **Step 4: Crear los componentes del perfil**
 
 `src/components/cuenta/seccion.tsx`:
 ```tsx
@@ -2764,7 +2764,7 @@ export function SeccionEliminar({ tieneClave }: { tieneClave: boolean }) {
 }
 ```
 
-- [ ] **Step 5: Crear la página de perfil, la confirmación del email nuevo y el enlace en el menú**
+- [x] **Step 5: Crear la página de perfil, la confirmación del email nuevo y el enlace en el menú**
 
 `src/app/(dashboard)/perfil/page.tsx`:
 ```tsx
@@ -2881,12 +2881,12 @@ import { LayoutDashboard, Settings, UserRound } from "lucide-react";
               </Link>
 ```
 
-- [ ] **Step 6: Correr los tests de web y el typecheck**
+- [x] **Step 6: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/web
@@ -2918,7 +2918,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `@/lib/certificados/otorgar`: `otorgarCertificados(db, userId, casoSlug, encolar): Promise<CertificadoEmitido[]>` (emite y encola `certificado-emitido`).
   - `POST /api/progreso` y `POST /api/entregables` responden además `certificados: CertificadoEmitido[]`. `POST /api/progreso/sync` también emite los certificados de los casos que se completan con lo pendiente.
 
-- [ ] **Step 1: Escribir los tests que fallan**
+- [x] **Step 1: Escribir los tests que fallan**
 
 `src/lib/certificados/servicio.test.ts`:
 ```ts
@@ -3082,12 +3082,12 @@ describe("otorgarCertificados", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que fallan**
+- [x] **Step 2: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/certificados`
 Expected: FAIL, porque no se pueden resolver `./servicio` ni `./otorgar`.
 
-- [ ] **Step 3: Crear `src/lib/certificados/servicio.ts` y `otorgar.ts`** (la emisión está portada de `$V1/apps/web/src/lib/certificates/service.ts`)
+- [x] **Step 3: Crear `src/lib/certificados/servicio.ts` y `otorgar.ts`** (la emisión está portada de `$V1/apps/web/src/lib/certificates/service.ts`)
 
 `src/lib/certificados/servicio.ts`:
 ```ts
@@ -3238,7 +3238,7 @@ export async function otorgarCertificados(
 }
 ```
 
-- [ ] **Step 4: Otorgar los certificados desde las APIs de progreso y entregables**
+- [x] **Step 4: Otorgar los certificados desde las APIs de progreso y entregables**
 
 Reemplazar `src/app/api/progreso/route.ts` por:
 ```ts
@@ -3339,7 +3339,7 @@ export async function POST(request: Request) {
 }
 ```
 
-- [ ] **Step 5: Ajustar los tests de las rutas de la Fase 2**
+- [x] **Step 5: Ajustar los tests de las rutas de la Fase 2**
 
 En `src/app/api/progreso/route.test.ts`:
 
@@ -3385,12 +3385,12 @@ vi.mock("@/lib/emails", () => ({ encolarEmail: vi.fn(async () => {}), encolarSin
   });
 ```
 
-- [ ] **Step 6: Correr los tests de web y el typecheck**
+- [x] **Step 6: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (10 tests nuevos) y `tsc` sin errores.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/web
@@ -3419,7 +3419,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `/certificados/[codigo]`: certificado imprimible, sin encabezado del sitio, con el botón `Imprimir o guardar en PDF`;
   - En el panel, la sección `Tus certificados`. En el caso, al guardar el entregable que lo completa, aparecen los enlaces `Ver tu certificado del caso` y `Ver tu certificado de la ruta <título>`.
 
-- [ ] **Step 1: Escribir el test que falla, `src/lib/certificados/formato.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/lib/certificados/formato.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -3438,12 +3438,12 @@ describe("formato de certificados", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/certificados/formato.test.ts`
 Expected: FAIL, porque no se puede resolver `./formato`.
 
-- [ ] **Step 3: Crear `src/lib/certificados/formato.ts`**
+- [x] **Step 3: Crear `src/lib/certificados/formato.ts`**
 
 ```ts
 import type { CertificadoPublico } from "./servicio";
@@ -3462,7 +3462,7 @@ export function descripcionTipo(tipo: CertificadoPublico["tipo"]): string {
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/certificados/formato.test.ts`
 Expected: PASS (2 tests).
 
-- [ ] **Step 4: Crear la página de verificación pública**
+- [x] **Step 4: Crear la página de verificación pública**
 
 `src/app/(cuenta)/verificar/[codigo]/page.tsx`:
 ```tsx
@@ -3517,7 +3517,7 @@ export default async function VerificarCertificadoPage({ params }: { params: Pro
 }
 ```
 
-- [ ] **Step 5: Crear el certificado imprimible**
+- [x] **Step 5: Crear el certificado imprimible**
 
 `src/app/(certificado)/layout.tsx`:
 ```tsx
@@ -3598,7 +3598,7 @@ export default async function CertificadoPage({ params }: Parametros) {
 }
 ```
 
-- [ ] **Step 6: Mostrar los certificados en el panel y en el caso**
+- [x] **Step 6: Mostrar los certificados en el panel y en el caso**
 
 En `src/app/(dashboard)/dashboard/page.tsx`:
 
@@ -3681,12 +3681,12 @@ por:
         ) : null}
 ```
 
-- [ ] **Step 7: Correr los tests de web y el typecheck**
+- [x] **Step 7: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add apps/web
@@ -3719,7 +3719,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `/p/[usuario]` con el nombre como título, `Casos resueltos` (con el enlace `Ver entregable`) y `Certificados`.
   - En `/perfil`, la sección `Portafolio público` con la casilla `Hacer público mi portafolio`, el campo `Tu usuario`, el botón `Guardar portafolio` y el mensaje `Portafolio guardado.`.
 
-- [ ] **Step 1: Escribir los tests que fallan**
+- [x] **Step 1: Escribir los tests que fallan**
 
 `src/lib/portafolio.test.ts`:
 ```ts
@@ -3866,12 +3866,12 @@ describe("PATCH /api/cuenta/portafolio", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que fallan**
+- [x] **Step 2: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/portafolio.test.ts src/app/api/cuenta/portafolio`
 Expected: FAIL, porque no se pueden resolver `./portafolio` ni `./route`.
 
-- [ ] **Step 3: Crear `src/lib/portafolio.ts` y la ruta**
+- [x] **Step 3: Crear `src/lib/portafolio.ts` y la ruta**
 
 `src/lib/portafolio.ts`:
 ```ts
@@ -4009,7 +4009,7 @@ export async function PATCH(request: Request) {
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/portafolio.test.ts src/app/api/cuenta/portafolio`
 Expected: PASS (8 tests).
 
-- [ ] **Step 4: Crear el formulario del perfil y la página pública**
+- [x] **Step 4: Crear el formulario del perfil y la página pública**
 
 `src/components/cuenta/formulario-portafolio.tsx`:
 ```tsx
@@ -4196,12 +4196,12 @@ export default async function PortafolioPage({ params }: Parametros) {
 }
 ```
 
-- [ ] **Step 5: Correr los tests de web y el typecheck**
+- [x] **Step 5: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add apps/web
@@ -4224,7 +4224,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `esperarEmail(para, asunto): Promise<{ asunto; texto }>` y `rutaDelEnlace(texto, ruta): string` (la ruta relativa del enlace, para usarla con `baseURL`);
   - fixture `ip`: una IP distinta por test. Esta fase registra más cuentas por corrida que el límite de 5 registros por hora e IP.
 
-- [ ] **Step 1: Una IP por test en los fixtures**
+- [x] **Step 1: Una IP por test en los fixtures**
 
 Reemplazar `e2e/tests/fixtures.ts` por:
 ```ts
@@ -4268,7 +4268,7 @@ test("el login acepta el email con otras mayúsculas", async ({ page, request, i
     headers: { Origin: "http://localhost:3000", "x-forwarded-for": ip },
 ```
 
-- [ ] **Step 2: Crear el helper de Mailpit, `e2e/tests/mailpit.ts`**
+- [x] **Step 2: Crear el helper de Mailpit, `e2e/tests/mailpit.ts`**
 
 ```ts
 const MAILPIT = process.env.MAILPIT_URL ?? "http://mailpit:8025";
@@ -4300,7 +4300,7 @@ export function rutaDelEnlace(texto: string, ruta: string): string {
 }
 ```
 
-- [ ] **Step 3: Escribir `e2e/tests/cuenta.spec.ts`**
+- [x] **Step 3: Escribir `e2e/tests/cuenta.spec.ts`**
 
 ```ts
 import { expect, test, type Page } from "./fixtures";
@@ -4439,7 +4439,7 @@ test("un código que no existe no se verifica", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 4: Documentar en `README.md` y `.env.example`**
+- [x] **Step 4: Documentar en `README.md` y `.env.example`**
 
 En `.env.example`, agregar al final:
 ```
@@ -4457,7 +4457,7 @@ En `README.md`, agregar al final:
 - El portafolio público (`/p/<usuario>`) parte apagado. Cada alumna lo publica desde su perfil.
 ```
 
-- [ ] **Step 5: Correr todo**
+- [x] **Step 5: Correr todo**
 
 Run: `npm test`
 Expected: PASS en todos los paquetes (`queue`, `engines`, `content`, `db`, `ui`, `web`, `worker`).
@@ -4476,7 +4476,7 @@ Expected: `x-nextjs-cache: HIT`: las misiones siguen estáticas.
 
 Run: `docker compose -f docker-compose.yml -f docker/compose.prod-check.yml down`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add e2e README.md .env.example
@@ -4517,7 +4517,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - rate limits `recuperar-ip` (5 por hora) y `recuperar-email` (3 por hora). Si se pasa el de email, se responde igual pero sin enviar nada;
   - páginas `/recuperar-clave` (campo `Email`, botón `Enviarme el enlace`) y `/restablecer-clave` (campo `Contraseña nueva`, botón `Guardar contraseña`, mensaje `Tu contraseña quedó guardada.`).
 
-- [ ] **Step 1: Tipo de email, token, auditoría y rate limits**
+- [x] **Step 1: Tipo de email, token, auditoría y rate limits**
 
 En `packages/queue/src/emails.ts`, agregar a la unión `TrabajoEmail`:
 ```ts
@@ -4549,7 +4549,7 @@ En `apps/web/src/lib/rate-limit.ts`:
   "recuperar-email": { points: 3, duration: 3600 },
 ```
 
-- [ ] **Step 2: Escribir los tests que fallan**
+- [x] **Step 2: Escribir los tests que fallan**
 
 En `apps/worker/src/emails/mensajes.test.ts`, agregar al final del arreglo `casos`:
 ```ts
@@ -4699,12 +4699,12 @@ describe("recuperar y restablecer por API", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que fallan**
+- [x] **Step 3: Verificar que fallan**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter worker test -- src/emails/mensajes.test.ts; pnpm --filter web test -- src/lib/cuenta/recuperacion.test.ts src/app/api/cuenta/recuperar"`
 Expected: FAIL. En el worker, `construirEmail` no conoce `recuperar-clave`; en la web, no se pueden resolver `./recuperacion` ni las rutas.
 
-- [ ] **Step 4: Crear el email, el servicio y las rutas**
+- [x] **Step 4: Crear el email, el servicio y las rutas**
 
 En `apps/worker/src/emails/mensajes.ts`, agregar este `case` antes del de `certificado-emitido`:
 ```ts
@@ -4839,12 +4839,12 @@ export async function POST(request: Request) {
 }
 ```
 
-- [ ] **Step 5: Correr los tests del servicio y las rutas**
+- [x] **Step 5: Correr los tests del servicio y las rutas**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter worker test -- src/emails/mensajes.test.ts && pnpm --filter web test -- src/lib/cuenta/recuperacion.test.ts src/app/api/cuenta/recuperar"`
 Expected: PASS (en la web, 7 tests nuevos; en el worker, un caso más en `construirEmail`).
 
-- [ ] **Step 6: Crear las páginas y el enlace en el login**
+- [x] **Step 6: Crear las páginas y el enlace en el login**
 
 `apps/web/src/components/cuenta/formulario-recuperar.tsx`:
 ```tsx
@@ -5015,7 +5015,7 @@ En `apps/web/src/app/(auth)/login/LoginForm.tsx`, después del `</Label>` que ci
       </Link>
 ```
 
-- [ ] **Step 7: Agregar el e2e**
+- [x] **Step 7: Agregar el e2e**
 
 Al final de `e2e/tests/cuenta.spec.ts`, agregar:
 ```ts
@@ -5041,7 +5041,7 @@ test("recuperar la contraseña desde el login", async ({ page }) => {
 });
 ```
 
-- [ ] **Step 8: Correr todo**
+- [x] **Step 8: Correr todo**
 
 Run: `docker compose run --rm tools sh -c "pnpm -r --if-present test && cd apps/web && pnpm exec tsc --noEmit -p . && cd ../worker && pnpm exec tsc --noEmit -p ."`
 Expected: PASS en todos los paquetes y `tsc` sin errores.
@@ -5054,7 +5054,7 @@ Expected: `11 passed`.
 
 Run: `docker compose -f docker-compose.yml -f docker/compose.prod-check.yml down`
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add packages apps e2e

@@ -26,8 +26,10 @@ export const users = pgTable(
     abandonmentEmailsOptOut: boolean("abandonment_emails_opt_out")
       .notNull()
       .default(false),
+    usuario: text("usuario"),
+    portafolioPublico: boolean("portafolio_publico").notNull().default(false),
   },
-  (table) => [uniqueIndex("users_email_idx").on(table.email)]
+  (table) => [uniqueIndex("users_email_idx").on(table.email), uniqueIndex("users_usuario_idx").on(table.usuario)]
 );
 
 export const accounts = pgTable(
@@ -179,3 +181,51 @@ export const entregables = pgTable(
   },
   (table) => [uniqueIndex("entregables_usuario_caso_idx").on(table.userId, table.casoId)]
 );
+
+export const tokensEmail = pgTable(
+  "tokens_email",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(),
+    email: text("email").notNull(),
+    tokenHash: text("token_hash").notNull(),
+    expiraEn: timestamp("expira_en").notNull(),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("tokens_email_hash_idx").on(table.tokenHash)]
+);
+
+export const certificados = pgTable(
+  "certificados",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(),
+    casoId: uuid("caso_id").references(() => casos.id, { onDelete: "set null" }),
+    rutaId: uuid("ruta_id").references(() => rutas.id, { onDelete: "set null" }),
+    codigo: text("codigo").notNull(),
+    nombreAlumno: text("nombre_alumno").notNull(),
+    titulo: text("titulo").notNull(),
+    cargo: text("cargo"),
+    emitidoEn: timestamp("emitido_en").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("certificados_codigo_idx").on(table.codigo),
+    uniqueIndex("certificados_usuario_caso_idx").on(table.userId, table.tipo, table.casoId),
+    uniqueIndex("certificados_usuario_ruta_idx").on(table.userId, table.tipo, table.rutaId),
+  ]
+);
+
+// Foto fija de los certificados de la v1: la llena scripts/migrar-v1.ts (Fase 5).
+export const certificadosLegacy = pgTable("certificados_legacy", {
+  codigo: text("codigo").primaryKey(),
+  nombreAlumno: text("nombre_alumno").notNull(),
+  titulo: text("titulo").notNull(),
+  tipo: text("tipo").notNull(),
+  emitidoEn: timestamp("emitido_en").notNull(),
+});

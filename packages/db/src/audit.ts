@@ -1,7 +1,20 @@
 import type { DbClient } from "./client";
 import { auditLog } from "./schema";
 
-export const AUDIT_ACTIONS = ["login_success", "login_failed", "logout"] as const;
+export const AUDIT_ACTIONS = [
+  "login_success",
+  "login_failed",
+  "logout",
+  "email_verified",
+  "profile_updated",
+  "password_changed",
+  "password_reset",
+  "email_change_requested",
+  "email_changed",
+  "data_exported",
+  "account_deleted",
+  "portfolio_updated",
+] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
 export type AuditTargetType = "user";

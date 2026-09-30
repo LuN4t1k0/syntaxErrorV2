@@ -1,8 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { casos, users } from "@syntaxerror/db/schema";
+import { casos, misionProgreso, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 
 vi.mock("@/lib/sesion", () => ({ obtenerUsuarioId: vi.fn() }));
+vi.mock("@/lib/emails", () => ({ encolarEmail: vi.fn(async () => {}), encolarSinFallar: vi.fn(async () => {}) }));
 
 const { POST } = await import("./route");
 const { obtenerUsuarioId } = await import("@/lib/sesion");
@@ -48,10 +49,26 @@ describe("POST /api/entregables", () => {
   it("guarda el entregable", async () => {
     const respuesta = await enviar({ caso: "ventas", url: "https://github.com/alumna/ventas" });
     expect(respuesta.status).toBe(200);
-    expect(await respuesta.json()).toEqual({ casoCompleto: false });
+    expect(await respuesta.json()).toEqual({ casoCompleto: false, certificados: [] });
   });
 
   it("responde 404 si el caso no existe", async () => {
     expect((await enviar({ caso: "otro", url: "https://github.com/alumna/ventas" })).status).toBe(404);
+  });
+
+  it("al completar el caso responde con su certificado", async () => {
+    const [usuario] = await db.select().from(users);
+    const [caso] = await db.select().from(casos);
+    await db.insert(misionProgreso).values({
+      userId: usuario.id,
+      casoId: caso.id,
+      mision: "m1",
+      estado: "aprobada",
+      tareasAprobadas: ["t1"],
+    });
+    const respuesta = await enviar({ caso: "ventas", url: "https://github.com/alumna/ventas" });
+    const cuerpo = await respuesta.json();
+    expect(cuerpo.casoCompleto).toBe(true);
+    expect(cuerpo.certificados).toEqual([{ codigo: expect.any(String), tipo: "caso", titulo: "Ventas" }]);
   });
 });

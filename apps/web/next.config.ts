@@ -5,7 +5,9 @@ import { construirCsp } from "./src/lib/csp";
 const nextConfig: NextConfig = {
   output: "standalone",
   devIndicators: false,
-  transpilePackages: ["@syntaxerror/db", "@syntaxerror/ui", "@syntaxerror/engines", "@syntaxerror/content"],
+  transpilePackages: ["@syntaxerror/db", "@syntaxerror/ui", "@syntaxerror/engines", "@syntaxerror/content", "@syntaxerror/queue"],
+  // BullMQ lee sus scripts Lua desde disco con rutas relativas: no se puede empaquetar con webpack.
+  serverExternalPackages: ["bullmq"],
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,

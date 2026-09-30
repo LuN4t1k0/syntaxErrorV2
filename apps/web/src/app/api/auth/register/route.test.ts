@@ -4,9 +4,11 @@ import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 const { db, close } = createTestDb();
 
 vi.mock("@/lib/rate-limit", () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }) }));
+vi.mock("@/lib/emails", () => ({ encolarEmail: vi.fn(async () => {}), encolarSinFallar: vi.fn(async () => {}) }));
 
 const { POST } = await import("./route");
 const { checkRateLimit } = await import("@/lib/rate-limit");
+const { encolarSinFallar } = await import("@/lib/emails");
 
 function post(body: unknown) {
   return POST(
@@ -26,6 +28,18 @@ describe("POST /api/auth/register", () => {
     const res = await post({ name: "Ana", email: "ana@correo.cl", password: "clave-segura-123" });
     expect(res.status).toBe(201);
     expect(await res.json()).toMatchObject({ email: "ana@correo.cl" });
+  });
+
+  it("crea la cuenta aunque no se pueda encolar la verificacion", async () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(encolarSinFallar).mockRejectedValueOnce(new Error("Redis caido"));
+
+    const res = await post({ name: "Ana", email: "ana@correo.cl", password: "clave-segura-123" });
+
+    expect(res.status).toBe(201);
+    expect(await res.json()).toMatchObject({ email: "ana@correo.cl" });
+    expect(error).toHaveBeenCalledWith("[registro] no se pudo preparar la verificación", expect.any(Error));
+    error.mockRestore();
   });
 
   it("responde 400 si la contrasena tiene menos de 8 caracteres", async () => {

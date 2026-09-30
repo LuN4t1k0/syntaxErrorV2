@@ -14,6 +14,10 @@ x-node: &node
     DATABASE_URL: postgres://platform:platform@postgres:5432/platform_dev
     DATABASE_URL_TEST: postgres://platform:platform@postgres-test:5432/platform_test
     REDIS_URL: redis://redis:6379
+    EMAIL_FROM: "syntaxError.cl <no-responder@syntaxerror.cl>"
+    SMTP_HOST: mailpit
+    SMTP_PORT: "1025"
+    MAILPIT_URL: http://mailpit:8025
   volumes:
     - .:/app
     - node_modules:/app/node_modules
@@ -21,6 +25,7 @@ x-node: &node
     - ui_node_modules:/app/packages/ui/node_modules
     - engines_node_modules:/app/packages/engines/node_modules
     - content_node_modules:/app/packages/content/node_modules
+    - queue_node_modules:/app/packages/queue/node_modules
     - web_node_modules:/app/apps/web/node_modules
     - web_next:/app/apps/web/.next
     - worker_node_modules:/app/apps/worker/node_modules
@@ -82,6 +87,7 @@ services:
       deps: { condition: service_completed_successfully }
       postgres-test: { condition: service_healthy }
       redis: { condition: service_healthy }
+      mailpit: { condition: service_started }
 
   db-setup:
     <<: *node
@@ -127,9 +133,11 @@ services:
       <<: *node-env
       CHAT_SOCKET_PORT: "4001"
       APP_URL: http://localhost:3000
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
     depends_on:
       db-setup: { condition: service_completed_successfully }
       redis: { condition: service_healthy }
+      mailpit: { condition: service_started }
 
   e2e:
     image: mcr.microsoft.com/playwright:v1.55.0-noble
@@ -143,6 +151,8 @@ services:
     command: ./node_modules/.bin/playwright test
     depends_on:
       web: { condition: service_healthy }
+      worker: { condition: service_started }
+      mailpit: { condition: service_started }
 
 volumes:
   postgres_data:
@@ -151,6 +161,7 @@ volumes:
   ui_node_modules:
   engines_node_modules:
   content_node_modules:
+  queue_node_modules:
   web_node_modules:
   web_next:
   worker_node_modules:

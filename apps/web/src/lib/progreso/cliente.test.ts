@@ -94,6 +94,7 @@ describe("cargarProgreso", () => {
       misiones: { m1: { estado: "aprobada", tareasAprobadas: ["t1", "t2"] } },
       entregable: null,
       completo: false,
+      certificados: [],
     });
   });
 
@@ -106,6 +107,7 @@ describe("cargarProgreso", () => {
       misiones: { m2: { estado: "aprobada", tareasAprobadas: ["t3"] } },
       entregable: null,
       completo: false,
+      certificados: [],
     });
   });
 });

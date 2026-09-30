@@ -1,7 +1,15 @@
 import { RateLimiterMemory, RateLimiterRedis, type RateLimiterRes } from "rate-limiter-flexible";
 import { getRedis, waitForReady } from "./redis";
 
-export type RateLimitKey = "login-email" | "login-ip" | "register-ip";
+export type RateLimitKey =
+  | "login-email"
+  | "login-ip"
+  | "register-ip"
+  | "cuenta-clave"
+  | "cuenta-email"
+  | "reenviar-verificacion"
+  | "recuperar-ip"
+  | "recuperar-email";
 
 export type RateLimitResult = { allowed: true } | { allowed: false; retryAfterSeconds: number };
 
@@ -11,6 +19,11 @@ const LIMITER_CONFIGS: Record<RateLimitKey, { points: number; duration: number }
   "login-email": { points: 5, duration: 900 },
   "login-ip": { points: 10, duration: 900 },
   "register-ip": { points: 5, duration: 3600 },
+  "cuenta-clave": { points: 5, duration: 900 },
+  "cuenta-email": { points: 5, duration: 3600 },
+  "reenviar-verificacion": { points: 3, duration: 3600 },
+  "recuperar-ip": { points: 5, duration: 3600 },
+  "recuperar-email": { points: 3, duration: 3600 },
 };
 
 const limiters = new Map<RateLimitKey, RateLimiterRedis>();

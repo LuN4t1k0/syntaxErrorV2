@@ -38,9 +38,13 @@ export function PanelCaso({ caso, misiones, entregable }: { caso: string; mision
       const respuesta = await fetch("/api/entregables", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ caso, url }) });
       if (respuesta.status === 400) { setMensaje("El enlace debe ser una URL completa que empiece con https://"); return; }
       if (!respuesta.ok) { setMensaje("No pudimos guardar el entregable. Intenta de nuevo."); return; }
-      const { casoCompleto } = (await respuesta.json()) as { casoCompleto: boolean };
-      setProgreso((actual) => (actual ? { ...actual, entregable: url, completo: casoCompleto } : actual));
-      setMensaje(casoCompleto ? "Entregable guardado. ¡Terminaste el caso!" : "Entregable guardado. Te faltan misiones por aprobar.");
+      const { casoCompleto, certificados = [] } = (await respuesta.json()) as { casoCompleto: boolean; certificados?: ProgresoVisible["certificados"] };
+      setProgreso((actual) => (actual ? { ...actual, entregable: url, completo: casoCompleto, certificados: [...actual.certificados, ...certificados] } : actual));
+      if (certificados.length > 0) {
+        setMensaje("Entregable guardado. Certificado emitido.");
+      } else {
+        setMensaje(casoCompleto ? "Entregable guardado. ¡Terminaste el caso!" : "Entregable guardado. Te faltan misiones por aprobar.");
+      }
     } catch {
       setMensaje("No pudimos guardar el entregable. Revisa tu conexión.");
     } finally {
@@ -64,6 +68,17 @@ export function PanelCaso({ caso, misiones, entregable }: { caso: string; mision
         <h2 className="text-xl font-black">Tu entregable</h2>
         <p className="leading-7 text-muted-foreground">{entregable}</p>
         {progreso?.completo ? <p role="status" className="font-bold text-primary">Caso completo</p> : null}
+        {progreso?.certificados.length ? (
+          <ul className="grid gap-2">
+            {progreso.certificados.map((certificado) => (
+              <li key={certificado.codigo}>
+                <Link className="font-bold text-primary hover:underline" href={`/certificados/${certificado.codigo}`}>
+                  Ver certificado de {certificado.tipo === "ruta" ? "ruta" : "caso"}: {certificado.titulo}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : null}
         {progreso && !progreso.sesion ? (
           <p className="text-sm">Para enlazar tu entregable necesitas una cuenta. <Link className="font-bold text-primary hover:underline" href={volverAqui}>Entrar</Link></p>
         ) : (
