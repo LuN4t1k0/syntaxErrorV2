@@ -5,6 +5,7 @@ import { archivosPython, paquetesPython } from "@syntaxerror/content/datos";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
 import { componentesMision } from "@/components/mision/componentes";
 import { MisionProvider } from "@/components/mision/mision-provider";
+import { Tutor } from "@/components/mision/tutor";
 import { casosParaPublicar, obtenerCaso } from "@/lib/contenido";
 
 export const dynamic = "error";
@@ -45,6 +46,7 @@ export default async function MisionPage({ params }: Parametros) {
       <MisionProvider caso={caso.slug} mision={mision.slug} tareas={tareasDeMision(mision).map((tarea) => tarea.props.id)} python={usaPython ? { paquetes: paquetesPython(mision), archivos: archivosPython(caso) } : null}>
         <article className="grid gap-6"><Contenido components={componentesMision(caso)} /></article>
       </MisionProvider>
+      <Tutor caso={caso.slug} mision={mision.slug} />
       <nav className="flex justify-between gap-4 text-sm font-bold">
         {anterior ? <Link className="text-primary hover:underline" href={`/casos/${caso.slug}/${anterior.slug}`}>{`← ${anterior.titulo}`}</Link> : <span />}
         {siguiente ? <Link className="text-primary hover:underline" href={`/casos/${caso.slug}/${siguiente.slug}`}>{`${siguiente.titulo} →`}</Link> : null}

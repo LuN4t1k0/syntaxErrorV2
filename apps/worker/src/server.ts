@@ -1,5 +1,7 @@
 import { createServer, type Server } from "node:http";
 import { Server as SocketIOServer } from "socket.io";
+import { PROPOSITO_TUTOR, salaTutor } from "@syntaxerror/queue/eventos";
+import { verificarTokenSocket } from "@syntaxerror/queue/token-socket";
 
 const DEFAULT_HEALTH_TIMEOUT_MS = 1000;
 
@@ -24,6 +26,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 export function createWorkerServer(deps: {
   redis: { ping: () => Promise<unknown> };
   corsOrigin: string;
+  secretoSocket: string;
   healthTimeoutMs?: number;
 }): { httpServer: Server; io: SocketIOServer } {
   const healthTimeoutMs = deps.healthTimeoutMs ?? DEFAULT_HEALTH_TIMEOUT_MS;
@@ -44,5 +47,18 @@ export function createWorkerServer(deps: {
     }
   });
   const io = new SocketIOServer(httpServer, { cors: { origin: deps.corsOrigin, credentials: true } });
+  io.on("connection", (socket) => {
+    const { clientId, token, proposito } = socket.handshake.query;
+    const valido =
+      typeof clientId === "string" &&
+      typeof token === "string" &&
+      proposito === PROPOSITO_TUTOR &&
+      verificarTokenSocket({ token, clientId, proposito, secreto: deps.secretoSocket }) !== null;
+    if (!valido) {
+      socket.disconnect(true);
+      return;
+    }
+    void socket.join(salaTutor(clientId));
+  });
   return { httpServer, io };
 }

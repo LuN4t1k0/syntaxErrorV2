@@ -73,7 +73,7 @@ e2e/tests/tutor.spec.ts
 - Consumes: `getLimiter`, `consumeLimiter`, `peekLimiter` (el mismo archivo).
 - Produces: `checkRateLimit`, `peekRateLimit`, `recordRateLimitFailure` y `resetRateLimit` mantienen su firma. Si Redis no responde (en unos 2 s, por `waitForReady`), devuelven `{ allowed: true }` (o nada) y registran `[rate-limit] Redis no responde ...` con `console.warn`, como máximo una vez por minuto. `consumeLimiter` y `peekLimiter` siguen lanzando el error.
 
-- [ ] **Step 1: Escribir el test que falla, `src/lib/rate-limit-redis-caido.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/lib/rate-limit-redis-caido.test.ts`**
 
 ```ts
 import { describe, expect, it, vi } from "vitest";
@@ -101,12 +101,12 @@ describe("rate limit con Redis caído", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/rate-limit-redis-caido.test.ts`
 Expected: FAIL: `checkRateLimit` rechaza con `redis_not_ready` en vez de devolver `{ allowed: true }`.
 
-- [ ] **Step 3: Envolver las funciones públicas**
+- [x] **Step 3: Envolver las funciones públicas**
 
 En `src/lib/rate-limit.ts`, reemplazar todo desde `// Gasta un punto por cada request (registro).` hasta el final del archivo por:
 ```ts
@@ -155,12 +155,12 @@ export async function resetRateLimit(key: RateLimitKey, identifier: string): Pro
 }
 ```
 
-- [ ] **Step 4: Correr los tests de web y el typecheck**
+- [x] **Step 4: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (los 2 tests nuevos y todos los anteriores) y `tsc` sin errores.
 
-- [ ] **Step 5: Verificar en la app con Redis detenido**
+- [x] **Step 5: Verificar en la app con Redis detenido**
 
 Run: `docker compose up -d --build && until curl -sf localhost:3000/api/health >/dev/null; do sleep 2; done && docker compose stop redis`
 
@@ -172,7 +172,7 @@ Expected: `1` o más.
 
 Run: `docker compose down`
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add apps/web
@@ -203,7 +203,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `@syntaxerror/ia/prueba`: `vectorDePrueba(texto): number[]` (trigramas normalizados, determinista) y `crearProveedorPrueba(): ProveedorIA`, que responde `Respuesta de prueba del tutor para la misión "<título>": <pregunta>`.
   - `@syntaxerror/ia/proveedor`: `crearProveedorDesdeEntorno(entorno?): ProveedorIA | null`.
 
-- [ ] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
+- [x] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
 
 `packages/ia/package.json`:
 ```json
@@ -244,7 +244,7 @@ export default defineConfig({ test: { environment: "node" } });
 
 En `docker-compose.yml`, agregar a `x-node.volumes` `- ia_node_modules:/app/packages/ia/node_modules`, y en `volumes:` agregar `ia_node_modules:`.
 
-- [ ] **Step 2: Escribir los tests que fallan**
+- [x] **Step 2: Escribir los tests que fallan**
 
 `src/tutor.test.ts`:
 ```ts
@@ -385,12 +385,12 @@ describe("crearProveedorDesdeEntorno", () => {
 });
 ```
 
-- [ ] **Step 3: Instalar y ver fallar los tests**
+- [x] **Step 3: Instalar y ver fallar los tests**
 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter @syntaxerror/ia test`
 Expected: FAIL, porque no se pueden resolver `./tutor`, `./gemini`, `./prueba` ni `./proveedor`.
 
-- [ ] **Step 4: Crear el código** (portado de `$V1/apps/worker/src/lib/gemini-chat.ts`, `$V1/apps/web/src/lib/ai-chat/guardrail.ts` y `gemini-embeddings.ts`)
+- [x] **Step 4: Crear el código** (portado de `$V1/apps/worker/src/lib/gemini-chat.ts`, `$V1/apps/web/src/lib/ai-chat/guardrail.ts` y `gemini-embeddings.ts`)
 
 `src/tutor.ts`:
 ```ts
@@ -554,12 +554,12 @@ export function crearProveedorDesdeEntorno(
 }
 ```
 
-- [ ] **Step 5: Correr los tests y el typecheck**
+- [x] **Step 5: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/ia test && cd packages/ia && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (12 tests) y `tsc` sin errores.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/ia docker-compose.yml pnpm-lock.yaml
@@ -586,7 +586,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `tutorPreguntas` (tabla `ai_chat_questions`): `id`, `userId`, `casoId`, `mision`, `pregunta`, `respuesta` (opcional), `estado` (`pendiente`, `respondida`, `desde_cache`, `fuera_de_tema` o `error`), `creadoEn`, `respondidaEn`;
   - `@syntaxerror/db/tutor`: `DISTANCIA_MAXIMA_CACHE = 0.12`, `buscarRespuestaEnCache(db, { casoId, mision, embedding }): Promise<string | null>` y `guardarRespuestaEnCache(db, { casoId, mision, pregunta, respuesta, embedding })`.
 
-- [ ] **Step 1: Crear la migración de pgvector**
+- [x] **Step 1: Crear la migración de pgvector**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/db exec drizzle-kit generate --custom --name=pgvector`
 Expected: crea `packages/db/drizzle/0003_pgvector.sql` vacía y la registra en `_journal.json`.
@@ -597,7 +597,7 @@ Escribir en `packages/db/drizzle/0003_pgvector.sql`:
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-- [ ] **Step 2: Agregar las tablas a `packages/db/src/schema.ts`**
+- [x] **Step 2: Agregar las tablas a `packages/db/src/schema.ts`**
 
 Agregar `vector` a la lista de imports de `drizzle-orm/pg-core`. Al final del archivo, agregar:
 ```ts
@@ -641,12 +641,12 @@ export const tutorPreguntas = pgTable(
 );
 ```
 
-- [ ] **Step 3: Generar la migración de las tablas**
+- [x] **Step 3: Generar la migración de las tablas**
 
 Run: `npm run db:generate`
 Expected: crea `packages/db/drizzle/0004_<nombre>.sql` con `CREATE TABLE "ai_chat_cache"` (columna `vector(768)` e índice `USING hnsw ("embedding" vector_cosine_ops)`) y `CREATE TABLE "ai_chat_questions"`.
 
-- [ ] **Step 4: Escribir el test que falla, `packages/db/src/tutor.test.ts`**
+- [x] **Step 4: Escribir el test que falla, `packages/db/src/tutor.test.ts`**
 
 ```ts
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
@@ -690,12 +690,12 @@ describe("caché del tutor", () => {
 });
 ```
 
-- [ ] **Step 5: Verificar que falla**
+- [x] **Step 5: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/db test`
 Expected: FAIL, porque no se puede resolver `./tutor`. El `globalSetup` ya aplica las migraciones 0003 y 0004 sin errores.
 
-- [ ] **Step 6: Crear `packages/db/src/tutor.ts`** (portado de `$V1/packages/db/src/ai-chat-cache.ts`)
+- [x] **Step 6: Crear `packages/db/src/tutor.ts`** (portado de `$V1/packages/db/src/ai-chat-cache.ts`)
 
 ```ts
 import { and, asc, cosineDistance, eq, lt } from "drizzle-orm";
@@ -732,12 +732,12 @@ En `packages/db/package.json`, agregar a `exports`:
 "./tutor": "./src/tutor.ts"
 ```
 
-- [ ] **Step 7: Correr los tests y el typecheck**
+- [x] **Step 7: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm -r --if-present test && cd packages/db && pnpm exec tsc --noEmit -p ."`
 Expected: PASS en todos los paquetes (3 tests en `db`) y `tsc` sin errores.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/db
@@ -766,7 +766,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `@syntaxerror/queue/token-socket`: `firmarTokenSocket({ userId, clientId, proposito, secreto, ahora? }): string` (dura 1 hora) y `verificarTokenSocket({ token, clientId, proposito, secreto, ahora? }): { userId } | null`.
   - `@syntaxerror/queue/eventos` (sin dependencias de Node, lo importa también el navegador): `PROPOSITO_TUTOR = "tutor"`, `EVENTO_TUTOR = "tutor:respuesta"`, `salaTutor(clientId)` y `type EventoTutor = { preguntaId; estado: "respondida" | "fuera_de_tema" | "error"; respuesta }`.
 
-- [ ] **Step 1: Escribir los tests que fallan**
+- [x] **Step 1: Escribir los tests que fallan**
 
 `src/token-socket.test.ts`:
 ```ts
@@ -841,12 +841,12 @@ describe("crearColaTutor", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que fallan**
+- [x] **Step 2: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/queue test`
 Expected: FAIL, porque no se pueden resolver `./token-socket`, `./conexion` ni `./tutor`.
 
-- [ ] **Step 3: Crear `conexion.ts` y reescribir `emails.ts` sobre ella**
+- [x] **Step 3: Crear `conexion.ts` y reescribir `emails.ts` sobre ella**
 
 `src/conexion.ts`:
 ```ts
@@ -940,7 +940,7 @@ export function crearColaEmails(
 }
 ```
 
-- [ ] **Step 4: Crear `tutor.ts`, `token-socket.ts` y `eventos.ts`**
+- [x] **Step 4: Crear `tutor.ts`, `token-socket.ts` y `eventos.ts`**
 
 `src/tutor.ts`:
 ```ts
@@ -1059,12 +1059,12 @@ En `packages/queue/package.json`, reemplazar `exports` por:
   },
 ```
 
-- [ ] **Step 5: Correr los tests y el typecheck**
+- [x] **Step 5: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/queue test && cd packages/queue && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (7 tests) y `tsc` sin errores.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/queue
@@ -1094,7 +1094,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `marcarErrorTutor(db, emitir, trabajo)`: al agotar los intentos, deja `MENSAJE_ERROR_TUTOR` en la pregunta y lo emite.
   - Variables de entorno: `CHAT_SOCKET_SECRET` (web y worker), `GEMINI_API_KEY` y `TUTOR_PRUEBA` (`true` en local).
 
-- [ ] **Step 1: Dependencias, configuración y variables**
+- [x] **Step 1: Dependencias, configuración y variables**
 
 Run: `docker compose run --rm tools pnpm --filter worker add "@syntaxerror/db@workspace:*" "@syntaxerror/ia@workspace:*" "drizzle-orm@^0.36.0" && docker compose run --rm tools pnpm --filter worker add -D "socket.io-client@^4.8.3"`
 
@@ -1121,7 +1121,7 @@ En `.env.example`, agregar al final:
 GEMINI_API_KEY=
 ```
 
-- [ ] **Step 2: Escribir los tests que fallan**
+- [x] **Step 2: Escribir los tests que fallan**
 
 Reemplazar `apps/worker/src/server.test.ts` por:
 ```ts
@@ -1303,12 +1303,12 @@ describe("crearProcesadorTutor", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que fallan**
+- [x] **Step 3: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter worker test -- src/server.test.ts src/tutor`
 Expected: FAIL: `createWorkerServer` ignora el token (el socket ajeno no se desconecta) y no se puede resolver `./procesar`.
 
-- [ ] **Step 4: Autenticar los sockets en `server.ts`**
+- [x] **Step 4: Autenticar los sockets en `server.ts`**
 
 En `apps/worker/src/server.ts`:
 
@@ -1338,7 +1338,7 @@ import { verificarTokenSocket } from "@syntaxerror/queue/token-socket";
   return { httpServer, io };
 ```
 
-- [ ] **Step 5: Crear `src/tutor/procesar.ts`** (portado de `$V1/apps/worker/src/handlers/answer-ai-chat-question.ts`)
+- [x] **Step 5: Crear `src/tutor/procesar.ts`** (portado de `$V1/apps/worker/src/handlers/answer-ai-chat-question.ts`)
 
 ```ts
 import type { Job } from "bullmq";
@@ -1392,7 +1392,7 @@ export async function marcarErrorTutor(db: DbClient, emitir: EmisorTutor, trabaj
 }
 ```
 
-- [ ] **Step 6: Arrancar el worker del tutor**
+- [x] **Step 6: Arrancar el worker del tutor**
 
 Reemplazar `apps/worker/src/index.ts` por:
 ```ts
@@ -1465,7 +1465,7 @@ process.on("SIGTERM", () => void shutdown("SIGTERM"));
 process.on("SIGINT", () => void shutdown("SIGINT"));
 ```
 
-- [ ] **Step 7: Correr los tests y el typecheck**
+- [x] **Step 7: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter worker test && cd apps/worker && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (los de emails, 5 de `server.test.ts` y 4 de `procesar.test.ts`) y `tsc` sin errores.
@@ -1473,7 +1473,7 @@ Expected: PASS (los de emails, 5 de `server.test.ts` y 4 de `procesar.test.ts`) 
 Run: `docker compose up -d --build worker && sleep 8 && docker compose logs worker | tail -3 && docker compose down`
 Expected: `[worker] escuchando en :4001 · tutor con prueba`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add apps/worker docker-compose.yml .env.example pnpm-lock.yaml
@@ -1509,7 +1509,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
     - `POST /api/tutor/preguntas { caso, mision, pregunta, clientId }`, con 10 por minuto por usuario y 429 después;
     - `GET /api/tutor/preguntas/[id]`.
 
-- [ ] **Step 1: Dependencias, configuración y rate limit**
+- [x] **Step 1: Dependencias, configuración y rate limit**
 
 Run: `docker compose run --rm tools pnpm --filter web add "@syntaxerror/ia@workspace:*"`
 
@@ -1519,7 +1519,7 @@ En `apps/web/src/lib/rate-limit.ts`:
 1. Agregar `| "tutor"` al tipo `RateLimitKey`.
 2. Agregar a `LIMITER_CONFIGS`: `tutor: { points: 10, duration: 60 },`.
 
-- [ ] **Step 2: Escribir los tests que fallan**
+- [x] **Step 2: Escribir los tests que fallan**
 
 `src/lib/tutor/contexto.test.ts`:
 ```ts
@@ -1773,12 +1773,12 @@ describe("/api/tutor", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que fallan**
+- [x] **Step 3: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/tutor src/app/api/tutor`
 Expected: FAIL, porque no se pueden resolver `./contexto`, `./servicio` ni las rutas.
 
-- [ ] **Step 4: Crear el contexto, los singletons y el servicio**
+- [x] **Step 4: Crear el contexto, los singletons y el servicio**
 
 `src/lib/tutor/contexto.ts`:
 ```ts
@@ -1937,7 +1937,7 @@ export async function consultarPregunta(
 }
 ```
 
-- [ ] **Step 5: Crear las rutas**
+- [x] **Step 5: Crear las rutas**
 
 `src/app/api/tutor/token/route.ts`:
 ```ts
@@ -2026,12 +2026,12 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 }
 ```
 
-- [ ] **Step 6: Correr los tests de web y el typecheck**
+- [x] **Step 6: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (13 tests nuevos) y `tsc` sin errores.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add apps/web pnpm-lock.yaml
@@ -2055,11 +2055,11 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Mensajes: `El tutor está pensando…`, `Respondida desde respuestas anteriores de esta misión.`, `Entra para preguntarle al tutor` (sin sesión) y `El tutor no está disponible ahora. Puedes seguir con la misión.`
   - Las respuestas llegan por socket. Si el socket no conecta, el panel consulta la API cada 4 s y se rinde a los 90 s con un mensaje.
 
-- [ ] **Step 1: Agregar socket.io-client**
+- [x] **Step 1: Agregar socket.io-client**
 
 Run: `docker compose run --rm tools pnpm --filter web add "socket.io-client@^4.8.3"`
 
-- [ ] **Step 2: Crear `src/components/mision/tutor.tsx`**
+- [x] **Step 2: Crear `src/components/mision/tutor.tsx`**
 
 ```tsx
 "use client";
@@ -2283,7 +2283,7 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
 }
 ```
 
-- [ ] **Step 3: Poner el tutor en la página de misión**
+- [x] **Step 3: Poner el tutor en la página de misión**
 
 En `src/app/(misiones)/casos/[caso]/[mision]/page.tsx`:
 
@@ -2296,7 +2296,7 @@ import { Tutor } from "@/components/mision/tutor";
       <Tutor caso={caso.slug} mision={mision.slug} />
 ```
 
-- [ ] **Step 4: Typecheck y prueba en el navegador**
+- [x] **Step 4: Typecheck y prueba en el navegador**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
@@ -2307,7 +2307,7 @@ Abrir `http://localhost:3000/registro`, crear una cuenta e ir a `http://localhos
 
 Run: `docker compose down`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add apps/web pnpm-lock.yaml
@@ -2328,7 +2328,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - Consumes: todo lo anterior.
 - Produces: e2e del tutor. En el contenedor `e2e`, `localhost:4001` no es el worker (comparte la red de `web`), así que el socket no conecta y la respuesta llega por la consulta periódica. El camino del socket lo cubren `server.test.ts` (Task 5) y la prueba en el navegador (Task 7).
 
-- [ ] **Step 1: Escribir `e2e/tests/tutor.spec.ts`**
+- [x] **Step 1: Escribir `e2e/tests/tutor.spec.ts`**
 
 ```ts
 import { expect, test } from "./fixtures";
@@ -2364,7 +2364,7 @@ test("el tutor responde con el contexto de la misión y reutiliza la respuesta",
 });
 ```
 
-- [ ] **Step 2: Documentar en `README.md`**
+- [x] **Step 2: Documentar en `README.md`**
 
 Agregar al final:
 ~~~markdown
@@ -2376,7 +2376,7 @@ Agregar al final:
 - Las respuestas se guardan en caché por misión (pgvector): la misma pregunta con otras palabras no gasta otra llamada. Límite: 10 preguntas por minuto por alumna.
 ~~~
 
-- [ ] **Step 3: Correr todo**
+- [x] **Step 3: Correr todo**
 
 Run: `npm test`
 Expected: PASS en todos los paquetes (`ia`, `queue`, `engines`, `content`, `db`, `ui`, `web`, `worker`).
@@ -2395,7 +2395,7 @@ Expected: `x-nextjs-cache: HIT`.
 
 Run: `docker compose -f docker-compose.yml -f docker/compose.prod-check.yml down`
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add e2e README.md

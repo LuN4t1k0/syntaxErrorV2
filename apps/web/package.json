@@ -14,6 +14,7 @@
     "@syntaxerror/content": "workspace:*",
     "@syntaxerror/db": "workspace:*",
     "@syntaxerror/engines": "workspace:*",
+    "@syntaxerror/ia": "workspace:*",
     "@syntaxerror/queue": "workspace:*",
     "@syntaxerror/ui": "workspace:*",
     "bcryptjs": "^2.4.3",
@@ -27,6 +28,7 @@
     "rate-limiter-flexible": "^11.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "socket.io-client": "^4.8.4",
     "zod": "^3.23.0"
   },
   "devDependencies": {

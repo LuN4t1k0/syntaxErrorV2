@@ -56,3 +56,10 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - Al registrarse llega un email para confirmar la cuenta. En `/perfil` se cambia el nombre, el email (con confirmación desde el correo nuevo) y la contraseña, se descargan los datos y se elimina la cuenta.
 - Al completar un caso (todas sus misiones y el entregable) se emite su certificado; al completar todos los casos de una ruta, el de la ruta. Se ven en `/certificados/<código>`, se imprimen o guardan en PDF desde el navegador y cualquiera los verifica en `/verificar/<código>`, que también busca los certificados migrados de la v1.
 - El portafolio público (`/p/<usuario>`) parte apagado. Cada alumna lo publica desde su perfil.
+
+## Tutor IA
+
+- En cada misión, `Preguntar al tutor` responde con el contexto de esa misión: encargo, conceptos, tareas y tablas, nunca las soluciones. Explica y da pistas, no resuelve.
+- Con `GEMINI_API_KEY` en `.env` responde Gemini (`gemini-2.5-flash-lite`, se cambia con `GEMINI_MODEL`). Sin clave, en local responde un proveedor de prueba (`TUTOR_PRUEBA=true`, ya puesto en `docker-compose.yml`). En producción va la clave y no `TUTOR_PRUEBA`.
+- Las preguntas pasan por la cola `tutor` del worker, que responde por socket.io (`CHAT_SOCKET_SECRET` debe ser el mismo en web y worker). Si el socket no conecta, el navegador consulta la respuesta cada 4 segundos.
+- Las respuestas se guardan en caché por misión (pgvector): la misma pregunta con otras palabras no gasta otra llamada. Límite: 10 preguntas por minuto por alumna.

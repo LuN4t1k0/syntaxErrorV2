@@ -9,6 +9,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  vector,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable(
@@ -229,3 +230,42 @@ export const certificadosLegacy = pgTable("certificados_legacy", {
   tipo: text("tipo").notNull(),
   emitidoEn: timestamp("emitido_en").notNull(),
 });
+
+export const tutorCache = pgTable(
+  "ai_chat_cache",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    mision: text("mision").notNull(),
+    pregunta: text("pregunta").notNull(),
+    respuesta: text("respuesta").notNull(),
+    embedding: vector("embedding", { dimensions: 768 }).notNull(),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+  },
+  (table) => [
+    index("ai_chat_cache_mision_idx").on(table.casoId, table.mision),
+    index("ai_chat_cache_embedding_idx").using("hnsw", table.embedding.op("vector_cosine_ops")),
+  ]
+);
+
+export const tutorPreguntas = pgTable(
+  "ai_chat_questions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    mision: text("mision").notNull(),
+    pregunta: text("pregunta").notNull(),
+    respuesta: text("respuesta"),
+    estado: text("estado").notNull(),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+    respondidaEn: timestamp("respondida_en"),
+  },
+  (table) => [index("ai_chat_questions_usuario_idx").on(table.userId, table.creadoEn)]
+);

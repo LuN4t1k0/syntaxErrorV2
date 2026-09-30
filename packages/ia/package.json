@@ -1,0 +1,23 @@
+{
+  "name": "@syntaxerror/ia",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tutor": "./src/tutor.ts",
+    "./gemini": "./src/gemini.ts",
+    "./prueba": "./src/prueba.ts",
+    "./proveedor": "./src/proveedor.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@google/genai": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.9"
+  }
+}

@@ -4,7 +4,11 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./emails": "./src/emails.ts"
+    "./conexion": "./src/conexion.ts",
+    "./emails": "./src/emails.ts",
+    "./tutor": "./src/tutor.ts",
+    "./token-socket": "./src/token-socket.ts",
+    "./eventos": "./src/eventos.ts"
   },
   "scripts": {
     "test": "vitest run"

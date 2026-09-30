@@ -9,7 +9,8 @@ export type RateLimitKey =
   | "cuenta-email"
   | "reenviar-verificacion"
   | "recuperar-ip"
-  | "recuperar-email";
+  | "recuperar-email"
+  | "tutor";
 
 export type RateLimitResult = { allowed: true } | { allowed: false; retryAfterSeconds: number };
 
@@ -24,9 +25,11 @@ const LIMITER_CONFIGS: Record<RateLimitKey, { points: number; duration: number }
   "reenviar-verificacion": { points: 3, duration: 3600 },
   "recuperar-ip": { points: 5, duration: 3600 },
   "recuperar-email": { points: 3, duration: 3600 },
+  tutor: { points: 10, duration: 60 },
 };
 
 const limiters = new Map<RateLimitKey, RateLimiterRedis>();
+let ultimoAviso = 0;
 
 async function getLimiter(key: RateLimitKey): Promise<RateLimiterRedis> {
   const redis = getRedis();
@@ -71,20 +74,42 @@ export async function peekLimiter(
   return { allowed: true };
 }
 
+function avisarRedisCaido(key: RateLimitKey, error: unknown): void {
+  if (Date.now() - ultimoAviso < 60_000) return;
+  ultimoAviso = Date.now();
+  console.warn(
+    `[rate-limit] Redis no responde (${key}); se deja pasar sin límite mientras vuelve.`,
+    error instanceof Error ? error.message : error
+  );
+}
+
+async function conRedisOpcional<T>(
+  key: RateLimitKey,
+  accion: (limiter: RateLimiterRedis) => Promise<T>,
+  siRedisFalla: T
+): Promise<T> {
+  try {
+    return await accion(await getLimiter(key));
+  } catch (error) {
+    avisarRedisCaido(key, error);
+    return siRedisFalla;
+  }
+}
+
 // Gasta un punto por cada request (registro).
 export async function checkRateLimit(key: RateLimitKey, identifier: string): Promise<RateLimitResult> {
-  return consumeLimiter(await getLimiter(key), identifier);
+  return conRedisOpcional(key, (limiter) => consumeLimiter(limiter, identifier), { allowed: true });
 }
 
 // Login: solo los intentos fallidos gastan puntos, y un login exitoso los limpia.
 export async function peekRateLimit(key: RateLimitKey, identifier: string): Promise<RateLimitResult> {
-  return peekLimiter(await getLimiter(key), identifier);
+  return conRedisOpcional(key, (limiter) => peekLimiter(limiter, identifier), { allowed: true });
 }
 
 export async function recordRateLimitFailure(key: RateLimitKey, identifier: string): Promise<void> {
-  await consumeLimiter(await getLimiter(key), identifier);
+  await conRedisOpcional(key, async (limiter) => void (await consumeLimiter(limiter, identifier)), undefined);
 }
 
 export async function resetRateLimit(key: RateLimitKey, identifier: string): Promise<void> {
-  await (await getLimiter(key)).delete(identifier);
+  await conRedisOpcional(key, async (limiter) => void (await limiter.delete(identifier)), undefined);
 }
