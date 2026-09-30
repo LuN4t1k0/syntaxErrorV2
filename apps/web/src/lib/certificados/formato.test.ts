@@ -8,8 +8,10 @@ describe("formato de certificados", () => {
     expect(etiquetaTipoCertificado("curso")).toBe("Curso");
   });
 
-  it("formatea fechas en español de Chile", () => {
-    expect(fechaCertificado(new Date("2026-03-04T15:00:00Z"))).toContain("marzo");
+  it("formatea fechas en español de Chile y en hora de Chile", () => {
+    expect(fechaCertificado(new Date("2026-03-03T15:00:00Z"))).toBe("3 de marzo de 2026");
+    // 02:00 UTC del 4 de marzo todavía es 3 de marzo en Santiago.
+    expect(fechaCertificado(new Date("2026-03-04T02:00:00Z"))).toBe("3 de marzo de 2026");
   });
 
   it("describe el alcance del certificado", () => {
