@@ -3,13 +3,7 @@ import type { Caso, Mision } from "@syntaxerror/content/tipos";
 import type { AppDb } from "@syntaxerror/db/client";
 import { casos, tutorPreguntas } from "@syntaxerror/db/schema";
 import { buscarRespuestaEnCache } from "@syntaxerror/db/tutor";
-import {
-  esDelTema,
-  MENSAJE_ERROR_TUTOR,
-  RESPUESTA_FUERA_DE_TEMA,
-  TEMAS_DEL_TUTOR,
-  type ProveedorIA,
-} from "@syntaxerror/ia/tutor";
+import { MENSAJE_ERROR_TUTOR, type ProveedorIA } from "@syntaxerror/ia/tutor";
 import type { TrabajoTutor } from "@syntaxerror/queue/tutor";
 import { contextoDeMision } from "./contexto";
 
@@ -21,18 +15,6 @@ export type ResultadoPregunta =
   | { estado: "desde_cache" | "fuera_de_tema" | "error"; preguntaId: string; respuesta: string };
 
 type Dependencias = { proveedor: ProveedorIA | null; encolar: (trabajo: TrabajoTutor) => Promise<void> };
-
-const temasPorProveedor = new WeakMap<ProveedorIA, Promise<number[][]>>();
-
-function temasVectorizados(proveedor: ProveedorIA): Promise<number[][]> {
-  let temas = temasPorProveedor.get(proveedor);
-  if (!temas) {
-    temas = Promise.all(TEMAS_DEL_TUTOR.map((tema) => proveedor.vectorizar(tema)));
-    temas.catch(() => temasPorProveedor.delete(proveedor));
-    temasPorProveedor.set(proveedor, temas);
-  }
-  return temas;
-}
 
 export async function preguntarAlTutor(
   db: AppDb,
@@ -59,14 +41,9 @@ export async function preguntarAlTutor(
     return nueva.id;
   };
 
-  if (proveedor.nombre === "gemini" && !esDelTema(embedding, await temasVectorizados(proveedor))) {
-    return {
-      estado: "fuera_de_tema",
-      preguntaId: await registrar("fuera_de_tema", RESPUESTA_FUERA_DE_TEMA),
-      respuesta: RESPUESTA_FUERA_DE_TEMA,
-    };
-  }
-
+  // Lo fuera de tema lo decide el modelo con las instrucciones del tutor. El filtro por embeddings
+  // de la v1 no separaba (medido con Gemini: se superponían preguntas legítimas y ajenas) y
+  // arriesgaba bloquear dudas válidas. El costo lo contienen el límite por usuario y la caché.
   const enCache = await buscarRespuestaEnCache(db, { casoId: fila.id, mision: mision.slug, embedding });
   if (enCache) return { estado: "desde_cache", preguntaId: await registrar("desde_cache", enCache), respuesta: enCache };
 

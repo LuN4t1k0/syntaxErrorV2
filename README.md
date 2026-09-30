@@ -60,6 +60,6 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 ## Tutor IA
 
 - En cada misión, `Preguntar al tutor` responde con el contexto de esa misión: encargo, conceptos, tareas y tablas, nunca las soluciones. Explica y da pistas, no resuelve.
-- Con `GEMINI_API_KEY` en `.env` responde Gemini (`gemini-2.5-flash-lite`, se cambia con `GEMINI_MODEL`). Sin clave, en local responde un proveedor de prueba (`TUTOR_PRUEBA=true`, ya puesto en `docker-compose.yml`). En producción va la clave y no `TUTOR_PRUEBA`.
+- Con `GEMINI_API_KEY` en `.env` responde Gemini (`gemini-flash-lite-latest`, se cambia con `GEMINI_MODEL`). Sin clave, en local responde un proveedor de prueba (`TUTOR_PRUEBA=true`, ya puesto en `docker-compose.yml`). En producción va la clave y no `TUTOR_PRUEBA`.
 - Las preguntas pasan por la cola `tutor` del worker, que responde por socket.io (`CHAT_SOCKET_SECRET` debe ser el mismo en web y worker). Si el socket no conecta, el navegador consulta la respuesta cada 4 segundos.
 - Las respuestas se guardan en caché por misión (pgvector): la misma pregunta con otras palabras no gasta otra llamada. Límite: 10 preguntas por minuto por alumna.

@@ -6,7 +6,7 @@ import { casos, tutorPreguntas, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { guardarRespuestaEnCache } from "@syntaxerror/db/tutor";
 import { crearProveedorPrueba, vectorDePrueba } from "@syntaxerror/ia/prueba";
-import { MENSAJE_ERROR_TUTOR, RESPUESTA_FUERA_DE_TEMA, TEMAS_DEL_TUTOR, type ProveedorIA } from "@syntaxerror/ia/tutor";
+import { MENSAJE_ERROR_TUTOR, type ProveedorIA } from "@syntaxerror/ia/tutor";
 import type { TrabajoTutor } from "@syntaxerror/queue/tutor";
 import { consultarPregunta, preguntarAlTutor } from "./servicio";
 
@@ -65,21 +65,6 @@ describe("preguntarAlTutor", () => {
     expect(trabajos).toEqual([]);
   });
 
-  it("con Gemini, una pregunta fuera de tema se contesta sin llamar al modelo", async () => {
-    const eje = (indice: number) => new Array(768).fill(0).map((_, i) => (i === indice ? 1 : 0));
-    const gemini: ProveedorIA = {
-      nombre: "gemini",
-      vectorizar: async (texto) => (TEMAS_DEL_TUTOR.includes(texto) ? eje(0) : eje(1)),
-      responder: async () => {
-        throw new Error("no debería llamarse");
-      },
-    };
-    expect(await preguntar("¿Quién ganó el partido?", { proveedor: gemini, encolar })).toMatchObject({
-      estado: "fuera_de_tema",
-      respuesta: RESPUESTA_FUERA_DE_TEMA,
-    });
-    expect(trabajos).toEqual([]);
-  });
 
   it("si no se puede encolar, informa el error", async () => {
     const resultado = await preguntar("¿Cómo filtro?", {

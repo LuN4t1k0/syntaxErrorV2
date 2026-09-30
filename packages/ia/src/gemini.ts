@@ -7,7 +7,9 @@ import {
   type ProveedorIA,
 } from "./tutor";
 
-export const MODELO_RESPUESTAS = "gemini-2.5-flash-lite";
+// Alias que Google mantiene apuntando al flash-lite vigente: los modelos con versión se retiran
+// (gemini-2.5-flash y 2.0-flash ya no están disponibles). GEMINI_MODEL permite fijar una versión.
+export const MODELO_RESPUESTAS = "gemini-flash-lite-latest";
 export const MODELO_EMBEDDINGS = "gemini-embedding-001";
 
 export function crearProveedorGemini({

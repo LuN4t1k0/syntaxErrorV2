@@ -37,7 +37,7 @@ describe("crearProveedorGemini", () => {
       texto: "Usa WHERE sobre la columna ciudad.",
     });
     const [{ model, contents, config }] = generateContent.mock.calls[0];
-    expect([model, contents]).toEqual(["gemini-2.5-flash-lite", "¿Cómo filtro?"]);
+    expect([model, contents]).toEqual(["gemini-flash-lite-latest", "¿Cómo filtro?"]);
     expect(config.systemInstruction).toContain("Misión: Filtrar clientes.");
   });
 
