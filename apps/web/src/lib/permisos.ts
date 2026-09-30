@@ -15,3 +15,9 @@ export async function exigirDocente(): Promise<Acceso> {
   if (acceso.error || esDocente(acceso.usuario)) return acceso;
   return { usuario: null, error: NextResponse.json({ error: "prohibido" }, { status: 403 }) };
 }
+
+export async function exigirAdmin(): Promise<Acceso> {
+  const acceso = await exigirUsuario();
+  if (acceso.error || acceso.usuario.rol === "admin") return acceso;
+  return { usuario: null, error: NextResponse.json({ error: "prohibido" }, { status: 403 }) };
+}

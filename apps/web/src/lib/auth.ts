@@ -2,7 +2,6 @@ import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { eq } from "drizzle-orm";
 import { getDb } from "@syntaxerror/db/client";
 import { accounts, users } from "@syntaxerror/db/schema";
 import type { AuditAction } from "@syntaxerror/db/audit";
@@ -10,6 +9,7 @@ import { normalizeEmail } from "@/app/api/auth/register/service";
 import { recordAuditEvent } from "./audit";
 import { getClientIp } from "./client-ip";
 import { authorizeCredentials } from "./credentials";
+import { refrescarToken } from "./sesion-token";
 
 class RateLimitedSignin extends CredentialsSignin {
   code = "rate_limited";
@@ -69,15 +69,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        token.sub = user.id;
-        token.role = (user as typeof user & { role?: string }).role;
-      }
-      if (token.sub && !token.role) {
-        const [stored] = await getDb().select({ role: users.role }).from(users).where(eq(users.id, token.sub));
-        token.role = stored?.role;
-      }
-      return token;
+      if (user?.id) token.sub = user.id;
+      return refrescarToken(getDb(), token);
     },
     async session({ session, token }) {
       if (session.user && token.sub) {

@@ -1,4 +1,4 @@
-import { GraduationCap, LayoutDashboard, Mail, Settings, UserRound } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Mail, Shield, UserRound } from "lucide-react";
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
@@ -48,6 +48,12 @@ export async function SiteHeader() {
                 <span className="hidden sm:inline">Docencia</span>
               </Link>
             ) : null}
+            {actual?.rol === "admin" ? (
+              <Link className="nav-link" href="/admin">
+                <Shield size={16} />
+                <span className="hidden sm:inline">Administración</span>
+              </Link>
+            ) : null}
           </nav>
         ) : null}
 
@@ -66,12 +72,6 @@ export async function SiteHeader() {
                 <strong className="block truncate text-sm">{user.name ?? "Estudiante"}</strong>
                 <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
               </div>
-              {actual?.rol === "admin" ? (
-                <span className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-muted-foreground">
-                  <Settings size={15} />
-                  Rol: administración
-                </span>
-              ) : null}
               <Link
                 href="/perfil"
                 className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-surface-raised hover:text-foreground"

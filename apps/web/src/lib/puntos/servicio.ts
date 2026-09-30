@@ -8,7 +8,7 @@ import { calcularNivel, type Nivel } from "./niveles";
 export const PUNTOS = { mision: 10, caso: 50, decision: 5 } as const;
 export const CLAVE_CASO = "__caso__";
 
-export type MotivoPuntos = "mision_aprobada" | "caso_completo" | "decision";
+export type MotivoPuntos = "mision_aprobada" | "caso_completo" | "decision" | "reporte_util";
 export type ResultadoDecision = { estado: "decision_no_existe" } | { estado: "registrada"; correcta: boolean; puntos: number };
 
 // El índice único (usuario, caso, clave) hace que cada logro sume una sola vez, aunque llegue repetido.

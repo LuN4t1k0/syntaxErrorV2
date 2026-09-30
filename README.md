@@ -84,3 +84,13 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
   - `Reportar un problema`, en el pie de página, guarda la página desde donde se envió y avisa a administración por email.
   - Los mensajes internos se leen en `/dashboard/mensajes`.
 - **Permisos:** el rol se lee desde la base en cada request, no desde la sesión: un cambio de rol rige al instante y una cuenta eliminada pierde el acceso aunque tenga la sesión abierta en otro dispositivo.
+
+## Administración
+
+- **Panel:** vive en `/admin` y solo entra el rol `admin` (a otros roles les responde 404). En local, `admin@local.test` con clave `admin123456`.
+- **Usuarios:** permite buscar, cambiar rol y eliminar una cuenta por solicitud ARCO, confirmando con su email. Nadie cambia su propio rol ni elimina su propia cuenta desde el panel.
+- **Sesiones:** cada `auth()` revisa la cuenta en la base. Si administración elimina la cuenta, la sesión se cierra en todos sus dispositivos, y un cambio de rol rige al instante.
+- **Contenido:** muestra casos, rutas, inscripciones y métricas por misión: personas que iniciaron/aprobaron, intentos promedio, abandono tras 14 días sin avance y primera tarea pendiente.
+- **Comunidad:** aprueba solicitudes docentes, modera comentarios de reseñas y resuelve reportes. Un error real de un caso suma 25 puntos a quien lo reportó.
+- **Preguntas y tutor:** supervisa preguntas a docentes y al tutor, y permite borrar respuestas malas de la caché del tutor.
+- **Bitácora:** registra acciones de administración con quién actuó, IP, destino y detalle; se filtra por acción y email.

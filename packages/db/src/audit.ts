@@ -17,10 +17,13 @@ export const AUDIT_ACTIONS = [
   "role_changed",
   "teacher_question_answered",
   "review_moderated",
+  "teacher_request_decided",
+  "report_resolved",
+  "tutor_cache_deleted",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
-export type AuditTargetType = "user" | "teacher_request" | "teacher_question" | "review";
+export type AuditTargetType = "user" | "teacher_request" | "teacher_question" | "review" | "report" | "tutor_cache";
 
 export type InsertAuditLogEntryInput = {
   actorId: string | null;
