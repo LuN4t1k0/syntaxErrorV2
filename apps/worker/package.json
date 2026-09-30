@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@sentry/node": "^10.75.3",
     "@syntaxerror/db": "workspace:*",
     "@syntaxerror/ia": "workspace:*",
     "@syntaxerror/queue": "workspace:*",

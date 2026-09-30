@@ -4,9 +4,11 @@ import { AvisoVerificacion } from "@/components/cuenta/aviso-verificacion";
 import { auth } from "@/lib/auth";
 import { fechaCertificado } from "@/lib/certificados/formato";
 import { listarCertificados } from "@/lib/certificados/servicio";
+import { casosParaPublicar } from "@/lib/contenido";
 import { necesitaVerificar } from "@/lib/cuenta/verificacion";
 import { calcularNivel } from "@/lib/puntos/niveles";
 import { obtenerNivel } from "@/lib/puntos/servicio";
+import { siguientePaso } from "@/lib/progreso/continuar";
 import { listarCasosDelUsuario } from "@/lib/progreso/servicio";
 
 export const metadata = { title: "Tu panel" };
@@ -20,6 +22,8 @@ export default async function DashboardPage() {
   const certificados = userId ? await listarCertificados(db, userId) : [];
   const nivel = userId ? await obtenerNivel(db, userId) : calcularNivel(0);
   const verificar = userId ? await necesitaVerificar(db, userId) : false;
+  const publicados = new Set((await casosParaPublicar()).map((caso) => caso.slug));
+  const paso = userId ? await siguientePaso(db, userId, publicados) : null;
   return (
     <main className="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 lg:px-8">
       <p className="font-mono text-sm font-bold text-primary">{"> whoami"}</p>
@@ -28,6 +32,23 @@ export default async function DashboardPage() {
         Aquí vas a ver tus casos en curso, tus entregables y tus certificados.
       </p>
       {verificar ? <AvisoVerificacion /> : null}
+      {paso ? (
+        <section className="card grid gap-3 border-primary p-5" aria-label="Continuar">
+          <p className="font-mono text-sm font-bold text-primary">{"> continuar"}</p>
+          {paso.tipo === "mision" ? (
+            <p className="leading-7">
+              Sigue con <strong>{paso.mision.titulo}</strong>, del caso <strong>{paso.caso.titulo}</strong>.
+            </p>
+          ) : (
+            <p className="leading-7">
+              Aprobaste todas las misiones de <strong>{paso.caso.titulo}</strong>. Te falta enlazar tu entregable para completarlo.
+            </p>
+          )}
+          <div>
+            <Link href={paso.href} className="btn btn-primary">{paso.tipo === "mision" ? "Continuar misión" : "Ir al caso"}</Link>
+          </div>
+        </section>
+      ) : null}
       <section className="card grid gap-1 p-4" aria-label="Tu nivel">
         <p className="font-mono text-sm font-bold text-primary">{`> nivel ${nivel.nivel}`}</p>
         <p className="text-xl font-black">{`${nivel.puntos} puntos`}</p>

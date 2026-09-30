@@ -7,6 +7,7 @@
     "./schema": "./src/schema.ts",
     "./client": "./src/client.ts",
     "./audit": "./src/audit.ts",
+    "./mantenimiento": "./src/mantenimiento.ts",
     "./tutor": "./src/tutor.ts",
     "./testing": "./src/testing.ts",
     "./migrate": "./src/migrate.ts"

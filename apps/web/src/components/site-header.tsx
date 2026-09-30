@@ -1,4 +1,4 @@
-import { GraduationCap, LayoutDashboard, Mail, Shield, UserRound } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Mail, Search, Shield, UserRound } from "lucide-react";
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
@@ -57,6 +57,10 @@ export async function SiteHeader() {
           </nav>
         ) : null}
 
+        <Link className="nav-link" href="/buscar" aria-label="Buscar">
+          <Search size={16} />
+          <span className="hidden sm:inline">Buscar</span>
+        </Link>
         <ThemeToggle />
 
         {user ? (

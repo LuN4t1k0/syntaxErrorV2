@@ -4,13 +4,17 @@ import { crearProveedorDesdeEntorno } from "@syntaxerror/ia/proveedor";
 import { COLA_AVISOS, type TrabajoAviso } from "@syntaxerror/queue/avisos";
 import { COLA_EMAILS, conexionWorker, type TrabajoEmail } from "@syntaxerror/queue/emails";
 import { EVENTO_TUTOR, salaTutor } from "@syntaxerror/queue/eventos";
+import { COLA_MANTENIMIENTO, programarMantenimiento } from "@syntaxerror/queue/mantenimiento";
 import { COLA_TUTOR, type TrabajoTutor } from "@syntaxerror/queue/tutor";
 import { crearProcesadorAvisos } from "./avisos/procesar";
 import { crearProcesadorEmails } from "./emails/procesar";
+import { crearProcesadorMantenimiento, leerRetencion } from "./mantenimiento/procesar";
+import { iniciarMonitoreo, reportarError } from "./monitoreo";
 import { getRedis } from "./redis";
 import { createWorkerServer } from "./server";
 import { crearProcesadorTutor, marcarErrorTutor, type EmisorTutor } from "./tutor/procesar";
 
+const monitoreo = iniciarMonitoreo();
 const port = Number(process.env.CHAT_SOCKET_PORT ?? 4001);
 const corsOrigin = process.env.APP_URL ?? "http://localhost:3000";
 const redisUrl = process.env.REDIS_URL;
@@ -27,6 +31,7 @@ const emails = new Worker<TrabajoEmail>(COLA_EMAILS, crearProcesadorEmails(), {
 });
 emails.on("failed", (job, error) => {
   console.error(`[emails] falló ${job?.name ?? "trabajo"} (intento ${job?.attemptsMade ?? "?"}): ${error.message}`);
+  if (job && job.attemptsMade >= (job.opts.attempts ?? 1)) reportarError(error, { cola: "emails", tipo: job.name });
 });
 emails.on("error", (error) => {
   console.error(`[emails] error de worker: ${error.message}`);
@@ -41,6 +46,21 @@ avisos.on("error", (error) => {
   console.error(`[avisos] error de worker: ${error.message}`);
 });
 
+const retencionDias = leerRetencion(process.env.RETENCION_BITACORA_DIAS);
+const mantenimiento = new Worker(COLA_MANTENIMIENTO, crearProcesadorMantenimiento({ db: getDb(), retencionDias }), {
+  connection: conexionWorker(redisUrl),
+});
+mantenimiento.on("failed", (_job, error) => {
+  console.error(`[mantenimiento] falló la limpieza: ${error.message}`);
+  reportarError(error, { cola: "mantenimiento" });
+});
+mantenimiento.on("error", (error) => {
+  console.error(`[mantenimiento] error de worker: ${error.message}`);
+});
+void programarMantenimiento(redisUrl).catch((error: unknown) => {
+  console.error("[mantenimiento] no se pudo programar la limpieza diaria", error);
+});
+
 const emitir: EmisorTutor = (clientId, evento) => void io.to(salaTutor(clientId)).emit(EVENTO_TUTOR, evento);
 const proveedor = crearProveedorDesdeEntorno();
 const tutor = proveedor
@@ -53,6 +73,7 @@ if (!tutor) console.log("[tutor] sin GEMINI_API_KEY ni TUTOR_PRUEBA: el tutor es
 tutor?.on("failed", (job, error) => {
   console.error(`[tutor] falló una respuesta (intento ${job?.attemptsMade ?? "?"}): ${error.message}`);
   if (job && job.attemptsMade >= (job.opts.attempts ?? 1)) {
+    reportarError(error, { cola: "tutor" });
     void marcarErrorTutor(getDb(), emitir, job.data).catch((falla) => console.error("[tutor] no se pudo marcar el error", falla));
   }
 });
@@ -61,7 +82,7 @@ tutor?.on("error", (error) => {
 });
 
 httpServer.listen(port, () => {
-  console.log(`[worker] escuchando en :${port}${proveedor ? ` · tutor con ${proveedor.nombre}` : ""}`);
+  console.log(`[worker] escuchando en :${port}${proveedor ? ` · tutor con ${proveedor.nombre}` : ""}${monitoreo ? " · con Sentry" : ""}`);
 });
 
 async function shutdown(signal: string) {
@@ -69,6 +90,7 @@ async function shutdown(signal: string) {
   io.close();
   await emails.close();
   await avisos.close();
+  await mantenimiento.close();
   await tutor?.close();
   await redis.quit();
   process.exit(0);

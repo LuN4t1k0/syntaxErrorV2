@@ -94,3 +94,11 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - **Comunidad:** aprueba solicitudes docentes, modera comentarios de reseñas y resuelve reportes. Un error real de un caso suma 25 puntos a quien lo reportó.
 - **Preguntas y tutor:** supervisa preguntas a docentes y al tutor, y permite borrar respuestas malas de la caché del tutor.
 - **Bitácora:** registra acciones de administración con quién actuó, IP, destino y detalle; se filtra por acción y email.
+
+## Plataforma
+
+- **Buscador:** `/buscar` busca rutas, casos y misiones publicadas en el encargo, los conceptos y los enunciados, sin distinguir mayúsculas ni tildes. El índice se arma en el build desde `content/` y nunca incluye soluciones, pruebas ni el cierre de las misiones.
+- **Continuar donde quedé:** el panel lleva a la misión en curso más reciente o a la siguiente pendiente. Si el caso solo necesita el entregable, lleva a la página del caso.
+- **Limpieza diaria (worker, cola `mantenimiento`):** borra la bitácora y las preguntas al tutor con más de `RETENCION_BITACORA_DIAS` días (365 por defecto, mínimo 30). Los registros de derechos ARCO no se borran.
+- **SEO:** `robots.txt` deja fuera las páginas privadas y `sitemap.xml` lista el contenido publicado.
+- **Sentry:** se enciende con `NEXT_PUBLIC_SENTRY_DSN` (web) y `SENTRY_DSN` (worker); sin ellas queda apagado. Muestrea el 10 % de las trazas, no envía datos personales y sube sourcemaps en el build solo si defines `SENTRY_ORG`, `SENTRY_PROJECT` y `SENTRY_AUTH_TOKEN`.

@@ -7,6 +7,7 @@
     "./conexion": "./src/conexion.ts",
     "./emails": "./src/emails.ts",
     "./avisos": "./src/avisos.ts",
+    "./mantenimiento": "./src/mantenimiento.ts",
     "./tutor": "./src/tutor.ts",
     "./token-socket": "./src/token-socket.ts",
     "./eventos": "./src/eventos.ts"

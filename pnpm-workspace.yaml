@@ -4,10 +4,12 @@ packages:
   - "e2e"
 storeDir: /pnpm/store
 onlyBuiltDependencies:
+  - '@sentry/cli'
   - esbuild
   - sharp
 allowBuilds:
   "@google/genai": false
+  '@sentry/cli': true
   esbuild: true
   protobufjs: false
   sharp: true

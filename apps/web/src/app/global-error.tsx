@@ -1,6 +1,13 @@
 "use client";
 
-export default function GlobalError({ reset }: { error: Error; reset: () => void }) {
+import { useEffect } from "react";
+
+export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    // Sin DSN el SDK no se carga: ver src/instrumentation.ts.
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) void import("@sentry/nextjs").then((Sentry) => Sentry.captureException(error));
+  }, [error]);
+
   return (
     <html lang="es">
       <body style={{ fontFamily: "system-ui", padding: "3rem", background: "#0a0a0a", color: "#fafafa" }}>
