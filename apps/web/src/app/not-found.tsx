@@ -1,11 +1,11 @@
 import { NotFoundGlitch } from "@/components/not-found-glitch";
 import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { MisionesHeader } from "@/components/misiones-header";
 
 export default function NotFound() {
   return (
     <>
-      <SiteHeader />
+      <MisionesHeader />
       <NotFoundGlitch
         eyebrow="ERROR_404"
         title="Esta ruta no existe."

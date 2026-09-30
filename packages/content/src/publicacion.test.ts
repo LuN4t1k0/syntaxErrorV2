@@ -1,0 +1,46 @@
+import { fileURLToPath } from "node:url";
+import { beforeAll, describe, expect, it } from "vitest";
+import { cargarContenido } from "./cargar";
+import { archivosPython, grillaDeHoja, paquetesPython, tablasSql } from "./datos";
+import { casosVisibles, rutasVisibles, tareasDeMision } from "./publicacion";
+import type { Contenido } from "./tipos";
+
+const FIXTURE = fileURLToPath(new URL("../test/fixtures/valido", import.meta.url));
+let contenido: Contenido;
+
+beforeAll(async () => {
+  contenido = await cargarContenido(FIXTURE);
+});
+
+describe("visibilidad", () => {
+  it("muestra las rutas publicadas y sus casos", () => {
+    expect(rutasVisibles(contenido, false).map((ruta) => ruta.slug)).toEqual(["analista"]);
+    expect(casosVisibles(contenido, false).map((caso) => caso.slug)).toEqual(["ventas"]);
+  });
+
+  it("oculta los borradores salvo que se pidan", () => {
+    const conBorrador: Contenido = {
+      ...contenido,
+      rutas: contenido.rutas.map((ruta) => ({ ...ruta, estado: "borrador" as const })),
+    };
+    expect(casosVisibles(conBorrador, false)).toEqual([]);
+    expect(casosVisibles(conBorrador, true).map((caso) => caso.slug)).toEqual(["ventas"]);
+  });
+
+  it("tareasDeMision devuelve solo los bloques de tarea", () => {
+    const ids = tareasDeMision(contenido.casos[0].misiones[0]).map((tarea) => tarea.props.id);
+    expect(ids).toEqual(["fuera-de-santiago"]);
+  });
+});
+
+describe("datos del caso", () => {
+  it("arma tablas SQL, archivos Python y grillas desde los CSV", () => {
+    const [caso] = contenido.casos;
+    expect(Object.keys(tablasSql(caso))).toEqual(["clientes"]);
+    expect(archivosPython(caso)[0].ruta).toBe("datos/clientes.csv");
+    expect(archivosPython(caso)[0].contenido.startsWith("id,nombre,ciudad,monto")).toBe(true);
+    expect(grillaDeHoja(caso, "clientes")[0]).toEqual(["id", "nombre", "ciudad", "monto"]);
+    expect(() => grillaDeHoja(caso, "no-existe")).toThrow('El caso ventas no tiene la hoja "no-existe"');
+    expect(paquetesPython(caso.misiones[2])).toEqual([]);
+  });
+});

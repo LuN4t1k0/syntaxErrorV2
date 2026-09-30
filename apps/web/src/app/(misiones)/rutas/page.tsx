@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { rutasParaPublicar } from "@/lib/contenido";
 
+export const dynamic = "error";
 export const metadata = { title: "Rutas" };
 
 export default async function RutasPage() {

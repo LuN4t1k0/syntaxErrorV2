@@ -7,6 +7,7 @@ import { componentesMision } from "@/components/mision/componentes";
 import { MisionProvider } from "@/components/mision/mision-provider";
 import { casosParaPublicar, obtenerCaso } from "@/lib/contenido";
 
+export const dynamic = "error";
 export const dynamicParams = false;
 type Parametros = { params: Promise<{ caso: string; mision: string }> };
 

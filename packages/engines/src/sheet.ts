@@ -56,10 +56,7 @@ export function normalizarFormula(contenido: string): string {
     if (enTexto) resultado += caracter;
     else resultado += caracter === ";" ? "," : caracter.toUpperCase();
   }
-  return resultado.replace(/\bSUMA\(([A-Z]+)(\d+),([A-Z]+)(\d+)\)/g, (formula, colA, rowA, colB, rowB) => {
-    if (colA !== colB && rowA !== rowB) return formula;
-    return `SUMA(${colA}${rowA}:${colB}${rowB})`;
-  });
+  return resultado;
 }
 
 export function crearHoja(grilla: Grilla): Hoja {

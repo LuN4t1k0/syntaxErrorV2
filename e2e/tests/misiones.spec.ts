@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page } from "./fixtures";
 
 const CASO = "/casos/demo-motor";
 const MISION_SQL = `${CASO}/01-clientes-de-regiones`;
@@ -46,7 +46,7 @@ test("con sesión: aprueba las tres misiones y completa el caso con su entregabl
   await validarYEsperar(page);
   await page.goto(MISION_HOJA);
   await page.getByRole("button", { name: "Celda F2" }).click();
-  await page.getByLabel("Fórmula").fill("=suma(d2;d7)");
+  await page.getByLabel("Fórmula").fill("=suma(d2:d7)");
   await page.getByLabel("Fórmula").press("Enter");
   await expect(page.getByRole("button", { name: "Celda F2" })).toHaveText("1049000");
   await validarYEsperar(page);

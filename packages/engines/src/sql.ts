@@ -38,6 +38,18 @@ function separarSentencias(consulta: string, permitirEscritura: boolean): string
   return sentencias;
 }
 
+// alasql reserva palabras que en Postgres o MySQL sirven como alias (total, count, value...).
+// Entre backticks funcionan igual y la columna conserva el nombre.
+const ALIAS_RESERVADOS = new Set([
+  "total", "count", "sum", "avg", "value", "top", "index", "matrix", "columns", "column", "row", "cross",
+]);
+
+function protegerAlias(sentencia: string): string {
+  return sentencia.replace(/\bAS\s+([A-Za-z_][A-Za-z0-9_]*)\b/gi, (coincidencia, alias: string) =>
+    ALIAS_RESERVADOS.has(alias.toLowerCase()) ? `AS \`${alias}\`` : coincidencia
+  );
+}
+
 function normalizarFilas(filas: Fila[]): Fila[] {
   return filas.map((fila) =>
     Object.fromEntries(
@@ -56,7 +68,7 @@ export function ejecutarSql(
 ): Fila[] {
   let resultado: unknown = [];
   for (const sentencia of separarSentencias(consulta, permitirEscritura)) {
-    resultado = base.exec(sentencia);
+    resultado = base.exec(protegerAlias(sentencia));
   }
   return Array.isArray(resultado) ? normalizarFilas(resultado as Fila[]) : [];
 }

@@ -3,6 +3,7 @@ import { tareasDeMision } from "@syntaxerror/content/publicacion";
 import { PanelCaso } from "@/components/mision/panel-caso";
 import { casosParaPublicar, obtenerCaso } from "@/lib/contenido";
 
+export const dynamic = "error";
 export const dynamicParams = false;
 type Parametros = { params: Promise<{ caso: string }> };
 

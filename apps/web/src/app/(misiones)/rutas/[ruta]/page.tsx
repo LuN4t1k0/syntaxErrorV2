@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { casosDeRuta, obtenerRuta, rutasParaPublicar } from "@/lib/contenido";
 
+export const dynamic = "error";
 export const dynamicParams = false;
 type Parametros = { params: Promise<{ ruta: string }> };
 
