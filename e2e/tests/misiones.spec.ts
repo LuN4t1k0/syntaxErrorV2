@@ -61,4 +61,9 @@ test("con sesión: aprueba las tres misiones y completa el caso con su entregabl
   await page.getByLabel("Enlace a tu entregable").fill("https://github.com/valentina/demo-motor");
   await page.getByRole("button", { name: "Guardar entregable" }).click();
   await expect(page.getByText("Caso completo", { exact: true })).toBeVisible();
+  await page.reload();
+  await page.getByLabel("5 estrellas").check();
+  await page.getByLabel("Comentario (opcional)").fill("Muy práctico para aprender SQL.");
+  await page.getByRole("button", { name: "Publicar reseña" }).click();
+  await expect(page.getByText("Gracias. Tu comentario se publicará cuando lo revisemos.")).toBeVisible();
 });

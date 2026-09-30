@@ -89,5 +89,87 @@ export function construirEmail(trabajo: TrabajoEmail): EmailListo {
         enlace: { texto: "Ver mi certificado", url: trabajo.enlace },
         comandoCierre: "git tag v1.0",
       });
+    case "pregunta-profesor-nueva":
+      return plantillaSyntaxError({
+        asunto: "Tienes una pregunta nueva",
+        estado: { etiqueta: "INFO", mensaje: "Pregunta de estudiante" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`${trabajo.alumno} preguntó en la misión «${trabajo.mision}» del caso ${trabajo.caso}:`, `«${trabajo.pregunta}»`],
+        enlace: { texto: "Responder la pregunta", url: trabajo.enlace },
+        comandoCierre: "git pull origin preguntas",
+      });
+    case "pregunta-profesor-respondida":
+      return plantillaSyntaxError({
+        asunto: "Respondieron tu pregunta",
+        estado: { etiqueta: "INFO", mensaje: "Pregunta respondida" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [
+          `Tu pregunta en la misión «${trabajo.mision}» del caso ${trabajo.caso} ya tiene respuesta.`,
+          `Preguntaste: «${trabajo.pregunta}»`,
+          `Respuesta: ${trabajo.respuesta}`,
+        ],
+        enlace: { texto: "Ver mis preguntas", url: trabajo.enlace },
+        comandoCierre: "git merge respuesta",
+      });
+    case "resena-nueva":
+      return plantillaSyntaxError({
+        asunto: "Hay una reseña por moderar",
+        estado: { etiqueta: "INFO", mensaje: "Reseña con comentario" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [
+          `Dejaron ${trabajo.estrellas} de 5 estrellas en el caso ${trabajo.caso}, con este comentario:`,
+          `«${trabajo.comentario}»`,
+          "El comentario queda oculto hasta que alguien de administración lo apruebe.",
+        ],
+        comandoCierre: "git review",
+      });
+    case "reporte-nuevo":
+      return plantillaSyntaxError({
+        asunto: trabajo.tipoReporte === "error" ? "Reportaron un error" : "Llegó una sugerencia",
+        estado: trabajo.tipoReporte === "error" ? { etiqueta: "WARNING", mensaje: "Reporte de error" } : { etiqueta: "INFO", mensaje: "Sugerencia" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`${trabajo.autor} escribió desde ${trabajo.pagina}:`, `«${trabajo.descripcion}»`],
+        comandoCierre: "git issue create",
+      });
+    case "solicitud-docente-nueva":
+      return plantillaSyntaxError({
+        asunto: "Pidieron acceso docente",
+        estado: { etiqueta: "INFO", mensaje: "Solicitud docente" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`${trabajo.solicitante} pidió acceso docente en syntaxError.cl.`, "Revisa la solicitud desde administración para aprobarla o rechazarla."],
+        comandoCierre: "sudo usermod -aG docentes",
+      });
+    case "clase-solicitud":
+      return plantillaSyntaxError({
+        asunto: "Pidieron entrar a tu clase",
+        estado: { etiqueta: "INFO", mensaje: "Solicitud de inscripción" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`${trabajo.alumno} pidió entrar a tu clase «${trabajo.clase}».`, "Acepta o rechaza la solicitud desde tu panel docente."],
+        enlace: { texto: "Ver mi clase", url: trabajo.enlace },
+        comandoCierre: "git remote add estudiante",
+      });
+    case "clase-decision":
+      return plantillaSyntaxError({
+        asunto: trabajo.aceptada ? "Te aceptaron en la clase" : "Ya no estás en la clase",
+        estado: trabajo.aceptada ? { etiqueta: "INFO", mensaje: "Inscripción aceptada" } : { etiqueta: "WARNING", mensaje: "Inscripción cerrada" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: trabajo.aceptada
+          ? [`Ya eres parte de la clase «${trabajo.clase}».`, "Tus preguntas sobre los casos de la clase le llegan a tu docente."]
+          : [
+              `Tu docente cerró tu inscripción en la clase «${trabajo.clase}».`,
+              "Puedes seguir con los casos por tu cuenta, y tus preguntas le llegarán al equipo de syntaxError.cl.",
+            ],
+        enlace: { texto: "Ver mis clases", url: trabajo.enlace },
+        comandoCierre: "git checkout clase",
+      });
+    case "mensaje-nuevo":
+      return plantillaSyntaxError({
+        asunto: "Tienes un mensaje nuevo",
+        estado: { etiqueta: "INFO", mensaje: "Mensaje nuevo" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`Te escribieron desde syntaxError.cl: «${trabajo.asunto}».`],
+        enlace: { texto: "Leer el mensaje", url: trabajo.enlace },
+        comandoCierre: "cat ~/mensajes",
+      });
   }
 }

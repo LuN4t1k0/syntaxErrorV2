@@ -6,6 +6,7 @@
   "exports": {
     "./conexion": "./src/conexion.ts",
     "./emails": "./src/emails.ts",
+    "./avisos": "./src/avisos.ts",
     "./tutor": "./src/tutor.ts",
     "./token-socket": "./src/token-socket.ts",
     "./eventos": "./src/eventos.ts"

@@ -2,7 +2,7 @@ import type { AddressInfo } from "node:net";
 import type { Server as SocketIOServer } from "socket.io";
 import { io as conectar, type Socket } from "socket.io-client";
 import { afterEach, describe, expect, it } from "vitest";
-import { EVENTO_TUTOR, PROPOSITO_TUTOR, salaTutor } from "@syntaxerror/queue/eventos";
+import { EVENTO_PREGUNTA_NUEVA, EVENTO_TUTOR, PROPOSITO_TUTOR, PROPOSITO_USUARIO, salaTutor, salaUsuario } from "@syntaxerror/queue/eventos";
 import { firmarTokenSocket } from "@syntaxerror/queue/token-socket";
 import { createWorkerServer } from "./server";
 
@@ -76,5 +76,26 @@ describe("sockets del tutor", () => {
     const cliente = conectarCon(base, { clientId: "c1", token: ajeno, proposito: PROPOSITO_TUTOR });
     await new Promise<void>((resolve) => cliente.on("disconnect", () => resolve()));
     expect(await servidor!.in(salaTutor("c1")).fetchSockets()).toHaveLength(0);
+  });
+});
+
+describe("sockets de avisos por usuario", () => {
+  it("con un token de usuario entra a la sala de esa persona", async () => {
+    const base = await start(async () => "PONG");
+    const token = firmarTokenSocket({ userId: "u1", clientId: "c1", proposito: PROPOSITO_USUARIO, secreto: SECRETO });
+    const cliente = conectarCon(base, { clientId: "c1", token, proposito: PROPOSITO_USUARIO });
+    const recibido = new Promise((resolve) => cliente.on(EVENTO_PREGUNTA_NUEVA, resolve));
+
+    await expect.poll(async () => (await servidor!.in(salaUsuario("u1")).fetchSockets()).length).toBe(1);
+    servidor!.to(salaUsuario("u1")).emit(EVENTO_PREGUNTA_NUEVA, { preguntaId: "p1" });
+    expect(await recibido).toEqual({ preguntaId: "p1" });
+  });
+
+  it("un token del tutor no sirve para escuchar avisos de usuario", async () => {
+    const base = await start(async () => "PONG");
+    const token = firmarTokenSocket({ userId: "u1", clientId: "c1", proposito: PROPOSITO_TUTOR, secreto: SECRETO });
+    const cliente = conectarCon(base, { clientId: "c1", token, proposito: PROPOSITO_USUARIO });
+    await new Promise<void>((resolve) => cliente.on("disconnect", () => resolve()));
+    expect(await servidor!.in(salaUsuario("u1")).fetchSockets()).toHaveLength(0);
   });
 });

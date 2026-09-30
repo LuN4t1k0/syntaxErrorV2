@@ -63,3 +63,24 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - Con `GEMINI_API_KEY` en `.env` responde Gemini (`gemini-flash-lite-latest`, se cambia con `GEMINI_MODEL`). Sin clave, en local responde un proveedor de prueba (`TUTOR_PRUEBA=true`, ya puesto en `docker-compose.yml`). En producción va la clave y no `TUTOR_PRUEBA`.
 - Las preguntas pasan por la cola `tutor` del worker, que responde por socket.io (`CHAT_SOCKET_SECRET` debe ser el mismo en web y worker). Si el socket no conecta, el navegador consulta la respuesta cada 4 segundos.
 - Las respuestas se guardan en caché por misión (pgvector): la misma pregunta con otras palabras no gasta otra llamada. Límite: 10 preguntas por minuto por alumna.
+
+## Comunidad
+
+- **Puntos y niveles:**
+  - 10 por misión aprobada, 50 por caso completo y 5 por acertar una decisión en la primera respuesta;
+  - cada logro suma una sola vez;
+  - se sube de nivel cada 100 puntos.
+- **Preguntas a docentes:**
+  - En cada misión, `Preguntar a un docente` envía la pregunta al docente de la clase del estudiante, si tiene ese caso habilitado. Si no, va a administración.
+  - Aviso por email (cola `emails`) y en vivo por socket.io (cola `avisos`, sala `usuario:<id>`).
+- **Clases:**
+  - Un docente crea la clase desde `/profesor` con una ruta del catálogo y comparte el código de 6 caracteres.
+  - Cada estudiante se une en `/dashboard/clases` y el docente acepta cada solicitud.
+- **Acceso docente:**
+  - Se pide desde `/perfil` y lo aprueba administración: la pantalla llega en la Fase 3c2.
+  - En local, `admin@local.test` (clave `admin123456`) ya es admin y puede usar todo lo docente.
+- **Reseñas:** quien completa un caso puede dejar de 1 a 5 estrellas y un comentario. El comentario queda oculto hasta que administración lo aprueba.
+- **Reportes y mensajes:**
+  - `Reportar un problema`, en el pie de página, guarda la página desde donde se envió y avisa a administración por email.
+  - Los mensajes internos se leen en `/dashboard/mensajes`.
+- **Permisos:** el rol se lee desde la base en cada request, no desde la sesión: un cambio de rol rige al instante y una cuenta eliminada pierde el acceso aunque tenga la sesión abierta en otro dispositivo.

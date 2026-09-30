@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
+import { ResenasCaso } from "@/components/comunidad/resenas-caso";
 import { PanelCaso } from "@/components/mision/panel-caso";
 import { casosParaPublicar, obtenerCaso } from "@/lib/contenido";
 
@@ -27,6 +28,7 @@ export default async function CasoPage({ params }: Parametros) {
         <p className="leading-7 text-muted-foreground">{`Llegas como ${caso.cargo.toLowerCase()} a ${caso.empresa}. Datos del caso: ${caso.dataset}.`}</p>
       </header>
       <PanelCaso caso={caso.slug} entregable={caso.entregable} misiones={caso.misiones.map((mision) => ({ slug: mision.slug, titulo: mision.titulo, tiempo: mision.tiempo, tareas: tareasDeMision(mision).map((tarea) => tarea.props.id) }))} />
+      <ResenasCaso caso={caso.slug} />
     </main>
   );
 }

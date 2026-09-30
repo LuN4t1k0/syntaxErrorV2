@@ -6,6 +6,8 @@ import { cargarProgreso, dependenciasNavegador, reportarTarea } from "@/lib/prog
 import { PythonProvider } from "./python-contexto";
 
 type ContextoMision = {
+  caso: string;
+  mision: string;
   completa: boolean;
   tareaAprobada: (id: string) => boolean;
   registrarResultado: (id: string, aprobada: boolean) => void;
@@ -49,8 +51,8 @@ export function MisionProvider({
   );
 
   const valor = useMemo<ContextoMision>(
-    () => ({ completa: tareas.length > 0 && tareas.every((tarea) => aprobadas.has(tarea)), tareaAprobada: (id) => aprobadas.has(id), registrarResultado }),
-    [aprobadas, tareas, registrarResultado]
+    () => ({ caso, mision, completa: tareas.length > 0 && tareas.every((tarea) => aprobadas.has(tarea)), tareaAprobada: (id) => aprobadas.has(id), registrarResultado }),
+    [aprobadas, caso, mision, tareas, registrarResultado]
   );
 
   return <Contexto.Provider value={valor}>{python ? <PythonProvider opciones={python}>{children}</PythonProvider> : children}</Contexto.Provider>;
@@ -60,4 +62,8 @@ export function useMision(): ContextoMision {
   const contexto = useContext(Contexto);
   if (!contexto) throw new Error("useMision debe usarse dentro de MisionProvider");
   return contexto;
+}
+
+export function useMisionOpcional(): ContextoMision | null {
+  return useContext(Contexto);
 }

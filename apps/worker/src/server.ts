@@ -1,6 +1,6 @@
 import { createServer, type Server } from "node:http";
 import { Server as SocketIOServer } from "socket.io";
-import { PROPOSITO_TUTOR, salaTutor } from "@syntaxerror/queue/eventos";
+import { PROPOSITO_TUTOR, PROPOSITO_USUARIO, salaTutor, salaUsuario } from "@syntaxerror/queue/eventos";
 import { verificarTokenSocket } from "@syntaxerror/queue/token-socket";
 
 const DEFAULT_HEALTH_TIMEOUT_MS = 1000;
@@ -49,16 +49,16 @@ export function createWorkerServer(deps: {
   const io = new SocketIOServer(httpServer, { cors: { origin: deps.corsOrigin, credentials: true } });
   io.on("connection", (socket) => {
     const { clientId, token, proposito } = socket.handshake.query;
-    const valido =
-      typeof clientId === "string" &&
-      typeof token === "string" &&
-      proposito === PROPOSITO_TUTOR &&
-      verificarTokenSocket({ token, clientId, proposito, secreto: deps.secretoSocket }) !== null;
-    if (!valido) {
+    if (typeof clientId !== "string" || typeof token !== "string" || (proposito !== PROPOSITO_TUTOR && proposito !== PROPOSITO_USUARIO)) {
       socket.disconnect(true);
       return;
     }
-    void socket.join(salaTutor(clientId));
+    const verificado = verificarTokenSocket({ token, clientId, proposito, secreto: deps.secretoSocket });
+    if (!verificado) {
+      socket.disconnect(true);
+      return;
+    }
+    void socket.join(proposito === PROPOSITO_TUTOR ? salaTutor(clientId) : salaUsuario(verificado.userId));
   });
   return { httpServer, io };
 }

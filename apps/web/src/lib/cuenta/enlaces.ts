@@ -6,3 +6,8 @@ export const enlaceRestablecerClave = (token: string) => absoluteUrl(`/restablec
 export const enlaceCertificado = (codigo: string) => absoluteUrl(`/certificados/${codigo}`);
 export const enlaceVerificarCertificado = (codigo: string) => absoluteUrl(`/verificar/${codigo}`);
 export const enlacePortafolio = (usuario: string) => absoluteUrl(`/p/${usuario}`);
+export const enlacePanelDocente = (claseId?: string) => absoluteUrl(claseId ? `/profesor/clases/${claseId}` : "/profesor");
+export const enlacePreguntasDocente = () => absoluteUrl("/profesor/preguntas");
+export const enlaceMisPreguntas = () => absoluteUrl("/dashboard/preguntas");
+export const enlaceMisClases = () => absoluteUrl("/dashboard/clases");
+export const enlaceMensajes = () => absoluteUrl("/dashboard/mensajes");

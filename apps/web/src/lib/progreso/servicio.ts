@@ -1,6 +1,7 @@
 import { and, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
 import type { AppDb, DbClient } from "@syntaxerror/db/client";
 import { casoInscripciones, casos, entregables, misionProgreso, rutaCasos, rutaInscripciones } from "@syntaxerror/db/schema";
+import { CLAVE_CASO, otorgarPuntos, PUNTOS } from "@/lib/puntos/servicio";
 import type { IntentoTarea } from "./esquemas";
 
 export type CodigoErrorProgreso = "caso_no_existe" | "mision_no_existe" | "tarea_no_existe";
@@ -83,7 +84,10 @@ export async function registrarIntento(db: AppDb, userId: string, intento: Inten
       .update(misionProgreso)
       .set({ intentos: fila.intentos + 1, tareasAprobadas: tareas, estado: aprobada ? "aprobada" : "en_curso", aprobadaEn: aprobada ? (fila.aprobadaEn ?? ahora) : null, actualizadoEn: ahora })
       .where(clave);
-    return { misionAprobada: aprobada, casoCompleto: await actualizarCompletitud(tx, userId, caso) };
+    if (aprobada) await otorgarPuntos(tx, { userId, casoId: caso.id, clave: mision.slug, motivo: "mision_aprobada", cantidad: PUNTOS.mision });
+    const casoCompleto = await actualizarCompletitud(tx, userId, caso);
+    if (casoCompleto) await otorgarPuntos(tx, { userId, casoId: caso.id, clave: CLAVE_CASO, motivo: "caso_completo", cantidad: PUNTOS.caso });
+    return { misionAprobada: aprobada, casoCompleto };
   });
 }
 
@@ -92,7 +96,9 @@ export async function guardarEntregable(db: AppDb, userId: string, entrada: { ca
     const caso = await buscarCaso(tx, entrada.caso);
     await inscribir(tx, userId, caso.id);
     await tx.insert(entregables).values({ userId, casoId: caso.id, url: entrada.url }).onConflictDoUpdate({ target: [entregables.userId, entregables.casoId], set: { url: entrada.url, actualizadoEn: new Date() } });
-    return { casoCompleto: await actualizarCompletitud(tx, userId, caso) };
+    const casoCompleto = await actualizarCompletitud(tx, userId, caso);
+    if (casoCompleto) await otorgarPuntos(tx, { userId, casoId: caso.id, clave: CLAVE_CASO, motivo: "caso_completo", cantidad: PUNTOS.caso });
+    return { casoCompleto };
   });
 }
 

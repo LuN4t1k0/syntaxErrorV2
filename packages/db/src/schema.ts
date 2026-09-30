@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
   boolean,
   index,
@@ -268,4 +269,173 @@ export const tutorPreguntas = pgTable(
     respondidaEn: timestamp("respondida_en"),
   },
   (table) => [index("ai_chat_questions_usuario_idx").on(table.userId, table.creadoEn)]
+);
+
+export const transaccionesPuntos = pgTable(
+  "point_transactions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    clave: text("clave").notNull(),
+    motivo: text("motivo").notNull(),
+    cantidad: integer("cantidad").notNull(),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("point_transactions_logro_idx").on(table.userId, table.casoId, table.clave),
+    index("point_transactions_usuario_idx").on(table.userId),
+  ]
+);
+
+export const solicitudesDocente = pgTable(
+  "teacher_requests",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    estado: text("estado").notNull().default("pendiente"),
+    creadaEn: timestamp("creada_en").notNull().defaultNow(),
+    revisadaEn: timestamp("revisada_en"),
+    revisadaPor: uuid("revisada_por").references(() => users.id, { onDelete: "set null" }),
+  },
+  (table) => [
+    uniqueIndex("teacher_requests_una_pendiente_idx").on(table.userId).where(sql`estado = 'pendiente'`),
+    index("teacher_requests_estado_idx").on(table.estado, table.creadaEn),
+  ]
+);
+
+export const clases = pgTable(
+  "classes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    profesorId: uuid("profesor_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rutaId: uuid("ruta_id")
+      .notNull()
+      .references(() => rutas.id, { onDelete: "cascade" }),
+    titulo: text("titulo").notNull(),
+    codigo: text("codigo").notNull(),
+    estado: text("estado").notNull().default("activa"),
+    creadaEn: timestamp("creada_en").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("classes_codigo_idx").on(table.codigo), index("classes_profesor_idx").on(table.profesorId)]
+);
+
+export const claseCasos = pgTable(
+  "clase_casos",
+  {
+    claseId: uuid("clase_id")
+      .notNull()
+      .references(() => clases.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    habilitado: boolean("habilitado").notNull().default(true),
+  },
+  (table) => [primaryKey({ columns: [table.claseId, table.casoId] })]
+);
+
+export const claseInscripciones = pgTable(
+  "class_enrollments",
+  {
+    claseId: uuid("clase_id")
+      .notNull()
+      .references(() => clases.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    estado: text("estado").notNull().default("pendiente"),
+    solicitadaEn: timestamp("solicitada_en").notNull().defaultNow(),
+    decididaEn: timestamp("decidida_en"),
+  },
+  (table) => [primaryKey({ columns: [table.claseId, table.userId] }), index("class_enrollments_usuario_idx").on(table.userId)]
+);
+
+export const preguntasProfesor = pgTable(
+  "teacher_questions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    alumnoId: uuid("alumno_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    mision: text("mision").notNull(),
+    claseId: uuid("clase_id").references(() => clases.id, { onDelete: "set null" }),
+    profesorId: uuid("profesor_id").references(() => users.id, { onDelete: "set null" }),
+    texto: text("texto").notNull(),
+    respuesta: text("respuesta"),
+    estado: text("estado").notNull().default("pendiente"),
+    creadaEn: timestamp("creada_en").notNull().defaultNow(),
+    respondidaEn: timestamp("respondida_en"),
+    respondidaPor: uuid("respondida_por").references(() => users.id, { onDelete: "set null" }),
+  },
+  (table) => [
+    index("teacher_questions_alumno_idx").on(table.alumnoId, table.creadaEn),
+    index("teacher_questions_profesor_idx").on(table.profesorId, table.estado),
+  ]
+);
+
+export const resenasCaso = pgTable(
+  "resenas_caso",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    estrellas: integer("estrellas").notNull(),
+    comentario: text("comentario"),
+    estadoComentario: text("estado_comentario"),
+    moderadaPor: uuid("moderada_por").references(() => users.id, { onDelete: "set null" }),
+    creadaEn: timestamp("creada_en").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("resenas_caso_usuario_idx").on(table.userId, table.casoId), index("resenas_caso_caso_idx").on(table.casoId)]
+);
+
+export const reportes = pgTable(
+  "feedback_reports",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tipo: text("tipo").notNull(),
+    descripcion: text("descripcion").notNull(),
+    pagina: text("pagina").notNull(),
+    caso: text("caso"),
+    mision: text("mision"),
+    estado: text("estado").notNull().default("pendiente"),
+    resueltoPor: uuid("resuelto_por").references(() => users.id, { onDelete: "set null" }),
+    resueltoEn: timestamp("resuelto_en"),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+  },
+  (table) => [index("feedback_reports_estado_idx").on(table.estado, table.creadoEn)]
+);
+
+export const mensajes = pgTable(
+  "user_messages",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    remitenteId: uuid("remitente_id").references(() => users.id, { onDelete: "set null" }),
+    reporteId: uuid("reporte_id").references(() => reportes.id, { onDelete: "set null" }),
+    asunto: text("asunto").notNull(),
+    cuerpo: text("cuerpo").notNull(),
+    leidoEn: timestamp("leido_en"),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+  },
+  (table) => [index("user_messages_usuario_idx").on(table.userId, table.creadoEn)]
 );

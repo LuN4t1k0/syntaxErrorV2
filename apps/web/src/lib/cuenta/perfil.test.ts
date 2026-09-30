@@ -6,11 +6,19 @@ import {
   casoInscripciones,
   casos,
   certificados,
+  claseInscripciones,
+  clases,
   entregables,
+  mensajes,
   misionProgreso,
+  preguntasProfesor,
+  reportes,
+  resenasCaso,
   rutaCasos,
   rutaInscripciones,
   rutas,
+  solicitudesDocente,
+  transaccionesPuntos,
   users,
 } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
@@ -223,6 +231,40 @@ describe("exportarDatos", () => {
     expect(datos?.entregables).toEqual([{ caso: "ventas", url: "https://github.com/ana/ventas", actualizadoEn: expect.any(Date) }]);
     expect(datos?.certificados).toEqual([{ codigo: "CERT-1", tipo: "caso", titulo: "Ventas", emitidoEn: expect.any(Date) }]);
     expect(await acciones()).toEqual(["data_exported"]);
+  });
+
+  it("incluye los datos de comunidad", async () => {
+    const id = await alumna();
+    const [docente] = await db.insert(users).values({ email: "rosa@correo.cl", role: "teacher" }).returning({ id: users.id });
+    const [ruta] = await db
+      .insert(rutas)
+      .values({ slug: "analista", titulo: "Analista", cargo: "Analista", descripcion: "Ruta" })
+      .returning({ id: rutas.id });
+    const [caso] = await db
+      .insert(casos)
+      .values({ slug: "ventas", titulo: "Ventas", cargo: "Analista", empresa: "Distribuidora", entregable: "Repo", misiones: [] })
+      .returning({ id: casos.id });
+    const [clase] = await db.insert(clases).values({ profesorId: docente.id, rutaId: ruta.id, titulo: "3°A", codigo: "ABC234" }).returning({ id: clases.id });
+    await db.insert(claseInscripciones).values({ claseId: clase.id, userId: id, estado: "activa" });
+    await db.insert(transaccionesPuntos).values({ userId: id, casoId: caso.id, clave: "m1", motivo: "mision_aprobada", cantidad: 10 });
+    await db.insert(preguntasProfesor).values({ alumnoId: id, casoId: caso.id, mision: "m1", texto: "¿Cómo filtro?" });
+    await db.insert(resenasCaso).values({ userId: id, casoId: caso.id, estrellas: 5, comentario: "Muy bueno", estadoComentario: "pendiente" });
+    await db.insert(reportes).values({ userId: id, tipo: "error", descripcion: "No carga la tabla", pagina: "/casos/ventas" });
+    await db.insert(mensajes).values({ userId: id, asunto: "Hola", cuerpo: "Gracias por tu reporte" });
+    await db.insert(solicitudesDocente).values({ userId: id });
+
+    const datos = await exportarDatos(db, id, SIN_META);
+    expect(datos?.puntos).toEqual([{ caso: "ventas", motivo: "mision_aprobada", cantidad: 10, creadoEn: expect.any(Date) }]);
+    expect(datos?.preguntasDocentes).toEqual([
+      { caso: "ventas", mision: "m1", texto: "¿Cómo filtro?", respuesta: null, estado: "pendiente", creadaEn: expect.any(Date) },
+    ]);
+    expect(datos?.resenas).toEqual([{ caso: "ventas", estrellas: 5, comentario: "Muy bueno", creadaEn: expect.any(Date) }]);
+    expect(datos?.reportes).toEqual([
+      { tipo: "error", descripcion: "No carga la tabla", pagina: "/casos/ventas", estado: "pendiente", creadoEn: expect.any(Date) },
+    ]);
+    expect(datos?.mensajes).toEqual([{ asunto: "Hola", cuerpo: "Gracias por tu reporte", leidoEn: null, creadoEn: expect.any(Date) }]);
+    expect(datos?.clases).toEqual([{ clase: "3°A", estado: "activa", solicitadaEn: expect.any(Date) }]);
+    expect(datos?.solicitudesDocente).toEqual([{ estado: "pendiente", creadaEn: expect.any(Date) }]);
   });
 });
 

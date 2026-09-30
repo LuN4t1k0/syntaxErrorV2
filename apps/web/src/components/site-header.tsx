@@ -1,12 +1,19 @@
-import { LayoutDashboard, Settings, UserRound } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Mail, Settings, UserRound } from "lucide-react";
 import Link from "next/link";
+import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
+import { contarNoLeidos } from "@/lib/mensajes";
+import { esDocente } from "@/lib/roles";
+import { obtenerUsuarioActual } from "@/lib/sesion";
 import { SignOutButton } from "./sign-out-button";
 import { ThemeToggle } from "./theme-toggle";
 
 export async function SiteHeader() {
   const session = await auth();
   const user = session?.user;
+  // Rol y mensajes se leen desde la base: el JWT no se entera de un cambio de rol.
+  const actual = user ? await obtenerUsuarioActual() : null;
+  const noLeidos = actual ? await contarNoLeidos(getDb(), actual.id) : 0;
   const initials = (user?.name ?? user?.email ?? "U")
     .split(/\s+/)
     .map((part) => part[0])
@@ -30,6 +37,17 @@ export async function SiteHeader() {
               <LayoutDashboard size={16} />
               <span className="hidden sm:inline">Dashboard</span>
             </Link>
+            <Link className="nav-link" href="/dashboard/mensajes" aria-label={noLeidos > 0 ? `Mensajes, ${noLeidos} sin leer` : "Mensajes"}>
+              <Mail size={16} />
+              <span className="hidden sm:inline">Mensajes</span>
+              {noLeidos > 0 ? <span className="badge">{noLeidos}</span> : null}
+            </Link>
+            {actual && esDocente(actual) ? (
+              <Link className="nav-link" href="/profesor">
+                <GraduationCap size={16} />
+                <span className="hidden sm:inline">Docencia</span>
+              </Link>
+            ) : null}
           </nav>
         ) : null}
 
@@ -48,7 +66,7 @@ export async function SiteHeader() {
                 <strong className="block truncate text-sm">{user.name ?? "Estudiante"}</strong>
                 <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
               </div>
-              {user.role === "admin" ? (
+              {actual?.rol === "admin" ? (
                 <span className="flex items-center gap-2 px-3 py-2 text-sm font-semibold text-muted-foreground">
                   <Settings size={15} />
                   Rol: administración

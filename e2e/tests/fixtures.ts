@@ -1,19 +1,33 @@
-import { test as base } from "@playwright/test";
+import { test as base, type BrowserContext, type Page } from "@playwright/test";
 
 function ipAleatoria(): string {
   const octeto = () => Math.floor(Math.random() * 250) + 1;
   return `10.${octeto()}.${octeto()}.${octeto()}`;
 }
 
-export const test = base.extend<{ ip: string }>({
+// Solo las requests a la app llevan la IP: agregarla a todo (extraHTTPHeaders) rompe el CDN de Pyodide por CORS.
+async function conIp(context: BrowserContext, ip: string): Promise<void> {
+  await context.route("http://localhost:3000/**", (route) => route.continue({ headers: { ...route.request().headers(), "x-forwarded-for": ip } }));
+}
+
+export const test = base.extend<{ ip: string; nuevaPagina: () => Promise<Page> }>({
   ip: async ({}, use) => {
     await use(ipAleatoria());
   },
   context: async ({ context, ip }, use) => {
-    await context.route("http://localhost:3000/**", (route) =>
-      route.continue({ headers: { ...route.request().headers(), "x-forwarded-for": ip } })
-    );
+    await conIp(context, ip);
     await use(context);
+  },
+  // Otra sesión de navegador en el mismo test, por ejemplo la del docente que responde.
+  nuevaPagina: async ({ browser }, use) => {
+    const contextos: BrowserContext[] = [];
+    await use(async () => {
+      const contexto = await browser.newContext({ baseURL: "http://localhost:3000" });
+      await conIp(contexto, ipAleatoria());
+      contextos.push(contexto);
+      return contexto.newPage();
+    });
+    for (const contexto of contextos) await contexto.close();
   },
 });
 

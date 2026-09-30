@@ -5,6 +5,8 @@ import { auth } from "@/lib/auth";
 import { fechaCertificado } from "@/lib/certificados/formato";
 import { listarCertificados } from "@/lib/certificados/servicio";
 import { necesitaVerificar } from "@/lib/cuenta/verificacion";
+import { calcularNivel } from "@/lib/puntos/niveles";
+import { obtenerNivel } from "@/lib/puntos/servicio";
 import { listarCasosDelUsuario } from "@/lib/progreso/servicio";
 
 export const metadata = { title: "Tu panel" };
@@ -16,6 +18,7 @@ export default async function DashboardPage() {
   const db = getDb();
   const casosDelUsuario = userId ? await listarCasosDelUsuario(db, userId) : [];
   const certificados = userId ? await listarCertificados(db, userId) : [];
+  const nivel = userId ? await obtenerNivel(db, userId) : calcularNivel(0);
   const verificar = userId ? await necesitaVerificar(db, userId) : false;
   return (
     <main className="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 lg:px-8">
@@ -25,6 +28,18 @@ export default async function DashboardPage() {
         Aquí vas a ver tus casos en curso, tus entregables y tus certificados.
       </p>
       {verificar ? <AvisoVerificacion /> : null}
+      <section className="card grid gap-1 p-4" aria-label="Tu nivel">
+        <p className="font-mono text-sm font-bold text-primary">{`> nivel ${nivel.nivel}`}</p>
+        <p className="text-xl font-black">{`${nivel.puntos} puntos`}</p>
+        <p className="text-sm text-muted-foreground">
+          {`Te faltan ${nivel.faltan} para el nivel ${nivel.nivel + 1}. Sumas puntos al aprobar misiones, completar casos y acertar decisiones.`}
+        </p>
+      </section>
+      <nav className="flex flex-wrap gap-3 text-sm font-bold" aria-label="Comunidad">
+        <Link className="text-primary hover:underline" href="/dashboard/preguntas">Tus preguntas a docentes</Link>
+        <Link className="text-primary hover:underline" href="/dashboard/clases">Tus clases</Link>
+        <Link className="text-primary hover:underline" href="/dashboard/mensajes">Tus mensajes</Link>
+      </nav>
       <section className="grid gap-3">
         <h2 className="text-xl font-black">Tus casos</h2>
         {casosDelUsuario.length === 0 ? (

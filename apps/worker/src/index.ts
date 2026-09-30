@@ -1,9 +1,11 @@
 import { Worker } from "bullmq";
 import { getDb } from "@syntaxerror/db/client";
 import { crearProveedorDesdeEntorno } from "@syntaxerror/ia/proveedor";
+import { COLA_AVISOS, type TrabajoAviso } from "@syntaxerror/queue/avisos";
 import { COLA_EMAILS, conexionWorker, type TrabajoEmail } from "@syntaxerror/queue/emails";
 import { EVENTO_TUTOR, salaTutor } from "@syntaxerror/queue/eventos";
 import { COLA_TUTOR, type TrabajoTutor } from "@syntaxerror/queue/tutor";
+import { crearProcesadorAvisos } from "./avisos/procesar";
 import { crearProcesadorEmails } from "./emails/procesar";
 import { getRedis } from "./redis";
 import { createWorkerServer } from "./server";
@@ -28,6 +30,15 @@ emails.on("failed", (job, error) => {
 });
 emails.on("error", (error) => {
   console.error(`[emails] error de worker: ${error.message}`);
+});
+
+const avisos = new Worker<TrabajoAviso>(
+  COLA_AVISOS,
+  crearProcesadorAvisos((sala, evento, datos) => void io.to(sala).emit(evento, datos)),
+  { connection: conexionWorker(redisUrl), concurrency: 5 }
+);
+avisos.on("error", (error) => {
+  console.error(`[avisos] error de worker: ${error.message}`);
 });
 
 const emitir: EmisorTutor = (clientId, evento) => void io.to(salaTutor(clientId)).emit(EVENTO_TUTOR, evento);
@@ -57,6 +68,7 @@ async function shutdown(signal: string) {
   console.log(`[worker] ${signal}: cerrando`);
   io.close();
   await emails.close();
+  await avisos.close();
   await tutor?.close();
   await redis.quit();
   process.exit(0);

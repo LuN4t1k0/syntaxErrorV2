@@ -12,6 +12,28 @@ const casos: Array<[TrabajoEmail, string]> = [
   [{ tipo: "recuperar-clave", para: "ana@correo.cl", nombre: "Ana", enlace }, "Restablece tu contraseña"],
   [{ tipo: "cuenta-eliminada", para: "ana@correo.cl", nombre: "Ana" }, "Tu cuenta fue eliminada"],
   [{ tipo: "certificado-emitido", para: "ana@correo.cl", nombre: "Ana", titulo: "Ventas de marzo", enlace }, "Obtuviste un certificado"],
+  [
+    { tipo: "pregunta-profesor-nueva", para: "docente@correo.cl", nombre: "Rosa", alumno: "Ana", caso: "Ventas", mision: "Clientes", pregunta: "¿Uso WHERE?", enlace },
+    "Tienes una pregunta nueva",
+  ],
+  [
+    { tipo: "pregunta-profesor-respondida", para: "ana@correo.cl", nombre: "Ana", caso: "Ventas", mision: "Clientes", pregunta: "¿Uso WHERE?", respuesta: "Sí, con comillas.", enlace },
+    "Respondieron tu pregunta",
+  ],
+  [{ tipo: "resena-nueva", para: "admin@correo.cl", nombre: "Admin", caso: "Ventas", estrellas: 4, comentario: "Muy claro" }, "Hay una reseña por moderar"],
+  [
+    { tipo: "reporte-nuevo", para: "admin@correo.cl", nombre: "Admin", tipoReporte: "error", descripcion: "No carga", pagina: "/casos/ventas", autor: "Ana" },
+    "Reportaron un error",
+  ],
+  [
+    { tipo: "reporte-nuevo", para: "admin@correo.cl", nombre: "Admin", tipoReporte: "sugerencia", descripcion: "Más casos", pagina: "/", autor: "Ana" },
+    "Llegó una sugerencia",
+  ],
+  [{ tipo: "solicitud-docente-nueva", para: "admin@correo.cl", nombre: "Admin", solicitante: "Rosa (rosa@correo.cl)" }, "Pidieron acceso docente"],
+  [{ tipo: "clase-solicitud", para: "docente@correo.cl", nombre: "Rosa", alumno: "Ana", clase: "3°A", enlace }, "Pidieron entrar a tu clase"],
+  [{ tipo: "clase-decision", para: "ana@correo.cl", nombre: "Ana", clase: "3°A", aceptada: true, enlace }, "Te aceptaron en la clase"],
+  [{ tipo: "clase-decision", para: "ana@correo.cl", nombre: "Ana", clase: "3°A", aceptada: false, enlace }, "Ya no estás en la clase"],
+  [{ tipo: "mensaje-nuevo", para: "ana@correo.cl", nombre: "Ana", asunto: "Gracias por tu reporte", enlace }, "Tienes un mensaje nuevo"],
 ];
 
 describe("construirEmail", () => {
@@ -37,5 +59,25 @@ describe("construirEmail", () => {
   it("saluda por nombre o con un saludo neutro", () => {
     expect(construirEmail({ tipo: "clave-cambiada", para: "a@b.cl", nombre: "Ana" }).texto).toContain("Hola, Ana:");
     expect(construirEmail({ tipo: "clave-cambiada", para: "a@b.cl", nombre: null }).texto).toContain("Hola:");
+  });
+
+  it("la respuesta de una pregunta incluye la pregunta y la respuesta", () => {
+    const email = construirEmail(casos[8][0]);
+    expect(email.texto).toContain("¿Uso WHERE?");
+    expect(email.texto).toContain("Sí, con comillas.");
+  });
+
+  it("el texto que escribe una persona se escapa en el HTML", () => {
+    const email = construirEmail({
+      tipo: "reporte-nuevo",
+      para: "admin@correo.cl",
+      nombre: null,
+      tipoReporte: "error",
+      descripcion: '<img src=x onerror="alert(1)">',
+      pagina: "/",
+      autor: "Ana",
+    });
+    expect(email.html).not.toContain("<img src=x");
+    expect(email.html).toContain("&lt;img");
   });
 });

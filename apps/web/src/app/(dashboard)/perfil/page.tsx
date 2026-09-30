@@ -6,10 +6,13 @@ import { FormularioNombre } from "@/components/cuenta/formulario-nombre";
 import { FormularioPortafolio } from "@/components/cuenta/formulario-portafolio";
 import { Seccion } from "@/components/cuenta/seccion";
 import { SeccionEliminar } from "@/components/cuenta/seccion-eliminar";
+import { SeccionDocencia } from "@/components/comunidad/seccion-docencia";
 import { auth } from "@/lib/auth";
 import { obtenerPerfil } from "@/lib/cuenta/perfil";
 import { enlacePortafolio } from "@/lib/cuenta/enlaces";
+import { estadoDocencia } from "@/lib/docentes";
 import { sugerirUsuario } from "@/lib/portafolio";
+import { obtenerUsuarioActual } from "@/lib/sesion";
 
 export const metadata = { title: "Tu perfil" };
 
@@ -20,6 +23,8 @@ export default async function PerfilPage() {
 
   const perfil = await obtenerPerfil(getDb(), userId);
   if (!perfil) redirect("/login?callbackUrl=/perfil");
+  const actual = await obtenerUsuarioActual();
+  const docencia = actual ? await estadoDocencia(getDb(), actual) : "puede_solicitar";
 
   return (
     <main className="mx-auto grid max-w-3xl gap-6 px-4 py-12 sm:px-6">
@@ -56,6 +61,10 @@ export default async function PerfilPage() {
           sugerido={sugerirUsuario(perfil.nombre, perfil.email)}
           urlBase={enlacePortafolio("")}
         />
+      </Seccion>
+
+      <Seccion titulo="Docencia">
+        <SeccionDocencia estadoInicial={docencia} />
       </Seccion>
 
       <Seccion

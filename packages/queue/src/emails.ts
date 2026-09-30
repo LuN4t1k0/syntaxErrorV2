@@ -14,7 +14,15 @@ export type TrabajoEmail =
   | (Destinatario & { tipo: "clave-cambiada" })
   | (Destinatario & { tipo: "recuperar-clave"; enlace: string })
   | (Destinatario & { tipo: "cuenta-eliminada" })
-  | (Destinatario & { tipo: "certificado-emitido"; titulo: string; enlace: string });
+  | (Destinatario & { tipo: "certificado-emitido"; titulo: string; enlace: string })
+  | (Destinatario & { tipo: "pregunta-profesor-nueva"; alumno: string; caso: string; mision: string; pregunta: string; enlace: string })
+  | (Destinatario & { tipo: "pregunta-profesor-respondida"; caso: string; mision: string; pregunta: string; respuesta: string; enlace: string })
+  | (Destinatario & { tipo: "resena-nueva"; caso: string; estrellas: number; comentario: string })
+  | (Destinatario & { tipo: "reporte-nuevo"; tipoReporte: "error" | "sugerencia"; descripcion: string; pagina: string; autor: string })
+  | (Destinatario & { tipo: "solicitud-docente-nueva"; solicitante: string })
+  | (Destinatario & { tipo: "clase-solicitud"; alumno: string; clase: string; enlace: string })
+  | (Destinatario & { tipo: "clase-decision"; clase: string; aceptada: boolean; enlace: string })
+  | (Destinatario & { tipo: "mensaje-nuevo"; asunto: string; enlace: string });
 
 export type ColaEmails = {
   encolar(trabajo: TrabajoEmail): Promise<void>;

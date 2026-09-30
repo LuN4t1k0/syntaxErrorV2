@@ -6,11 +6,19 @@ import {
   casoInscripciones,
   casos,
   certificados,
+  claseInscripciones,
+  clases,
   entregables,
+  mensajes,
   misionProgreso,
+  preguntasProfesor,
+  reportes,
+  resenasCaso,
   rutaInscripciones,
   rutas,
+  solicitudesDocente,
   tokensEmail,
+  transaccionesPuntos,
   users,
 } from "@syntaxerror/db/schema";
 import { normalizeEmail } from "@/app/api/auth/register/service";
@@ -56,6 +64,13 @@ export type DatosExportados = {
   rutas: { ruta: string; inscritoEn: Date; completadoEn: Date | null }[];
   entregables: { caso: string; url: string; actualizadoEn: Date }[];
   certificados: { codigo: string; tipo: string; titulo: string; emitidoEn: Date }[];
+  puntos: { caso: string; motivo: string; cantidad: number; creadoEn: Date }[];
+  preguntasDocentes: { caso: string; mision: string; texto: string; respuesta: string | null; estado: string; creadaEn: Date }[];
+  resenas: { caso: string; estrellas: number; comentario: string | null; creadaEn: Date }[];
+  reportes: { tipo: string; descripcion: string; pagina: string; estado: string; creadoEn: Date }[];
+  mensajes: { asunto: string; cuerpo: string; leidoEn: Date | null; creadoEn: Date }[];
+  clases: { clase: string; estado: string; solicitadaEn: Date }[];
+  solicitudesDocente: { estado: string; creadaEn: Date }[];
 };
 
 async function buscarUsuario(db: DbClient, userId: string): Promise<Usuario | null> {
@@ -248,6 +263,48 @@ export async function exportarDatos(db: AppDb, userId: string, meta: MetaRequest
       .where(eq(certificados.userId, userId)),
   ]);
 
+  const [puntos, preguntasDocentes, resenas, susReportes, susMensajes, susClases, solicitudes] = await Promise.all([
+    db
+      .select({ caso: casos.slug, motivo: transaccionesPuntos.motivo, cantidad: transaccionesPuntos.cantidad, creadoEn: transaccionesPuntos.creadoEn })
+      .from(transaccionesPuntos)
+      .innerJoin(casos, eq(casos.id, transaccionesPuntos.casoId))
+      .where(eq(transaccionesPuntos.userId, userId)),
+    db
+      .select({
+        caso: casos.slug,
+        mision: preguntasProfesor.mision,
+        texto: preguntasProfesor.texto,
+        respuesta: preguntasProfesor.respuesta,
+        estado: preguntasProfesor.estado,
+        creadaEn: preguntasProfesor.creadaEn,
+      })
+      .from(preguntasProfesor)
+      .innerJoin(casos, eq(casos.id, preguntasProfesor.casoId))
+      .where(eq(preguntasProfesor.alumnoId, userId)),
+    db
+      .select({ caso: casos.slug, estrellas: resenasCaso.estrellas, comentario: resenasCaso.comentario, creadaEn: resenasCaso.creadaEn })
+      .from(resenasCaso)
+      .innerJoin(casos, eq(casos.id, resenasCaso.casoId))
+      .where(eq(resenasCaso.userId, userId)),
+    db
+      .select({ tipo: reportes.tipo, descripcion: reportes.descripcion, pagina: reportes.pagina, estado: reportes.estado, creadoEn: reportes.creadoEn })
+      .from(reportes)
+      .where(eq(reportes.userId, userId)),
+    db
+      .select({ asunto: mensajes.asunto, cuerpo: mensajes.cuerpo, leidoEn: mensajes.leidoEn, creadoEn: mensajes.creadoEn })
+      .from(mensajes)
+      .where(eq(mensajes.userId, userId)),
+    db
+      .select({ clase: clases.titulo, estado: claseInscripciones.estado, solicitadaEn: claseInscripciones.solicitadaEn })
+      .from(claseInscripciones)
+      .innerJoin(clases, eq(clases.id, claseInscripciones.claseId))
+      .where(eq(claseInscripciones.userId, userId)),
+    db
+      .select({ estado: solicitudesDocente.estado, creadaEn: solicitudesDocente.creadaEn })
+      .from(solicitudesDocente)
+      .where(eq(solicitudesDocente.userId, userId)),
+  ]);
+
   await auditar(db, usuario, "data_exported", meta);
   return {
     exportadoEn: new Date().toISOString(),
@@ -265,6 +322,13 @@ export async function exportarDatos(db: AppDb, userId: string, meta: MetaRequest
     rutas: rutasInscritas,
     entregables: susEntregables,
     certificados: susCertificados,
+    puntos,
+    preguntasDocentes,
+    resenas,
+    reportes: susReportes,
+    mensajes: susMensajes,
+    clases: susClases,
+    solicitudesDocente: solicitudes,
   };
 }
 
