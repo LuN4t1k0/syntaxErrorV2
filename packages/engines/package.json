@@ -1,0 +1,24 @@
+{
+  "name": "@syntaxerror/engines",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tipos": "./src/tipos.ts",
+    "./sql": "./src/sql.ts",
+    "./sheet": "./src/sheet.ts",
+    "./python": "./src/python.ts",
+    "./python-cliente": "./src/python-cliente.ts"
+  },
+  "scripts": { "test": "vitest run" },
+  "dependencies": {
+    "alasql": "4.19.1",
+    "hyperformula": "3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "pyodide": "0.28.3",
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.9"
+  }
+}

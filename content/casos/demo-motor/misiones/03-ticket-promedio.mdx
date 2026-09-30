@@ -1,0 +1,29 @@
+---
+titulo: Ticket promedio
+tiempo: 10
+---
+
+<Brief de="Paula Contreras, jefa comercial">
+Última cosa: quiero saber cuánto gasta en promedio un cliente por compra, el famoso ticket promedio. Hazlo en Python, que después lo vamos a automatizar.
+</Brief>
+
+<Concepto>
+Con pandas lees un CSV como una tabla (un `DataFrame`) y calculas el promedio de una columna con `.mean()`.
+
+<PythonEjemplo codigo={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")\nprint(ventas.head())"} />
+</Concepto>
+
+<PythonTask
+  id="ticket-promedio"
+  enunciado="La tabla ventas ya está cargada. Guarda en ticket_promedio el promedio de la columna monto, redondeado a pesos (sin decimales)."
+  paquetes={["pandas"]}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")"}
+  inicial="ticket_promedio = None"
+  solucion={"ticket_promedio = round(ventas[\"monto\"].mean())"}
+  pruebas={"assert ticket_promedio is not None, \"Todavía no guardas nada en ticket_promedio.\"\nassert ticket_promedio == 174833, \"ticket_promedio debe ser el promedio de monto, redondeado.\""}
+  pistas={["Una columna se lee con ventas[\"monto\"].", "round() quita los decimales."]}
+/>
+
+<Debrief entrevista="Una pregunta típica: ¿por qué el promedio puede engañar? Porque un par de compras muy grandes lo suben. Ahí conviene mirar también la mediana con .median().">
+El ticket promedio es el total vendido dividido por la cantidad de compras. En este caso, la venta de Punta Arenas sube bastante el promedio.
+</Debrief>

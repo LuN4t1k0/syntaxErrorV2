@@ -1,0 +1,7 @@
+slug: data-analyst
+titulo: Data Analyst
+cargo: Analista de datos junior
+descripcion: Resuelve casos reales de una empresa chilena con SQL, planillas, Python y Power BI, y termina con un portafolio que puedes mostrar en una entrevista.
+estado: borrador
+casos:
+  - demo-motor

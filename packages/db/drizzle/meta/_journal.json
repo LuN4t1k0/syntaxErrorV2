@@ -8,6 +8,13 @@
       "when": 1790723910331,
       "tag": "0000_needy_psynapse",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790729263289,
+      "tag": "0001_spooky_makkari",
+      "breakpoints": true
     }
   ]
 }

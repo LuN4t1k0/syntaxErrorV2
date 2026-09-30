@@ -1,0 +1,10 @@
+slug: ventas
+titulo: Ventas de marzo
+cargo: Analista de datos junior
+empresa: Distribuidora de prueba
+dataset: Clientes y ventas de marzo
+entregable: Un repositorio con las consultas del caso
+misiones:
+  - 01-filtrar
+  - 02-hoja
+  - 03-python

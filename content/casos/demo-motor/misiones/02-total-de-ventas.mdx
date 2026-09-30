@@ -1,0 +1,25 @@
+---
+titulo: Total de ventas
+tiempo: 8
+---
+
+<Brief de="Paula Contreras, jefa comercial">
+Gerencia me pide el total vendido en marzo para la reunión de mañana. Te dejé la hoja de ventas: calcula el total en la celda F2 con una fórmula, así si alguien corrige un monto el total se actualiza solo.
+</Brief>
+
+<Concepto>
+`SUMA` suma todos los números de un rango. El rango `D2:D7` va desde la celda D2 hasta la D7. Puedes separar los argumentos con `;`, como en Excel en español.
+</Concepto>
+
+<SheetTask
+  id="total-marzo"
+  hoja="ventas"
+  enunciado="En la celda F2, calcula el total de la columna monto con la función SUMA."
+  celdas={[{ celda: "F2", valor: 1049000, funcion: "SUMA" }]}
+  solucion={{ F2: "=SUMA(D2:D7)" }}
+  pistas={["Selecciona la celda F2 y escribe la fórmula en la barra de fórmulas.", "Los montos están de D2 a D7."]}
+/>
+
+<Debrief entrevista="Te pueden preguntar la diferencia entre escribir el número a mano y usar una fórmula. La respuesta: la fórmula se recalcula sola y deja claro de dónde sale el número.">
+Un total escrito a mano queda desactualizado apenas cambia un dato. Con `SUMA` el cálculo queda a la vista y cualquiera puede revisarlo.
+</Debrief>

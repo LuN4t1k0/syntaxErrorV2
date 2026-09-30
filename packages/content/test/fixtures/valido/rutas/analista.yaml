@@ -1,0 +1,7 @@
+slug: analista
+titulo: Analista de datos
+cargo: Analista de datos junior
+descripcion: Ruta de prueba para los tests del cargador.
+estado: publicada
+casos:
+  - ventas

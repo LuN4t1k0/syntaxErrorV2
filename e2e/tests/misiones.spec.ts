@@ -1,0 +1,64 @@
+import { expect, test, type Page } from "@playwright/test";
+
+const CASO = "/casos/demo-motor";
+const MISION_SQL = `${CASO}/01-clientes-de-regiones`;
+const MISION_HOJA = `${CASO}/02-total-de-ventas`;
+const MISION_PYTHON = `${CASO}/03-ticket-promedio`;
+const CONSULTA_CORRECTA = "SELECT nombre, ciudad FROM clientes WHERE ciudad <> 'Santiago';";
+
+async function registrarse(page: Page, callbackUrl: string) {
+  await page.goto(`/registro?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  await page.locator('input[name="name"]').fill("Valentina Muñoz");
+  await page.locator('input[name="email"]').fill(`misiones-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`);
+  await page.locator('input[name="password"]').fill("clave-segura-123");
+  await page.getByRole("button", { name: "Crear y entrar" }).click();
+}
+
+async function validarYEsperar(page: Page) {
+  const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  await page.getByRole("button", { name: "Validar" }).click();
+  await reportado;
+}
+
+test("sin sesión: aprueba la misión SQL y el progreso se sube al crear la cuenta", async ({ page }) => {
+  await page.goto(MISION_SQL);
+  await page.getByLabel("Consulta SQL").fill("SELECT nombre, ciudad FROM clientes");
+  await validarYEsperar(page);
+  await expect(page.getByText("Tu consulta trae 6 filas, se esperan 4.")).toBeVisible();
+  await page.getByLabel("Consulta SQL").fill(CONSULTA_CORRECTA);
+  await validarYEsperar(page);
+  await expect(page.getByText("¡Tarea aprobada!")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Misión aprobada" })).toBeVisible();
+  const sincronizado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso/sync") && respuesta.ok());
+  await registrarse(page, CASO);
+  await expect(page).toHaveURL(new RegExp(`${CASO}$`));
+  await sincronizado;
+  await page.reload();
+  await expect(page.getByTestId("estado-01-clientes-de-regiones")).toHaveText("Aprobada");
+});
+
+test("con sesión: aprueba las tres misiones y completa el caso con su entregable", async ({ page }) => {
+  test.setTimeout(240_000);
+  await registrarse(page, "/dashboard");
+  await expect(page).toHaveURL(/\/dashboard/);
+  await page.goto(MISION_SQL);
+  await page.getByLabel("Consulta SQL").fill(CONSULTA_CORRECTA);
+  await validarYEsperar(page);
+  await page.goto(MISION_HOJA);
+  await page.getByRole("button", { name: "Celda F2" }).click();
+  await page.getByLabel("Fórmula").fill("=suma(d2;d7)");
+  await page.getByLabel("Fórmula").press("Enter");
+  await expect(page.getByRole("button", { name: "Celda F2" })).toHaveText("1049000");
+  await validarYEsperar(page);
+  await page.goto(MISION_PYTHON);
+  await expect(page.getByText("Python listo")).toBeVisible({ timeout: 150_000 });
+  await page.getByLabel("Código Python").fill('ticket_promedio = round(ventas["monto"].mean())');
+  await validarYEsperar(page);
+  await page.goto(CASO);
+  for (const mision of ["01-clientes-de-regiones", "02-total-de-ventas", "03-ticket-promedio"]) {
+    await expect(page.getByTestId(`estado-${mision}`)).toHaveText("Aprobada");
+  }
+  await page.getByLabel("Enlace a tu entregable").fill("https://github.com/valentina/demo-motor");
+  await page.getByRole("button", { name: "Guardar entregable" }).click();
+  await expect(page.getByText("Caso completo", { exact: true })).toBeVisible();
+});

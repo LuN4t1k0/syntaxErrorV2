@@ -1,0 +1,10 @@
+slug: demo-motor
+titulo: "Demo del motor: ventas de marzo"
+cargo: Analista de datos junior
+empresa: Distribuidora Los Andes
+dataset: Clientes y ventas de marzo de 2025
+entregable: Un repositorio en GitHub con la consulta, la planilla y el script de Python que usaste, más un README que explique qué encontraste.
+misiones:
+  - 01-clientes-de-regiones
+  - 02-total-de-ventas
+  - 03-ticket-promedio

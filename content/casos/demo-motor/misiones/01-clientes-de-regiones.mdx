@@ -1,0 +1,35 @@
+---
+titulo: Clientes de regiones
+tiempo: 10
+---
+
+<Brief de="Paula Contreras, jefa comercial">
+Hola, te doy la bienvenida al equipo. Estamos armando una campaña de despacho gratis para regiones y necesito saber qué clientes compran fuera de Santiago. Mándame el nombre y la ciudad de cada uno.
+</Brief>
+
+<Concepto>
+`WHERE` filtra las filas de una tabla: solo quedan las que cumplen la condición. Para decir "distinto de" se usa el operador `<>`.
+
+<SqlEjemplo consulta="SELECT nombre, ciudad FROM clientes WHERE ciudad = 'Temuco'" />
+</Concepto>
+
+<SqlTask
+  id="clientes-fuera-de-santiago"
+  enunciado="Escribe una consulta que traiga el nombre y la ciudad de los clientes que no son de Santiago."
+  solucion="SELECT nombre, ciudad FROM clientes WHERE ciudad <> 'Santiago'"
+  comparar="filas-sin-orden"
+  pistas={["Parte con SELECT nombre, ciudad FROM clientes.", "Agrega un WHERE sobre la columna ciudad.", "El operador para decir distinto es <>."]}
+/>
+
+<Decision
+  pregunta="Paula te responde: 'Ojo, solo los clientes activos'. En la tabla no hay ninguna columna que diga si un cliente está activo. ¿Qué haces?"
+  opciones={[
+    { texto: "Le pregunto qué significa activo para ella; por ejemplo, si compró en los últimos 3 meses.", correcta: true, porque: "Aclarar el criterio antes de entregar evita un reporte que responde otra pregunta." },
+    { texto: "Entrego todos los clientes igual; si no hay columna, da lo mismo.", porque: "Paula va a tomar decisiones con una lista que no es la que pidió." },
+    { texto: "Invento un criterio y no le cuento.", porque: "Un criterio oculto hace que nadie pueda revisar ni repetir tu análisis." },
+  ]}
+/>
+
+<Debrief entrevista="Es común que te pidan filtrar con varias condiciones a la vez, por ejemplo clientes de regiones con compras sobre 100 mil pesos. Ahí combinas condiciones con AND y OR.">
+`WHERE` se evalúa fila por fila antes de mostrar el resultado. El error más común es olvidar las comillas simples alrededor de un texto: `ciudad <> Santiago` falla y `ciudad <> 'Santiago'` funciona.
+</Debrief>

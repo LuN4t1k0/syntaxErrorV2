@@ -1,0 +1,18 @@
+import type { z } from "zod";
+import type { Fila } from "@syntaxerror/engines/tipos";
+import type { Bloque, rutaSchema } from "./esquemas";
+
+export type Ruta = z.output<typeof rutaSchema>;
+export type Tabla = { nombre: string; filas: Fila[]; csv: string };
+export type Mision = { slug: string; titulo: string; tiempo: number; fuente: string; bloques: Bloque[] };
+export type Caso = {
+  slug: string;
+  titulo: string;
+  cargo: string;
+  empresa: string;
+  dataset: string;
+  entregable: string;
+  misiones: Mision[];
+  datos: Tabla[];
+};
+export type Contenido = { rutas: Ruta[]; casos: Caso[] };

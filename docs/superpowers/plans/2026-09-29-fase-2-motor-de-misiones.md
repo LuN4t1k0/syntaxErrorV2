@@ -96,7 +96,7 @@ apps/web/src/
     - `compararSql(tablas: Tablas, tarea: SqlComparacion, consulta: string): ResultadoTarea`;
     - `revisarSql(tablas: Tablas, tarea: SqlTarea, consulta: string): ResultadoTarea`.
 
-- [ ] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
+- [x] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
 
 `packages/engines/package.json`:
 ```json
@@ -140,7 +140,7 @@ export default defineConfig({
 
 En `docker-compose.yml`, agregar a `x-node.volumes` `- engines_node_modules:/app/packages/engines/node_modules`, y en `volumes:` agregar `engines_node_modules:`.
 
-- [ ] **Step 2: Crear `src/tipos.ts`**
+- [x] **Step 2: Crear `src/tipos.ts`**
 
 ```ts
 export type Fila = Record<string, unknown>;
@@ -148,7 +148,7 @@ export type Fila = Record<string, unknown>;
 export type ResultadoTarea = { aprobada: boolean; diagnostico: string | null };
 ```
 
-- [ ] **Step 3: Escribir el test que falla, `src/sql.test.ts`**
+- [x] **Step 3: Escribir el test que falla, `src/sql.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -263,12 +263,12 @@ describe("revisarSql", () => {
 });
 ```
 
-- [ ] **Step 4: Instalar y ver fallar el test**
+- [x] **Step 4: Instalar y ver fallar el test**
 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter @syntaxerror/engines test`
 Expected: FAIL, porque no se puede resolver `./sql`.
 
-- [ ] **Step 5: Crear `src/sql.ts`** (portado de `$V1/aula-sql/src/lib/sql-engine.js`, con una base aislada por revisión en vez de la base global)
+- [x] **Step 5: Crear `src/sql.ts`** (portado de `$V1/aula-sql/src/lib/sql-engine.js`, con una base aislada por revisión en vez de la base global)
 
 ```ts
 import alasql from "alasql";
@@ -423,12 +423,12 @@ export function revisarSql(tablas: Tablas, tarea: SqlTarea, consulta: string): R
 }
 ```
 
-- [ ] **Step 6: Correr los tests y el typecheck**
+- [x] **Step 6: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/engines test && cd packages/engines && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (13 tests) y `tsc` sin errores.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/engines docker-compose.yml pnpm-lock.yaml
@@ -460,12 +460,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `aplicarSolucion(grilla: Grilla, solucion: Record<string, string | number>): Hoja`;
   - `grillaDesdeFilas(filas: Fila[]): Grilla`.
 
-- [ ] **Step 1: Agregar HyperFormula**
+- [x] **Step 1: Agregar HyperFormula**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/engines add hyperformula@3.4.0`
 Expected: `package.json` de engines queda con `"hyperformula": "3.4.0"` en `dependencies`.
 
-- [ ] **Step 2: Escribir el test que falla, `src/sheet.test.ts`**
+- [x] **Step 2: Escribir el test que falla, `src/sheet.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -573,12 +573,12 @@ describe("grillas desde datos", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que falla**
+- [x] **Step 3: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/engines test -- src/sheet.test.ts`
 Expected: FAIL, porque no se puede resolver `./sheet`.
 
-- [ ] **Step 4: Crear `src/sheet.ts`** (portado de `$V1/aula-excel/src/lib/sheet-engine.js`)
+- [x] **Step 4: Crear `src/sheet.ts`** (portado de `$V1/aula-excel/src/lib/sheet-engine.js`)
 
 ```ts
 import { HyperFormula } from "hyperformula";
@@ -733,12 +733,12 @@ export function grillaDesdeFilas(filas: Fila[]): Grilla {
 }
 ```
 
-- [ ] **Step 5: Correr los tests y el typecheck**
+- [x] **Step 5: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/engines test && cd packages/engines && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (25 tests en total) y `tsc` sin errores.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add packages/engines pnpm-lock.yaml
@@ -775,12 +775,12 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
     - `type ClientePython = { iniciar(): Promise<void>; ejecutar(preparacion: string, codigo: string): Promise<ResultadoEjecucion>; revisar(tarea: TareaPython, codigo: string): Promise<ResultadoRevision>; destruir(): void }`;
     - `crearClientePython(opciones: OpcionesPython, deps: { crearTrabajador: () => TrabajadorLike; limiteMs?: number; limiteCargaMs?: number }): ClientePython`.
 
-- [ ] **Step 1: Agregar Pyodide para los tests en Node**
+- [x] **Step 1: Agregar Pyodide para los tests en Node**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/engines add -D pyodide@0.28.3`
 Expected: `package.json` de engines queda con `"pyodide": "0.28.3"` en `devDependencies`.
 
-- [ ] **Step 2: Escribir el test que falla, `src/python.test.ts`**
+- [x] **Step 2: Escribir el test que falla, `src/python.test.ts`**
 
 Este test carga Pyodide real en Node (unos segundos) y no usa paquetes externos, así que no necesita red.
 
@@ -853,7 +853,7 @@ describe("crearSesionPython", () => {
 });
 ```
 
-- [ ] **Step 3: Escribir el test que falla, `src/python-cliente.test.ts`**
+- [x] **Step 3: Escribir el test que falla, `src/python-cliente.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -965,12 +965,12 @@ describe("crearClientePython", () => {
 });
 ```
 
-- [ ] **Step 4: Verificar que fallan**
+- [x] **Step 4: Verificar que fallan**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/engines test -- src/python.test.ts src/python-cliente.test.ts`
 Expected: FAIL, porque no se pueden resolver `./python` ni `./python-cliente`.
 
-- [ ] **Step 5: Crear `src/python.ts`** (portado de `$V1/aula-python/src/lib/py-engine.js`, con pruebas `assert` en vez de comparar una variable)
+- [x] **Step 5: Crear `src/python.ts`** (portado de `$V1/aula-python/src/lib/py-engine.js`, con pruebas `assert` en vez de comparar una variable)
 
 ```ts
 import type { ResultadoTarea } from "./tipos";
@@ -1068,7 +1068,7 @@ export async function crearSesionPython(py: PyodideLike, opciones: OpcionesPytho
 }
 ```
 
-- [ ] **Step 6: Crear `src/python-cliente.ts`**
+- [x] **Step 6: Crear `src/python-cliente.ts`**
 
 ```ts
 import type { OpcionesPython, ResultadoEjecucion, ResultadoRevision, TareaPython } from "./python";
@@ -1193,12 +1193,12 @@ export function crearClientePython(
 }
 ```
 
-- [ ] **Step 7: Correr los tests y el typecheck**
+- [x] **Step 7: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/engines test && cd packages/engines && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (37 tests en total) y `tsc` sin errores.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/engines pnpm-lock.yaml
@@ -1228,7 +1228,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `@syntaxerror/content/publicacion`: `rutasVisibles(contenido, incluirBorradores): Ruta[]`, `casosVisibles(contenido, incluirBorradores): Caso[]`, `tareasDeMision(mision): BloqueTarea[]`.
   - `@syntaxerror/content/datos`: `tablasSql(caso): Tablas`, `archivosPython(caso): Archivo[]`, `grillaDeHoja(caso, hoja): Grilla`, `paquetesPython(mision): string[]`.
 
-- [ ] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
+- [x] **Step 1: Crear `package.json`, `tsconfig.json` y `vitest.config.ts`**
 
 `packages/content/package.json`:
 ```json
@@ -1289,7 +1289,7 @@ export default defineConfig({
 
 En `docker-compose.yml`, agregar a `x-node.volumes` `- content_node_modules:/app/packages/content/node_modules`, y en `volumes:` agregar `content_node_modules:`.
 
-- [ ] **Step 2: Crear el fixture `test/fixtures/valido/`**
+- [x] **Step 2: Crear el fixture `test/fixtures/valido/`**
 
 `test/fixtures/valido/rutas/analista.yaml`:
 ```yaml
@@ -1391,7 +1391,7 @@ tiempo: 8
 />
 ```
 
-- [ ] **Step 3: Escribir los tests que fallan**
+- [x] **Step 3: Escribir los tests que fallan**
 
 `src/bloques.test.ts`:
 ```ts
@@ -1618,12 +1618,12 @@ describe("datos del caso", () => {
 });
 ```
 
-- [ ] **Step 4: Instalar y ver fallar los tests**
+- [x] **Step 4: Instalar y ver fallar los tests**
 
 Run: `docker compose run --rm tools pnpm install && docker compose run --rm tools pnpm --filter @syntaxerror/content test`
 Expected: FAIL, porque no se pueden resolver `./bloques`, `./cargar`, `./datos` ni `./publicacion`.
 
-- [ ] **Step 5: Crear `src/esquemas.ts` y `src/tipos.ts`**
+- [x] **Step 5: Crear `src/esquemas.ts` y `src/tipos.ts`**
 
 `src/esquemas.ts`:
 ```ts
@@ -1751,7 +1751,7 @@ export type Caso = {
 export type Contenido = { rutas: Ruta[]; casos: Caso[] };
 ```
 
-- [ ] **Step 6: Crear `src/bloques.ts`**
+- [x] **Step 6: Crear `src/bloques.ts`**
 
 La extracción no renderiza el MDX: lo evalúa con componentes marcadores y recorre el árbol de elementos. Así no depende de `react-dom/server`, que Next no permite importar en el grafo de Server Components.
 
@@ -1807,7 +1807,7 @@ export async function extraerBloques(fuente: string): Promise<BloqueCrudo[]> {
 }
 ```
 
-- [ ] **Step 7: Crear `src/cargar.ts`**
+- [x] **Step 7: Crear `src/cargar.ts`**
 
 ```ts
 import { readdir, readFile } from "node:fs/promises";
@@ -1998,7 +1998,7 @@ export async function cargarContenido(dir: string): Promise<Contenido> {
 }
 ```
 
-- [ ] **Step 8: Crear `src/publicacion.ts` y `src/datos.ts`**
+- [x] **Step 8: Crear `src/publicacion.ts` y `src/datos.ts`**
 
 `src/publicacion.ts`:
 ```ts
@@ -2047,12 +2047,12 @@ export function paquetesPython(mision: Mision): string[] {
 }
 ```
 
-- [ ] **Step 9: Correr los tests y el typecheck**
+- [x] **Step 9: Correr los tests y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/content test && cd packages/content && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (19 tests) y `tsc` sin errores.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add packages/content docker-compose.yml pnpm-lock.yaml
@@ -2080,7 +2080,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Comando `pnpm --filter @syntaxerror/content validate` (sale con código 1 si hay problemas) y `npm run content:validate` en el host.
   - Caso `demo-motor` en `content/`, en una ruta `data-analyst` en borrador: una misión SQL, una de planilla y una de Python con pandas. Lo usan las tareas 6 a 10. La Fase 4 lo reemplaza por los casos reales.
 
-- [ ] **Step 1: Crear el caso de demostración**
+- [x] **Step 1: Crear el caso de demostración**
 
 `content/rutas/data-analyst.yaml`:
 ```yaml
@@ -2230,7 +2230,7 @@ El ticket promedio es el total vendido dividido por la cantidad de compras. En e
 </Debrief>
 ```
 
-- [ ] **Step 2: Escribir los tests que fallan**
+- [x] **Step 2: Escribir los tests que fallan**
 
 `packages/content/src/validar.test.ts`:
 ```ts
@@ -2335,12 +2335,12 @@ describe("content/ del repositorio", () => {
 });
 ```
 
-- [ ] **Step 3: Agregar Pyodide al paquete y ver fallar los tests**
+- [x] **Step 3: Agregar Pyodide al paquete y ver fallar los tests**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/content add pyodide@0.28.3 && docker compose run --rm tools pnpm --filter @syntaxerror/content test`
 Expected: FAIL, porque no se pueden resolver `./validar` ni `./revisor-python`.
 
-- [ ] **Step 4: Crear `src/validar.ts`**
+- [x] **Step 4: Crear `src/validar.ts`**
 
 ```ts
 import { aplicarSolucion, revisarHoja } from "@syntaxerror/engines/sheet";
@@ -2420,7 +2420,7 @@ export async function validarContenido(
 }
 ```
 
-- [ ] **Step 5: Crear `src/revisor-python.ts` y `src/validar-cli.ts`**
+- [x] **Step 5: Crear `src/revisor-python.ts` y `src/validar-cli.ts`**
 
 `src/revisor-python.ts`:
 ```ts
@@ -2478,7 +2478,7 @@ En el `package.json` raíz, agregar a `scripts`:
 "content:validate": "docker compose run --rm tools pnpm --filter @syntaxerror/content validate"
 ```
 
-- [ ] **Step 6: Correr los tests, el typecheck y el validador**
+- [x] **Step 6: Correr los tests, el typecheck y el validador**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/content test && cd packages/content && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (27 tests) y `tsc` sin errores. El test de `contenido-real` tarda más la primera vez porque descarga pandas.
@@ -2489,7 +2489,7 @@ Expected: `[content] ok: 1 rutas, 1 casos, 3 misiones` y código de salida 0.
 Run: `docker compose run --rm -e CONTENT_DIR=/tmp/roto tools sh -c "cp -r packages/content/test/fixtures/valido /tmp/roto && sed -i 's/SUMA(D2:D4)/SUMA(D2:D3)/' /tmp/roto/casos/ventas/misiones/02-hoja.mdx && pnpm --filter @syntaxerror/content validate; echo salida=\$?"`
 Expected: el mensaje `la solución de la tarea "total" no pasa su propio validador` y `salida=1` (la copia vive solo dentro del contenedor).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add packages/content content package.json pnpm-lock.yaml
@@ -2516,7 +2516,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `@syntaxerror/content/sincronizar`: `sincronizarContenido(db: AppDb, contenido: Contenido): Promise<{ rutas: number; casos: number }>`, idempotente. Una ruta que ya no está en `content/` queda en `borrador`; un caso que ya no está se conserva para no perder el progreso.
   - `db-setup` ejecuta migraciones, sincroniza el contenido y hace el seed, en ese orden (spec §6).
 
-- [ ] **Step 1: Agregar las tablas a `packages/db/src/schema.ts`** (al final del archivo)
+- [x] **Step 1: Agregar las tablas a `packages/db/src/schema.ts`** (al final del archivo)
 
 ```ts
 export type MisionResumen = { slug: string; titulo: string; tareas: string[] };
@@ -2633,7 +2633,7 @@ export const entregables = pgTable(
 );
 ```
 
-- [ ] **Step 2: Generar la migración**
+- [x] **Step 2: Generar la migración**
 
 Run: `npm run db:generate`
 Expected: crea `packages/db/drizzle/0001_<nombre>.sql` con `CREATE TABLE` para `rutas`, `casos`, `ruta_casos`, `mision_progreso`, `caso_inscripciones`, `ruta_inscripciones` y `entregables`, y actualiza `drizzle/meta/_journal.json`.
@@ -2641,7 +2641,7 @@ Expected: crea `packages/db/drizzle/0001_<nombre>.sql` con `CREATE TABLE` para `
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/db test`
 Expected: PASS (1 test). El `globalSetup` aplica la migración nueva sobre `postgres-test` sin errores.
 
-- [ ] **Step 3: Conectar `packages/content` con la base**
+- [x] **Step 3: Conectar `packages/content` con la base**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/content add "@syntaxerror/db@workspace:*" "drizzle-orm@^0.36.0"`
 
@@ -2659,7 +2659,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 4: Escribir el test que falla, `packages/content/src/sincronizar.test.ts`**
+- [x] **Step 4: Escribir el test que falla, `packages/content/src/sincronizar.test.ts`**
 
 ```ts
 import { eq } from "drizzle-orm";
@@ -2756,12 +2756,12 @@ describe("sincronizarContenido", () => {
 });
 ```
 
-- [ ] **Step 5: Verificar que falla**
+- [x] **Step 5: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter @syntaxerror/content test -- src/sincronizar.test.ts`
 Expected: FAIL, porque no se puede resolver `./sincronizar`.
 
-- [ ] **Step 6: Crear `src/sincronizar.ts` y `src/sincronizar-cli.ts`**
+- [x] **Step 6: Crear `src/sincronizar.ts` y `src/sincronizar-cli.ts`**
 
 `src/sincronizar.ts`:
 ```ts
@@ -2863,7 +2863,7 @@ En `docker-compose.yml`, cambiar el `command` de `db-setup` por:
     command: sh -c "pnpm --filter @syntaxerror/db migrate && pnpm --filter @syntaxerror/content sync && pnpm --filter web db:seed"
 ```
 
-- [ ] **Step 7: Correr los tests, el typecheck y `db-setup`**
+- [x] **Step 7: Correr los tests, el typecheck y `db-setup`**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter @syntaxerror/content test && cd packages/content && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (31 tests) y `tsc` sin errores.
@@ -2876,7 +2876,7 @@ Expected: una fila `demo-motor | 3 | borrador`.
 
 Run: `docker compose down`
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add packages/db packages/content docker-compose.yml pnpm-lock.yaml
@@ -2920,7 +2920,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
     - `cargarProgreso(caso, tareasPorMision: Record<string, string[]>, deps): Promise<ProgresoVisible>` (une servidor y `localStorage`).
   - `<SincronizarProgreso />`: al montarse sube lo pendiente en `localStorage`.
 
-- [ ] **Step 1: Escribir el test que falla, `src/lib/progreso/servicio.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/lib/progreso/servicio.test.ts`**
 
 ```ts
 import { eq } from "drizzle-orm";
@@ -3072,12 +3072,12 @@ describe("consultas", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/progreso/servicio.test.ts`
 Expected: FAIL, porque no se puede resolver `./servicio`.
 
-- [ ] **Step 3: Crear `src/lib/progreso/esquemas.ts` y `src/lib/progreso/servicio.ts`**
+- [x] **Step 3: Crear `src/lib/progreso/esquemas.ts` y `src/lib/progreso/servicio.ts`**
 
 `src/lib/progreso/esquemas.ts`:
 ```ts
@@ -3348,12 +3348,12 @@ export async function listarCasosDelUsuario(db: AppDb, userId: string): Promise<
 }
 ```
 
-- [ ] **Step 4: Correr el test del servicio**
+- [x] **Step 4: Correr el test del servicio**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/progreso/servicio.test.ts`
 Expected: PASS (10 tests).
 
-- [ ] **Step 5: Escribir los tests de las rutas de API**
+- [x] **Step 5: Escribir los tests de las rutas de API**
 
 `src/app/api/progreso/route.test.ts`:
 ```ts
@@ -3496,7 +3496,7 @@ describe("POST /api/entregables", () => {
 });
 ```
 
-- [ ] **Step 6: Crear `src/lib/sesion.ts` y las rutas de API**
+- [x] **Step 6: Crear `src/lib/sesion.ts` y las rutas de API**
 
 `src/lib/sesion.ts`:
 ```ts
@@ -3584,12 +3584,12 @@ export async function POST(request: Request) {
 }
 ```
 
-- [ ] **Step 7: Correr los tests de las rutas**
+- [x] **Step 7: Correr los tests de las rutas**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/app/api/progreso src/app/api/entregables`
 Expected: PASS (8 tests).
 
-- [ ] **Step 8: Escribir el test que falla, `src/lib/progreso/cliente.test.ts`**
+- [x] **Step 8: Escribir el test que falla, `src/lib/progreso/cliente.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -3705,12 +3705,12 @@ describe("cargarProgreso", () => {
 });
 ```
 
-- [ ] **Step 9: Verificar que falla**
+- [x] **Step 9: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/progreso/cliente.test.ts`
 Expected: FAIL, porque no se puede resolver `./cliente`.
 
-- [ ] **Step 10: Crear `src/lib/progreso/cliente.ts` y `src/components/sincronizar-progreso.tsx`**
+- [x] **Step 10: Crear `src/lib/progreso/cliente.ts` y `src/components/sincronizar-progreso.tsx`**
 
 `src/lib/progreso/cliente.ts`:
 ```ts
@@ -3867,7 +3867,7 @@ export function SincronizarProgreso() {
 }
 ```
 
-- [ ] **Step 11: Mostrar los casos en el dashboard y sincronizar ahí también**
+- [x] **Step 11: Mostrar los casos en el dashboard y sincronizar ahí también**
 
 Reemplazar `src/app/(dashboard)/layout.tsx` por:
 ```tsx
@@ -3946,12 +3946,12 @@ export default async function DashboardPage() {
 }
 ```
 
-- [ ] **Step 12: Correr todos los tests de web y el typecheck**
+- [x] **Step 12: Correr todos los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS (todos los tests de web, incluidos los 27 nuevos de esta tarea) y `tsc` sin errores.
 
-- [ ] **Step 13: Commit**
+- [x] **Step 13: Commit**
 
 ```bash
 git add apps/web
@@ -3979,7 +3979,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Textos que usan los e2e: etiqueta `Consulta SQL`, botones `Ejecutar` y `Validar`, mensaje `¡Tarea aprobada!`, título `Misión aprobada` (Debrief), botones `Celda F2`, campo `Fórmula`.
   - `SqlTask` recibe `esperadas` (filas) y nunca la `solucion`.
 
-- [ ] **Step 1: Agregar los motores a `web`**
+- [x] **Step 1: Agregar los motores a `web`**
 
 Run: `docker compose run --rm tools pnpm --filter web add "@syntaxerror/engines@workspace:*"`
 
@@ -3988,7 +3988,7 @@ En `apps/web/next.config.ts`, cambiar `transpilePackages` por:
   transpilePackages: ["@syntaxerror/db", "@syntaxerror/ui", "@syntaxerror/engines"],
 ```
 
-- [ ] **Step 2: Escribir el test que falla, `src/lib/mezclar.test.ts`**
+- [x] **Step 2: Escribir el test que falla, `src/lib/mezclar.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -4009,12 +4009,12 @@ describe("mezclar", () => {
 });
 ```
 
-- [ ] **Step 3: Verificar que falla**
+- [x] **Step 3: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/mezclar.test.ts`
 Expected: FAIL, porque no se puede resolver `./mezclar`.
 
-- [ ] **Step 4: Crear `src/lib/mezclar.ts`**
+- [x] **Step 4: Crear `src/lib/mezclar.ts`**
 
 ```ts
 export function mezclar<T>(lista: readonly T[], aleatorio: () => number = Math.random): T[] {
@@ -4030,7 +4030,7 @@ export function mezclar<T>(lista: readonly T[], aleatorio: () => number = Math.r
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/mezclar.test.ts`
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Crear el proveedor de la misión y los bloques de texto**
+- [x] **Step 5: Crear el proveedor de la misión y los bloques de texto**
 
 `src/components/mision/mision-provider.tsx`:
 ```tsx
@@ -4222,7 +4222,7 @@ export function Decision({ pregunta, opciones }: { pregunta: string; opciones: O
 }
 ```
 
-- [ ] **Step 6: Crear las piezas compartidas de las tareas**
+- [x] **Step 6: Crear las piezas compartidas de las tareas**
 
 `src/components/mision/panel-tarea.tsx`:
 ```tsx
@@ -4362,7 +4362,7 @@ export function EditorCodigo({
 }
 ```
 
-- [ ] **Step 7: Crear `SqlTask` y `SqlEjemplo`**
+- [x] **Step 7: Crear `SqlTask` y `SqlEjemplo`**
 
 `src/components/mision/sql-task.tsx`:
 ```tsx
@@ -4495,7 +4495,7 @@ export function SqlEjemplo({ consulta, tablas }: { consulta: string; tablas: Tab
 }
 ```
 
-- [ ] **Step 8: Crear `SheetTask`**
+- [x] **Step 8: Crear `SheetTask`**
 
 `src/components/mision/sheet-task.tsx`:
 ```tsx
@@ -4661,12 +4661,12 @@ export function SheetTask({ id, enunciado, grilla, celdas, pistas }: SheetTaskPr
 }
 ```
 
-- [ ] **Step 9: Correr los tests de web y el typecheck**
+- [x] **Step 9: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add apps/web pnpm-lock.yaml
@@ -4694,7 +4694,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `PythonTask` (etiqueta `Código Python`, estado `Python listo`, botón `Reintentar` si Pyodide no carga) y `PythonEjemplo` (botón `Probar ejemplo`).
   - `construirCsp({ motores: boolean; socket: string }): string`. En producción, `/casos/:caso/:mision` recibe la CSP con motores (`'unsafe-eval'` para alasql, `'wasm-unsafe-eval'` y jsDelivr para Pyodide). El resto del sitio mantiene la CSP estricta. `/_next/*` no lleva CSP, para que el worker (que se sirve desde ahí) pueda importar Pyodide.
 
-- [ ] **Step 1: Escribir el test que falla, `src/lib/csp.test.ts`**
+- [x] **Step 1: Escribir el test que falla, `src/lib/csp.test.ts`**
 
 ```ts
 import { describe, expect, it } from "vitest";
@@ -4728,12 +4728,12 @@ describe("construirCsp", () => {
 });
 ```
 
-- [ ] **Step 2: Verificar que falla**
+- [x] **Step 2: Verificar que falla**
 
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/csp.test.ts`
 Expected: FAIL, porque no se puede resolver `./csp`.
 
-- [ ] **Step 3: Crear `src/lib/csp.ts` y usarlo en `next.config.ts`**
+- [x] **Step 3: Crear `src/lib/csp.ts` y usarlo en `next.config.ts`**
 
 `src/lib/csp.ts`:
 ```ts
@@ -4808,7 +4808,7 @@ export default nextConfig;
 Run: `docker compose run --rm tools pnpm --filter web test -- src/lib/csp.test.ts`
 Expected: PASS (3 tests).
 
-- [ ] **Step 4: Crear el worker de Python**
+- [x] **Step 4: Crear el worker de Python**
 
 `src/engines/python.worker.ts`:
 ```ts
@@ -4851,7 +4851,7 @@ ambito.onmessage = (evento) => {
 };
 ```
 
-- [ ] **Step 5: Crear `python-contexto.tsx`, `python-task.tsx` y `python-ejemplo.tsx`**
+- [x] **Step 5: Crear `python-contexto.tsx`, `python-task.tsx` y `python-ejemplo.tsx`**
 
 `src/components/mision/python-contexto.tsx`:
 ```tsx
@@ -5057,7 +5057,7 @@ export function PythonEjemplo({ codigo }: { codigo: string }) {
 }
 ```
 
-- [ ] **Step 6: Montar Python desde `MisionProvider`**
+- [x] **Step 6: Montar Python desde `MisionProvider`**
 
 En `src/components/mision/mision-provider.tsx`:
 
@@ -5093,12 +5093,12 @@ export function MisionProvider({
   );
 ```
 
-- [ ] **Step 7: Correr los tests de web y el typecheck**
+- [x] **Step 7: Correr los tests de web y el typecheck**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add apps/web
@@ -5125,7 +5125,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - Páginas `/rutas`, `/rutas/[ruta]`, `/casos/[caso]` y `/casos/[caso]/[mision]`, todas con `dynamic = "error"` (el build falla si alguna se vuelve dinámica) y `dynamicParams = false`.
   - En `/casos/[caso]`: `data-testid="estado-<mision>"` con `Aprobada`, `En curso` o `Pendiente`; campo `Enlace a tu entregable`, botón `Guardar entregable` y estado `Caso completo`.
 
-- [ ] **Step 1: Dependencias, build y variables**
+- [x] **Step 1: Dependencias, build y variables**
 
 Run: `docker compose run --rm tools pnpm --filter web add "@syntaxerror/content@workspace:*" && docker compose run --rm tools pnpm --filter web add -D "@types/mdx@^2.0.13"`
 
@@ -5144,7 +5144,7 @@ En `docker-compose.yml`, agregar al `environment` de `web`:
       CONTENT_INCLUDE_DRAFTS: "true"
 ```
 
-- [ ] **Step 2: Crear `src/lib/contenido.ts`**
+- [x] **Step 2: Crear `src/lib/contenido.ts`**
 
 ```ts
 import path from "node:path";
@@ -5190,7 +5190,7 @@ export async function casosDeRuta(ruta: Ruta): Promise<Caso[]> {
 }
 ```
 
-- [ ] **Step 3: Crear el layout de misiones y su encabezado**
+- [x] **Step 3: Crear el layout de misiones y su encabezado**
 
 El encabezado no llama a `auth()`: estas páginas son estáticas.
 
@@ -5243,7 +5243,7 @@ export default function MisionesLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 4: Crear las páginas de rutas**
+- [x] **Step 4: Crear las páginas de rutas**
 
 `src/app/(misiones)/rutas/page.tsx`:
 ```tsx
@@ -5328,7 +5328,7 @@ export default async function RutaPage({ params }: Parametros) {
 }
 ```
 
-- [ ] **Step 5: Crear la página del caso y su panel de progreso y entregable**
+- [x] **Step 5: Crear la página del caso y su panel de progreso y entregable**
 
 `src/components/mision/panel-caso.tsx`:
 ```tsx
@@ -5525,7 +5525,7 @@ export default async function CasoPage({ params }: Parametros) {
 }
 ```
 
-- [ ] **Step 6: Crear el mapa de componentes y la página de misión**
+- [x] **Step 6: Crear el mapa de componentes y la página de misión**
 
 `src/components/mision/componentes.tsx` (módulo de servidor: corre en el build):
 ```tsx
@@ -5662,7 +5662,7 @@ export default async function MisionPage({ params }: Parametros) {
 }
 ```
 
-- [ ] **Step 7: Enlazar las rutas desde la portada**
+- [x] **Step 7: Enlazar las rutas desde la portada**
 
 En `src/app/(marketing)/page.tsx`, después del enlace `Ya tengo cuenta` y antes del `</div>` que los contiene, agregar:
 ```tsx
@@ -5671,7 +5671,7 @@ En `src/app/(marketing)/page.tsx`, después del enlace `Ya tengo cuenta` y antes
           </Link>
 ```
 
-- [ ] **Step 8: Typecheck y verificación en el entorno de desarrollo**
+- [x] **Step 8: Typecheck y verificación en el entorno de desarrollo**
 
 Run: `docker compose run --rm tools sh -c "pnpm --filter web test && cd apps/web && pnpm exec tsc --noEmit -p ."`
 Expected: PASS y `tsc` sin errores.
@@ -5695,7 +5695,7 @@ Abrir `http://localhost:3000/casos/demo-motor/01-clientes-de-regiones` en el nav
 
 Run: `docker compose down`
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add apps/web docker-compose.yml pnpm-lock.yaml
@@ -5719,7 +5719,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
   - `npm run test:e2e` (contra el servidor de desarrollo) y `npm run test:e2e:prod` (compila `web` en modo producción, con la CSP real, y corre los mismos e2e).
   - README con la sección de contenido.
 
-- [ ] **Step 1: Healthcheck de `web` y espera en `e2e`**
+- [x] **Step 1: Healthcheck de `web` y espera en `e2e`**
 
 En `docker-compose.yml`, agregar al servicio `web`:
 ```yaml
@@ -5736,7 +5736,7 @@ Y en el servicio `e2e`, cambiar `depends_on` por:
       web: { condition: service_healthy }
 ```
 
-- [ ] **Step 2: Crear `docker/compose.prod-check.yml` y el script**
+- [x] **Step 2: Crear `docker/compose.prod-check.yml` y el script**
 
 `docker/compose.prod-check.yml`:
 ```yaml
@@ -5753,7 +5753,7 @@ En el `package.json` raíz, agregar a `scripts`:
 "test:e2e:prod": "docker compose -f docker-compose.yml -f docker/compose.prod-check.yml --profile e2e run --rm e2e"
 ```
 
-- [ ] **Step 3: Escribir `e2e/tests/misiones.spec.ts`**
+- [x] **Step 3: Escribir `e2e/tests/misiones.spec.ts`**
 
 ```ts
 import { expect, test, type Page } from "@playwright/test";
@@ -5841,7 +5841,7 @@ test("con sesión: aprueba las tres misiones y completa el caso con su entregabl
 });
 ```
 
-- [ ] **Step 4: Correr todo contra el entorno de desarrollo**
+- [x] **Step 4: Correr todo contra el entorno de desarrollo**
 
 Run: `npm test`
 Expected: PASS en todos los paquetes (`engines`, `content`, `db`, `ui`, `web`, `worker`).
@@ -5851,7 +5851,7 @@ Expected: `5 passed` (los 3 de `auth.spec.ts` y los 2 de `misiones.spec.ts`).
 
 Run: `docker compose down`
 
-- [ ] **Step 5: Correr los e2e contra el build de producción y revisar la CSP**
+- [x] **Step 5: Correr los e2e contra el build de producción y revisar la CSP**
 
 Run: `npm run test:e2e:prod`
 Expected: el `web` compila (el validador de contenido corre primero e imprime `[content] ok: 1 rutas, 1 casos, 3 misiones`), `next start` puede avisar que `output: standalone` recomienda `node server.js` (es solo un aviso) y los e2e terminan con `5 passed`. En particular, la misión de Python carga Pyodide con la CSP de producción.
@@ -5870,7 +5870,7 @@ Expected: aparecen `01-clientes-de-regiones.html`, `02-total-de-ventas.html` y `
 
 Run: `docker compose -f docker-compose.yml -f docker/compose.prod-check.yml down`
 
-- [ ] **Step 6: Documentar el contenido en `README.md`**
+- [x] **Step 6: Documentar el contenido en `README.md`**
 
 Agregar a la tabla de comandos:
 ```markdown
@@ -5901,7 +5901,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - El validador ejecuta las soluciones de Python con Pyodide y descarga pandas desde jsDelivr la primera vez, así que necesita red.
 ~~~
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add e2e docker docker-compose.yml package.json README.md

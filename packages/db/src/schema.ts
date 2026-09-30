@@ -66,3 +66,116 @@ export const auditLog = pgTable(
   },
   (table) => [index("audit_log_created_at_idx").on(table.createdAt)]
 );
+
+export type MisionResumen = { slug: string; titulo: string; tareas: string[] };
+
+export const rutas = pgTable(
+  "rutas",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    slug: text("slug").notNull(),
+    titulo: text("titulo").notNull(),
+    cargo: text("cargo").notNull(),
+    descripcion: text("descripcion").notNull(),
+    estado: text("estado").notNull().default("borrador"),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+    actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("rutas_slug_idx").on(table.slug)]
+);
+
+export const casos = pgTable(
+  "casos",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    slug: text("slug").notNull(),
+    titulo: text("titulo").notNull(),
+    cargo: text("cargo").notNull(),
+    empresa: text("empresa").notNull(),
+    entregable: text("entregable").notNull(),
+    misiones: jsonb("misiones").notNull().$type<MisionResumen[]>().default([]),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+    actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("casos_slug_idx").on(table.slug)]
+);
+
+export const rutaCasos = pgTable(
+  "ruta_casos",
+  {
+    rutaId: uuid("ruta_id")
+      .notNull()
+      .references(() => rutas.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    orden: integer("orden").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.rutaId, table.casoId] })]
+);
+
+export const misionProgreso = pgTable(
+  "mision_progreso",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    mision: text("mision").notNull(),
+    estado: text("estado").notNull().default("en_curso"),
+    intentos: integer("intentos").notNull().default(0),
+    tareasAprobadas: jsonb("tareas_aprobadas").notNull().$type<string[]>().default([]),
+    aprobadaEn: timestamp("aprobada_en"),
+    actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.casoId, table.mision] })]
+);
+
+export const casoInscripciones = pgTable(
+  "caso_inscripciones",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    inscritoEn: timestamp("inscrito_en").notNull().defaultNow(),
+    completadoEn: timestamp("completado_en"),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.casoId] })]
+);
+
+export const rutaInscripciones = pgTable(
+  "ruta_inscripciones",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    rutaId: uuid("ruta_id")
+      .notNull()
+      .references(() => rutas.id, { onDelete: "cascade" }),
+    inscritoEn: timestamp("inscrito_en").notNull().defaultNow(),
+    completadoEn: timestamp("completado_en"),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.rutaId] })]
+);
+
+export const entregables = pgTable(
+  "entregables",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    casoId: uuid("caso_id")
+      .notNull()
+      .references(() => casos.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    creadoEn: timestamp("creado_en").notNull().defaultNow(),
+    actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex("entregables_usuario_caso_idx").on(table.userId, table.casoId)]
+);

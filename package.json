@@ -10,6 +10,8 @@
     "sh": "docker compose run --rm tools bash",
     "test": "docker compose run --rm tools pnpm -r --if-present test",
     "test:e2e": "docker compose --profile e2e run --rm e2e",
-    "db:generate": "docker compose run --rm tools pnpm --filter @syntaxerror/db generate"
+    "test:e2e:prod": "docker compose -f docker-compose.yml -f docker/compose.prod-check.yml --profile e2e run --rm e2e",
+    "db:generate": "docker compose run --rm tools pnpm --filter @syntaxerror/db generate",
+    "content:validate": "docker compose run --rm tools pnpm --filter @syntaxerror/content validate"
   }
 }

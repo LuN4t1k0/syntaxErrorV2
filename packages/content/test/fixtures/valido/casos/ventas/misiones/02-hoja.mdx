@@ -1,0 +1,13 @@
+---
+titulo: Total de ventas
+tiempo: 8
+---
+
+<Brief de="Paula, jefa comercial">¿Cuánto vendimos en total?</Brief>
+
+<SheetTask
+  id="total"
+  hoja="clientes"
+  celdas={[{ celda: "F2", valor: 487000, funcion: "SUMA" }]}
+  solucion={{ F2: "=SUMA(D2:D4)" }}
+/>

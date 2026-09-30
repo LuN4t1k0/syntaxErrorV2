@@ -37,6 +37,9 @@ export default function HomePage() {
           <Link href="/login" className="btn btn-secondary">
             Ya tengo cuenta
           </Link>
+          <Link href="/rutas" className="btn btn-secondary">
+            Ver rutas
+          </Link>
         </div>
       </section>
 

@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0 -p 3000",
-    "build": "next build",
+    "build": "pnpm --filter @syntaxerror/content validate && next build",
     "start": "next start",
     "test": "vitest run",
     "db:seed": "tsx src/db/seed-cli.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.7.0",
+    "@syntaxerror/content": "workspace:*",
     "@syntaxerror/db": "workspace:*",
+    "@syntaxerror/engines": "workspace:*",
     "@syntaxerror/ui": "workspace:*",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.36.0",
@@ -28,6 +30,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.0.0",
     "@types/bcryptjs": "^2.4.6",
+    "@types/mdx": "^2.0.13",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
