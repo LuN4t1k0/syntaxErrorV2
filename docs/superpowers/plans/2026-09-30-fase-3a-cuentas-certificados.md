@@ -2,13 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Que el alumno gestione su cuenta (confirmar email, cambiar nombre, email y contraseña, descargar sus datos y eliminar su cuenta), reciba un certificado verificable al completar un caso o una ruta, y pueda publicar su portafolio en `/p/<usuario>`, con los emails de cuenta enviados por el worker.
+**Goal:** Que el alumno gestione su cuenta (confirmar email, cambiar nombre, email y contraseña, recuperar la contraseña olvidada, descargar sus datos y eliminar su cuenta), reciba un certificado verificable al completar un caso o una ruta, y pueda publicar su portafolio en `/p/<usuario>`, con los emails de cuenta enviados por el worker.
 
 **Architecture:**
 - `packages/queue` define una sola cola `emails` en BullMQ, con un tipo de trabajo por email. La web encola y falla rápido si Redis no responde. El worker consume, arma el email con la plantilla de la v1 y lo envía por SMTP a Mailpit en local o por la API de Resend en producción (Railway bloquea SMTP saliente).
 - Los tokens de email (verificar y cambiar email) se guardan hasheados con SHA-256 y se consumen con `DELETE ... RETURNING`: son de un solo uso aunque alguien haga doble clic. Las páginas de confirmación piden un clic que hace `POST`: un antivirus que abre el enlace no confirma nada.
 - Los certificados se emiten cuando la API de progreso o de entregables detecta un caso completo. Guardan una foto fija (nombre del alumno, título y cargo) y un código de 12 caracteres. `/verificar/[codigo]` busca primero en `certificados` y después en `certificados_legacy` (la Fase 5 llena esa tabla).
-- El certificado se ve en `/certificados/[codigo]` como una página imprimible (el navegador la guarda en PDF), en vez del PDF que la v1 generaba en el servidor con `@react-pdf/renderer`. **Decisión a confirmar:** así no se suma RAM al servidor web (spec §14: menos de 512 MB).
+- El certificado se ve en `/certificados/[codigo]` como una página imprimible (el navegador la guarda en PDF), en vez del PDF que la v1 generaba en el servidor con `@react-pdf/renderer`. **Decisión tomada:** así no se suma RAM al servidor web (spec §14: menos de 512 MB) y el certificado mantiene la identidad visual del sitio.
+- Recuperar la contraseña (Task 11) responde lo mismo exista o no la cuenta, para no revelar qué emails están registrados. El enlace dura una hora y sirve una vez. También les sirve a las cuentas de Google para crear una contraseña. Es clave para los alumnos que se migran de la v1 (Fase 5).
+- Eliminar la cuenta está disponible para todos: las cuentas con contraseña la confirman con ella, y las de Google escribiendo su email.
 - El portafolio público es opcional y parte apagado: la alumna elige su usuario y decide publicarlo (ley 21.719 de datos personales).
 
 **Tech Stack:** Node 22, pnpm 11.9.0, Next.js 15, React 19, TypeScript 5, Auth.js v5, Drizzle ORM 0.36, BullMQ 5, nodemailer 6, Mailpit, Vitest 4, Playwright 1.55.
@@ -49,6 +51,7 @@ apps/web/src/lib/cuenta/
   tokens.ts, enlaces.ts, meta.ts          tokens de un uso, URLs de los emails, IP y user agent
   verificacion.ts                         verificar el email al registrarse
   perfil.ts                               nombre, clave, email, exportar y eliminar
+  recuperacion.ts                         recuperar la contraseña olvidada (Task 11)
   cliente.ts                              enviarJson para los formularios
 apps/web/src/lib/certificados/
   servicio.ts                             emitir, buscar (con legacy) y listar
@@ -4478,6 +4481,584 @@ Run: `docker compose -f docker-compose.yml -f docker/compose.prod-check.yml down
 ```bash
 git add e2e README.md .env.example
 git commit -m "test(e2e): cuenta, certificados y portafolio con emails en mailpit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+```
+
+---
+
+### Task 11: Recuperar la contraseña olvidada
+
+**Files:**
+- Create: `apps/web/src/lib/cuenta/recuperacion.ts`
+- Create: `apps/web/src/app/api/cuenta/recuperar/route.ts`, `apps/web/src/app/api/cuenta/restablecer/route.ts`
+- Create: `apps/web/src/components/cuenta/formulario-recuperar.tsx`, `apps/web/src/components/cuenta/formulario-restablecer.tsx`
+- Create: `apps/web/src/app/(cuenta)/recuperar-clave/page.tsx`, `apps/web/src/app/(cuenta)/restablecer-clave/page.tsx`
+- Test: `apps/web/src/lib/cuenta/recuperacion.test.ts`, `apps/web/src/app/api/cuenta/recuperar/route.test.ts`
+- Modify:
+  - `packages/queue/src/emails.ts` (tipo `recuperar-clave`);
+  - `apps/worker/src/emails/mensajes.ts` y `mensajes.test.ts`;
+  - `packages/db/src/audit.ts` (acción `password_reset`);
+  - `apps/web/src/lib/cuenta/tokens.ts` (tipo `recuperar`) y `enlaces.ts`;
+  - `apps/web/src/lib/rate-limit.ts`;
+  - `apps/web/src/app/(auth)/login/LoginForm.tsx` (enlace `¿Olvidaste tu contraseña?`);
+  - `e2e/tests/cuenta.spec.ts`.
+
+**Interfaces:**
+- Consumes: `crearTokenEmail`, `consumirTokenEmail`, `metaDeRequest`, `encolarSinFallar`, `enviarJson`, `ConfirmarToken` como referencia de UI (Task 4), `hashPassword`, `normalizeEmail`, `resetRateLimit` (Fase 1).
+- Produces:
+  - `TrabajoEmail` con `{ tipo: "recuperar-clave"; para; nombre; enlace }`, asunto `Restablece tu contraseña`;
+  - `TipoToken` con `"recuperar"` (dura 1 hora) y `enlaceRestablecerClave(token)`;
+  - `@/lib/cuenta/recuperacion`:
+    - `solicitarRecuperacion(db, email, encolar): Promise<void>`: no hace nada si la cuenta no existe;
+    - `restablecerClave(db, token, claveNueva, { encolar, meta })`, que devuelve `{ ok: true; email }` o `{ ok: false; motivo: "invalido" | "vencido" }`. Marca el email como confirmado y avisa con `clave-cambiada`;
+  - `POST /api/cuenta/recuperar { email }`: siempre responde `{ ok: true }`, salvo 429 por IP;
+  - `POST /api/cuenta/restablecer { token, claveNueva }`: además limpia los intentos fallidos de login de ese email;
+  - rate limits `recuperar-ip` (5 por hora) y `recuperar-email` (3 por hora). Si se pasa el de email, se responde igual pero sin enviar nada;
+  - páginas `/recuperar-clave` (campo `Email`, botón `Enviarme el enlace`) y `/restablecer-clave` (campo `Contraseña nueva`, botón `Guardar contraseña`, mensaje `Tu contraseña quedó guardada.`).
+
+- [ ] **Step 1: Tipo de email, token, auditoría y rate limits**
+
+En `packages/queue/src/emails.ts`, agregar a la unión `TrabajoEmail`:
+```ts
+  | (Destinatario & { tipo: "recuperar-clave"; enlace: string })
+```
+
+En `packages/db/src/audit.ts`, agregar `"password_reset",` a `AUDIT_ACTIONS` (después de `"password_changed",`).
+
+En `apps/web/src/lib/cuenta/tokens.ts`:
+1. Cambiar el tipo por:
+```ts
+export type TipoToken = "verificar" | "cambiar" | "recuperar";
+```
+2. Cambiar `DURACION_MS` por:
+```ts
+const DURACION_MS: Record<TipoToken, number> = { verificar: 7 * DIA_MS, cambiar: DIA_MS, recuperar: 60 * 60 * 1000 };
+```
+
+En `apps/web/src/lib/cuenta/enlaces.ts`, agregar:
+```ts
+export const enlaceRestablecerClave = (token: string) => absoluteUrl(`/restablecer-clave?token=${encodeURIComponent(token)}`);
+```
+
+En `apps/web/src/lib/rate-limit.ts`:
+1. Agregar al tipo `RateLimitKey`: `| "recuperar-ip" | "recuperar-email"`.
+2. Agregar a `LIMITER_CONFIGS`:
+```ts
+  "recuperar-ip": { points: 5, duration: 3600 },
+  "recuperar-email": { points: 3, duration: 3600 },
+```
+
+- [ ] **Step 2: Escribir los tests que fallan**
+
+En `apps/worker/src/emails/mensajes.test.ts`, agregar al final del arreglo `casos`:
+```ts
+  [{ tipo: "recuperar-clave", para: "ana@correo.cl", nombre: "Ana", enlace }, "Restablece tu contraseña"],
+```
+
+`apps/web/src/lib/cuenta/recuperacion.test.ts`:
+```ts
+import { eq } from "drizzle-orm";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import type { TrabajoEmail } from "@syntaxerror/queue/emails";
+import { auditLog, tokensEmail, users } from "@syntaxerror/db/schema";
+import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
+import { registerUser } from "@/app/api/auth/register/service";
+import type { Encolar } from "@/lib/emails";
+import { verifyPassword } from "@/lib/password";
+import { SIN_META } from "./meta";
+import { restablecerClave, solicitarRecuperacion } from "./recuperacion";
+
+const { db, close } = createTestDb();
+const enviados: TrabajoEmail[] = [];
+const encolar: Encolar = async (trabajo) => void enviados.push(trabajo);
+const deps = { encolar, meta: SIN_META };
+
+function tokenDe(trabajo: TrabajoEmail | undefined): string {
+  if (!trabajo || !("enlace" in trabajo)) throw new Error("El email no tiene enlace");
+  return new URL(trabajo.enlace).searchParams.get("token") ?? "";
+}
+
+async function claveDe(email: string) {
+  const [usuario] = await db.select().from(users).where(eq(users.email, email));
+  return usuario.passwordHash;
+}
+
+beforeEach(async () => {
+  await truncateAll(db);
+  enviados.length = 0;
+});
+afterAll(() => close());
+
+describe("recuperar la contraseña", () => {
+  it("envía un enlace que deja entrar con la contraseña nueva, avisa y deja registro", async () => {
+    await registerUser(db, { name: "Ana", email: "ana@correo.cl", password: "clave-segura-123" });
+    await solicitarRecuperacion(db, " ANA@Correo.cl ", encolar);
+    expect(enviados[0]).toMatchObject({ tipo: "recuperar-clave", para: "ana@correo.cl", nombre: "Ana" });
+    expect("enlace" in enviados[0] && enviados[0].enlace).toContain("/restablecer-clave?token=");
+
+    expect(await restablecerClave(db, tokenDe(enviados[0]), "nueva-clave-789", deps)).toEqual({ ok: true, email: "ana@correo.cl" });
+    expect(await verifyPassword("nueva-clave-789", (await claveDe("ana@correo.cl"))!)).toBe(true);
+    expect(enviados[1]).toEqual({ tipo: "clave-cambiada", para: "ana@correo.cl", nombre: "Ana" });
+    expect((await db.select().from(auditLog)).map((fila) => fila.action)).toEqual(["password_reset"]);
+  });
+
+  it("no envía nada ni falla si el email no tiene cuenta", async () => {
+    await expect(solicitarRecuperacion(db, "nadie@correo.cl", encolar)).resolves.toBeUndefined();
+    expect(enviados).toEqual([]);
+  });
+
+  it("el enlace sirve una sola vez y vence", async () => {
+    await registerUser(db, { name: "Ana", email: "ana@correo.cl", password: "clave-segura-123" });
+    await solicitarRecuperacion(db, "ana@correo.cl", encolar);
+    const token = tokenDe(enviados[0]);
+    await restablecerClave(db, token, "nueva-clave-789", deps);
+    expect(await restablecerClave(db, token, "otra-clave-000", deps)).toEqual({ ok: false, motivo: "invalido" });
+
+    await solicitarRecuperacion(db, "ana@correo.cl", encolar);
+    await db.update(tokensEmail).set({ expiraEn: new Date(Date.now() - 1_000) });
+    expect(await restablecerClave(db, tokenDe(enviados.at(-1)), "otra-clave-000", deps)).toEqual({ ok: false, motivo: "vencido" });
+  });
+
+  it("un enlace viejo no sirve si la cuenta cambió de email", async () => {
+    const { id } = await registerUser(db, { name: "Ana", email: "ana@correo.cl", password: "clave-segura-123" });
+    await solicitarRecuperacion(db, "ana@correo.cl", encolar);
+    await db.update(users).set({ email: "otra@correo.cl" }).where(eq(users.id, id));
+    expect(await restablecerClave(db, tokenDe(enviados[0]), "nueva-clave-789", deps)).toEqual({ ok: false, motivo: "invalido" });
+    expect(await verifyPassword("clave-segura-123", (await claveDe("otra@correo.cl"))!)).toBe(true);
+  });
+
+  it("una cuenta de Google puede crear su contraseña así", async () => {
+    await db.insert(users).values({ email: "google@correo.cl", name: "Gabriela" });
+    await solicitarRecuperacion(db, "google@correo.cl", encolar);
+    expect(await restablecerClave(db, tokenDe(enviados[0]), "nueva-clave-789", deps)).toMatchObject({ ok: true });
+    expect(await claveDe("google@correo.cl")).not.toBeNull();
+  });
+});
+```
+
+`apps/web/src/app/api/cuenta/recuperar/route.test.ts`:
+```ts
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
+import { registerUser } from "@/app/api/auth/register/service";
+
+vi.mock("@/lib/emails", () => ({ encolarEmail: vi.fn(async () => {}), encolarSinFallar: vi.fn(async () => {}) }));
+
+const recuperar = await import("./route");
+const restablecer = await import("../restablecer/route");
+const { encolarSinFallar } = await import("@/lib/emails");
+const { db, close } = createTestDb();
+
+// IP y email distintos en cada corrida: los rate limits viven en Redis entre corridas.
+function pedir(cuerpo: unknown) {
+  return new Request("http://localhost:3000/api/cuenta/recuperar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-forwarded-for": `10.9.${Math.floor(Math.random() * 250)}.${Math.floor(Math.random() * 250)}` },
+    body: JSON.stringify(cuerpo),
+  });
+}
+
+beforeEach(async () => {
+  await truncateAll(db);
+  vi.clearAllMocks();
+});
+afterAll(() => close());
+
+describe("recuperar y restablecer por API", () => {
+  it("responde lo mismo exista o no la cuenta, y solo envía a la que existe", async () => {
+    const email = `ana-${Date.now()}@correo.cl`;
+    await registerUser(db, { name: "Ana", email, password: "clave-segura-123" });
+
+    const existe = await recuperar.POST(pedir({ email }));
+    const noExiste = await recuperar.POST(pedir({ email: `nadie-${Date.now()}@correo.cl` }));
+    expect([existe.status, await existe.json()]).toEqual([200, { ok: true }]);
+    expect([noExiste.status, await noExiste.json()]).toEqual([200, { ok: true }]);
+    expect(encolarSinFallar).toHaveBeenCalledTimes(1);
+  });
+
+  it("restablecer: 400 con un token inválido o una clave corta, 200 con el enlace del email", async () => {
+    const email = `ana-${Date.now()}@correo.cl`;
+    await registerUser(db, { name: "Ana", email, password: "clave-segura-123" });
+    await recuperar.POST(pedir({ email }));
+    const [trabajo] = vi.mocked(encolarSinFallar).mock.calls[0];
+    const token = "enlace" in trabajo ? new URL(trabajo.enlace).searchParams.get("token") : null;
+
+    const enviar = (cuerpo: unknown) =>
+      restablecer.POST(
+        new Request("http://localhost:3000/api/cuenta/restablecer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cuerpo),
+        })
+      );
+    expect((await enviar({ token: "z".repeat(43), claveNueva: "nueva-clave-789" })).status).toBe(400);
+    expect((await enviar({ token, claveNueva: "corta" })).status).toBe(400);
+    expect((await enviar({ token, claveNueva: "nueva-clave-789" })).status).toBe(200);
+  });
+});
+```
+
+- [ ] **Step 3: Verificar que fallan**
+
+Run: `docker compose run --rm tools sh -c "pnpm --filter worker test -- src/emails/mensajes.test.ts; pnpm --filter web test -- src/lib/cuenta/recuperacion.test.ts src/app/api/cuenta/recuperar"`
+Expected: FAIL. En el worker, `construirEmail` no conoce `recuperar-clave`; en la web, no se pueden resolver `./recuperacion` ni las rutas.
+
+- [ ] **Step 4: Crear el email, el servicio y las rutas**
+
+En `apps/worker/src/emails/mensajes.ts`, agregar este `case` antes del de `certificado-emitido`:
+```ts
+    case "recuperar-clave":
+      return plantillaSyntaxError({
+        asunto: "Restablece tu contraseña",
+        estado: { etiqueta: "INFO", mensaje: "Solicitud de contraseña nueva" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [
+          "Recibimos una solicitud para elegir una contraseña nueva en tu cuenta de syntaxError.cl. El enlace dura una hora y sirve una sola vez.",
+          "Si no la pediste tú, ignora este correo: tu contraseña sigue igual.",
+        ],
+        enlace: { texto: "Elegir una contraseña nueva", url: trabajo.enlace },
+        comandoCierre: "passwd",
+      });
+```
+
+`apps/web/src/lib/cuenta/recuperacion.ts`:
+```ts
+import { and, eq } from "drizzle-orm";
+import type { AppDb } from "@syntaxerror/db/client";
+import { insertAuditLogEntry } from "@syntaxerror/db/audit";
+import { users } from "@syntaxerror/db/schema";
+import { normalizeEmail } from "@/app/api/auth/register/service";
+import type { Encolar } from "@/lib/emails";
+import { hashPassword } from "@/lib/password";
+import { enlaceRestablecerClave } from "./enlaces";
+import type { MetaRequest } from "./meta";
+import { consumirTokenEmail, crearTokenEmail } from "./tokens";
+
+// No devuelve nada: la respuesta es igual exista o no la cuenta, así nadie averigua qué emails están registrados.
+export async function solicitarRecuperacion(db: AppDb, email: string, encolar: Encolar): Promise<void> {
+  const [usuario] = await db.select().from(users).where(eq(users.email, normalizeEmail(email)));
+  if (!usuario) return;
+  const token = await crearTokenEmail(db, { userId: usuario.id, tipo: "recuperar", email: usuario.email });
+  await encolar({ tipo: "recuperar-clave", para: usuario.email, nombre: usuario.name, enlace: enlaceRestablecerClave(token) });
+}
+
+export async function restablecerClave(
+  db: AppDb,
+  token: string,
+  claveNueva: string,
+  { encolar, meta }: { encolar: Encolar; meta: MetaRequest }
+): Promise<{ ok: true; email: string } | { ok: false; motivo: "invalido" | "vencido" }> {
+  const resultado = await consumirTokenEmail(db, "recuperar", token);
+  if (!resultado.ok) return resultado;
+
+  const passwordHash = await hashPassword(claveNueva);
+  const [usuario] = await db.transaction(async (tx) => {
+    // Quien abrió el enlace demostró que el correo es suyo: el email queda confirmado.
+    const actualizados = await tx
+      .update(users)
+      .set({ passwordHash, emailVerified: new Date(), updatedAt: new Date() })
+      .where(and(eq(users.id, resultado.userId), eq(users.email, resultado.email)))
+      .returning({ id: users.id, email: users.email, name: users.name });
+    if (actualizados.length > 0) {
+      await insertAuditLogEntry(tx, {
+        actorId: resultado.userId,
+        actorEmail: resultado.email,
+        action: "password_reset",
+        targetType: "user",
+        targetId: resultado.userId,
+        ipAddress: meta.ip,
+        userAgent: meta.userAgent,
+      });
+    }
+    return actualizados;
+  });
+  if (!usuario) return { ok: false, motivo: "invalido" };
+
+  await encolar({ tipo: "clave-cambiada", para: usuario.email, nombre: usuario.name });
+  return { ok: true, email: usuario.email };
+}
+```
+
+`apps/web/src/app/api/cuenta/recuperar/route.ts`:
+```ts
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { getDb } from "@syntaxerror/db/client";
+import { normalizeEmail } from "@/app/api/auth/register/service";
+import { getClientIp } from "@/lib/client-ip";
+import { solicitarRecuperacion } from "@/lib/cuenta/recuperacion";
+import { encolarSinFallar } from "@/lib/emails";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+const esquema = z.object({ email: z.string().trim().email().max(200) });
+
+export async function POST(request: Request) {
+  const limiteIp = await checkRateLimit("recuperar-ip", getClientIp(request.headers));
+  if (!limiteIp.allowed) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(limiteIp.retryAfterSeconds) } });
+  }
+  const parsed = esquema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "invalido" }, { status: 400 });
+
+  // Pasado el límite por email se responde igual, pero sin enviar: así no se delata si la cuenta existe.
+  const limiteEmail = await checkRateLimit("recuperar-email", normalizeEmail(parsed.data.email));
+  if (limiteEmail.allowed) {
+    await solicitarRecuperacion(getDb(), parsed.data.email, encolarSinFallar).catch((error) =>
+      console.error("[cuenta] no se pudo preparar la recuperación", error)
+    );
+  }
+  return NextResponse.json({ ok: true });
+}
+```
+
+`apps/web/src/app/api/cuenta/restablecer/route.ts`:
+```ts
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { getDb } from "@syntaxerror/db/client";
+import { metaDeRequest } from "@/lib/cuenta/meta";
+import { restablecerClave } from "@/lib/cuenta/recuperacion";
+import { encolarSinFallar } from "@/lib/emails";
+import { resetRateLimit } from "@/lib/rate-limit";
+
+const esquema = z.object({ token: z.string().min(10).max(200), claveNueva: z.string().min(8).max(200) });
+
+export async function POST(request: Request) {
+  const parsed = esquema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "clave_corta" }, { status: 400 });
+
+  const resultado = await restablecerClave(getDb(), parsed.data.token, parsed.data.claveNueva, {
+    encolar: encolarSinFallar,
+    meta: metaDeRequest(request),
+  });
+  if (!resultado.ok) return NextResponse.json({ error: resultado.motivo }, { status: 400 });
+  // Quien estaba bloqueado por intentos fallidos puede entrar al tiro con la contraseña nueva.
+  await resetRateLimit("login-email", resultado.email).catch(() => {});
+  return NextResponse.json({ ok: true });
+}
+```
+
+- [ ] **Step 5: Correr los tests del servicio y las rutas**
+
+Run: `docker compose run --rm tools sh -c "pnpm --filter worker test -- src/emails/mensajes.test.ts && pnpm --filter web test -- src/lib/cuenta/recuperacion.test.ts src/app/api/cuenta/recuperar"`
+Expected: PASS (en la web, 7 tests nuevos; en el worker, un caso más en `construirEmail`).
+
+- [ ] **Step 6: Crear las páginas y el enlace en el login**
+
+`apps/web/src/components/cuenta/formulario-recuperar.tsx`:
+```tsx
+"use client";
+
+import { useState, type FormEvent } from "react";
+import { Button } from "@syntaxerror/ui/components/button";
+import { Input } from "@syntaxerror/ui/components/input";
+import { Label } from "@syntaxerror/ui/components/label";
+import { enviarJson } from "@/lib/cuenta/cliente";
+
+export function FormularioRecuperar() {
+  const [email, setEmail] = useState("");
+  const [mensaje, setMensaje] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  async function pedir(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    setEnviando(true);
+    const respuesta = await enviarJson("/api/cuenta/recuperar", "POST", { email });
+    setEnviando(false);
+    if (respuesta.status === 429) setMensaje("Hiciste muchos intentos. Espera un rato antes de volver a pedir el enlace.");
+    else if (!respuesta.ok) setMensaje("Revisa que el email esté bien escrito.");
+    else setMensaje("Si hay una cuenta con ese email, te enviamos un enlace para elegir una contraseña nueva. Revisa tu correo.");
+  }
+
+  return (
+    <form className="grid gap-4" onSubmit={pedir}>
+      <Label>
+        Email
+        <Input type="email" value={email} onChange={(evento) => setEmail(evento.target.value)} required autoComplete="email" />
+      </Label>
+      <div>
+        <Button type="submit" disabled={enviando}>
+          Enviarme el enlace
+        </Button>
+      </div>
+      {mensaje ? (
+        <p role="status" className="text-sm font-bold">
+          {mensaje}
+        </p>
+      ) : null}
+    </form>
+  );
+}
+```
+
+`apps/web/src/components/cuenta/formulario-restablecer.tsx`:
+```tsx
+"use client";
+
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useState, type FormEvent } from "react";
+import { Button } from "@syntaxerror/ui/components/button";
+import { Input } from "@syntaxerror/ui/components/input";
+import { Label } from "@syntaxerror/ui/components/label";
+import { enviarJson } from "@/lib/cuenta/cliente";
+
+const ERRORES: Record<string, string> = {
+  invalido: "El enlace no es válido o ya se usó. Pide uno nuevo.",
+  vencido: "El enlace venció (dura una hora). Pide uno nuevo.",
+  clave_corta: "La contraseña debe tener al menos 8 caracteres.",
+};
+
+export function FormularioRestablecer() {
+  const token = useSearchParams().get("token") ?? "";
+  const [claveNueva, setClaveNueva] = useState("");
+  const [estado, setEstado] = useState<"inicial" | "enviando" | "listo">("inicial");
+  const [error, setError] = useState<string | null>(null);
+
+  async function guardar(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault();
+    setEstado("enviando");
+    const respuesta = await enviarJson("/api/cuenta/restablecer", "POST", { token, claveNueva });
+    if (respuesta.ok) {
+      setEstado("listo");
+      return;
+    }
+    setEstado("inicial");
+    setError((respuesta.error && ERRORES[respuesta.error]) ?? "No pudimos guardar la contraseña. Intenta de nuevo.");
+  }
+
+  if (!token) return <p className="text-muted-foreground">El enlace no trae su código. Ábrelo directamente desde el email.</p>;
+  if (estado === "listo") {
+    return (
+      <p role="status" className="leading-7">
+        Tu contraseña quedó guardada.{" "}
+        <Link className="font-bold text-primary hover:underline" href="/login">
+          Entrar
+        </Link>
+      </p>
+    );
+  }
+
+  return (
+    <form className="grid gap-4" onSubmit={guardar}>
+      <Label>
+        Contraseña nueva
+        <Input type="password" value={claveNueva} onChange={(evento) => setClaveNueva(evento.target.value)} required minLength={8} autoComplete="new-password" />
+      </Label>
+      <div>
+        <Button type="submit" disabled={estado === "enviando"}>
+          Guardar contraseña
+        </Button>
+      </div>
+      {error ? (
+        <p role="alert" className="text-sm font-bold text-destructive">
+          {error}{" "}
+          <Link className="underline" href="/recuperar-clave">
+            Pedir otro enlace
+          </Link>
+        </p>
+      ) : null}
+    </form>
+  );
+}
+```
+
+`apps/web/src/app/(cuenta)/recuperar-clave/page.tsx`:
+```tsx
+import { Card } from "@syntaxerror/ui/components/card";
+import { FormularioRecuperar } from "@/components/cuenta/formulario-recuperar";
+
+export const metadata = { title: "Recuperar contraseña", robots: { index: false } };
+
+export default function RecuperarClavePage() {
+  return (
+    <main className="mx-auto grid max-w-lg px-4 py-16">
+      <Card className="grid gap-4 p-6">
+        <h1 className="text-2xl font-black">Recuperar contraseña</h1>
+        <p className="text-sm leading-6 text-muted-foreground">
+          Escribe el email de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva. Si entras con Google, también te sirve para crear una.
+        </p>
+        <FormularioRecuperar />
+      </Card>
+    </main>
+  );
+}
+```
+
+`apps/web/src/app/(cuenta)/restablecer-clave/page.tsx`:
+```tsx
+import { Suspense } from "react";
+import { Card } from "@syntaxerror/ui/components/card";
+import { FormularioRestablecer } from "@/components/cuenta/formulario-restablecer";
+
+export const metadata = { title: "Elige una contraseña nueva", robots: { index: false } };
+
+export default function RestablecerClavePage() {
+  return (
+    <main className="mx-auto grid max-w-lg px-4 py-16">
+      <Card className="grid gap-4 p-6">
+        <h1 className="text-2xl font-black">Elige una contraseña nueva</h1>
+        <Suspense fallback={null}>
+          <FormularioRestablecer />
+        </Suspense>
+      </Card>
+    </main>
+  );
+}
+```
+
+En `apps/web/src/app/(auth)/login/LoginForm.tsx`, después del `</Label>` que cierra el campo `Password` (el que tiene `autoComplete="current-password"`), agregar:
+```tsx
+      <Link className="-mt-2 w-fit text-sm font-bold text-primary hover:underline" href="/recuperar-clave">
+        ¿Olvidaste tu contraseña?
+      </Link>
+```
+
+- [ ] **Step 7: Agregar el e2e**
+
+Al final de `e2e/tests/cuenta.spec.ts`, agregar:
+```ts
+test("recuperar la contraseña desde el login", async ({ page }) => {
+  const email = emailNuevo("olvido");
+  await registrarse(page, email);
+  await page.context().clearCookies();
+
+  await page.goto("/login");
+  await page.getByRole("link", { name: "¿Olvidaste tu contraseña?" }).click();
+  await page.getByLabel("Email").fill(email);
+  await page.getByRole("button", { name: "Enviarme el enlace" }).click();
+  await expect(page.getByText("Si hay una cuenta con ese email", { exact: false })).toBeVisible();
+
+  const mensaje = await esperarEmail(email, "Restablece tu contraseña");
+  await page.goto(rutaDelEnlace(mensaje.texto, "/restablecer-clave"));
+  await page.getByLabel("Contraseña nueva").fill("recuperada-789");
+  await page.getByRole("button", { name: "Guardar contraseña" }).click();
+  await expect(page.getByText("Tu contraseña quedó guardada.")).toBeVisible();
+
+  await entrar(page, email, "recuperada-789");
+  await expect(page).toHaveURL(/\/dashboard/);
+});
+```
+
+- [ ] **Step 8: Correr todo**
+
+Run: `docker compose run --rm tools sh -c "pnpm -r --if-present test && cd apps/web && pnpm exec tsc --noEmit -p . && cd ../worker && pnpm exec tsc --noEmit -p ."`
+Expected: PASS en todos los paquetes y `tsc` sin errores.
+
+Run: `docker compose up -d --build && npm run test:e2e`
+Expected: `11 passed`.
+
+Run: `docker compose down && npm run test:e2e:prod`
+Expected: `11 passed`.
+
+Run: `docker compose -f docker-compose.yml -f docker/compose.prod-check.yml down`
+
+- [ ] **Step 9: Commit**
+
+```bash
+git add packages apps e2e
+git commit -m "feat(cuenta): recuperar la contrasena olvidada por email
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 ```
