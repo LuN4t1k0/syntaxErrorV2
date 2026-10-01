@@ -14,7 +14,7 @@ Solo Docker (con Compose v2.24+) y npm. Todo lo demás corre en contenedores.
 | `npm run stop` | Baja todo y conserva los datos |
 | `npm run reset` | Baja todo y borra los datos (base, `node_modules`) |
 | `npm test` | Tests unitarios y de integración contra `postgres-test` |
-| `npm run test:e2e` | Tests end-to-end con Playwright contra `next dev` (requiere `npm run dev` arriba). Reinicia `web` antes de correr y usa 3 navegadores en paralelo: `next dev` acumula memoria y compila cada página al vuelo |
+| `npm run test:e2e` | Tests end-to-end con Playwright contra `next dev` (requiere `npm run dev` arriba). Reinicia `web` antes de correr y usa 3 navegadores en paralelo: `next dev` acumula memoria y compila cada página al vuelo. Antes de empezar, `e2e/calentar.ts` pide cada ruta una vez, y `onDemandEntries` en `next.config.ts` mantiene compiladas las páginas: si no, las recompilaciones recargan páginas de otras pruebas a mitad de camino |
 | `npm run test:e2e:prod` | Compila `web` como en producción (CSP real, páginas estáticas) y corre los e2e contra ese build |
 | `npm run sh` | Shell dentro del contenedor de herramientas (`pnpm`, `tsc`, etc.) |
 | `npm run db:generate` | Genera una migración Drizzle a partir de `packages/db/src/schema.ts` |
@@ -126,3 +126,22 @@ Se basa en la propuesta pedagógica aprobada (`docs/propuesta-pedagogica-data-an
   - Solo un entregable aprobado completa el caso y emite el certificado.
   - En local y en e2e, `ENTREGABLES_VERIFICACION=prueba` evita consultar GitHub (un repositorio con `vacio` en el nombre simula uno sin README).
   - En producción conviene definir `GITHUB_TOKEN`.
+
+## Consolas
+
+Se basan en la sección 10 de la propuesta pedagógica: que escribir código acompañe y no intimide.
+
+- **Editor** (`apps/web/src/components/consola/`):
+  - CodeMirror 6, que carga después de la página: mientras tanto, o si la conexión falla, se usa un `textarea`.
+  - Sintaxis coloreada, números de línea, cierre de paréntesis y comillas, y resaltado del par correspondiente.
+  - Autocompletado con las tablas y columnas del caso (SQL) o con columnas, archivos, variables y métodos de pandas (Python). `Ctrl+Espacio` lo abre.
+  - Explicaciones en español al pasar el mouse (`apps/web/src/lib/consola/glosario.ts`), que también llegan por teclado en las sugerencias.
+  - Teclado: `Tab` agrega sangría; `Esc` y luego `Tab` sale del editor.
+- **Errores en español** (`packages/engines/src/*-errores.ts`, `sheet-ayuda.ts`):
+  - cada error trae mensaje, sugerencia ("¿Quisiste decir…?") y línea marcada en el editor;
+  - el mensaje original queda disponible en "Mensaje original";
+  - en SQL, además, hay avisos de lo que alasql deja pasar en silencio: columnas mal escritas o textos sin comillas.
+- **Python:** después de ejecutar se muestran las tablas de pandas que quedaron en variables (hasta 5, con sus primeras 10 filas).
+- **Planilla:** ayuda de la función mientras se escribe la fórmula, sugerencias de funciones y explicación del error de la celda.
+- **Regla:** una explicación explica el error, nunca entrega la solución de la tarea.
+- **Rutas futuras:** las consolas comparten un contrato común. Ver `packages/engines/README.md` para agregar una nueva (terminal, registros, desarrollo web).

@@ -3,6 +3,7 @@ import {
   calcularEsperado,
   compararSql,
   crearBaseSql,
+  ejecutarConsulta,
   ejecutarSql,
   revisarSql,
   type SqlTarea,
@@ -77,10 +78,18 @@ describe("revisarSql", () => {
     );
   });
 
-  it("muestra el error de sintaxis de la consulta", () => {
+  it("explica el error de la consulta en español", () => {
     const resultado = revisarSql(tablas, fueraDeSantiago, "SELEC nombre FROM clientes");
-    expect(resultado.aprobada).toBe(false);
-    expect(resultado.diagnostico).toMatch(/^Tu consulta tiene un error: /);
+    expect(resultado).toEqual({
+      aprobada: false,
+      diagnostico: "Tu consulta tiene un error. Línea 1: «SELEC» no es una palabra de SQL. ¿Quisiste decir SELECT?",
+    });
+  });
+
+  it("si no coincide, agrega el aviso que probablemente explica la diferencia", () => {
+    expect(revisarSql(tablas, fueraDeSantiago, "SELECT nombre, ciudad FROM clientes WHERE ciudad <> Santiago").diagnostico).toBe(
+      "Tu consulta trae 0 filas, se esperan 2. «Santiago» parece un texto: escríbelo entre comillas simples, 'Santiago'."
+    );
   });
 
   it("compara el estado de la tabla después de un UPDATE", () => {
@@ -111,5 +120,35 @@ describe("revisarSql", () => {
     expect(esperadas).toHaveLength(2);
     const consulta = "SELECT nombre, ciudad FROM clientes WHERE ciudad IN ('Temuco', 'Valparaíso')";
     expect(compararSql(tablas, { comparar: "filas-sin-orden", esperadas }, consulta).aprobada).toBe(true);
+  });
+});
+
+describe("ejecutarConsulta", () => {
+  it("devuelve las filas y los avisos", () => {
+    expect(ejecutarConsulta(tablas, "SELECT nombres FROM clientes WHERE id = 1")).toEqual({
+      ok: true,
+      filas: [{}],
+      avisos: [{ mensaje: "No existe la columna «nombres» en las tablas de esta consulta. ¿Quisiste decir «nombre»?", linea: 1 }],
+    });
+  });
+
+  it("devuelve el error explicado en vez de lanzarlo", () => {
+    expect(ejecutarConsulta(tablas, "SELECT * FROM cliente")).toEqual({
+      ok: false,
+      error: {
+        mensaje: "No existe una tabla llamada «cliente».",
+        sugerencia: "¿Quisiste decir «clientes»?",
+        linea: 1,
+        original: "Table does not exist: cliente",
+      },
+    });
+    expect(ejecutarConsulta(tablas, "UPDATE clientes SET ciudad = 'Talca'")).toMatchObject({
+      ok: false,
+      error: { mensaje: "En esta tarea solo puedes usar consultas SELECT." },
+    });
+  });
+
+  it("permite escribir cuando la tarea lo pide", () => {
+    expect(ejecutarConsulta(tablas, "UPDATE clientes SET ciudad = 'Talca' WHERE id = 1", { permitirEscritura: true })).toMatchObject({ ok: true });
   });
 });

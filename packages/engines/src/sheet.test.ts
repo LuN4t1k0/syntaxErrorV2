@@ -83,7 +83,9 @@ describe("revisarHoja", () => {
   it("informa los errores de fórmula", () => {
     const hoja = crearHoja(ventas);
     escribirCelda(hoja, "C2", "=B2/0");
-    expect(revisarHoja(hoja, total).diagnostico).toBe("La celda C2 tiene un error: #¡DIV/0!.");
+    expect(revisarHoja(hoja, total).diagnostico).toBe(
+      "La celda C2 tiene el error #¡DIV/0!. La fórmula divide por cero o por una celda vacía. Revisa la celda del divisor. Si puede valer 0, usa SI.ERROR(fórmula; 0)."
+    );
   });
 
   it("tolera diferencias de decimales menores a 0,0001", () => {

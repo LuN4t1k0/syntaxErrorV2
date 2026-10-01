@@ -85,7 +85,7 @@ describe("crearClientePython", () => {
     });
     const resultado = await cliente.ejecutar("", "while True: pass");
     expect(resultado.ok).toBe(false);
-    if (!resultado.ok) expect(resultado.error).toContain("tardó más de");
+    if (!resultado.ok) expect(resultado.error).toMatchObject({ mensaje: expect.stringContaining("tardó más de"), linea: null });
   });
 
   it("si la carga falla se puede reintentar", async () => {

@@ -6,6 +6,9 @@ import { construirCsp } from "./src/lib/csp";
 const nextConfig: NextConfig = {
   output: "standalone",
   devIndicators: false,
+  // Solo en desarrollo: Next mantiene compiladas 5 páginas y descarta las inactivas al minuto. Con las pruebas
+  // e2e en paralelo eso recompila sin parar y cada recompilación recarga páginas abiertas de otras pruebas.
+  onDemandEntries: { maxInactiveAge: 60 * 60 * 1000, pagesBufferLength: 100 },
   transpilePackages: ["@syntaxerror/db", "@syntaxerror/ui", "@syntaxerror/engines", "@syntaxerror/content", "@syntaxerror/queue", "@syntaxerror/ia"],
   // BullMQ lee sus scripts Lua desde disco con rutas relativas: no se puede empaquetar con webpack.
   serverExternalPackages: ["bullmq"],

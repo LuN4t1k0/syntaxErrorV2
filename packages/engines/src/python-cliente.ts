@@ -1,3 +1,4 @@
+import { errorSimple } from "./consola";
 import type { OpcionesPython, ResultadoEjecucion, ResultadoRevision, TareaPython } from "./python";
 
 export type MensajeWorker =
@@ -98,7 +99,7 @@ export function crearClientePython(
       try {
         return (await enviar({ tipo: "ejecutar", preparacion, codigo }, limiteMs)) as ResultadoEjecucion;
       } catch (error) {
-        if (error instanceof ErrorDeTiempo) return { ok: false, error: mensajeDeTiempo(limiteMs), salida: "" };
+        if (error instanceof ErrorDeTiempo) return { ok: false, error: errorSimple(mensajeDeTiempo(limiteMs)), salida: "" };
         throw error;
       }
     },

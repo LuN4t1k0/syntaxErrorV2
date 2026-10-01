@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { createContext, useContext, useState, type ReactNode } from "react";
 import { Badge } from "@syntaxerror/ui/components/badge";
 import { Button } from "@syntaxerror/ui/components/button";
 import type { ResultadoTarea } from "@syntaxerror/engines/tipos";
@@ -35,6 +35,13 @@ function AvisoBloqueo({ bloqueo, caso }: { bloqueo: Bloqueo; caso: string }) {
   );
 }
 
+const TareaDeshabilitada = createContext(false);
+
+// Los controles nativos se desactivan con el fieldset; el editor de código lo lee de aquí.
+export function useTareaDeshabilitada(): boolean {
+  return useContext(TareaDeshabilitada);
+}
+
 export function PanelTarea({
   id,
   titulo,
@@ -58,6 +65,7 @@ export function PanelTarea({
   const [pistasVistas, setPistasVistas] = useState(0);
   const fallidos = fallidosDe(id);
   const disponibles = pistasDisponibles(fallidos, pistas.length);
+  const deshabilitada = !listo || bloqueo !== null;
   return (
     <section className="card grid gap-4 p-5">
       <header className="flex flex-wrap items-center justify-between gap-2">
@@ -67,16 +75,18 @@ export function PanelTarea({
       {enunciado ? <p className="leading-7">{enunciado}</p> : null}
       {bloqueo ? <AvisoBloqueo bloqueo={bloqueo} caso={caso} /> : null}
       {/* Leer sí, resolver no: con bloqueo (o mientras carga el progreso) los controles quedan desactivados. */}
-      <fieldset disabled={!listo || bloqueo !== null} className="grid min-w-0 gap-4 border-0 p-0">
-        {children}
-        <div className="flex flex-wrap gap-3">
-          {acciones}
-          {pistasVistas < disponibles ? (
-            <Button type="button" variant="ghost" onClick={() => setPistasVistas((vistas) => vistas + 1)}>
-              Ver pista
-            </Button>
-          ) : null}
-        </div>
+      <fieldset disabled={deshabilitada} className="grid min-w-0 gap-4 border-0 p-0">
+        <TareaDeshabilitada.Provider value={deshabilitada}>
+          {children}
+          <div className="flex flex-wrap gap-3">
+            {acciones}
+            {pistasVistas < disponibles ? (
+              <Button type="button" variant="ghost" onClick={() => setPistasVistas((vistas) => vistas + 1)}>
+                Ver pista
+              </Button>
+            ) : null}
+          </div>
+        </TareaDeshabilitada.Provider>
       </fieldset>
       {pistas.length > 0 && disponibles === 0 && !aprobada && !bloqueo ? (
         <p className="text-sm text-muted-foreground">{`Primero intenta: las pistas aparecen después de ${INTENTOS_PARA_PISTA} intentos. Llevas ${fallidos}.`}</p>

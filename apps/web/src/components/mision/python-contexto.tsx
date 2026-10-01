@@ -6,7 +6,7 @@ import type { OpcionesPython } from "@syntaxerror/engines/python";
 import { crearClientePython, type ClientePython, type TrabajadorLike } from "@syntaxerror/engines/python-cliente";
 
 type FaseCarga = "inactivo" | "cargando" | "listo" | "error";
-type ContextoPython = { estado: FaseCarga; iniciar: () => void; cliente: () => ClientePython };
+type ContextoPython = { estado: FaseCarga; iniciar: () => void; cliente: () => ClientePython; opciones: OpcionesPython };
 
 const Contexto = createContext<ContextoPython | null>(null);
 
@@ -26,7 +26,7 @@ export function PythonProvider({ opciones, children }: { opciones: OpcionesPytho
     cliente().iniciar().then(() => setEstado("listo"), () => setEstado("error"));
   }, [cliente]);
   useEffect(() => () => clienteRef.current?.destruir(), []);
-  const valor = useMemo(() => ({ estado, iniciar, cliente }), [estado, iniciar, cliente]);
+  const valor = useMemo(() => ({ estado, iniciar, cliente, opciones }), [estado, iniciar, cliente, opciones]);
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }
 

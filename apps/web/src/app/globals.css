@@ -843,3 +843,41 @@
     animation: none;
   }
 }
+
+/* Consolas: colores de sintaxis (clases tok-* de @lezer/highlight), con contraste AA en ambos temas. */
+:root {
+  --sintaxis-palabra: #c4b5fd;
+  --sintaxis-texto: #86efac;
+  --sintaxis-numero: #fdba74;
+  --sintaxis-comentario: #a1a1aa;
+  --sintaxis-logico: #f9a8d4;
+  --sintaxis-propiedad: #7dd3fc;
+  --sintaxis-definicion: #fde68a;
+}
+
+:root[data-theme="light"] {
+  --sintaxis-palabra: #6d28d9;
+  --sintaxis-texto: #15803d;
+  --sintaxis-numero: #c2410c;
+  --sintaxis-comentario: #52525b;
+  --sintaxis-logico: #be185d;
+  --sintaxis-propiedad: #0369a1;
+  --sintaxis-definicion: #a16207;
+}
+
+.tok-keyword { color: var(--sintaxis-palabra); font-weight: 600; }
+.tok-string { color: var(--sintaxis-texto); }
+.tok-number { color: var(--sintaxis-numero); }
+.tok-comment { color: var(--sintaxis-comentario); font-style: italic; }
+.tok-bool { color: var(--sintaxis-logico); }
+.tok-propertyName { color: var(--sintaxis-propiedad); }
+.tok-definition { color: var(--sintaxis-definicion); }
+
+.cm-linea-error {
+  background-color: color-mix(in srgb, var(--color-destructive) 14%, transparent);
+  box-shadow: inset 3px 0 0 var(--color-destructive);
+}
+
+.consola-glosario { display: grid; gap: 0.25rem; max-width: 22rem; padding: 0.5rem 0.75rem; font-size: 0.8125rem; line-height: 1.5; }
+.consola-glosario-titulo { font-family: var(--font-mono); font-weight: 700; }
+.consola-glosario code { font-family: var(--font-mono); color: var(--muted-foreground); white-space: pre-wrap; }

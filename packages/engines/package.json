@@ -8,9 +8,15 @@
     "./sql": "./src/sql.ts",
     "./sheet": "./src/sheet.ts",
     "./python": "./src/python.ts",
-    "./python-cliente": "./src/python-cliente.ts"
+    "./python-cliente": "./src/python-cliente.ts",
+    "./consola": "./src/consola.ts",
+    "./sql-errores": "./src/sql-errores.ts",
+    "./python-errores": "./src/python-errores.ts",
+    "./sheet-ayuda": "./src/sheet-ayuda.ts"
   },
-  "scripts": { "test": "vitest run" },
+  "scripts": {
+    "test": "vitest run"
+  },
   "dependencies": {
     "alasql": "4.19.1",
     "hyperformula": "3.4.0"

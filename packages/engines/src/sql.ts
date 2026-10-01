@@ -1,4 +1,6 @@
 import alasql from "alasql";
+import { textoDeError, type Aviso, type ErrorExplicado } from "./consola";
+import { avisosSql, explicarErrorSql } from "./sql-errores";
 import type { Fila, ResultadoTarea } from "./tipos";
 
 export type Tablas = Record<string, Fila[]>;
@@ -73,6 +75,21 @@ export function ejecutarSql(
   return Array.isArray(resultado) ? normalizarFilas(resultado as Fila[]) : [];
 }
 
+export type EjecucionSql = { ok: true; filas: Fila[]; avisos: Aviso[] } | { ok: false; error: ErrorExplicado };
+
+export function ejecutarConsulta(
+  tablas: Tablas,
+  consulta: string,
+  opciones: { permitirEscritura?: boolean } = {}
+): EjecucionSql {
+  try {
+    const filas = ejecutarSql(crearBaseSql(tablas), consulta, opciones);
+    return { ok: true, filas, avisos: avisosSql(consulta, tablas) };
+  } catch (error) {
+    return { ok: false, error: explicarErrorSql(consulta, mensajeDe(error), tablas) };
+  }
+}
+
 function mensajeDe(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
@@ -145,7 +162,7 @@ export function compararSql(tablas: Tablas, tarea: SqlComparacion, consulta: str
       actuales = ejecutarSql(base, consulta);
     }
   } catch (error) {
-    return { aprobada: false, diagnostico: `Tu consulta tiene un error: ${mensajeDe(error)}` };
+    return { aprobada: false, diagnostico: `Tu consulta tiene un error. ${textoDeError(explicarErrorSql(consulta, mensajeDe(error), tablas))}` };
   }
 
   const sinOrden = tarea.comparar === "filas-sin-orden";
@@ -154,7 +171,9 @@ export function compararSql(tablas: Tablas, tarea: SqlComparacion, consulta: str
   if (serializar(comparables, sinOrden) === serializar(tarea.esperadas, sinOrden)) {
     return { aprobada: true, diagnostico: null };
   }
-  return { aprobada: false, diagnostico: describirDiferencia(tarea.esperadas, actuales, sinOrden) };
+  const diferencia = describirDiferencia(tarea.esperadas, actuales, sinOrden);
+  const [aviso] = avisosSql(consulta, tablas);
+  return { aprobada: false, diagnostico: aviso ? `${diferencia} ${aviso.mensaje}` : diferencia };
 }
 
 export function revisarSql(tablas: Tablas, tarea: SqlTarea, consulta: string): ResultadoTarea {

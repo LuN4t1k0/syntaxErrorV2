@@ -1,5 +1,7 @@
 import { HyperFormula } from "hyperformula";
 import esES from "hyperformula/i18n/languages/esES";
+import { textoDeError } from "./consola";
+import { explicarErrorHoja } from "./sheet-ayuda";
 import type { Fila, ResultadoTarea } from "./tipos";
 
 if (!HyperFormula.getRegisteredLanguagesCodes().includes("esES")) {
@@ -108,8 +110,9 @@ function usaFuncion(formula: string, funcion: string): boolean {
 export function revisarHoja(hoja: Hoja, tarea: SheetTarea): ResultadoTarea {
   for (const esperada of tarea.celdas) {
     const valor = leerValor(hoja, esperada.celda);
-    if (esError(valor)) {
-      return { aprobada: false, diagnostico: `La celda ${esperada.celda} tiene un error: ${valor.value}.` };
+    const error = explicarErrorHoja(valor);
+    if (error) {
+      return { aprobada: false, diagnostico: `La celda ${esperada.celda} tiene el error ${error.original}. ${textoDeError(error)}` };
     }
     if (esperada.funcion) {
       const formula = leerFormula(hoja, esperada.celda);

@@ -4,6 +4,7 @@ import { grillaDeHoja, tablasSql } from "@syntaxerror/content/datos";
 import { bloqueSchemas } from "@syntaxerror/content/esquemas";
 import type { Caso } from "@syntaxerror/content/tipos";
 import { calcularEsperado } from "@syntaxerror/engines/sql";
+import { CodigoResaltado } from "@/components/consola/codigo-resaltado";
 import { Brief, Concepto } from "./bloques";
 import { Debrief } from "./debrief";
 import { Decision } from "./decision";
@@ -20,8 +21,14 @@ export function componentesMision(caso: Caso): MDXComponents {
   return {
     Brief: ({ children, ...props }: PropsMdx) => <Brief {...bloqueSchemas.Brief.parse(props)}>{children}</Brief>,
     Concepto: ({ children }: PropsMdx) => <Concepto>{children}</Concepto>,
-    SqlEjemplo: (props: PropsMdx) => <SqlEjemplo {...bloqueSchemas.SqlEjemplo.parse(props)} tablas={tablas} />,
-    PythonEjemplo: (props: PropsMdx) => <PythonEjemplo {...bloqueSchemas.PythonEjemplo.parse(props)} />,
+    SqlEjemplo: (props: PropsMdx) => {
+      const ejemplo = bloqueSchemas.SqlEjemplo.parse(props);
+      return <SqlEjemplo {...ejemplo} tablas={tablas} resaltado={<CodigoResaltado codigo={ejemplo.consulta} lenguaje="sql" />} />;
+    },
+    PythonEjemplo: (props: PropsMdx) => {
+      const ejemplo = bloqueSchemas.PythonEjemplo.parse(props);
+      return <PythonEjemplo {...ejemplo} resaltado={<CodigoResaltado codigo={ejemplo.codigo} lenguaje="python" />} />;
+    },
     SqlTask: (props: PropsMdx) => {
       const { solucion, ...tarea } = bloqueSchemas.SqlTask.parse(props);
       const esperadas = calcularEsperado(tablas, { solucion, comparar: tarea.comparar, verificar: tarea.verificar });
