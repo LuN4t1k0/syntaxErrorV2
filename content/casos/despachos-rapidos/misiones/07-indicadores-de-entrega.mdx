@@ -1,0 +1,52 @@
+---
+titulo: Indicadores de entrega
+tiempo: 30
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Los clientes se están quejando de atrasos y quiero saber si es cierto. Para cada despacho entregado calcula cuántos días tardó y compáralo con lo que prometemos en su comuna. Después dame tres números: el promedio de días de entrega, cuántos despachos llegaron atrasados y qué porcentaje de los entregados representan.
+</Brief>
+
+<Concepto>
+**Restar fechas** da los días entre ellas: `=C2-B2` son los días entre el pedido y la entrega.
+
+Los despachos devueltos no tienen fecha de entrega. Para no restar una celda vacía, se combina con `SI`:
+
+`=SI(C2=""; ""; C2-B2)` → si no hay fecha de entrega, deja la celda vacía.
+
+Un **indicador** resume el desempeño en un número que se puede seguir mes a mes:
+- **Promedio de días de entrega:** `PROMEDIO` ignora las celdas vacías.
+- **Atrasados:** los días de entrega superan los días comprometidos de la comuna.
+- **Porcentaje de atrasos:** atrasados ÷ entregados. Como número, 0.26 es el 26 %.
+
+Un `SI` dentro de otro `SI` permite tres resultados: `=SI(I2=""; "devuelto"; SI(I2>J2; "atrasado"; "a tiempo"))`.
+</Concepto>
+
+<SheetTask
+  id="indicadores"
+  hoja="despachos_limpios"
+  otras={["comunas"]}
+  inicial={{ I1: "dias_entrega", J1: "compromiso", K1: "resultado", M2: "Promedio de días", M3: "Atrasados", M4: "Porcentaje de atrasos" }}
+  enunciado="Rellena tres columnas: en I los días de entrega (vacío si no hay fecha), en J los días de compromiso de la comuna y en K si el despacho fue devuelto, atrasado o a tiempo. Luego, en N2 el promedio de días con un decimal, en N3 los atrasados y en N4 el porcentaje de atrasos sobre los entregados, con dos decimales."
+  celdas={[
+    { celda: "I2", valor: 2 },
+    { celda: "K2", valor: "a tiempo" },
+    { celda: "N2", valor: 2, funcion: "PROMEDIO" },
+    { celda: "N3", valor: 14, funcion: "CONTAR.SI" },
+    { celda: "N4", valor: 0.26 },
+  ]}
+  solucion={{ "I2:I61": '=SI(C2="";"";C2-B2)', "J2:J61": "=BUSCARV(D2;comunas!$A$2:$E$13;5;FALSO())", "K2:K61": '=SI(I2="";"devuelto";SI(I2>J2;"atrasado";"a tiempo"))', N2: "=REDONDEAR(PROMEDIO(I2:I61);1)", N3: '=CONTAR.SI(K2:K61;"atrasado")', N4: '=REDONDEAR(N3/CONTAR.SI(H2:H61;"entregado");2)' }}
+  pistas={["Los días de compromiso se traen igual que en la misión de buscar en otra tabla: BUSCARV a comunas, columna 5.", "Un despacho está atrasado si sus días de entrega (I) son más que su compromiso (J).", "Para el porcentaje, divide los atrasados (N3) por la cantidad de despachos con estado «entregado» y redondea a 2 decimales."]}
+/>
+
+<Decision
+  pregunta="El promedio de días de entrega es 2 y el compromiso suele ser de 1 o 2 días. Carla concluye: 'Entonces no hay atrasos'. ¿Qué le respondes?"
+  opciones={[
+    { texto: "Que el promedio esconde los casos: el 26 % de los entregados llegó atrasado, y eso es lo que sienten los clientes.", correcta: true, porque: "Un promedio razonable puede convivir con muchos casos malos. Para un problema de servicio importa la proporción de clientes afectados." },
+    { texto: "Que tiene razón: el promedio está dentro del compromiso.", porque: "Ningún cliente recibe el promedio: cada uno recibe su despacho, y uno de cada cuatro llegó tarde." },
+  ]}
+/>
+
+<Debrief entrevista="Te pueden pedir que propongas indicadores para un negocio. Una buena respuesta define la fórmula exacta (atrasados ÷ entregados), explica por qué ese y no otro, y dice con qué frecuencia mirarlo.">
+Un indicador bien definido convierte una sensación ("hay atrasos") en un número que se puede seguir. El promedio y el porcentaje cuentan historias distintas: un buen análisis muestra los dos y explica la diferencia.
+</Debrief>

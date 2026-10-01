@@ -1,0 +1,47 @@
+---
+titulo: Revisar la fórmula de la IA
+tiempo: 20
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Ayer le pedí a un asistente de inteligencia artificial una fórmula para traer la tarifa de cada comuna. Me dio una, la pegué en la columna I de la planilla limpia y la rellené. No me tiró ningún error, pero los números no me cuadran. ¿Me ayudas a revisarla y corregirla?
+</Brief>
+
+<Concepto>
+Los asistentes de IA escriben fórmulas rápido, pero **no revisan tus datos**: una fórmula puede verse bien, no dar ningún error y traer números equivocados. Por eso lo que produce la IA se revisa como el trabajo de un colega nuevo:
+
+1. **Lee la fórmula parte por parte.** ¿Cada argumento hace lo que crees? ¿Falta alguno?
+2. **Compara con dos o tres filas a mano.** Busca la comuna en la hoja de comunas y mira si la tarifa coincide.
+3. **Desconfía de los patrones raros:** todos los resultados iguales, ceros donde no debería haberlos o totales demasiado redondos.
+
+Un argumento que se omite toma su valor por defecto, y ese valor no siempre es el que necesitas.
+</Concepto>
+
+<SheetTask
+  id="corregir-buscarv"
+  hoja="despachos_limpios"
+  otras={["comunas"]}
+  inicial={{ I1: "tarifa", "I2:I61": "=BUSCARV(D2;comunas!$A$2:$E$13;4)" }}
+  enunciado="Revisa la fórmula de la columna I comparando algunas filas con la hoja comunas. Corrígela en I2 y vuelve a rellenar la columna."
+  celdas={[
+    { celda: "I2", valor: 3800, funcion: "BUSCARV" },
+    { celda: "I3", valor: 3100 },
+    { celda: "I4", valor: 2900 },
+    { celda: "I61", valor: 3300 },
+  ]}
+  solucion={{ "I2:I61": "=BUSCARV(D2;comunas!$A$2:$E$13;4;FALSO())" }}
+  pistas={["Compara I2 con la tarifa de Puente Alto en la hoja comunas: ¿coincide?", "¿Todas las filas muestran la misma tarifa? Eso no tiene sentido si las comunas son distintas.", "Revisa cuántos argumentos tiene el BUSCARV. ¿Qué pasa cuando falta el cuarto?"]}
+/>
+
+<Decision
+  pregunta="Corregiste la fórmula. La próxima vez que uses una fórmula de un asistente de IA, ¿qué haces?"
+  opciones={[
+    { texto: "La uso, pero la reviso: leo cada argumento y comparo algunos resultados con los datos antes de entregar.", correcta: true, porque: "La IA ahorra tiempo escribiendo, pero la responsabilidad por el número que entregas sigue siendo tuya." },
+    { texto: "Dejo de usar IA: se equivoca.", porque: "Bien usada ahorra mucho tiempo. El problema no es usarla, sino no revisar lo que entrega." },
+    { texto: "Le pido que la revise ella misma y confío en su respuesta.", porque: "Puede volver a equivocarse con la misma seguridad. La verificación tiene que hacerse contra los datos." },
+  ]}
+/>
+
+<Debrief entrevista="Cada vez más preguntan '¿usas IA en tu trabajo?'. Una respuesta que destaca: 'Sí, para escribir fórmulas y consultas más rápido, y siempre las verifico contra los datos; una vez una fórmula traía la misma tarifa para todas las comunas sin dar error'.">
+Sin `FALSO()`, `BUSCARV` hace una búsqueda aproximada que supone la tabla ordenada. Como la tabla de comunas no lo está, devolvía la misma tarifa en casi todas las filas, sin ningún error visible. Usar IA para analizar datos es parte del oficio; verificar lo que entrega, también.
+</Debrief>

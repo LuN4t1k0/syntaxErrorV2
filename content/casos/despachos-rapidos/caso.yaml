@@ -1,0 +1,22 @@
+slug: despachos-rapidos
+titulo: "Despachos Rápidos: ordenar el mes con planillas"
+cargo: Analista de datos junior
+empresa: Despachos Rápidos
+dataset: Despachos de marzo de 2025 y tarifas por comuna (datos generados con un script reproducible)
+entregable: Un repositorio en GitHub con tu planilla del análisis (.xlsx), con una hoja de conclusiones, y un README que explique qué encontraste y qué le recomiendas a la dueña.
+archivos:
+  - .xlsx
+rubrica:
+  - "Responde las preguntas de Carla con números que salen de la planilla."
+  - "La planilla se entiende: columnas con título, fórmulas en vez de números escritos a mano y los datos limpios separados de los originales."
+  - "El README explica qué se encontró y qué se recomienda, con los datos que lo respaldan."
+misiones:
+  - 01-conoce-la-planilla
+  - 02-totales-del-mes
+  - 03-condiciones
+  - 04-buscar-en-otra-tabla
+  - 05-limpiar-los-datos
+  - 06-resumir-por-comuna
+  - 07-indicadores-de-entrega
+  - 08-revisar-la-formula-de-la-ia
+  - 09-resumen-para-la-duena

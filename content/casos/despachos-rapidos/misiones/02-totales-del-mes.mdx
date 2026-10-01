@@ -1,0 +1,51 @@
+---
+titulo: Los totales del mes
+tiempo: 20
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Para la reunión con el banco necesito cuatro números de marzo: cuánto cobramos en total por despachos, el costo promedio de un despacho, cuántos despachos tienen costo registrado y cuántas filas tiene la planilla. Te dejé los títulos en la columna J.
+</Brief>
+
+<Concepto>
+Cuatro funciones que vas a usar todo el tiempo. Todas reciben un rango, como `G2:G63`:
+
+| Función | Qué hace | Ejemplo |
+| --- | --- | --- |
+| `SUMA` | Suma los números | `=SUMA(G2:G63)` |
+| `PROMEDIO` | Promedia los números, sin contar las celdas vacías | `=PROMEDIO(G2:G63)` |
+| `CONTAR` | Cuenta las celdas **con números** | `=CONTAR(G2:G63)` |
+| `CONTARA` | Cuenta las celdas **que no están vacías**, con lo que sea | `=CONTARA(A2:A63)` |
+
+`REDONDEAR(valor; decimales)` deja un número con los decimales que pidas: `=REDONDEAR(PROMEDIO(G2:G63); 0)` lo deja en pesos, sin decimales.
+
+En las planillas en español, los argumentos se separan con `;`.
+</Concepto>
+
+<SheetTask
+  id="totales"
+  hoja="despachos"
+  inicial={{ J2: "Total cobrado", J3: "Costo promedio", J4: "Despachos con costo", J5: "Filas de la planilla" }}
+  enunciado="En K2 calcula el total cobrado; en K3, el costo promedio redondeado a pesos; en K4, cuántos despachos tienen costo, y en K5, cuántas filas con id tiene la planilla."
+  celdas={[
+    { celda: "K2", valor: 290560, funcion: "SUMA" },
+    { celda: "K3", valor: 4843, funcion: "PROMEDIO" },
+    { celda: "K4", valor: 60, funcion: "CONTAR" },
+    { celda: "K5", valor: 62, funcion: "CONTARA" },
+  ]}
+  solucion={{ K2: "=SUMA(G2:G63)", K3: "=REDONDEAR(PROMEDIO(G2:G63);0)", K4: "=CONTAR(G2:G63)", K5: "=CONTARA(A2:A63)" }}
+  pistas={["Los costos están en G2:G63 y los id en A2:A63.", "Para el promedio en pesos, pon PROMEDIO dentro de REDONDEAR, con 0 decimales.", "CONTAR cuenta solo números; CONTARA cuenta cualquier celda con algo escrito."]}
+/>
+
+<Decision
+  pregunta="K4 dice 60 despachos con costo y K5 dice 62 filas. ¿Cuántos despachos hubo en marzo?"
+  opciones={[
+    { texto: "Todavía no lo sé: la diferencia indica filas sin costo o repetidas, y hay que revisarlas antes de responder.", correcta: true, porque: "Dos conteos que no cuadran son una señal. Responder sin revisar es apostar." },
+    { texto: "62, porque son las filas de la planilla.", porque: "Una fila no siempre es un despacho: puede estar repetida." },
+    { texto: "60, porque son los que tienen costo.", porque: "Un despacho sin costo registrado igual existió: falta el dato, no el despacho." },
+  ]}
+/>
+
+<Debrief entrevista="Es común que pregunten la diferencia entre CONTAR y CONTARA, o por qué un promedio cambia si hay celdas vacías. Explicar que PROMEDIO ignora las vacías, pero no los ceros, muestra criterio.">
+`SUMA`, `PROMEDIO`, `CONTAR` y `CONTARA` resumen una columna en un número. Comparar dos conteos que deberían coincidir es una de las formas más rápidas de encontrar problemas en los datos. Ya tienes dos pistas: filas sin costo y algo que hace que haya más filas que despachos.
+</Debrief>

@@ -1,0 +1,52 @@
+---
+titulo: Condiciones
+tiempo: 25
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Los despachos de más de 10 kilos nos cuestan más: necesito marcarlos como pesados. También quiero saber cuántos despachos se devolvieron, cuánto nos pagaron las empresas y cuántos despachos pesados hubo en marzo.
+</Brief>
+
+<Concepto>
+**`SI`** elige entre dos resultados según una condición:
+
+`=SI(F2>10; "pesado"; "liviano")` → si el peso de F2 es mayor que 10, escribe "pesado"; si no, "liviano".
+
+**`CONTAR.SI`** cuenta las celdas de un rango que cumplen un criterio:
+
+`=CONTAR.SI(H2:H63; "devuelto")` → cuántas veces aparece "devuelto" en la columna H.
+
+**`SUMAR.SI`** suma solo las filas que cumplen el criterio. Recibe el rango donde busca, el criterio y el rango que suma:
+
+`=SUMAR.SI(E2:E63; "empresa"; G2:G63)` → suma los costos (G) de las filas cuyo cliente (E) es "empresa".
+
+Los textos van entre comillas dobles. Los criterios también pueden ser comparaciones: `">10"`.
+</Concepto>
+
+<SheetTask
+  id="condiciones"
+  hoja="despachos"
+  inicial={{ I1: "tamano", K2: "Devueltos", K3: "Cobrado a empresas", K4: "Despachos pesados" }}
+  enunciado="En la columna I marca cada despacho como pesado (más de 10 kilos) o liviano y rellénala. En L2 cuenta los devueltos; en L3 suma lo cobrado a empresas, y en L4 cuenta los despachos pesados usando la columna I."
+  celdas={[
+    { celda: "I2", valor: "pesado" },
+    { celda: "I25", valor: "pesado" },
+    { celda: "L2", valor: 6, funcion: "CONTAR.SI" },
+    { celda: "L3", valor: 113700, funcion: "SUMAR.SI" },
+    { celda: "L4", valor: 31, funcion: "CONTAR.SI" },
+  ]}
+  solucion={{ "I2:I63": '=SI(F2>10;"pesado";"liviano")', L2: '=CONTAR.SI(H2:H63;"devuelto")', L3: '=SUMAR.SI(E2:E63;"empresa";G2:G63)', L4: '=CONTAR.SI(I2:I63;"pesado")' }}
+  pistas={["El peso está en la columna F, el cliente en E y el estado en H.", "Escribe el SI en I2 y usa Rellenar, como con el IVA.", "En SUMAR.SI el orden es: dónde buscar, qué buscar y qué sumar."]}
+/>
+
+<Decision
+  pregunta="Carla pregunta: '¿Los clientes empresa son los que más nos pagan?'. Tienes el total cobrado a empresas. ¿Te basta para responder?"
+  opciones={[
+    { texto: "No: necesito compararlo con lo cobrado a personas y, mejor aún, con cuántos despachos hizo cada uno.", correcta: true, porque: "Un total solo no dice si es mucho o poco: hay que compararlo, y el promedio por despacho cuenta otra historia que el total." },
+    { texto: "Sí: 113.700 es bastante plata.", porque: "Sin un punto de comparación, «bastante» es una opinión, no un análisis." },
+  ]}
+/>
+
+<Debrief entrevista="Un ejercicio típico: 'cuenta los pedidos de más de 50 mil pesos de una región'. Ahí se usan CONTAR.SI.CONJUNTO o SUMAR.SI.CONJUNTO, que aceptan varios criterios a la vez.">
+`SI` transforma una regla del negocio en una columna nueva. `CONTAR.SI` y `SUMAR.SI` responden "¿cuántos?" y "¿cuánto?" para un grupo. Juntas son la base de casi cualquier resumen en una planilla.
+</Debrief>

@@ -1,0 +1,55 @@
+---
+titulo: Limpiar los datos
+tiempo: 30
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Ya viste que la planilla tiene problemas: comunas escritas de distintas formas, filas repetidas y fechas raras. Antes de sacar conclusiones quiero saber cuántos de estos problemas hay y dónde. No borres nada todavía: márcalos en columnas nuevas para que podamos revisarlos.
+</Brief>
+
+<Concepto>
+Tres problemas comunes y cómo encontrarlos sin cambiar los datos originales:
+
+**Textos mal escritos.** `ESPACIOS` quita los espacios de más y `NOMPROPIO` deja la primera letra de cada palabra en mayúscula:
+
+`=NOMPROPIO(ESPACIOS(D2))` → "  maipú " queda "Maipú".
+
+**Filas repetidas.** Si un id aparece más de una vez, la fila está repetida:
+
+`=CONTAR.SI($A$2:$A$63; A2)>1` → VERDADERO si el id de la fila aparece más de una vez. El rango va fijo con `$` para poder rellenar.
+
+**Fechas que no son fechas.** Una fecha que la planilla entiende es un número por dentro. `ESNUMERO` detecta las que quedaron como texto, como `2025-03-14`:
+
+`=ESNUMERO(C2)` → VERDADERO si C2 es una fecha de verdad. Ojo: también da FALSO si la celda está vacía, como en los despachos devueltos.
+
+Marcar antes de borrar permite revisar cada caso y explicar qué se corrigió.
+</Concepto>
+
+<SheetTask
+  id="marcar-problemas"
+  hoja="despachos"
+  inicial={{ I1: "comuna_limpia", J1: "repetido", K1: "fecha_ok" }}
+  enunciado="Rellena tres columnas nuevas: en I la comuna limpia, en J si el id está repetido y en K si la fecha de entrega es una fecha de verdad."
+  celdas={[
+    { celda: "I6", valor: "Valparaíso" },
+    { celda: "I43", valor: "La Florida" },
+    { celda: "J5", valor: false },
+    { celda: "J23", valor: true },
+    { celda: "K2", valor: true },
+    { celda: "K11", valor: false },
+  ]}
+  solucion={{ "I2:I63": "=NOMPROPIO(ESPACIOS(D2))", "J2:J63": "=CONTAR.SI($A$2:$A$63;A2)>1", "K2:K63": "=ESNUMERO(C2)" }}
+  pistas={["Las comunas están en D, los id en A y las fechas de entrega en C.", "Puedes poner una función dentro de otra: primero ESPACIOS y, sobre el resultado, NOMPROPIO.", "En el CONTAR.SI, el rango de los id va fijo ($A$2:$A$63) y lo que buscas es el id de la fila (A2)."]}
+/>
+
+<Decision
+  pregunta="Encontraste dos filas repetidas. Carla te dice: 'Bórralas y listo'. ¿Qué haces?"
+  opciones={[
+    { texto: "Antes de borrar, reviso que sean idénticas en todas las columnas y anoto cuáles quité y por qué.", correcta: true, porque: "Dos filas con el mismo id pueden ser un error de copia o dos despachos distintos mal numerados. El registro permite que otra persona revise la limpieza." },
+    { texto: "Las borro de inmediato en la planilla original.", porque: "Si te equivocas, perdiste el dato y nadie puede saber qué cambió." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta frecuente: '¿cuánto tiempo de un análisis se va en limpiar datos?'. Una respuesta honesta es 'gran parte', con un ejemplo: espacios de más que rompen una búsqueda, fechas guardadas como texto o filas duplicadas que inflan un total.">
+Limpiar es encontrar los problemas, decidir qué hacer con cada uno y dejarlo registrado. Desde aquí, Carla te deja una versión limpia de la planilla (despachos_limpios), con estos problemas corregidos, para que el análisis use datos confiables.
+</Debrief>

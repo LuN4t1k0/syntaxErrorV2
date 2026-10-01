@@ -1,0 +1,54 @@
+---
+titulo: Buscar en otra tabla
+tiempo: 25
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+En la hoja comunas está la tarifa de cada comuna y cuántos días le prometemos al cliente para entregar. Quiero tener esos dos datos al lado de cada despacho, sin copiarlos a mano: el mes pasado alguien se equivocó copiando y cobramos mal a medio Maipú.
+</Brief>
+
+<Concepto>
+**`BUSCARV`** busca un valor en la primera columna de una tabla y devuelve el de otra columna de la misma fila:
+
+`=BUSCARV(D2; comunas!$A$2:$E$13; 4; FALSO())`
+
+1. `D2`: lo que buscas, la comuna del despacho.
+2. `comunas!$A$2:$E$13`: la tabla donde buscas, en la hoja comunas, fija con `$` para poder rellenar.
+3. `4`: la columna de la tabla que quieres traer (la tarifa es la cuarta).
+4. `FALSO()`: coincidencia exacta. Sin él, la planilla busca un valor «aproximado» y puede traer otro.
+
+**`BUSCARX`** hace lo mismo con rangos separados, y no depende del número de columna:
+
+`=BUSCARX(D2; comunas!$A$2:$A$13; comunas!$E$2:$E$13)` → busca la comuna en la columna A y devuelve la E.
+
+Para ver la tabla de comunas, cambia de pestaña sobre la grilla.
+</Concepto>
+
+<SheetTask
+  id="buscar-tarifas"
+  hoja="despachos"
+  otras={["comunas"]}
+  inicial={{ I1: "tarifa", J1: "dias_compromiso" }}
+  enunciado="En la columna I trae la tarifa de la comuna de cada despacho con BUSCARV, y en la J los días de compromiso con BUSCARX. Rellena ambas columnas."
+  celdas={[
+    { celda: "I2", valor: 3800, funcion: "BUSCARV" },
+    { celda: "I10", valor: 3500 },
+    { celda: "J3", valor: 1, funcion: "BUSCARX" },
+    { celda: "J50", valor: 1 },
+  ]}
+  solucion={{ "I2:I63": "=BUSCARV(D2;comunas!$A$2:$E$13;4;FALSO())", "J2:J63": "=BUSCARX(D2;comunas!$A$2:$A$13;comunas!$E$2:$E$13)" }}
+  pistas={["La comuna del despacho está en D2. La tabla de comunas va de A2 a E13 en la hoja comunas.", "La tarifa es la columna 4 de la tabla y los días de compromiso, la 5.", "Fija la tabla con $ antes de rellenar: comunas!$A$2:$E$13."]}
+/>
+
+<Decision
+  pregunta="Al rellenar, la fila 6 muestra #N/D aunque Valparaíso sí está en la hoja comunas. ¿Qué pasa?"
+  opciones={[
+    { texto: "El nombre en la fila 6 tiene algo distinto, por ejemplo espacios antes del nombre: la búsqueda exige que sea idéntico.", correcta: true, porque: "«  Valparaíso» con espacios no es igual a «Valparaíso». Es un problema de los datos, no de la fórmula." },
+    { texto: "BUSCARV no funciona con tildes.", porque: "Funciona sin problemas con tildes; lo que falla es que el texto no sea exactamente el mismo." },
+    { texto: "Hay que quitar el FALSO() para que encuentre algo.", porque: "Sin FALSO() la búsqueda es aproximada y puede traer la tarifa de otra comuna, que es peor que un #N/D visible." },
+  ]}
+/>
+
+<Debrief entrevista="BUSCARV es la función más preguntada en las pruebas de Excel. Lo que más distingue a quien la domina es explicar por qué siempre lleva FALSO() y qué significa un #N/D.">
+Buscar en otra tabla evita copiar datos a mano y los mantiene al día. Un `#N/D` dice que el valor no está tal cual en la tabla: casi siempre por espacios o diferencias de escritura. En la próxima misión vas a limpiar justamente eso.
+</Debrief>

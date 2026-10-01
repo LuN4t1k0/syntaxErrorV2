@@ -1,0 +1,48 @@
+---
+titulo: Resumir por comuna
+tiempo: 25
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Con la planilla limpia, quiero ver marzo por comuna: cuántos despachos hicimos en cada una y cuánto nos pagaron. Así decido dónde conviene poner un segundo repartidor. Te dejé la lista de comunas lista para que agregues las dos columnas.
+</Brief>
+
+<Concepto>
+Para resumir por grupo, en Excel y Google Sheets se usa una **tabla dinámica**: eliges la columna para agrupar (comuna) y qué calcular (contar, sumar). Es lo primero que vas a usar en tu planilla del entregable.
+
+La misma tabla se puede construir con fórmulas, y así se entiende qué hace la tabla dinámica por dentro:
+
+`=CONTAR.SI(despachos_limpios!$D$2:$D$61; A2)` → cuántos despachos tiene la comuna de A2.
+
+`=SUMAR.SI(despachos_limpios!$D$2:$D$61; A2; despachos_limpios!$G$2:$G$61)` → cuánto se cobró en esa comuna.
+
+Esta vez la hoja principal es **comunas**, y los despachos se leen desde la hoja **despachos_limpios**.
+</Concepto>
+
+<SheetTask
+  id="resumen-por-comuna"
+  hoja="comunas"
+  otras={["despachos_limpios"]}
+  inicial={{ F1: "despachos", G1: "cobrado" }}
+  enunciado="En la columna F cuenta los despachos de cada comuna y en la G suma lo cobrado, usando la hoja despachos_limpios. Rellena las dos columnas para las 12 comunas."
+  celdas={[
+    { celda: "F2", valor: 7, funcion: "CONTAR.SI" },
+    { celda: "F8", valor: 14 },
+    { celda: "G8", valor: 64720, funcion: "SUMAR.SI" },
+    { celda: "G13", valor: 13360 },
+  ]}
+  solucion={{ "F2:F13": "=CONTAR.SI(despachos_limpios!$D$2:$D$61;A2)", "G2:G13": "=SUMAR.SI(despachos_limpios!$D$2:$D$61;A2;despachos_limpios!$G$2:$G$61)" }}
+  pistas={["La comuna de cada fila está en A2. En despachos_limpios, la comuna está en la columna D y el costo en la G.", "Los rangos de la otra hoja van fijos con $ para que no se muevan al rellenar.", "Es el mismo CONTAR.SI y SUMAR.SI de la misión de condiciones; lo que cambia es que el criterio es una celda (A2) y no un texto."]}
+/>
+
+<Decision
+  pregunta="Maipú tiene la mayor cantidad de despachos. ¿Es donde conviene poner el segundo repartidor?"
+  opciones={[
+    { texto: "Es una buena candidata, pero antes miraría también los atrasos y la distancia: más despachos no siempre significa más problemas.", correcta: true, porque: "La cantidad muestra la demanda; para decidir dónde poner un repartidor también importa dónde se está fallando." },
+    { texto: "Sí, sin dudas: tiene más despachos.", porque: "Puede que Maipú se esté atendiendo bien y el problema esté en otra comuna con menos despachos pero más atrasos." },
+  ]}
+/>
+
+<Debrief entrevista="En casi toda prueba de Excel piden una tabla dinámica. Saber armarla con fórmulas (CONTAR.SI y SUMAR.SI) demuestra que entiendes lo que calcula, y te salva cuando la tabla dinámica no alcanza.">
+Resumir por grupo convierte 60 filas en 12 que se pueden leer de una vez. En tu entregable, haz este mismo resumen con una tabla dinámica y compáralo con tus fórmulas: si los números coinciden, ambos están bien.
+</Debrief>

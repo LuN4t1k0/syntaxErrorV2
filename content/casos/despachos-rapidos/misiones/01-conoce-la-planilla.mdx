@@ -1,0 +1,44 @@
+---
+titulo: Conoce la planilla
+tiempo: 20
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Hola, bienvenida o bienvenido. Somos una pyme de despachos: llevamos pedidos a comunas de Santiago y a un par de ciudades de regiones. Te dejé la planilla de marzo tal como la llevamos, con sus errores. Partamos por algo simple: necesito ver cada costo con IVA incluido, en una columna nueva, para cotizar con las empresas.
+</Brief>
+
+<Concepto>
+Una planilla es una grilla: las **columnas** tienen letras (A, B, C…) y las **filas**, números. Cada celda tiene una dirección, como `G2`: columna G, fila 2. Un **rango** es un grupo de celdas, como `G2:G63`.
+
+Una fórmula empieza con `=` y puede usar otras celdas: `=G2+1000` suma mil pesos al costo de la fila 2. Al **rellenar hacia abajo**, la planilla copia la fórmula en cada fila y ajusta las referencias: en la fila 3 queda `=G3+1000`.
+
+Si el valor del IVA está en una celda, por ejemplo `K2`, la referencia tiene que quedar fija al rellenar: eso se escribe `$K$2`. El `$` fija la columna y la fila.
+
+- `=G2*(1+K2)` → en la fila 3 queda `=G3*(1+K3)`, y `K3` está vacía: error.
+- `=G2*(1+$K$2)` → en la fila 3 queda `=G3*(1+$K$2)`: correcto.
+
+En esta planilla escribes la fórmula en la barra **Fórmula**, la aplicas y usas **Rellenar hasta la fila…** para copiarla hacia abajo. Los decimales se escriben con punto (`0.19`); en Excel en español van con coma.
+</Concepto>
+
+<SheetTask
+  id="costo-con-iva"
+  hoja="despachos"
+  inicial={{ I1: "costo_con_iva", K1: "IVA", K2: 0.19 }}
+  enunciado="En la columna I calcula el costo con IVA de cada despacho, usando el IVA de la celda K2. Escribe la fórmula en I2 y rellénala hasta la última fila."
+  celdas={[{ celda: "I2", valor: 7235.2 }, { celda: "I40", valor: 4593.4 }, { celda: "I63", valor: 4593.4 }]}
+  solucion={{ "I2:I63": "=G2*(1+$K$2)" }}
+  pistas={["El costo está en la columna G y el IVA en K2.", "Si al rellenar aparecen ceros o errores, revisa que la referencia al IVA esté fija: $K$2.", "La fórmula de I2 es el costo de G2 multiplicado por (1 + el IVA)."]}
+/>
+
+<Decision
+  pregunta="En la fila 14 el costo con IVA da 0. ¿Qué haces?"
+  opciones={[
+    { texto: "Reviso la fila: el costo está vacío, así que lo anoto como un dato por corregir y le pregunto a Carla.", correcta: true, porque: "El 0 no es un costo real: viene de una celda vacía. Hay que encontrar la causa antes de usar ese número." },
+    { texto: "Escribo a mano un costo parecido al de otras filas.", porque: "Inventar un dato esconde el problema y nadie va a saber que ese número no es real." },
+    { texto: "Nada: es solo una fila.", porque: "Un 0 baja los promedios y los totales. Si no se explica, termina en un informe." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta clásica de planillas: '¿qué diferencia hay entre A1 y $A$1?'. La respuesta: la primera se ajusta al copiar la fórmula; la segunda queda fija.">
+Las fórmulas se escriben una vez y se rellenan: así la planilla se actualiza sola si cambia un dato. Las referencias relativas cambian al copiar y las absolutas (`$K$2`) no. Un resultado raro, como un 0, casi siempre es una pista de un dato con problemas.
+</Debrief>

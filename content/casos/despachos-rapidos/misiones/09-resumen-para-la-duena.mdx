@@ -1,0 +1,37 @@
+---
+titulo: El resumen para la dueña
+tiempo: 40
+sinGuia: true
+---
+
+<Brief de="Carla Muñoz, dueña de Despachos Rápidos">
+Mañana me reúno con mi socio y quiero llevar el resumen de marzo en una sola mirada. Te dejé los títulos en la columna N de la planilla limpia: cuántos despachos hicimos, cuánto cobramos, el costo promedio de un despacho en pesos, cuántos se devolvieron y cuántos llegaron atrasados según lo que prometemos en cada comuna. Arma las columnas de apoyo que necesites. Confío en tu criterio.
+</Brief>
+
+<SheetTask
+  id="resumen-de-marzo"
+  hoja="despachos_limpios"
+  otras={["comunas"]}
+  inicial={{ N2: "Despachos del mes", N3: "Total cobrado", N4: "Costo promedio", N5: "Devueltos", N6: "Atrasados" }}
+  enunciado="Completa la columna O con el resumen de marzo, a partir de la hoja despachos_limpios."
+  celdas={[
+    { celda: "O2", valor: 60 },
+    { celda: "O3", valor: 290540 },
+    { celda: "O4", valor: 4842 },
+    { celda: "O5", valor: 6 },
+    { celda: "O6", valor: 14 },
+  ]}
+  solucion={{ O2: "=CONTARA(A2:A61)", O3: "=SUMA(G2:G61)", O4: "=REDONDEAR(PROMEDIO(G2:G61);0)", O5: '=CONTAR.SI(H2:H61;"devuelto")', "I2:I61": '=SI(C2="";"";C2-B2)', "J2:J61": "=BUSCARV(D2;comunas!$A$2:$E$13;5;FALSO())", "K2:K61": '=SI(I2="";"devuelto";SI(I2>J2;"atrasado";"a tiempo"))', O6: '=CONTAR.SI(K2:K61;"atrasado")' }}
+/>
+
+<Decision
+  pregunta="Tu resumen está listo. ¿Qué agregas antes de mandárselo a Carla?"
+  opciones={[
+    { texto: "Dos o tres frases con lo más importante y una recomendación, por ejemplo dónde se concentran los atrasos.", correcta: true, porque: "Los números sin interpretación obligan a Carla a hacer el análisis. Tu trabajo es decirle qué significan y qué haría." },
+    { texto: "Nada: los números hablan por sí solos.", porque: "Para quien no estuvo en el análisis, cinco números sueltos no dicen qué hacer." },
+  ]}
+/>
+
+<Debrief entrevista="Un cierre típico de las pruebas técnicas: 'Si tuvieras dos minutos con la gerencia, ¿qué le dirías de estos datos?'. Practica responder con un número, lo que significa y una recomendación.">
+Este resumen es la base de tu entregable: arma la planilla completa en Excel o Google Sheets, con una hoja de conclusiones, súbela a un repositorio con un README que cuente qué encontraste y envíala desde la página del caso.
+</Debrief>
