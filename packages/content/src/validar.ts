@@ -2,7 +2,7 @@ import { revisarMarkdown } from "@syntaxerror/engines/markdown";
 import { aplicarSolucion, revisarHoja } from "@syntaxerror/engines/sheet";
 import { revisarSql } from "@syntaxerror/engines/sql";
 import type { ResultadoTarea } from "@syntaxerror/engines/tipos";
-import { grillaDeHoja, tablasSql } from "./datos";
+import { hojaDeTarea, tablasSql } from "./datos";
 import type { BloqueTarea, PropsBloque } from "./esquemas";
 import { tareasDeMision } from "./publicacion";
 import type { Caso, Contenido } from "./tipos";
@@ -23,8 +23,11 @@ async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: Re
       if (Object.keys(tablas).length === 0) return { aprobada: false, diagnostico: "el caso no tiene tablas en datos/" };
       return revisarSql(tablas, tarea.props, tarea.props.solucion);
     }
-    case "SheetTask":
-      return revisarHoja(aplicarSolucion(grillaDeHoja(caso, tarea.props.hoja), tarea.props.solucion), tarea.props);
+    case "SheetTask": {
+      if (tarea.props.otras.includes(tarea.props.hoja)) return { aprobada: false, diagnostico: `la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta` };
+      const { grilla, opciones } = hojaDeTarea(caso, tarea.props);
+      return revisarHoja(aplicarSolucion(grilla, tarea.props.solucion, opciones), tarea.props);
+    }
     case "PythonTask":
       return revisarPython(tarea.props, caso);
     case "MarkdownTask":

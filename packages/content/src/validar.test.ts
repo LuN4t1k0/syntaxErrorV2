@@ -58,6 +58,14 @@ describe("validarContenido", () => {
     expect(await validar()).toEqual([]);
   });
 
+  it("una tarea de planilla no puede consultar su propia hoja", async () => {
+    const tarea = bloque(mision("02-hoja"), "SheetTask");
+    tarea.props.otras = [tarea.props.hoja];
+    expect(await validar()).toContain(
+      `casos/ventas/misiones/02-hoja.mdx: la solución de la tarea "total" no pasa su propio validador: la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta`
+    );
+  });
+
   it("rechaza un Brief de más de 150 palabras", async () => {
     bloque(mision("01-filtrar"), "Brief").texto = Array(151).fill("palabra").join(" ");
     expect(await validar()).toContain("casos/ventas/misiones/01-filtrar.mdx: el Brief tiene 151 palabras (máximo 150)");

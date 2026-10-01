@@ -49,6 +49,11 @@ export const frontmatterSchema = z.object({
   sinGuia: z.boolean().default(false),
 });
 
+const nombreHoja = z.string().regex(/^[a-z_][a-z0-9_]*$/, "debe ser el nombre de un CSV de datos/");
+// Una celda (F2) o una columna que se rellena hacia abajo desde la primera (F2:F41).
+const rangoCeldas = z.string().regex(/^[A-Z]+[1-9][0-9]*(?::[A-Z]+[1-9][0-9]*)?$/, "debe ser una celda como F2 o un rango de una columna como F2:F41");
+const contenidoCelda = z.union([z.string(), z.number()]);
+
 const celdaEsperada = z.object({
   celda: z.string().regex(/^[A-Z]+[1-9][0-9]*$/, "debe ser una celda como F2"),
   valor: z.union([z.string(), z.number(), z.boolean()]),
@@ -87,9 +92,13 @@ export const bloqueSchemas = {
   SheetTask: z.object({
     id: idTarea,
     enunciado: z.string().optional(),
-    hoja: z.string().regex(/^[a-z_][a-z0-9_]*$/, "debe ser el nombre de un CSV de datos/"),
+    hoja: nombreHoja,
+    // Hojas de consulta (por ejemplo comunas), que se leen con referencias como comunas!A2:E13.
+    otras: z.array(nombreHoja).default([]),
+    // Celdas escritas de antemano: títulos de columna, un valor de referencia o una fórmula a corregir.
+    inicial: z.record(rangoCeldas, contenidoCelda).default({}),
     celdas: z.array(celdaEsperada).min(1, "indica al menos una celda a revisar"),
-    solucion: z.record(z.string(), z.union([z.string(), z.number()])),
+    solucion: z.record(rangoCeldas, contenidoCelda),
     pistas,
   }),
   MarkdownTask: z.object({

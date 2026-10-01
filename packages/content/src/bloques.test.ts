@@ -58,3 +58,15 @@ describe("tareas de Markdown y GitHub", () => {
     expect(bloqueSchemas.GithubTask.safeParse({ id: "x", requisitos: ["carpeta:datos", "extension:.csv", "nombres-limpios", "readme"] }).success).toBe(true);
   });
 });
+
+describe("tareas de planilla con varias hojas", () => {
+  it("aceptan hojas de consulta, celdas iniciales y soluciones con rangos de una columna", async () => {
+    const { bloqueSchemas } = await import("./esquemas");
+    const base = { id: "x", hoja: "despachos", celdas: [{ celda: "I2", valor: 1 }] };
+    const tarea = bloqueSchemas.SheetTask.parse({ ...base, otras: ["comunas"], inicial: { K2: 0.19, "I2:I10": "=1" }, solucion: { "I2:I63": "=G2" } });
+    expect(tarea).toMatchObject({ otras: ["comunas"], inicial: { K2: 0.19, "I2:I10": "=1" } });
+    expect(bloqueSchemas.SheetTask.parse({ ...base, solucion: { I2: "=1" } })).toMatchObject({ otras: [], inicial: {} });
+    expect(bloqueSchemas.SheetTask.safeParse({ ...base, solucion: { i2: "=1" } }).success).toBe(false);
+    expect(bloqueSchemas.SheetTask.safeParse({ ...base, otras: ["Comunas"], solucion: { I2: "=1" } }).success).toBe(false);
+  });
+});

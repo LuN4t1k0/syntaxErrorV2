@@ -1,6 +1,6 @@
 import type { MDXComponents } from "mdx/types";
 import type { ReactNode } from "react";
-import { grillaDeHoja, tablasSql } from "@syntaxerror/content/datos";
+import { hojaDeTarea, tablasSql } from "@syntaxerror/content/datos";
 import { bloqueSchemas } from "@syntaxerror/content/esquemas";
 import type { Caso } from "@syntaxerror/content/tipos";
 import { calcularEsperado } from "@syntaxerror/engines/sql";
@@ -37,8 +37,10 @@ export function componentesMision(caso: Caso): MDXComponents {
       return <SqlTask {...tarea} esperadas={esperadas} tablas={tablas} />;
     },
     SheetTask: (props: PropsMdx) => {
-      const { solucion: _solucion, ...tarea } = bloqueSchemas.SheetTask.parse(props);
-      return <SheetTask {...tarea} grilla={grillaDeHoja(caso, tarea.hoja)} />;
+      const { solucion: _solucion, ...resto } = bloqueSchemas.SheetTask.parse(props);
+      const { grilla, opciones } = hojaDeTarea(caso, resto);
+      const { hoja: _hoja, otras: _otras, inicial: _inicial, ...tarea } = resto;
+      return <SheetTask {...tarea} grilla={grilla} opciones={opciones} />;
     },
     PythonTask: (props: PropsMdx) => {
       const { solucion: _solucion, paquetes: _paquetes, ...tarea } = bloqueSchemas.PythonTask.parse(props);
