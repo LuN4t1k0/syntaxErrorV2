@@ -36,8 +36,26 @@ describe("validarContenido", () => {
     const filtrar = mision("01-filtrar");
     filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
     expect(await validar()).toContain(
-      "casos/ventas/misiones/01-filtrar.mdx: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask o SheetTask)"
+      "casos/ventas/misiones/01-filtrar.mdx: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask o GithubTask)"
     );
+  });
+
+  it("revisa la solución de una tarea de Markdown con sus requisitos", async () => {
+    mision("01-filtrar").bloques.push({
+      tipo: "MarkdownTask",
+      props: { id: "readme", inicial: "", requisitos: ["titulo", "tabla"], solucion: "# Proyecto", pistas: [] },
+      texto: null,
+    });
+    expect(await validar()).toContain(
+      'casos/ventas/misiones/01-filtrar.mdx: la solución de la tarea "readme" no pasa su propio validador: Falta una tabla: una fila de encabezados, una línea de separación como «| --- | --- |» y al menos una fila de datos.'
+    );
+  });
+
+  it("una tarea de GitHub cuenta como tarea práctica y no tiene solución que validar", async () => {
+    const filtrar = mision("01-filtrar");
+    filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
+    filtrar.bloques.push({ tipo: "GithubTask", props: { id: "repo", repositorio: "{usuario}/mi-primer-repositorio", requisitos: ["publico", "readme"], pistas: [] }, texto: null });
+    expect(await validar()).toEqual([]);
   });
 
   it("rechaza un Brief de más de 150 palabras", async () => {

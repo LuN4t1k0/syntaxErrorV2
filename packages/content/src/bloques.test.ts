@@ -43,3 +43,18 @@ describe("compilarMision", () => {
     expect(typeof (await compilarMision("# Hola"))).toBe("function");
   });
 });
+
+describe("tareas de Markdown y GitHub", () => {
+  it("leen sus requisitos y rechazan los desconocidos", async () => {
+    const [markdown, github] = await extraerBloques(
+      '<MarkdownTask id="readme" requisitos={["titulo", "subtitulos:2"]} solucion="# Hola" />\n\n<GithubTask id="repo" repositorio="{usuario}/{usuario}" requisitos={["publico", "readme:enlace", "commits:3"]} />'
+    );
+    expect(markdown.props).toEqual({ id: "readme", requisitos: ["titulo", "subtitulos:2"], solucion: "# Hola" });
+    expect(github.props).toEqual({ id: "repo", repositorio: "{usuario}/{usuario}", requisitos: ["publico", "readme:enlace", "commits:3"] });
+    const { bloqueSchemas } = await import("./esquemas");
+    expect(bloqueSchemas.MarkdownTask.safeParse({ id: "x", requisitos: ["parrafo"], solucion: "a" }).success).toBe(false);
+    expect(bloqueSchemas.GithubTask.safeParse({ id: "x", requisitos: ["readme:parrafo"] }).success).toBe(false);
+    expect(bloqueSchemas.GithubTask.safeParse({ id: "x", repositorio: "ana/repo", requisitos: ["publico"] }).success).toBe(false);
+    expect(bloqueSchemas.GithubTask.safeParse({ id: "x", requisitos: ["carpeta:datos", "extension:.csv", "nombres-limpios", "readme"] }).success).toBe(true);
+  });
+});
