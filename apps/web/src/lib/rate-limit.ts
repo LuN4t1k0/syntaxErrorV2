@@ -14,7 +14,8 @@ export type RateLimitKey =
   | "reportes"
   | "clases-unirse"
   | "preguntas-profesor"
-  | "entregables";
+  | "entregables"
+  | "github";
 
 export type RateLimitResult = { allowed: true } | { allowed: false; retryAfterSeconds: number };
 
@@ -34,6 +35,8 @@ const LIMITER_CONFIGS: Record<RateLimitKey, { points: number; duration: number }
   "clases-unirse": { points: 10, duration: 900 },
   "preguntas-profesor": { points: 5, duration: 3600 },
   entregables: { points: 10, duration: 3600 },
+  // Cada revisión consulta la API de GitHub (hasta 4 llamadas): sin token, el límite es de 60 por hora para todo el servidor.
+  github: { points: 20, duration: 600 },
 };
 
 const limiters = new Map<RateLimitKey, RateLimiterRedis>();
