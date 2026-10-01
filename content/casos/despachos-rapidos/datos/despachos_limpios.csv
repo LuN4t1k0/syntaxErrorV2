@@ -1,0 +1,61 @@
+id,fecha_pedido,fecha_entrega,comuna,cliente,peso_kg,costo,estado
+1001,01/03/2025,03/03/2025,Puente Alto,persona,19,6080,entregado
+1002,12/03/2025,13/03/2025,Ñuñoa,empresa,2,3340,entregado
+1003,27/03/2025,29/03/2025,Santiago,empresa,8,3860,entregado
+1004,06/03/2025,08/03/2025,San Bernardo,persona,6,4620,entregado
+1005,10/03/2025,13/03/2025,Valparaíso,empresa,4,6680,entregado
+1006,05/03/2025,08/03/2025,Maipú,persona,15,5300,entregado
+1007,22/03/2025,24/03/2025,Santiago,empresa,15,4700,entregado
+1008,02/03/2025,06/03/2025,San Bernardo,persona,16,5820,entregado
+1009,09/03/2025,10/03/2025,Maipú,persona,4,3980,entregado
+1010,13/03/2025,14/03/2025,Ñuñoa,persona,19,5380,entregado
+1011,20/03/2025,23/03/2025,Quilicura,empresa,20,6100,entregado
+1012,13/03/2025,14/03/2025,Providencia,persona,9,4180,entregado
+1013,07/03/2025,09/03/2025,Puente Alto,persona,10,5000,entregado
+1014,09/03/2025,10/03/2025,Providencia,persona,12,4540,entregado
+1015,25/03/2025,27/03/2025,Puente Alto,persona,4,4280,entregado
+1016,22/03/2025,23/03/2025,Maipú,empresa,2,3740,entregado
+1017,11/03/2025,,La Florida,persona,1,3420,devuelto
+1018,05/03/2025,09/03/2025,Quilicura,persona,6,4420,entregado
+1019,08/03/2025,10/03/2025,Maipú,persona,16,5420,entregado
+1020,25/03/2025,28/03/2025,Maipú,persona,6,4220,entregado
+1021,12/03/2025,14/03/2025,La Florida,empresa,19,5580,entregado
+1022,04/03/2025,06/03/2025,Maipú,empresa,9,4580,entregado
+1023,16/03/2025,18/03/2025,La Florida,persona,10,4500,entregado
+1024,07/03/2025,09/03/2025,Quilicura,persona,20,6100,entregado
+1025,12/03/2025,13/03/2025,Santiago,persona,3,3260,entregado
+1026,25/03/2025,,Puente Alto,empresa,1,3920,devuelto
+1027,13/03/2025,14/03/2025,Santiago,persona,19,5180,entregado
+1028,02/03/2025,03/03/2025,La Florida,empresa,2,3540,entregado
+1029,20/03/2025,23/03/2025,Puente Alto,persona,14,5480,entregado
+1030,05/03/2025,06/03/2025,Ñuñoa,persona,6,3820,entregado
+1031,09/03/2025,13/03/2025,Maipú,persona,10,4700,entregado
+1032,25/03/2025,27/03/2025,Maipú,persona,5,4100,entregado
+1033,19/03/2025,21/03/2025,Maipú,persona,18,5660,entregado
+1034,07/03/2025,09/03/2025,Maipú,persona,1,3620,entregado
+1035,19/03/2025,20/03/2025,La Florida,persona,19,5580,entregado
+1036,12/03/2025,15/03/2025,La Florida,empresa,17,5340,entregado
+1037,11/03/2025,13/03/2025,Maipú,persona,18,5660,entregado
+1038,10/03/2025,12/03/2025,Puente Alto,persona,11,5120,entregado
+1039,17/03/2025,19/03/2025,Maipú,empresa,3,3860,entregado
+1040,09/03/2025,10/03/2025,Santiago,persona,12,4340,entregado
+1041,23/03/2025,,Rancagua,persona,18,8060,devuelto
+1042,09/03/2025,,La Florida,empresa,7,4140,devuelto
+1043,24/03/2025,27/03/2025,La Florida,empresa,20,5700,entregado
+1044,22/03/2025,24/03/2025,Las Condes,persona,16,5320,entregado
+1045,19/03/2025,,Puente Alto,empresa,20,6200,devuelto
+1046,10/03/2025,12/03/2025,Ñuñoa,empresa,17,5140,entregado
+1047,22/03/2025,26/03/2025,Valparaíso,empresa,4,6680,entregado
+1048,03/03/2025,05/03/2025,La Florida,empresa,1,3420,entregado
+1049,10/03/2025,11/03/2025,Santiago,persona,20,5300,entregado
+1050,01/03/2025,03/03/2025,La Florida,empresa,19,5580,entregado
+1051,19/03/2025,21/03/2025,La Florida,empresa,1,3420,entregado
+1052,12/03/2025,14/03/2025,Maipú,persona,13,5060,entregado
+1053,14/03/2025,17/03/2025,Maipú,persona,11,4820,entregado
+1054,02/03/2025,04/03/2025,Puente Alto,empresa,9,4880,entregado
+1055,15/03/2025,,Quilicura,persona,16,5620,devuelto
+1056,22/03/2025,24/03/2025,La Florida,persona,18,5460,entregado
+1057,18/03/2025,19/03/2025,Santiago,empresa,12,4340,entregado
+1058,20/03/2025,21/03/2025,Providencia,persona,5,3700,entregado
+1059,25/03/2025,26/03/2025,Providencia,empresa,7,3940,entregado
+1060,27/03/2025,29/03/2025,La Florida,persona,12,4740,entregado

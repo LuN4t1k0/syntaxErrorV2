@@ -1,0 +1,13 @@
+comuna,region,zona,tarifa,dias_compromiso
+Santiago,Metropolitana,Centro,2900,1
+Providencia,Metropolitana,Oriente,3100,1
+Ñuñoa,Metropolitana,Oriente,3100,1
+Las Condes,Metropolitana,Oriente,3400,2
+La Florida,Metropolitana,Sur,3300,2
+Puente Alto,Metropolitana,Sur,3800,2
+Maipú,Metropolitana,Poniente,3500,2
+Pudahuel,Metropolitana,Poniente,3600,2
+Quilicura,Metropolitana,Norte,3700,2
+San Bernardo,Metropolitana,Sur,3900,2
+Rancagua,O'Higgins,Regiones,5900,3
+Valparaíso,Valparaíso,Regiones,6200,3
