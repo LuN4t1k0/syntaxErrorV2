@@ -13,6 +13,9 @@ export type Grilla = ValorCelda[][];
 export type Hoja = HyperFormula;
 export type CeldaEsperada = { celda: string; valor: string | number | boolean; funcion?: string };
 export type SheetTarea = { celdas: CeldaEsperada[] };
+// Una tarea trabaja sobre su hoja principal (índice 0, la única que se edita) y puede consultar otras,
+// por ejemplo «comunas», con referencias como comunas!A2:E13. «inicial» deja celdas escritas de antemano.
+export type OpcionesHoja = { nombre?: string; otras?: Record<string, Grilla>; inicial?: Record<string, string | number> };
 
 const LETRAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -61,11 +64,20 @@ export function normalizarFormula(contenido: string): string {
   return resultado;
 }
 
-export function crearHoja(grilla: Grilla): Hoja {
-  const normalizada = grilla.map((fila) =>
-    fila.map((valor) => (typeof valor === "string" ? normalizarFormula(valor) : valor))
-  );
-  return HyperFormula.buildFromArray(normalizada, { licenseKey: "gpl-v3", language: "esES" });
+function normalizar(grilla: Grilla): Grilla {
+  return grilla.map((fila) => fila.map((valor) => (typeof valor === "string" ? normalizarFormula(valor) : valor)));
+}
+
+export function crearHoja(grilla: Grilla, { nombre = "Hoja1", otras = {}, inicial = {} }: OpcionesHoja = {}): Hoja {
+  const hojas: Record<string, Grilla> = { [nombre]: normalizar(grilla) };
+  for (const [otra, datos] of Object.entries(otras)) hojas[otra] = normalizar(datos);
+  const hoja = HyperFormula.buildFromSheets(hojas, { licenseKey: "gpl-v3", language: "esES" });
+  for (const [rango, contenido] of Object.entries(inicial)) escribirRango(hoja, rango, contenido);
+  return hoja;
+}
+
+export function nombresDeHojas(hoja: Hoja): string[] {
+  return hoja.getSheetNames();
 }
 
 export function escribirCelda(hoja: Hoja, a1: string, contenido: string | number): void {
@@ -73,16 +85,39 @@ export function escribirCelda(hoja: Hoja, a1: string, contenido: string | number
   hoja.setCellContents({ sheet: 0, ...leerDireccion(a1) }, valor);
 }
 
-export function leerValor(hoja: Hoja, a1: string): unknown {
-  return hoja.getCellValue({ sheet: 0, ...leerDireccion(a1) });
+// Copia la fórmula de a1 a las filas de abajo, hasta «hastaFila» (como en la planilla: 1 es la primera),
+// ajustando las referencias relativas igual que Excel al arrastrar.
+export function rellenarHaciaAbajo(hoja: Hoja, a1: string, hastaFila: number): void {
+  const { row, col } = leerDireccion(a1);
+  hoja.copy({ start: { sheet: 0, row, col }, end: { sheet: 0, row, col } });
+  for (let fila = row + 1; fila < hastaFila; fila += 1) hoja.paste({ sheet: 0, row: fila, col });
 }
 
-export function leerFormula(hoja: Hoja, a1: string): string | undefined {
-  return hoja.getCellFormula({ sheet: 0, ...leerDireccion(a1) });
+const RANGO_DE_COLUMNA = /^([A-Z]+)([1-9][0-9]*):([A-Z]+)([1-9][0-9]*)$/;
+
+// "F2" escribe una celda; "F2:F41" escribe F2 y la rellena hacia abajo hasta F41.
+export function escribirRango(hoja: Hoja, rango: string, contenido: string | number): void {
+  const coincidencia = RANGO_DE_COLUMNA.exec(rango);
+  if (!coincidencia) {
+    escribirCelda(hoja, rango, contenido);
+    return;
+  }
+  const [, desde, filaDesde, hasta, filaHasta] = coincidencia;
+  if (desde !== hasta || Number(filaHasta) < Number(filaDesde)) throw new Error(`El rango ${rango} debe ser una sola columna, de arriba hacia abajo`);
+  escribirCelda(hoja, `${desde}${filaDesde}`, contenido);
+  rellenarHaciaAbajo(hoja, `${desde}${filaDesde}`, Number(filaHasta));
 }
 
-export function dimensiones(hoja: Hoja): { filas: number; columnas: number } {
-  const { height, width } = hoja.getSheetDimensions(0);
+export function leerValor(hoja: Hoja, a1: string, indice = 0): unknown {
+  return hoja.getCellValue({ sheet: indice, ...leerDireccion(a1) });
+}
+
+export function leerFormula(hoja: Hoja, a1: string, indice = 0): string | undefined {
+  return hoja.getCellFormula({ sheet: indice, ...leerDireccion(a1) });
+}
+
+export function dimensiones(hoja: Hoja, indice = 0): { filas: number; columnas: number } {
+  const { height, width } = hoja.getSheetDimensions(indice);
   return { filas: height, columnas: width };
 }
 
@@ -94,6 +129,19 @@ export function formatearValor(valor: unknown): string {
   if (valor === null || valor === undefined) return "";
   if (esError(valor)) return String(valor.value);
   return String(valor);
+}
+
+const dosDigitos = (numero: number) => String(numero).padStart(2, "0");
+
+// Lo que ve la persona en la celda: las fechas como DD/MM/AAAA, no como el número de serie que guarda la planilla.
+export function mostrarValor(hoja: Hoja, a1: string, indice = 0): string {
+  const direccion = { sheet: indice, ...leerDireccion(a1) };
+  const valor = hoja.getCellValue(direccion);
+  if (typeof valor === "number" && hoja.getCellValueDetailedType(direccion) === "NUMBER_DATE") {
+    const fecha = hoja.numberToDate(valor);
+    if ("year" in fecha) return `${dosDigitos(fecha.day)}/${dosDigitos(fecha.month)}/${fecha.year}`;
+  }
+  return formatearValor(valor);
 }
 
 function mismoValor(actual: unknown, esperado: string | number | boolean): boolean {
@@ -133,9 +181,9 @@ export function revisarHoja(hoja: Hoja, tarea: SheetTarea): ResultadoTarea {
   return { aprobada: true, diagnostico: null };
 }
 
-export function aplicarSolucion(grilla: Grilla, solucion: Record<string, string | number>): Hoja {
-  const hoja = crearHoja(grilla);
-  for (const [celda, contenido] of Object.entries(solucion)) escribirCelda(hoja, celda, contenido);
+export function aplicarSolucion(grilla: Grilla, solucion: Record<string, string | number>, opciones: OpcionesHoja = {}): Hoja {
+  const hoja = crearHoja(grilla, opciones);
+  for (const [rango, contenido] of Object.entries(solucion)) escribirRango(hoja, rango, contenido);
   return hoja;
 }
 

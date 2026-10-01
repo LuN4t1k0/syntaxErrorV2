@@ -8,6 +8,9 @@ import {
   leerDireccion,
   leerFormula,
   leerValor,
+  mostrarValor,
+  nombresDeHojas,
+  rellenarHaciaAbajo,
   revisarHoja,
   type Grilla,
   type SheetTarea,
@@ -26,6 +29,54 @@ describe("direcciones A1", () => {
   it("convierte índices a letras y letras a posiciones", () => {
     expect([columnaALetra(0), columnaALetra(25), columnaALetra(26)]).toEqual(["A", "Z", "AA"]);
     expect(leerDireccion("AA10")).toEqual({ row: 9, col: 26 });
+  });
+});
+
+describe("varias hojas, rellenar hacia abajo y fechas", () => {
+  const despachos: Grilla = [
+    ["id", "fecha_pedido", "fecha_entrega", "comuna", "costo"],
+    [1001, "03/03/2025", "05/03/2025", "Maipú", 4700],
+    [1002, "04/03/2025", "2025-03-06", "Ñuñoa", 3900],
+    [1003, "05/03/2025", "06/03/2025", "Maipú", 5300],
+  ];
+  const comunas: Grilla = [
+    ["comuna", "tarifa", "dias_compromiso"],
+    ["Ñuñoa", 3100, 1],
+    ["Maipú", 3500, 2],
+  ];
+  const opciones = { nombre: "despachos", otras: { comunas } };
+
+  it("consulta otra hoja por su nombre", () => {
+    const hoja = crearHoja(despachos, opciones);
+    expect(nombresDeHojas(hoja)).toEqual(["despachos", "comunas"]);
+    escribirCelda(hoja, "F2", "=BUSCARV(D2;comunas!A2:C3;2;FALSO())");
+    expect(leerValor(hoja, "F2")).toBe(3500);
+    expect(leerValor(hoja, "B3", 1)).toBe(3500);
+  });
+
+  it("rellena hacia abajo ajustando las referencias relativas y no las absolutas", () => {
+    const hoja = crearHoja(despachos, { ...opciones, inicial: { H1: 0.19 } });
+    escribirCelda(hoja, "F2", "=E2*(1+$H$1)");
+    rellenarHaciaAbajo(hoja, "F2", 4);
+    expect(leerFormula(hoja, "F4")).toBe("=E4*(1+$H$1)");
+    expect(leerValor(hoja, "F4")).toBeCloseTo(6307, 4);
+    expect(leerValor(hoja, "F5")).toBeNull();
+  });
+
+  it("aplica soluciones con rangos de una columna y celdas iniciales", () => {
+    const hoja = aplicarSolucion(despachos, { "F2:F4": "=C2-B2", G2: "=PROMEDIO(F2:F4)" }, { ...opciones, inicial: { "H2:H4": "=D2" } });
+    expect(leerValor(hoja, "F2")).toBe(2);
+    expect(leerValor(hoja, "H4")).toBe("Maipú");
+    expect(() => aplicarSolucion(despachos, { "F2:G4": "=1" }, opciones)).toThrow("El rango F2:G4 debe ser una sola columna");
+  });
+
+  it("muestra las fechas como DD/MM/AAAA y deja como texto las que no lo son", () => {
+    const hoja = crearHoja(despachos, opciones);
+    expect(mostrarValor(hoja, "B2")).toBe("03/03/2025");
+    expect(mostrarValor(hoja, "C3")).toBe("2025-03-06");
+    escribirCelda(hoja, "F2", "=C2-B2");
+    expect(mostrarValor(hoja, "F2")).toBe("2");
+    expect(mostrarValor(hoja, "A1", 1)).toBe("comuna");
   });
 });
 
