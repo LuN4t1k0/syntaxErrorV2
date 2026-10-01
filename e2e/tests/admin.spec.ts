@@ -40,6 +40,18 @@ test("una solicitud docente aprobada da acceso docente y llega un mensaje", asyn
   await expect(page.getByText("Tu acceso docente fue aprobado")).toBeVisible();
 });
 
+// Los pendientes se listan del más antiguo al más nuevo, de 25 en 25. La base de e2e acumula reportes de
+// corridas anteriores, así que el recién creado puede quedar en otra página.
+async function buscarReportePendiente(admin: Page, descripcion: string) {
+  for (let pagina = 1; pagina <= 50; pagina += 1) {
+    await admin.goto(`/admin/reportes?pagina=${pagina}`);
+    const reporte = admin.locator("li", { hasText: descripcion });
+    if ((await reporte.count()) > 0) return reporte;
+    if ((await admin.getByText("No hay reportes.").count()) > 0) break;
+  }
+  throw new Error(`No se encontró el reporte pendiente: ${descripcion}`);
+}
+
 test("un reporte resuelto con respuesta llega como mensaje y queda en la bitácora", async ({ page, nuevaPagina }) => {
   await registrarse(page, "Diego Salinas");
   const descripcion = `El filtro de rutas no responde en el celular (${Date.now()}).`;
@@ -51,8 +63,7 @@ test("un reporte resuelto con respuesta llega como mensaje y queda en la bitáco
 
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  await admin.goto("/admin/reportes");
-  const reporte = admin.locator("li", { hasText: descripcion });
+  const reporte = await buscarReportePendiente(admin, descripcion);
   await reporte.getByLabel("Respuesta").fill("Gracias, ya lo corregimos.");
   await reporte.getByRole("button", { name: "Responder y resolver" }).click();
   await expect(reporte).toHaveCount(0);

@@ -2,6 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./tests",
+  globalSetup: "./calentar.ts",
   timeout: 60_000,
   retries: 0,
   // En desarrollo la primera visita a una página la compila; 5 s no siempre alcanzan.

@@ -1,0 +1,36 @@
+// En desarrollo, Next compila cada ruta la primera vez que se pide. Si eso ocurre con varias pruebas en
+// paralelo, las recompilaciones abortan navegaciones de otras pruebas (net::ERR_ABORTED). Se piden las
+// rutas una vez, en orden, antes de empezar. Contra el build de producción no cuesta nada.
+const RUTAS = [
+  "/",
+  "/login",
+  "/registro",
+  "/rutas",
+  "/buscar",
+  "/reportar",
+  "/casos/demo-motor",
+  "/casos/demo-motor/01-clientes-de-regiones",
+  "/casos/demo-motor/02-total-de-ventas",
+  "/casos/demo-motor/03-ticket-promedio",
+  "/dashboard",
+  "/dashboard/mensajes",
+  "/perfil",
+  "/p/calentamiento",
+  "/verificar/calentamiento",
+  "/certificados/calentamiento",
+  "/profesor",
+  "/profesor/entregables",
+  "/admin",
+  "/admin/reportes",
+  "/admin/bitacora",
+];
+
+export default async function calentar(): Promise<void> {
+  for (const ruta of RUTAS) {
+    try {
+      await fetch(`http://localhost:3000${ruta}`, { redirect: "manual", signal: AbortSignal.timeout(60_000) });
+    } catch {
+      // Una ruta que no responde se compila igual en su prueba; el calentamiento nunca hace fallar la suite.
+    }
+  }
+}
