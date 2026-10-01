@@ -162,3 +162,13 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
   - En producción, define `GITHUB_TOKEN`: sin token, GitHub permite 60 consultas por hora para todo el servidor.
   - En local y en e2e, `ENTREGABLES_VERIFICACION=prueba` evita llamar a GitHub: el usuario `no-existe` simula una cuenta inexistente.
 - **El caso demo** (`demo-motor`) vive en la ruta `demo`, en borrador: lo usan las pruebas y nunca se publica.
+
+## Caso 1: Despachos Rápidos
+
+- **Datos generados:** los CSV de `content/casos/despachos-rapidos/datos/` salen de `packages/content/src/generadores/despachos-rapidos.ts`, con semilla fija.
+  - Para cambiarlos: edita el generador, corre `docker compose run --rm tools pnpm --filter @syntaxerror/content generar` y actualiza los valores esperados de las tareas.
+  - Una prueba falla si los CSV se editan a mano.
+- **Defectos a propósito:** `despachos.csv` trae comunas mal escritas, fechas como texto, costos vacíos y filas duplicadas, en posiciones fijas (`DEFECTOS`). `despachos_limpios.csv` es la versión corregida que usan las misiones 6 a 9.
+- **Planilla:**
+  - Una `SheetTask` puede consultar otras hojas (`otras`), traer celdas escritas de antemano (`inicial`) y resolver columnas completas con rangos en la solución (`"I2:I63": "=G2*(1+$K$2)"`).
+  - En la misión se ven pestañas, el botón "Rellenar hasta la fila..." y las fechas como DD/MM/AAAA.
