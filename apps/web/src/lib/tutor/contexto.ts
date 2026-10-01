@@ -1,7 +1,7 @@
 import type { Caso, Mision } from "@syntaxerror/content/tipos";
 
 const LARGO_MAXIMO = 4_000;
-const TIPO_DE_TAREA = { SqlTask: "SQL", PythonTask: "Python", SheetTask: "de planilla" } as const;
+const TIPO_DE_TAREA = { SqlTask: "SQL", PythonTask: "Python", SheetTask: "de planilla", MarkdownTask: "de Markdown", GithubTask: "en GitHub" } as const;
 
 export function contextoDeMision(caso: Caso, mision: Mision): string {
   const lineas = [
@@ -16,7 +16,7 @@ export function contextoDeMision(caso: Caso, mision: Mision): string {
   for (const bloque of mision.bloques) {
     if (bloque.tipo === "Brief") lineas.push(`Encargo de ${bloque.props.de}: ${bloque.texto ?? ""}`);
     else if (bloque.tipo === "Concepto") lineas.push(`Concepto de la misión: ${bloque.texto ?? ""}`);
-    else if (bloque.tipo === "SqlTask" || bloque.tipo === "PythonTask" || bloque.tipo === "SheetTask") {
+    else if (bloque.tipo === "SqlTask" || bloque.tipo === "PythonTask" || bloque.tipo === "SheetTask" || bloque.tipo === "MarkdownTask" || bloque.tipo === "GithubTask") {
       lineas.push(`Tarea ${TIPO_DE_TAREA[bloque.tipo]}: ${bloque.props.enunciado ?? "resolver la tarea de la misión"}`);
     }
   }

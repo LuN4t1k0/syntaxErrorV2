@@ -8,6 +8,8 @@ import { CodigoResaltado } from "@/components/consola/codigo-resaltado";
 import { Brief, Concepto } from "./bloques";
 import { Debrief } from "./debrief";
 import { Decision } from "./decision";
+import { GithubTask } from "./github-task";
+import { MarkdownTask } from "./markdown-task";
 import { PythonEjemplo } from "./python-ejemplo";
 import { PythonTask } from "./python-task";
 import { SheetTask } from "./sheet-task";
@@ -42,6 +44,11 @@ export function componentesMision(caso: Caso): MDXComponents {
       const { solucion: _solucion, paquetes: _paquetes, ...tarea } = bloqueSchemas.PythonTask.parse(props);
       return <PythonTask {...tarea} />;
     },
+    MarkdownTask: (props: PropsMdx) => {
+      const { solucion: _solucion, ...tarea } = bloqueSchemas.MarkdownTask.parse(props);
+      return <MarkdownTask {...tarea} />;
+    },
+    GithubTask: (props: PropsMdx) => <GithubTask {...bloqueSchemas.GithubTask.parse(props)} />,
     Decision: (props: PropsMdx) => <Decision {...bloqueSchemas.Decision.parse(props)} />,
     Debrief: ({ children, ...props }: PropsMdx) => <Debrief {...bloqueSchemas.Debrief.parse(props)}>{children}</Debrief>,
   };

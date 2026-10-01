@@ -10,7 +10,7 @@ function textoDeMision(mision: Mision): string {
   for (const bloque of mision.bloques) {
     if ((bloque.tipo === "Brief" || bloque.tipo === "Concepto") && bloque.texto) partes.push(bloque.texto);
     if (bloque.tipo === "Decision") partes.push(bloque.props.pregunta);
-    if ((bloque.tipo === "SqlTask" || bloque.tipo === "PythonTask" || bloque.tipo === "SheetTask") && bloque.props.enunciado) {
+    if ((bloque.tipo === "SqlTask" || bloque.tipo === "PythonTask" || bloque.tipo === "SheetTask" || bloque.tipo === "MarkdownTask" || bloque.tipo === "GithubTask") && bloque.props.enunciado) {
       partes.push(bloque.props.enunciado);
     }
   }

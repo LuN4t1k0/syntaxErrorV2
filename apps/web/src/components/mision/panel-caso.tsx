@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Button } from "@syntaxerror/ui/components/button";
 import { Input } from "@syntaxerror/ui/components/input";
 import { Label } from "@syntaxerror/ui/components/label";
+import { PLAZO_REVISION_DIAS_HABILES } from "@/lib/entregables/plazo";
 import { cargarProgreso, dependenciasNavegador, type ProgresoVisible } from "@/lib/progreso/cliente";
 import type { CasoCorto } from "@/lib/progreso/requisitos";
 
@@ -126,7 +127,7 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
           </p>
         ) : revision?.estado === "pendiente" ? (
           <p role="status" className="text-sm leading-6">
-            Tu entregable está en revisión. Te avisaremos por email cuando lo revisen. Enviaste:{" "}
+            {`Tu entregable está en revisión. Te responderemos en un plazo de ${PLAZO_REVISION_DIAS_HABILES} días hábiles y te avisaremos por email. Enviaste: `}
             <a className="font-bold text-primary hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
           </p>
         ) : !todasAprobadas ? (
