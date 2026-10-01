@@ -1,0 +1,46 @@
+---
+titulo: Ordena tu proyecto
+tiempo: 20
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Tu repositorio va bien, pero imagina cuando tenga diez archivos: datos, consultas, gráficos y conclusiones mezclados. En los proyectos de datos se separa lo que entra de lo que sale. Arma dos carpetas, datos y resultados, mueve los despachos a datos y crea un resumen en resultados. Y revisa los nombres: nada de espacios ni tildes.
+</Brief>
+
+<Concepto>
+Una estructura simple que se usa en casi todos los proyectos de datos:
+
+```
+mi-primer-repositorio/
+├── README.md          qué es el proyecto
+├── datos/             los archivos de entrada, sin modificar
+└── resultados/        lo que produjiste: resúmenes, gráficos, conclusiones
+```
+
+En la web de GitHub las carpetas se crean con el nombre del archivo:
+- **Mover un archivo a una carpeta:** abre `despachos.csv`, presiona el lápiz y, en el nombre, escribe `datos/` antes de `despachos.csv`. Al escribir la `/`, GitHub crea la carpeta.
+- **Crear un archivo en otra carpeta:** **Add file** → **Create new file** y nómbralo `resultados/resumen.md`.
+
+**Nombres de archivo:** en minúsculas, sin espacios ni tildes, con guiones: `despachos-marzo.csv`. Los espacios y las tildes fallan en muchas herramientas y en los enlaces.
+</Concepto>
+
+<GithubTask
+  id="proyecto-ordenado"
+  enunciado="En mi-primer-repositorio, crea las carpetas datos y resultados, deja tu .csv dentro de datos y revisa que ningún nombre tenga espacios ni tildes."
+  repositorio="{usuario}/mi-primer-repositorio"
+  requisitos={["carpeta:datos", "carpeta:resultados", "extension:.csv", "nombres-limpios"]}
+  pistas={["Una carpeta vacía no existe en GitHub: necesita al menos un archivo adentro.", "Para mover despachos.csv, edítalo y escribe datos/ al inicio del nombre.", "Si un archivo tiene un espacio o una tilde, cámbiale el nombre de la misma forma: con el lápiz."]}
+/>
+
+<Decision
+  pregunta="Tienes que guardar la versión final del análisis de marzo. ¿Qué nombre le pones al archivo?"
+  opciones={[
+    { texto: "analisis-despachos-2025-03.csv", correcta: true, porque: "Dice qué es y de cuándo, y la fecha en formato año-mes ordena los archivos solos." },
+    { texto: "Análisis FINAL (2) ÚLTIMO.csv", porque: "Espacios, tildes y paréntesis complican los enlaces, y «final» deja de ser cierto a la semana." },
+    { texto: "datos.csv", porque: "No dice qué datos ni de cuándo: con dos archivos así ya no sabes cuál es cuál." },
+  ]}
+/>
+
+<Debrief entrevista="Te pueden pedir que expliques cómo organizas un proyecto. Contar que separas los datos de entrada de los resultados, y que nunca modificas los datos originales, muestra que trabajas de forma ordenada y repetible.">
+Separar datos y resultados permite que otra persona entienda el proyecto de un vistazo y que puedas repetir el análisis desde cero. Los nombres sin espacios ni tildes evitan errores al compartir y enlazar archivos.
+</Debrief>

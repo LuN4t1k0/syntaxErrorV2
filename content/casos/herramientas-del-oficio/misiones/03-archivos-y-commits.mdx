@@ -1,0 +1,48 @@
+---
+titulo: Archivos y commits
+tiempo: 25
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Ahora vamos a llenar tu repositorio. Agrega un archivo de datos de despachos y después mejora el README. Cada vez que guardes un cambio, GitHub te va a pedir un mensaje: no lo dejes en lo que GitHub propone. Escribe qué cambiaste. Necesito ver al menos tres cambios con mensajes tuyos.
+</Brief>
+
+<Concepto>
+Cada vez que guardas un cambio en GitHub haces un **commit**: una foto del proyecto en ese momento, con un mensaje que explica qué cambió. El historial de commits permite saber qué pasó, cuándo y volver atrás si algo sale mal.
+
+Para crear un archivo desde la web:
+1. En tu repositorio, presiona **Add file** → **Create new file**.
+2. Nómbralo `despachos.csv` y pega estos datos:
+
+```
+fecha,comuna,estado,costo
+2025-03-03,Maipú,entregado,3500
+2025-03-03,Ñuñoa,atrasado,4200
+2025-03-04,Puente Alto,entregado,3900
+```
+
+3. Presiona **Commit changes…** y, en **Commit message**, reemplaza el texto propuesto por uno tuyo.
+
+Un buen mensaje dice qué cambió, con un verbo: «Agrega los despachos del 3 y 4 de marzo», «Corrige el costo de Ñuñoa», «Explica los datos en el README». Los mensajes que GitHub propone, como «Create despachos.csv» o «Update README.md», no cuentan.
+</Concepto>
+
+<GithubTask
+  id="commits-propios"
+  enunciado="En mi-primer-repositorio, agrega un archivo .csv y haz al menos tres commits con mensajes escritos por ti (por ejemplo, el archivo y dos mejoras al README)."
+  repositorio="{usuario}/mi-primer-repositorio"
+  requisitos={["extension:.csv", "commits:3"]}
+  pistas={["Al guardar, borra el mensaje que propone GitHub y escribe el tuyo.", "Editar el README cuenta: abre README.md, presiona el lápiz (Edit this file), cambia algo y guarda con tu mensaje.", "Si un commit quedó con el mensaje automático, no se puede cambiar desde la web: haz otro cambio con un buen mensaje."]}
+/>
+
+<Decision
+  pregunta="Terminaste de corregir los costos de tres comunas en el archivo de despachos. ¿Qué mensaje de commit escribes?"
+  opciones={[
+    { texto: "Corrige el costo de Maipú, Ñuñoa y Puente Alto", correcta: true, porque: "Dice qué cambió y dónde: dentro de un mes vas a entender ese commit sin abrir el archivo." },
+    { texto: "cambios", porque: "Todos los commits son cambios: no ayuda a encontrar nada en el historial." },
+    { texto: "asdfg final final ahora sí", porque: "Además de no explicar nada, se ve poco profesional en un historial que otros van a leer." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta frecuente: '¿cómo sabes qué cambió en un análisis si algo da distinto?'. Con el historial de commits: cada cambio tiene fecha, autor y un mensaje que explica qué se hizo.">
+Un commit es una foto del proyecto con una explicación. Commits pequeños y con buenos mensajes hacen que el historial cuente la historia del trabajo, y que un error se pueda encontrar y deshacer.
+</Debrief>

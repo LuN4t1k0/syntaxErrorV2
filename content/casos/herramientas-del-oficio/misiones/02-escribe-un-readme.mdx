@@ -1,0 +1,59 @@
+---
+titulo: Escribe un buen README
+tiempo: 25
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Revisé tu repositorio: está creado, pero el README dice solo el nombre. Cuando alguien entra a un proyecto, lo primero que lee es el README, y si no entiende de qué se trata, se va. Te dejo un ejercicio: escribe el README de un análisis de despachos de una pyme. Tiene que tener título, secciones, una lista de los datos, una tabla con un resultado y un enlace.
+</Brief>
+
+<Concepto>
+Los README se escriben en **Markdown**: texto normal con algunos símbolos que le dan formato.
+
+```
+# Título principal
+## Subtítulo
+
+- un elemento de lista
+- otro elemento
+
+1. primer paso
+2. segundo paso
+
+| Comuna | Despachos |
+| --- | --- |
+| Maipú | 120 |
+
+**negrita** y `código`
+
+[texto del enlace](https://github.com)
+![descripción de la imagen](https://ejemplo.cl/grafico.png)
+```
+
+Tres detalles que causan la mayoría de los errores:
+- Después de `#` o de `-` va un **espacio**: `# Título`, no `#Título`.
+- Una tabla necesita la línea `| --- | --- |` bajo los encabezados.
+- Entre un párrafo y una lista o tabla va una **línea en blanco**.
+</Concepto>
+
+<MarkdownTask
+  id="readme-de-proyecto"
+  enunciado="Escribe el README del análisis de despachos: un título, al menos dos subtítulos, una lista, una tabla y un enlace. Mira la vista previa mientras escribes."
+  inicial="Análisis de despachos"
+  requisitos={["titulo", "subtitulos:2", "lista", "tabla", "enlace"]}
+  solucion={"# Análisis de despachos de marzo\n\nRevisé los despachos de una pyme de la Región Metropolitana para encontrar dónde se atrasan las entregas.\n\n## Datos\n\n- despachos.csv: un registro por despacho\n- comunas.csv: tarifas por comuna\n\n## Resultados\n\n| Comuna | Atrasos |\n| --- | --- |\n| Maipú | 12 |\n| Ñuñoa | 4 |\n\nEl detalle está en [la carpeta de resultados](resultados/resumen.md)."}
+  pistas={["El título empieza con # y un espacio. Los subtítulos, con ## y un espacio.", "Para la tabla: una fila con los encabezados, la línea | --- | --- | y al menos una fila con datos.", "Un enlace se escribe [texto](dirección). Puede apuntar a una página o a un archivo del repositorio."]}
+/>
+
+<Decision
+  pregunta="Un compañero te pasa su README: dice solo 'proyecto final, ver archivos'. ¿Qué es lo más importante que le falta?"
+  opciones={[
+    { texto: "Explicar qué pregunta responde el proyecto, con qué datos y qué encontró.", correcta: true, porque: "Quien entra tiene que entender en un minuto de qué se trata y si le sirve, sin abrir los archivos." },
+    { texto: "Más emojis y colores para que se vea bonito.", porque: "El formato ayuda a leer, pero no reemplaza el contenido: un README bonito y vacío sigue sin explicar nada." },
+    { texto: "Nada: los archivos hablan por sí solos.", porque: "Nadie va a abrir diez archivos para adivinar qué hiciste; la mayoría se va antes." },
+  ]}
+/>
+
+<Debrief entrevista="En entrevistas técnicas suelen abrir tu GitHub mientras conversan. Un README claro te permite guiar esa conversación: 'acá está la pregunta, acá los datos y acá lo que encontré'.">
+Markdown es el formato de los README, de la documentación técnica y de muchas herramientas de trabajo. Un buen README responde tres preguntas: qué es, con qué datos y qué se encontró.
+</Debrief>

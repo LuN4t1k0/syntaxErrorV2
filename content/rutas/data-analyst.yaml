@@ -3,5 +3,6 @@ titulo: Data Analyst
 cargo: Analista de datos junior
 descripcion: Resuelve casos reales de una empresa chilena con SQL, planillas, Python y Power BI, y termina con un portafolio que puedes mostrar en una entrevista.
 estado: borrador
+# Orden aprobado en la propuesta pedagógica (sección 7). Los casos siguientes se agregan al escribirlos.
 casos:
-  - demo-motor
+  - herramientas-del-oficio

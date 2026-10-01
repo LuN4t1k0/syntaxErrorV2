@@ -1,0 +1,8 @@
+# Caso de demostración del motor: lo usan las pruebas e2e y el desarrollo. Nunca se publica.
+slug: demo
+titulo: Demo del motor
+cargo: Analista de datos junior
+descripcion: Caso corto para probar las consolas de SQL, planilla y Python.
+estado: borrador
+casos:
+  - demo-motor

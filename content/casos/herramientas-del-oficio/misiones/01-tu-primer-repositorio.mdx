@@ -1,0 +1,43 @@
+---
+titulo: Tu primer repositorio
+tiempo: 20
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Hola, qué bueno tenerte aquí. Antes de tocar datos quiero mostrarte dónde va a vivir tu trabajo. En los equipos de datos, las consultas, planillas y análisis se guardan en GitHub: ahí se revisan, se comparten y quedan a la vista de quien te quiera contratar. Cada entregable de esta ruta será un repositorio tuyo. Hoy partimos simple: crea tu cuenta y tu primer repositorio, llamado mi-primer-repositorio, público y con un README.
+</Brief>
+
+<Concepto>
+Un **repositorio** es la carpeta de un proyecto con su historia completa: qué archivos tiene, quién cambió qué y cuándo. GitHub guarda repositorios en internet para que un equipo trabaje sobre los mismos archivos sin pisarse, y para que cualquiera pueda ver tu trabajo.
+
+Todo se hace desde la web de GitHub, sin instalar nada:
+
+1. Entra a github.com y elige **Sign up**. Usa un nombre de usuario profesional: es la dirección de tu portafolio (github.com/tu-usuario).
+2. Ya con la cuenta, presiona **New** (o el **+** de arriba a la derecha y luego **New repository**).
+3. En **Repository name** escribe exactamente `mi-primer-repositorio`.
+4. Deja marcado **Public**: un repositorio privado no lo puede ver quien revise tu portafolio.
+5. Marca **Add a README file** y presiona **Create repository**.
+
+El README es la portada del repositorio: GitHub lo muestra apenas alguien entra.
+</Concepto>
+
+<GithubTask
+  id="primer-repositorio"
+  enunciado="Crea en tu cuenta el repositorio mi-primer-repositorio, público y con README. Después escribe tu usuario de GitHub y revisamos."
+  repositorio="{usuario}/mi-primer-repositorio"
+  requisitos={["publico", "readme"]}
+  pistas={["El nombre debe ser exactamente mi-primer-repositorio, con guiones y en minúsculas.", "Si no ves el README, crea el repositorio de nuevo marcando Add a README file, o usa Add file → Create new file con el nombre README.md.", "Si GitHub dice que no existe, revisa en Settings → General que la visibilidad sea Public."]}
+/>
+
+<Decision
+  pregunta="Vas a crear tu cuenta y piensas en el nombre de usuario. ¿Cuál eliges?"
+  opciones={[
+    { texto: "ana-perez-datos", correcta: true, porque: "Se lee bien, te identifica y sirve en un CV: github.com/ana-perez-datos." },
+    { texto: "xX_anita_gamer_Xx", porque: "Puede ser divertido, pero es la dirección de tu portafolio profesional y quien te contrate la va a ver." },
+    { texto: "user84629", porque: "No dice nada de ti: nadie lo va a recordar ni asociar contigo." },
+  ]}
+/>
+
+<Debrief entrevista="Te pueden preguntar si usas GitHub o control de versiones. Una buena respuesta: 'Sí, guardo mis análisis en repositorios públicos; así queda el historial de cambios y cualquiera puede revisar cómo llegué a los resultados'.">
+Un repositorio guarda el proyecto y su historia. Público significa que cualquiera lo puede ver, pero solo tú lo puedes cambiar. Desde ahora, cada entregable de la ruta será un repositorio como este.
+</Debrief>

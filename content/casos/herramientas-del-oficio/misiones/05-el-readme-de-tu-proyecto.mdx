@@ -1,0 +1,40 @@
+---
+titulo: El README de tu proyecto
+tiempo: 20
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Ya practicaste Markdown y ordenaste el repositorio. Ahora junta las dos cosas: escribe en tu README real qué hay en el proyecto, con un título, secciones para los datos y los resultados, una lista de archivos y un enlace al archivo de datos. Es el mismo ejercicio de antes, pero esta vez queda publicado.
+</Brief>
+
+<Concepto>
+Para editar el README en GitHub, ábrelo y presiona el lápiz (**Edit this file**). La pestaña **Preview** muestra cómo se verá antes de guardar.
+
+Los enlaces pueden apuntar a archivos del mismo repositorio con su ruta, sin la dirección completa:
+
+```
+Los datos están en [despachos.csv](datos/despachos.csv).
+```
+
+Así el enlace sigue funcionando aunque cambies el nombre del repositorio. Al guardar, escribe un mensaje de commit propio, como en la misión de archivos y commits.
+</Concepto>
+
+<GithubTask
+  id="readme-del-proyecto"
+  enunciado="Escribe el README de mi-primer-repositorio: un título, al menos dos subtítulos, una lista y un enlace al archivo de datos. Guárdalo con un mensaje propio."
+  repositorio="{usuario}/mi-primer-repositorio"
+  requisitos={["readme:titulo", "readme:subtitulos:2", "readme:lista", "readme:enlace", "commits:4"]}
+  pistas={["Revisa la pestaña Preview antes de guardar: si un título no se ve grande, falta el espacio después de #.", "El enlace al archivo de datos es [despachos.csv](datos/despachos.csv).", "Los cuatro commits incluyen los tres de la misión de archivos y commits: con guardar este README con tu mensaje, ya suman cuatro."]}
+/>
+
+<Decision
+  pregunta="Tu README tiene un enlace escrito como https://github.com/tu-usuario/mi-primer-repositorio/blob/main/datos/despachos.csv. ¿Lo cambias?"
+  opciones={[
+    { texto: "Sí, por la ruta relativa datos/despachos.csv.", correcta: true, porque: "La ruta relativa sigue funcionando si cambias el nombre del repositorio o si alguien hace una copia." },
+    { texto: "No, la dirección completa es más segura.", porque: "Se rompe apenas cambia el nombre del repositorio o la rama, y el enlace sigue apuntando a tu cuenta aunque otro copie el proyecto." },
+  ]}
+/>
+
+<Debrief entrevista="Si te piden mostrar un proyecto, abre el README y recórrelo: pregunta, datos, resultados y próximos pasos. Es la forma más rápida de mostrar que sabes comunicar lo que hiciste.">
+El README es la puerta de entrada del proyecto: lo escribe la persona que conoce el trabajo para alguien que no lo conoce. Los enlaces relativos lo mantienen funcionando aunque el repositorio cambie.
+</Debrief>

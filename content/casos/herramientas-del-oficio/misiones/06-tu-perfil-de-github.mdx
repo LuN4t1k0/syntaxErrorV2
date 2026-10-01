@@ -1,0 +1,41 @@
+---
+titulo: Tu perfil de GitHub
+tiempo: 20
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Cuando postules, mucha gente va a llegar a tu perfil de GitHub antes que a tu CV. Hoy vamos a dejarlo presentable: GitHub permite poner un README en la portada del perfil. Crea ese repositorio especial y escribe ahí quién eres, qué estás aprendiendo y cómo contactarte.
+</Brief>
+
+<Concepto>
+Si creas un repositorio con **el mismo nombre que tu usuario**, su README aparece en la portada de tu perfil. GitHub lo avisa al escribir el nombre: «you found a secret!».
+
+1. **New** → en **Repository name** escribe tu usuario exacto, por ejemplo `ana-perez-datos`.
+2. Déjalo **Public**, marca **Add a README file** y créalo.
+3. Edita el README: un título con tu nombre, una lista con lo que estás aprendiendo y un enlace para contactarte, como tu LinkedIn.
+
+Otras dos cosas que mejoran el perfil y no requieren código:
+- **Foto y bio:** en tu perfil, **Edit profile**. Una línea basta: «Analista de datos en formación. SQL, planillas y Python.».
+- **Proyectos fijados:** en tu perfil, **Customize your pins** y elige hasta seis repositorios. Fija los entregables de esta ruta a medida que los termines.
+</Concepto>
+
+<GithubTask
+  id="perfil"
+  enunciado="Crea el repositorio con el nombre de tu usuario y escribe su README: un título, una lista y un enlace para contactarte."
+  repositorio="{usuario}/{usuario}"
+  requisitos={["publico", "readme:titulo", "readme:lista", "readme:enlace"]}
+  pistas={["El nombre del repositorio tiene que ser idéntico a tu usuario, con las mismas mayúsculas y guiones.", "Un enlace se escribe [LinkedIn](https://www.linkedin.com/in/tu-perfil).", "Si el README no aparece en tu perfil, revisa que el repositorio sea Public."]}
+/>
+
+<Decision
+  pregunta="Tienes cinco repositorios y puedes fijar algunos en tu perfil. ¿Cuáles eliges?"
+  opciones={[
+    { texto: "Los proyectos terminados y con buen README, aunque sean pocos.", correcta: true, porque: "Quien revisa tu perfil va a abrir lo fijado: dos proyectos bien explicados dicen más que cinco a medio hacer." },
+    { texto: "Todos, para que se vea que tengo harto.", porque: "Los proyectos incompletos o sin README le quitan valor a los buenos." },
+    { texto: "Ninguno: el perfil lo ordena GitHub solo.", porque: "GitHub muestra los más recientes, no necesariamente los mejores: tú eliges qué se ve primero." },
+  ]}
+/>
+
+<Debrief entrevista="Es común que pregunten '¿qué proyecto de tu GitHub te gustaría que viéramos?'. Tener la respuesta fijada en tu perfil, con un README claro, te da ventaja desde el primer minuto.">
+El perfil de GitHub funciona como un portafolio: la portada presenta a la persona y los proyectos fijados muestran su trabajo. Se mantiene igual que un CV: se actualiza cada vez que terminas algo.
+</Debrief>

@@ -1,0 +1,20 @@
+slug: herramientas-del-oficio
+titulo: "Herramientas del oficio: GitHub y tu portafolio"
+cargo: Persona que empieza a trabajar en tecnología
+empresa: Tu propio perfil profesional
+dataset: Tus archivos, tus proyectos y tu presentación personal
+entregable: Un repositorio público de presentación personal en GitHub, con un README que cuente quién eres, qué estás aprendiendo, qué proyectos tienes y cómo contactarte.
+# Solo se pide el README: lo revisa la verificación automática y después una persona con la rúbrica.
+archivos: []
+rubrica:
+  - "El README presenta a la persona: quién es, qué está aprendiendo y qué busca."
+  - "El README está ordenado: título, secciones, listas, una imagen y enlaces que funcionan."
+  - "El historial de commits cuenta qué se hizo, con mensajes claros."
+misiones:
+  - 01-tu-primer-repositorio
+  - 02-escribe-un-readme
+  - 03-archivos-y-commits
+  - 04-ordena-tu-proyecto
+  - 05-el-readme-de-tu-proyecto
+  - 06-tu-perfil-de-github
+  - 07-tu-presentacion

@@ -1,0 +1,27 @@
+---
+titulo: Tu presentación personal
+tiempo: 40
+sinGuia: true
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Te tengo una noticia: una empresa abrió una práctica de análisis de datos y quiero recomendarte. Me pidieron un enlace donde puedan conocerte. Arma un repositorio de presentación personal, con el nombre que quieras: quién eres, qué estás aprendiendo, en qué proyectos trabajas y cómo contactarte, con al menos una imagen. Que el historial muestre cómo lo fuiste construyendo y que todo esté ordenado. Cuando esté listo, pega el enlace y lo reviso.
+</Brief>
+
+<GithubTask
+  id="presentacion"
+  enunciado="Pega el enlace de tu repositorio de presentación personal."
+  requisitos={["publico", "nombres-limpios", "commits:3", "readme:titulo", "readme:subtitulos:3", "readme:lista", "readme:enlace", "readme:imagen"]}
+/>
+
+<Decision
+  pregunta="Antes de mandar el enlace, ¿qué haces?"
+  opciones={[
+    { texto: "Lo abro como si fuera otra persona, sin sesión iniciada, y reviso que todo se vea y que los enlaces funcionen.", correcta: true, porque: "Así ves exactamente lo que verá quien te evalúe, incluidos los enlaces rotos o una imagen que no carga." },
+    { texto: "Lo mando de inmediato: si GitHub lo aceptó, está bien.", porque: "Que se haya guardado no significa que se entienda ni que los enlaces lleven a donde deben." },
+  ]}
+/>
+
+<Debrief entrevista="'Cuéntame de ti' es casi siempre la primera pregunta. Tu repositorio de presentación es la versión escrita de esa respuesta: practícala en voz alta usando el README como guía.">
+Este repositorio es tu entregable del caso y la primera pieza de tu portafolio. Envíalo desde la página del caso para que lo revisen con la rúbrica. Todo lo que hiciste aquí (repositorios, Markdown, commits y orden) lo vas a usar en cada caso de la ruta.
+</Debrief>
