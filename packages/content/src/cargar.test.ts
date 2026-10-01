@@ -48,6 +48,9 @@ describe("cargarContenido", () => {
     const [caso] = contenido.casos;
     expect(caso.misiones.map((mision) => mision.slug)).toEqual(["01-filtrar", "02-hoja", "03-python"]);
     expect(caso.misiones[0]).toMatchObject({ titulo: "Filtrar clientes", tiempo: 10 });
+    expect(caso.misiones.map((mision) => mision.sinGuia)).toEqual([false, false, true]);
+    expect(caso.archivos).toEqual([]);
+    expect(caso.rubrica).toHaveLength(3);
     expect(caso.datos[0].nombre).toBe("clientes");
     expect(caso.datos[0].filas[0]).toEqual({ id: 1, nombre: "Ferretería El Roble", ciudad: "Santiago", monto: 185000 });
     const tarea = caso.misiones[0].bloques.find((bloque) => bloque.tipo === "SqlTask");

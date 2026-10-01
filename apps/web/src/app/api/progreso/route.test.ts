@@ -56,9 +56,12 @@ describe("/api/progreso", () => {
     expect(respuesta.status).toBe(200);
     expect(await respuesta.json()).toEqual({ misionAprobada: true, casoCompleto: false, certificados: [] });
     expect(await (await consultar("ventas")).json()).toEqual({
-      misiones: { m1: { estado: "aprobada", tareasAprobadas: ["t1"] } },
+      misiones: { m1: { estado: "aprobada", tareasAprobadas: ["t1"], fallidos: 0 } },
       entregable: null,
+      revision: null,
       completo: false,
+      bloqueadoPor: null,
+      certificados: [],
     });
   });
 
@@ -73,5 +76,13 @@ describe("/api/progreso", () => {
     await iniciarSesion();
     const respuesta = await enviar(SINCRONIZAR, { intentos: [aprobado, { ...aprobado, caso: "otro" }] });
     expect(await respuesta.json()).toEqual({ aplicados: 1, rechazados: 1, certificados: [] });
+  });
+
+  it("responde 409 si la misión anterior no está aprobada", async () => {
+    await iniciarSesion();
+    await db.update(casos).set({ misiones: [{ slug: "m0", titulo: "M0", tareas: ["t0"] }, { slug: "m1", titulo: "M1", tareas: ["t1"] }] });
+    const respuesta = await enviar(POST, aprobado);
+    expect(respuesta.status).toBe(409);
+    expect(await respuesta.json()).toEqual({ error: "mision_bloqueada" });
   });
 });

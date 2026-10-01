@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { casos, users } from "@syntaxerror/db/schema";
+import { casos, misionProgreso, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { verificarTokenSocket } from "@syntaxerror/queue/token-socket";
 
@@ -40,6 +40,8 @@ const pregunta = (texto = "¿Cómo filtro los clientes?") => ({
 
 async function iniciarSesion(): Promise<string> {
   const [usuario] = await db.insert(users).values({ email: `ana-${Date.now()}@correo.cl` }).returning({ id: users.id });
+  const [caso] = await db.select({ id: casos.id }).from(casos);
+  await db.insert(misionProgreso).values({ userId: usuario.id, casoId: caso.id, mision: "01-clientes-de-regiones", fallidos: 3 });
   vi.mocked(obtenerUsuarioId).mockResolvedValue(usuario.id);
   return usuario.id;
 }
@@ -93,4 +95,13 @@ describe("/api/tutor", () => {
     expect(bloqueada.status).toBe(429);
     expect(encolarTutor).toHaveBeenCalledTimes(10);
   }, 30_000);
+
+  it("preguntas: sin los intentos suficientes responde 403 sin llamar a la IA", async () => {
+    const [usuario] = await db.insert(users).values({ email: `sin-intentos-${Date.now()}@correo.cl` }).returning({ id: users.id });
+    vi.mocked(obtenerUsuarioId).mockResolvedValue(usuario.id);
+    const respuesta = await preguntar(pregunta());
+    expect(respuesta.status).toBe(403);
+    expect(await respuesta.json()).toEqual({ error: "tutor_bloqueado", fallidos: 0, umbral: 3 });
+    expect(encolarTutor).not.toHaveBeenCalled();
+  });
 });

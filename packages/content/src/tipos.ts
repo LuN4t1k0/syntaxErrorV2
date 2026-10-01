@@ -4,7 +4,7 @@ import type { Bloque, rutaSchema } from "./esquemas";
 
 export type Ruta = z.output<typeof rutaSchema>;
 export type Tabla = { nombre: string; filas: Fila[]; csv: string };
-export type Mision = { slug: string; titulo: string; tiempo: number; fuente: string; bloques: Bloque[] };
+export type Mision = { slug: string; titulo: string; tiempo: number; sinGuia: boolean; fuente: string; bloques: Bloque[] };
 export type Caso = {
   slug: string;
   titulo: string;
@@ -12,6 +12,8 @@ export type Caso = {
   empresa: string;
   dataset: string;
   entregable: string;
+  archivos: string[];
+  rubrica: string[];
   misiones: Mision[];
   datos: Tabla[];
 };

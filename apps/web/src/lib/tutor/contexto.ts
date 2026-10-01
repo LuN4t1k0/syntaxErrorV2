@@ -7,6 +7,11 @@ export function contextoDeMision(caso: Caso, mision: Mision): string {
   const lineas = [
     `Caso: ${caso.titulo} (${caso.empresa}). El alumno trabaja como ${caso.cargo.toLowerCase()}.`,
     `Misión: ${mision.titulo}.`,
+    ...(mision.sinGuia
+      ? [
+          "Esta es una misión sin guía: la persona debe demostrar lo aprendido en el caso. No le indiques qué función, cláusula o paso usar; responde con preguntas que la hagan pensar y revisar lo que ya aprendió.",
+        ]
+      : []),
   ];
   for (const bloque of mision.bloques) {
     if (bloque.tipo === "Brief") lineas.push(`Encargo de ${bloque.props.de}: ${bloque.texto ?? ""}`);

@@ -78,4 +78,19 @@ describe("validarContenido", () => {
     );
     expect(revisor).toHaveBeenCalledWith(expect.objectContaining({ id: "promedio" }), contenido.casos[0]);
   });
+
+  it("una misión sin guía no puede tener concepto, ejemplos ni pistas", async () => {
+    const filtrar = mision("01-filtrar");
+    filtrar.sinGuia = true;
+    const problemas = await validar();
+    expect(problemas).toContain("casos/ventas/misiones/01-filtrar.mdx: una misión sin guía no puede tener <Concepto>");
+    expect(problemas).toContain('casos/ventas/misiones/01-filtrar.mdx: una misión sin guía no puede tener pistas (tarea "fuera-de-santiago")');
+  });
+
+  it("la última misión de un caso publicado debe ser sin guía; en borrador no se exige", async () => {
+    mision("03-python").sinGuia = false;
+    expect(await validar()).toContain("casos/ventas: la última misión (03-python) debe ser sin guía: agrega sinGuia: true a su frontmatter");
+    contenido.rutas[0].estado = "borrador";
+    expect(await validar()).toEqual([]);
+  });
 });

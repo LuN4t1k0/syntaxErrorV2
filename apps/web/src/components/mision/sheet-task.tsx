@@ -49,7 +49,7 @@ export function SheetTask({ id, enunciado, grilla, celdas, pistas }: SheetTaskPr
     setResultado(null);
   }
   return (
-    <PanelTarea titulo="tarea de planilla" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" onClick={validar}>Validar</Button><Button type="button" variant="secondary" onClick={reiniciar}>Reiniciar hoja</Button></>}>
+    <PanelTarea id={id} titulo="tarea de planilla" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" onClick={validar}>Validar</Button><Button type="button" variant="secondary" onClick={reiniciar}>Reiniciar hoja</Button></>}>
       <div className="flex flex-wrap items-end gap-2">
         <span className="rounded-md border border-border bg-surface-raised px-3 py-2 font-mono text-sm font-bold">{seleccionada}</span>
         <label className="grid flex-1 gap-1 text-sm font-bold">Fórmula<input value={entrada} onChange={(evento) => setEntrada(evento.target.value)} onKeyDown={alPresionar} spellCheck={false} placeholder="=SUMA(D2:D7)" className="field font-mono" /></label>

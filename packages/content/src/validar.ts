@@ -9,6 +9,7 @@ import type { Caso, Contenido } from "./tipos";
 export type RevisorPython = (tarea: PropsBloque<"PythonTask">, caso: Caso) => Promise<ResultadoTarea>;
 
 const MAXIMO_PALABRAS_BRIEF = 150;
+const BLOQUES_DE_GUIA = new Set(["Concepto", "SqlEjemplo", "PythonEjemplo"]);
 
 function contarPalabras(texto: string): number {
   return texto.split(/\s+/).filter(Boolean).length;
@@ -45,6 +46,14 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
         if (vistos.has(tarea.props.id)) problemas.push(`${donde}: el id de tarea "${tarea.props.id}" está repetido`);
         vistos.add(tarea.props.id);
       }
+      if (mision.sinGuia) {
+        for (const bloque of mision.bloques) {
+          if (BLOQUES_DE_GUIA.has(bloque.tipo)) problemas.push(`${donde}: una misión sin guía no puede tener <${bloque.tipo}>`);
+        }
+        for (const tarea of tareas) {
+          if (tarea.props.pistas.length > 0) problemas.push(`${donde}: una misión sin guía no puede tener pistas (tarea "${tarea.props.id}")`);
+        }
+      }
       for (const tarea of tareas) {
         let resultado: ResultadoTarea;
         try {
@@ -56,6 +65,11 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
           problemas.push(`${donde}: la solución de la tarea "${tarea.props.id}" no pasa su propio validador: ${resultado.diagnostico ?? "sin detalle"}`);
         }
       }
+    }
+    const publicado = contenido.rutas.some((ruta) => ruta.estado === "publicada" && ruta.casos.includes(caso.slug));
+    const ultima = caso.misiones.at(-1);
+    if (publicado && ultima && !ultima.sinGuia) {
+      problemas.push(`casos/${caso.slug}: la última misión (${ultima.slug}) debe ser sin guía: agrega sinGuia: true a su frontmatter`);
     }
   }
   return problemas;

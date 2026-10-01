@@ -8,3 +8,5 @@ misiones:
   - 01-clientes-de-regiones
   - 02-total-de-ventas
   - 03-ticket-promedio
+archivos:
+  - .sql

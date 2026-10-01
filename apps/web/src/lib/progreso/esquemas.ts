@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { parsearRepositorio } from "@/lib/entregables/github";
 
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
@@ -9,5 +10,9 @@ export const sincronizacionSchema = z.object({ intentos: z.array(intentoSchema).
 
 export const entregableSchema = z.object({
   caso: slug,
-  url: z.string().trim().max(500).url().refine((url) => url.startsWith("https://"), "El enlace debe empezar con https://"),
+  url: z
+    .string()
+    .trim()
+    .max(500)
+    .refine((url) => parsearRepositorio(url) !== null, "El enlace debe ser un repositorio de GitHub: https://github.com/tu-usuario/tu-repositorio"),
 });

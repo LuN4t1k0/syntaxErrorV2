@@ -22,7 +22,8 @@ export default async function ProfesorPage() {
         <h1 className="text-3xl font-black">Panel docente</h1>
         <p className="leading-7 text-muted-foreground">
           Crea clases, comparte su código y sigue el avance de tus estudiantes.{" "}
-          <Link className="font-bold text-primary hover:underline" href="/profesor/preguntas">Ver las preguntas de tus estudiantes</Link>
+          <Link className="font-bold text-primary hover:underline" href="/profesor/preguntas">Ver las preguntas de tus estudiantes</Link>{" · "}
+          <Link className="font-bold text-primary hover:underline" href="/profesor/entregables">Revisar entregables</Link>
         </p>
       </header>
 

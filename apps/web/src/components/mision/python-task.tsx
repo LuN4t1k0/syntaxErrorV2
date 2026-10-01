@@ -34,7 +34,7 @@ export function PythonTask({ id, enunciado, inicial, preparacion, pruebas, pista
   });
   const disponible = python.estado === "listo" && !corriendo;
   return (
-    <PanelTarea titulo="tarea Python" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" variant="secondary" disabled={!disponible} onClick={() => void ejecutar()}>Ejecutar</Button><Button type="button" disabled={!disponible} onClick={() => void validar()}>{corriendo ? "Ejecutando…" : "Validar"}</Button></>}>
+    <PanelTarea id={id} titulo="tarea Python" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" variant="secondary" disabled={!disponible} onClick={() => void ejecutar()}>Ejecutar</Button><Button type="button" disabled={!disponible} onClick={() => void validar()}>{corriendo ? "Ejecutando…" : "Validar"}</Button></>}>
       <EstadoPython estado={python.estado} onReintentar={python.iniciar} />
       <EditorCodigo etiqueta="Código Python" valor={codigo} onCambio={setCodigo} filas={8} />
       {salida ? <pre className="overflow-x-auto rounded-md border border-border bg-background p-3 font-mono text-sm">{salida}</pre> : null}

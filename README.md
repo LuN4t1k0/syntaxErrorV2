@@ -14,7 +14,7 @@ Solo Docker (con Compose v2.24+) y npm. Todo lo demás corre en contenedores.
 | `npm run stop` | Baja todo y conserva los datos |
 | `npm run reset` | Baja todo y borra los datos (base, `node_modules`) |
 | `npm test` | Tests unitarios y de integración contra `postgres-test` |
-| `npm run test:e2e` | Tests end-to-end con Playwright (requiere `npm run dev` arriba) |
+| `npm run test:e2e` | Tests end-to-end con Playwright contra `next dev` (requiere `npm run dev` arriba). Reinicia `web` antes de correr y usa 3 navegadores en paralelo: `next dev` acumula memoria y compila cada página al vuelo |
 | `npm run test:e2e:prod` | Compila `web` como en producción (CSP real, páginas estáticas) y corre los e2e contra ese build |
 | `npm run sh` | Shell dentro del contenedor de herramientas (`pnpm`, `tsc`, etc.) |
 | `npm run db:generate` | Genera una migración Drizzle a partir de `packages/db/src/schema.ts` |
@@ -102,3 +102,27 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - **Limpieza diaria (worker, cola `mantenimiento`):** borra la bitácora y las preguntas al tutor con más de `RETENCION_BITACORA_DIAS` días (365 por defecto, mínimo 30). Los registros de derechos ARCO no se borran.
 - **SEO:** `robots.txt` deja fuera las páginas privadas y `sitemap.xml` lista el contenido publicado.
 - **Sentry:** se enciende con `NEXT_PUBLIC_SENTRY_DSN` (web) y `SENTRY_DSN` (worker); sin ellas queda apagado. Muestrea el 10 % de las trazas, no envía datos personales y sube sourcemaps en el build solo si defines `SENTRY_ORG`, `SENTRY_PROJECT` y `SENTRY_AUTH_TOKEN`.
+
+## Recorrido y ayudas
+
+Se basa en la propuesta pedagógica aprobada (`docs/propuesta-pedagogica-data-analyst.md`).
+
+- **Orden obligatorio:**
+  - La tarea de una misión se habilita al aprobar la anterior, y un caso al completar el caso anterior de su ruta.
+  - Todo se puede leer; lo que se bloquea es resolver.
+  - El servidor rechaza con 409 los intentos fuera de orden.
+- **Primero intentar:**
+  - La primera pista aparece tras 2 intentos fallidos de la tarea y luego una por intento.
+  - El tutor IA se habilita tras 3 intentos fallidos en la misión (5 en una misión sin guía).
+  - Los umbrales están en `apps/web/src/lib/progreso/ayudas.ts`.
+- **Misión sin guía:**
+  - `sinGuia: true` en el frontmatter.
+  - Sin concepto, ejemplos ni pistas.
+  - El validador exige que la última misión de todo caso de una ruta publicada lo sea.
+- **Entregables:**
+  - Deben ser un repositorio de GitHub.
+  - Al enviarlo se verifica que sea público, tenga README y los archivos de `archivos` en `caso.yaml`.
+  - Luego un docente de la clase, o administración, lo revisa en `/profesor/entregables` con la rúbrica del caso (`rubrica` en `caso.yaml`, con una base común).
+  - Solo un entregable aprobado completa el caso y emite el certificado.
+  - En local y en e2e, `ENTREGABLES_VERIFICACION=prueba` evita consultar GitHub (un repositorio con `vacio` en el nombre simula uno sin README).
+  - En producción conviene definir `GITHUB_TOKEN`.

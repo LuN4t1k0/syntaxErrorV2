@@ -7,6 +7,7 @@ const SECCIONES = [
   { href: "/admin/contenido", texto: "Contenido y métricas" },
   { href: "/admin/comunidad", texto: "Solicitudes y reseñas" },
   { href: "/admin/reportes", texto: "Reportes" },
+  { href: "/profesor/entregables", texto: "Entregables" },
   { href: "/admin/preguntas", texto: "Preguntas" },
   { href: "/admin/tutor", texto: "Caché del tutor" },
   { href: "/admin/bitacora", texto: "Bitácora" },

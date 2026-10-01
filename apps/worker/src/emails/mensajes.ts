@@ -162,6 +162,24 @@ export function construirEmail(trabajo: TrabajoEmail): EmailListo {
         enlace: { texto: "Ver mis clases", url: trabajo.enlace },
         comandoCierre: "git checkout clase",
       });
+    case "entregable-por-revisar":
+      return plantillaSyntaxError({
+        asunto: "Hay un entregable por revisar",
+        estado: { etiqueta: "INFO", mensaje: "Entregable en revisión" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`${trabajo.alumno} envió su entregable del caso ${trabajo.caso}.`, "Revísalo con la rúbrica del caso para aprobarlo o pedir cambios."],
+        enlace: { texto: "Revisar entregables", url: trabajo.enlace },
+        comandoCierre: "git diff --review",
+      });
+    case "entregable-observado":
+      return plantillaSyntaxError({
+        asunto: "Tu entregable necesita cambios",
+        estado: { etiqueta: "WARNING", mensaje: "Entregable con observaciones" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [`Revisaron tu entregable del caso ${trabajo.caso} y te piden algunos cambios:`, `«${trabajo.comentario}»`, "Haz los ajustes en tu repositorio y vuelve a enviarlo desde la página del caso."],
+        enlace: { texto: "Ir al caso", url: trabajo.enlace },
+        comandoCierre: "git commit --amend",
+      });
     case "mensaje-nuevo":
       return plantillaSyntaxError({
         asunto: "Tienes un mensaje nuevo",

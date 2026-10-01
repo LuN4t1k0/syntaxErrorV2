@@ -43,7 +43,7 @@ export function SqlTask({ id, enunciado, inicial, comparar, verificar, esperadas
     registrarResultado(id, revision.aprobada);
   }
   return (
-    <PanelTarea titulo="tarea SQL" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" variant="secondary" onClick={ejecutar}>Ejecutar</Button><Button type="button" onClick={validar}>Validar</Button></>}>
+    <PanelTarea id={id} titulo="tarea SQL" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" variant="secondary" onClick={ejecutar}>Ejecutar</Button><Button type="button" onClick={validar}>Validar</Button></>}>
       <TablasDelCaso tablas={tablas} />
       <EditorCodigo etiqueta="Consulta SQL" valor={consulta} onCambio={setConsulta} />
       {error ? <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 font-mono text-sm text-destructive">{error}</p> : null}

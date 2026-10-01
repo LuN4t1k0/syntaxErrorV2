@@ -1,4 +1,5 @@
 import type { IntentoTarea } from "./esquemas";
+import type { CasoCorto } from "./requisitos";
 import type { EstadoMision } from "./servicio";
 
 export type Almacen = Pick<Storage, "getItem" | "setItem" | "removeItem">;
@@ -8,8 +9,10 @@ export type ProgresoVisible = {
   sesion: boolean;
   misiones: Record<string, EstadoMision>;
   entregable: string | null;
+  revision: { estado: "pendiente" | "aprobado" | "observado"; comentario: string | null } | null;
   completo: boolean;
   certificados: CertificadoVisible[];
+  bloqueadoPor: CasoCorto | null;
 };
 
 type Pendiente = Omit<IntentoTarea, "aprobada">;
@@ -84,15 +87,57 @@ export async function cargarProgreso(caso: string, tareasPorMision: Record<strin
     const delServidor = servidor?.misiones[mision];
     const aprobadas = new Set([...(delServidor?.tareasAprobadas ?? []), ...locales.filter((pendiente) => pendiente.mision === mision).map((pendiente) => pendiente.tarea)]);
     if (!delServidor && aprobadas.size === 0) continue;
-    misiones[mision] = { estado: tareas.length > 0 && tareas.every((tarea) => aprobadas.has(tarea)) ? "aprobada" : "en_curso", tareasAprobadas: [...aprobadas] };
+    misiones[mision] = {
+      estado: tareas.length > 0 && tareas.every((tarea) => aprobadas.has(tarea)) ? "aprobada" : "en_curso",
+      tareasAprobadas: [...aprobadas],
+      fallidos: delServidor?.fallidos ?? 0,
+    };
   }
   return {
     sesion: servidor !== null,
     misiones,
     entregable: servidor?.entregable ?? null,
+    revision: servidor?.revision ?? null,
     completo: servidor?.completo ?? false,
     certificados: servidor?.certificados ?? [],
+    bloqueadoPor: servidor?.bloqueadoPor ?? null,
   };
+}
+
+// Intentos fallidos por tarea, para liberar las pistas. Es un empujón pedagógico, no seguridad:
+// las pistas ya vienen en la página. Sin almacenamiento disponible, se cuenta en memoria.
+const CLAVE_FALLIDOS = "syntaxerror:fallidos";
+const fallidosEnMemoria: Record<string, number> = {};
+
+function leerMapaFallidos(almacen: Almacen | null): Record<string, number> {
+  if (!almacen) return fallidosEnMemoria;
+  try {
+    const valor: unknown = JSON.parse(almacen.getItem(CLAVE_FALLIDOS) ?? "{}");
+    return valor && typeof valor === "object" ? (valor as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+}
+
+export function leerFallidos(almacen: Almacen | null, caso: string, mision: string): Record<string, number> {
+  const prefijo = `${caso}/${mision}/`;
+  return Object.fromEntries(
+    Object.entries(leerMapaFallidos(almacen))
+      .filter(([clave]) => clave.startsWith(prefijo))
+      .map(([clave, cantidad]) => [clave.slice(prefijo.length), cantidad])
+  );
+}
+
+export function sumarFallido(almacen: Almacen | null, caso: string, mision: string, tarea: string): number {
+  const mapa = leerMapaFallidos(almacen);
+  const clave = `${caso}/${mision}/${tarea}`;
+  mapa[clave] = (mapa[clave] ?? 0) + 1;
+  if (almacen) {
+    try {
+      almacen.setItem(CLAVE_FALLIDOS, JSON.stringify(mapa));
+    } catch {}
+  }
+  return mapa[clave];
 }
 
 export function dependenciasNavegador(): Dependencias {

@@ -1,5 +1,5 @@
 import { randomInt } from "node:crypto";
-import { and, desc, eq, isNotNull } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNotNull, or } from "drizzle-orm";
 import type { AppDb } from "@syntaxerror/db/client";
 import {
   casoInscripciones,
@@ -177,4 +177,17 @@ export async function listarCertificados(db: AppDb, userId: string): Promise<Cer
     emitidoEn: fila.emitidoEn,
     legado: false,
   }));
+}
+
+export async function certificadosDelCaso(db: AppDb, userId: string, casoSlug: string): Promise<CertificadoEmitido[]> {
+  const [caso] = await db.select({ id: casos.id }).from(casos).where(eq(casos.slug, casoSlug));
+  if (!caso) return [];
+  const rutasDelCaso = (await db.select({ rutaId: rutaCasos.rutaId }).from(rutaCasos).where(eq(rutaCasos.casoId, caso.id))).map((fila) => fila.rutaId);
+  const delCaso = eq(certificados.casoId, caso.id);
+  const filas = await db
+    .select({ codigo: certificados.codigo, tipo: certificados.tipo, titulo: certificados.titulo })
+    .from(certificados)
+    .where(and(eq(certificados.userId, userId), rutasDelCaso.length > 0 ? or(delCaso, inArray(certificados.rutaId, rutasDelCaso)) : delCaso))
+    .orderBy(asc(certificados.emitidoEn));
+  return filas.map((fila) => ({ codigo: fila.codigo, tipo: fila.tipo as TipoCertificado, titulo: fila.titulo }));
 }

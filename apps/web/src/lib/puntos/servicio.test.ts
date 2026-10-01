@@ -1,8 +1,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import type { Mision } from "@syntaxerror/content/tipos";
-import { casos, transaccionesPuntos, users } from "@syntaxerror/db/schema";
+import { casos, entregables, transaccionesPuntos, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
-import { guardarEntregable, registrarIntento } from "@/lib/progreso/servicio";
+import { recalcularCaso, registrarIntento } from "@/lib/progreso/servicio";
 import { obtenerNivel, responderDecision } from "./servicio";
 
 const { db, close } = createTestDb();
@@ -25,6 +25,7 @@ const MISION: Mision = {
       },
     },
   ],
+  sinGuia: false,
 } as Mision;
 
 async function preparar(): Promise<string> {
@@ -56,8 +57,10 @@ describe("puntos por progreso", () => {
   it("completar el caso suma 50 más, una sola vez", async () => {
     const userId = await preparar();
     await aprobar(userId);
-    await guardarEntregable(db, userId, { caso: "ventas", url: "https://github.com/ana/ventas" });
-    await guardarEntregable(db, userId, { caso: "ventas", url: "https://github.com/ana/ventas-v2" });
+    const [caso] = await db.select({ id: casos.id }).from(casos);
+    await db.insert(entregables).values({ userId, casoId: caso.id, url: "https://github.com/ana/ventas", estado: "aprobado" });
+    await recalcularCaso(db, userId, "ventas");
+    await recalcularCaso(db, userId, "ventas");
     expect((await obtenerNivel(db, userId)).puntos).toBe(60);
   });
 

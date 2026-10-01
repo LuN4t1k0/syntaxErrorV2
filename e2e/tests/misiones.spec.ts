@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./fixtures";
+import { aprobarEntregable, entrarComoAdmin } from "./revision";
 
 const CASO = "/casos/demo-motor";
 const MISION_SQL = `${CASO}/01-clientes-de-regiones`;
@@ -6,12 +7,14 @@ const MISION_HOJA = `${CASO}/02-total-de-ventas`;
 const MISION_PYTHON = `${CASO}/03-ticket-promedio`;
 const CONSULTA_CORRECTA = "SELECT nombre, ciudad FROM clientes WHERE ciudad <> 'Santiago';";
 
-async function registrarse(page: Page, callbackUrl: string) {
+async function registrarse(page: Page, callbackUrl: string): Promise<string> {
+  const email = `misiones-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`;
   await page.goto(`/registro?callbackUrl=${encodeURIComponent(callbackUrl)}`);
   await page.locator('input[name="name"]').fill("Valentina Muñoz");
-  await page.locator('input[name="email"]').fill(`misiones-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`);
+  await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear y entrar" }).click();
+  return email;
 }
 
 async function validarYEsperar(page: Page) {
@@ -37,9 +40,9 @@ test("sin sesión: aprueba la misión SQL y el progreso se sube al crear la cuen
   await expect(page.getByTestId("estado-01-clientes-de-regiones")).toHaveText("Aprobada");
 });
 
-test("con sesión: aprueba las tres misiones y completa el caso con su entregable", async ({ page }) => {
+test("con sesión: aprueba las tres misiones y completa el caso con su entregable", async ({ page, nuevaPagina }) => {
   test.setTimeout(240_000);
-  await registrarse(page, "/dashboard");
+  const email = await registrarse(page, "/dashboard");
   await expect(page).toHaveURL(/\/dashboard/);
   await page.goto(MISION_SQL);
   await page.getByLabel("Consulta SQL").fill(CONSULTA_CORRECTA);
@@ -58,10 +61,16 @@ test("con sesión: aprueba las tres misiones y completa el caso con su entregabl
   for (const mision of ["01-clientes-de-regiones", "02-total-de-ventas", "03-ticket-promedio"]) {
     await expect(page.getByTestId(`estado-${mision}`)).toHaveText("Aprobada");
   }
-  await page.getByLabel("Enlace a tu entregable").fill("https://github.com/valentina/demo-motor");
-  await page.getByRole("button", { name: "Guardar entregable" }).click();
-  await expect(page.getByText("Caso completo", { exact: true })).toBeVisible();
+  await page.getByLabel("Enlace a tu repositorio de GitHub").fill("https://github.com/valentina/demo-motor");
+  await page.getByRole("button", { name: "Enviar a revisión" }).click();
+  await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
+
+  const admin = await nuevaPagina();
+  await entrarComoAdmin(admin);
+  await aprobarEntregable(admin, email);
+
   await page.reload();
+  await expect(page.getByText("Caso completo", { exact: true })).toBeVisible();
   await page.getByLabel("5 estrellas").check();
   await page.getByLabel("Comentario (opcional)").fill("Muy práctico para aprender SQL.");
   await page.getByRole("button", { name: "Publicar reseña" }).click();

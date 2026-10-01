@@ -112,10 +112,14 @@ services:
     environment:
       <<: *node-env
       WATCHPACK_POLLING: "true"
+      # next dev reinicia el servidor al usar el 80 % del heap; con el límite por defecto de Node (~2 GB)
+      # lo hacía a mitad de los e2e. En producción el servidor usa mucho menos.
+      NODE_OPTIONS: --max-old-space-size=5120
       AUTH_SECRET: ${AUTH_SECRET:-dev-only-secret-change-me-dev-only-secret}
       AUTH_URL: http://localhost:3000
       AUTH_TRUST_HOST: "true"
       CONTENT_INCLUDE_DRAFTS: "true"
+      ENTREGABLES_VERIFICACION: prueba
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       NEXT_PUBLIC_CHAT_SOCKET_URL: http://localhost:4001
     healthcheck:

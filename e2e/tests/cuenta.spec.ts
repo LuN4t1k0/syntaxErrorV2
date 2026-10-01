@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "./fixtures";
 import { esperarEmail, rutaDelEnlace } from "./mailpit";
+import { aprobarEntregable, entrarComoAdmin } from "./revision";
 
 const CLAVE = "clave-segura-123";
 
@@ -41,7 +42,7 @@ test("al registrarse llega el email de confirmación y el enlace confirma la cue
   await expect(page.getByRole("button", { name: "Reenviar email" })).toHaveCount(0);
 });
 
-test("completar el caso emite el certificado, se verifica en público y aparece en el portafolio", async ({ page, ip }) => {
+test("completar el caso emite el certificado, se verifica en público y aparece en el portafolio", async ({ page, ip, nuevaPagina }) => {
   const email = emailNuevo("certificado");
   await registrarse(page, email);
 
@@ -59,8 +60,13 @@ test("completar el caso emite el certificado, se verifica en público y aparece 
   }
 
   await page.goto("/casos/demo-motor");
-  await page.getByLabel("Enlace a tu entregable").fill("https://github.com/josefa/demo-motor");
-  await page.getByRole("button", { name: "Guardar entregable" }).click();
+  await page.getByLabel("Enlace a tu repositorio de GitHub").fill("https://github.com/josefa/demo-motor");
+  await page.getByRole("button", { name: "Enviar a revisión" }).click();
+  await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
+  const admin = await nuevaPagina();
+  await entrarComoAdmin(admin);
+  await aprobarEntregable(admin, email);
+  await page.reload();
   await page.getByRole("link", { name: /Ver certificado de caso/ }).click();
   await expect(page.getByText("Josefa Morales")).toBeVisible();
   const codigo = new URL(page.url()).pathname.split("/").pop();

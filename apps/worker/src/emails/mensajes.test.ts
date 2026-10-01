@@ -34,6 +34,8 @@ const casos: Array<[TrabajoEmail, string]> = [
   [{ tipo: "clase-decision", para: "ana@correo.cl", nombre: "Ana", clase: "3°A", aceptada: true, enlace }, "Te aceptaron en la clase"],
   [{ tipo: "clase-decision", para: "ana@correo.cl", nombre: "Ana", clase: "3°A", aceptada: false, enlace }, "Ya no estás en la clase"],
   [{ tipo: "mensaje-nuevo", para: "ana@correo.cl", nombre: "Ana", asunto: "Gracias por tu reporte", enlace }, "Tienes un mensaje nuevo"],
+  [{ tipo: "entregable-por-revisar", para: "rosa@correo.cl", nombre: "Rosa", alumno: "Ana (ana@correo.cl)", caso: "Ventas", enlace }, "Hay un entregable por revisar"],
+  [{ tipo: "entregable-observado", para: "ana@correo.cl", nombre: "Ana", caso: "Ventas", comentario: "Falta explicar las conclusiones.", enlace }, "Tu entregable necesita cambios"],
 ];
 
 describe("construirEmail", () => {

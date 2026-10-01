@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cargarProgreso, leerPendientes, reportarTarea, sincronizarPendientes, type Almacen } from "./cliente";
+import { cargarProgreso, leerFallidos, leerPendientes, reportarTarea, sincronizarPendientes, sumarFallido, type Almacen } from "./cliente";
 
 function almacenEnMemoria(): Almacen {
   const datos = new Map<string, string>();
@@ -84,17 +84,21 @@ describe("cargarProgreso", () => {
     const almacen = almacenEnMemoria();
     await reportarTarea({ ...aprobado, tarea: "t2" }, { fetch: fetchFalso(() => json(401)).fetch, almacen });
     const servidor = {
-      misiones: { m1: { estado: "en_curso", tareasAprobadas: ["t1"] } },
+      misiones: { m1: { estado: "en_curso", tareasAprobadas: ["t1"], fallidos: 2 } },
       entregable: null,
+      revision: null,
       completo: false,
+      bloqueadoPor: null,
     };
     const progreso = await cargarProgreso("ventas", tareasPorMision, { fetch: fetchFalso(() => json(200, servidor)).fetch, almacen });
     expect(progreso).toEqual({
       sesion: true,
-      misiones: { m1: { estado: "aprobada", tareasAprobadas: ["t1", "t2"] } },
+      misiones: { m1: { estado: "aprobada", tareasAprobadas: ["t1", "t2"], fallidos: 2 } },
       entregable: null,
+      revision: null,
       completo: false,
       certificados: [],
+      bloqueadoPor: null,
     });
   });
 
@@ -104,10 +108,26 @@ describe("cargarProgreso", () => {
     const progreso = await cargarProgreso("ventas", tareasPorMision, { fetch: fetchFalso(() => json(401)).fetch, almacen });
     expect(progreso).toEqual({
       sesion: false,
-      misiones: { m2: { estado: "aprobada", tareasAprobadas: ["t3"] } },
+      misiones: { m2: { estado: "aprobada", tareasAprobadas: ["t3"], fallidos: 0 } },
       entregable: null,
+      revision: null,
       completo: false,
       certificados: [],
+      bloqueadoPor: null,
     });
+  });
+});
+
+describe("intentos fallidos por tarea", () => {
+  it("cuenta por tarea y se lee por misión, también sin almacenamiento", () => {
+    const almacen = almacenEnMemoria();
+    expect(sumarFallido(almacen, "ventas", "m1", "t1")).toBe(1);
+    expect(sumarFallido(almacen, "ventas", "m1", "t1")).toBe(2);
+    expect(sumarFallido(almacen, "ventas", "m1", "t2")).toBe(1);
+    expect(sumarFallido(almacen, "ventas", "m2", "t3")).toBe(1);
+    expect(leerFallidos(almacen, "ventas", "m1")).toEqual({ t1: 2, t2: 1 });
+    expect(sumarFallido(null, "ventas", "m9", "x")).toBe(1);
+    expect(sumarFallido(null, "ventas", "m9", "x")).toBe(2);
+    expect(leerFallidos(null, "ventas", "m9")).toEqual({ x: 2 });
   });
 });

@@ -14,6 +14,13 @@ export const rutaSchema = z.object({
   casos: z.array(slug).min(1, "la ruta necesita al menos un caso"),
 });
 
+// Rúbrica común para revisar entregables (propuesta pedagógica, sección 9). Un caso puede reemplazarla.
+export const RUBRICA_BASE = [
+  "Responde la pregunta del encargo del caso.",
+  "El README explica qué se hizo, con qué datos y cómo revisarlo.",
+  "Las conclusiones se apoyan en los datos y en el análisis.",
+];
+
 export const casoSchema = z.object({
   slug,
   titulo: texto,
@@ -21,12 +28,16 @@ export const casoSchema = z.object({
   empresa: texto,
   dataset: texto,
   entregable: z.string({ required_error: "el caso debe declarar su entregable" }).trim().min(1, "el caso debe declarar su entregable"),
+  archivos: z.array(z.string().regex(/^\.[a-z0-9]+$/, "cada archivo requerido es una extensión, por ejemplo .sql")).default([]),
+  rubrica: z.array(texto).min(1, "la rúbrica necesita al menos un criterio").default(RUBRICA_BASE),
   misiones: z.array(slug).min(1, "el caso necesita al menos una misión"),
 });
 
 export const frontmatterSchema = z.object({
   titulo: texto,
   tiempo: z.number().int().positive(),
+  // La misión final de cada caso: sin concepto, ejemplos ni pistas (propuesta pedagógica, sección 5).
+  sinGuia: z.boolean().default(false),
 });
 
 const celdaEsperada = z.object({

@@ -130,6 +130,7 @@ export const misionProgreso = pgTable(
     mision: text("mision").notNull(),
     estado: text("estado").notNull().default("en_curso"),
     intentos: integer("intentos").notNull().default(0),
+    fallidos: integer("fallidos").notNull().default(0),
     tareasAprobadas: jsonb("tareas_aprobadas").notNull().$type<string[]>().default([]),
     aprobadaEn: timestamp("aprobada_en"),
     actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
@@ -178,6 +179,13 @@ export const entregables = pgTable(
       .notNull()
       .references(() => casos.id, { onDelete: "cascade" }),
     url: text("url").notNull(),
+    // pendiente -> (revisión con rúbrica) -> aprobado u observado. Solo aprobado completa el caso.
+    estado: text("estado").notNull().default("pendiente"),
+    verificadoEn: timestamp("verificado_en"),
+    comentario: text("comentario"),
+    criterios: jsonb("criterios").notNull().$type<boolean[]>().default([]),
+    revisadoPor: uuid("revisado_por").references(() => users.id, { onDelete: "set null" }),
+    revisadoEn: timestamp("revisado_en"),
     creadoEn: timestamp("creado_en").notNull().defaultNow(),
     actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
   },

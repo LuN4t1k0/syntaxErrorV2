@@ -13,7 +13,8 @@ export type RateLimitKey =
   | "tutor"
   | "reportes"
   | "clases-unirse"
-  | "preguntas-profesor";
+  | "preguntas-profesor"
+  | "entregables";
 
 export type RateLimitResult = { allowed: true } | { allowed: false; retryAfterSeconds: number };
 
@@ -32,6 +33,7 @@ const LIMITER_CONFIGS: Record<RateLimitKey, { points: number; duration: number }
   reportes: { points: 5, duration: 3600 },
   "clases-unirse": { points: 10, duration: 900 },
   "preguntas-profesor": { points: 5, duration: 3600 },
+  entregables: { points: 10, duration: 3600 },
 };
 
 const limiters = new Map<RateLimitKey, RateLimiterRedis>();

@@ -36,4 +36,9 @@ describe("contextoDeMision", () => {
     const largo = { ...caso.misiones[0], titulo: "x".repeat(10_000) };
     expect(contextoDeMision(caso, largo).length).toBeLessThanOrEqual(4_000);
   });
+
+  it("en una misión sin guía pide responder con preguntas", () => {
+    expect(contextoDeMision(caso, caso.misiones[2])).toContain("Esta es una misión sin guía");
+    expect(contextoDeMision(caso, caso.misiones[0])).not.toContain("misión sin guía");
+  });
 });

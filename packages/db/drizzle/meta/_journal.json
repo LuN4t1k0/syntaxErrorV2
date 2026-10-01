@@ -43,6 +43,13 @@
       "when": 1790796983441,
       "tag": "0005_boring_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790815438157,
+      "tag": "0006_clumsy_selene",
+      "breakpoints": true
     }
   ]
 }

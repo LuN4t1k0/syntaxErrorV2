@@ -7,6 +7,8 @@ import { cn } from "@syntaxerror/ui/cn";
 import { Button } from "@syntaxerror/ui/components/button";
 import { EVENTO_TUTOR, PROPOSITO_TUTOR, type EventoTutor } from "@syntaxerror/queue/eventos";
 import { enviarJson } from "@/lib/cuenta/cliente";
+import { tutorHabilitado, umbralTutor } from "@/lib/progreso/ayudas";
+import { useMisionOpcional } from "./mision-provider";
 
 type EstadoMensaje = "pendiente" | "respondida" | "desde_cache" | "fuera_de_tema" | "error";
 type Mensaje = { id: string; pregunta: string; estado: EstadoMensaje; respuesta: string | null };
@@ -28,7 +30,7 @@ function idDelNavegador(): string {
   }
 }
 
-export function Tutor({ caso, mision }: { caso: string; mision: string }) {
+export function Tutor({ caso, mision, sinGuia = false }: { caso: string; mision: string; sinGuia?: boolean }) {
   const [abierto, setAbierto] = useState(false);
   const [sesion, setSesion] = useState<"cargando" | "si" | "no">("cargando");
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
@@ -37,6 +39,9 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
   const [aviso, setAviso] = useState<string | null>(null);
   const clienteRef = useRef("");
   const socketRef = useRef<Socket | null>(null);
+  const contexto = useMisionOpcional();
+  const fallidos = contexto?.fallidosMision ?? 0;
+  const habilitado = !contexto || tutorHabilitado({ fallidos, aprobada: contexto.completa, sinGuia });
 
   const actualizar = useCallback((id: string, cambios: Partial<Mensaje>) => {
     setMensajes((actuales) => actuales.map((mensaje) => (mensaje.id === id ? { ...mensaje, ...cambios } : mensaje)));
@@ -120,6 +125,10 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
       setAviso("Hiciste muchas preguntas seguidas. Espera un minuto.");
       return;
     }
+    if (respuesta.status === 403) {
+      setAviso("Todavía no: el tutor se habilita después de intentar la tarea.");
+      return;
+    }
     const datos = respuesta.datos as { estado?: string; preguntaId?: string; respuesta?: string };
     if (!respuesta.ok || datos.estado === "no_disponible" || !datos.preguntaId) {
       setAviso("El tutor no está disponible ahora. Puedes seguir con la misión.");
@@ -155,6 +164,10 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
           <Link className="font-bold text-primary hover:underline" href={`/login?callbackUrl=${encodeURIComponent(`/casos/${caso}/${mision}`)}`}>
             Entra para preguntarle al tutor
           </Link>
+        </p>
+      ) : !habilitado ? (
+        <p role="status" className="text-sm leading-6">
+          {`Primero intenta resolver la tarea. El tutor se habilita con ${umbralTutor(sinGuia)} intentos fallidos en esta misión; llevas ${fallidos}.`}
         </p>
       ) : (
         <>

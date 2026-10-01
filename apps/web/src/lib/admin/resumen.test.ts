@@ -1,5 +1,5 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
-import { casos, preguntasProfesor, reportes, resenasCaso, solicitudesDocente, tutorPreguntas, users } from "@syntaxerror/db/schema";
+import { casos, entregables, preguntasProfesor, reportes, resenasCaso, solicitudesDocente, tutorPreguntas, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { resumenAdmin } from "./resumen";
 
@@ -39,6 +39,10 @@ describe("resumenAdmin", () => {
       { userId: ana.id, casoId: caso.id, mision: "m1", pregunta: "¿Antes?", estado: "respondida", creadoEn: hace(9) },
     ]);
 
+    await db.insert(entregables).values([
+      { userId: ana.id, casoId: caso.id, url: "https://github.com/ana/ventas" },
+      { userId: beto.id, casoId: caso.id, url: "https://github.com/beto/ventas", estado: "aprobado" },
+    ]);
     expect(await resumenAdmin(db, AHORA)).toEqual({
       usuarios: 3,
       nuevosSemana: 1,
@@ -48,6 +52,7 @@ describe("resumenAdmin", () => {
       reportesPendientes: 1,
       preguntasSinDocente: 1,
       preguntasTutorSemana: 1,
+      entregablesPorRevisar: 1,
     });
   });
 });

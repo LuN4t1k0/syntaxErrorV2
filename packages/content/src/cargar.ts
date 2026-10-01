@@ -115,7 +115,7 @@ async function cargarMision(dirCaso: string, donde: string, slug: string, proble
   }
 
   if (!frontmatter) return null;
-  return { slug, titulo: frontmatter.titulo, tiempo: frontmatter.tiempo, fuente: archivo.content, bloques };
+  return { slug, titulo: frontmatter.titulo, tiempo: frontmatter.tiempo, sinGuia: frontmatter.sinGuia, fuente: archivo.content, bloques };
 }
 
 async function cargarCaso(dirCaso: string, carpeta: string, problemas: string[]): Promise<Caso | null> {
@@ -144,6 +144,8 @@ async function cargarCaso(dirCaso: string, carpeta: string, problemas: string[])
     empresa: datos.empresa,
     dataset: datos.dataset,
     entregable: datos.entregable,
+    archivos: datos.archivos,
+    rubrica: datos.rubrica,
     misiones,
     datos: await cargarTablas(dirCaso, donde, problemas),
   };

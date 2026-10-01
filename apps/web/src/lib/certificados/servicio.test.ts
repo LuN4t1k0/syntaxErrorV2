@@ -10,7 +10,7 @@ import {
   users,
 } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
-import { buscarCertificado, emitirCertificadosDelCaso, generarCodigo, listarCertificados } from "./servicio";
+import { buscarCertificado, certificadosDelCaso, emitirCertificadosDelCaso, generarCodigo, listarCertificados } from "./servicio";
 
 const { db, close } = createTestDb();
 
@@ -122,5 +122,18 @@ describe("buscarCertificado y listarCertificados", () => {
     const userId = await escenario();
     await emitirCertificadosDelCaso(db, userId, "ventas");
     expect((await listarCertificados(db, userId)).map((certificado) => certificado.tipo).sort()).toEqual(["caso", "ruta"]);
+  });
+});
+
+describe("certificadosDelCaso", () => {
+  it("devuelve el certificado del caso y los de sus rutas", async () => {
+    const userId = await escenario();
+    expect(await certificadosDelCaso(db, userId, "ventas")).toEqual([]);
+    await emitirCertificadosDelCaso(db, userId, "ventas");
+    expect((await certificadosDelCaso(db, userId, "ventas")).map(({ tipo, titulo }) => ({ tipo, titulo })).sort((a, b) => a.tipo.localeCompare(b.tipo))).toEqual([
+      { tipo: "caso", titulo: "Ventas de marzo" },
+      { tipo: "ruta", titulo: "Data Analyst" },
+    ]);
+    expect(await certificadosDelCaso(db, userId, "otro")).toEqual([]);
   });
 });

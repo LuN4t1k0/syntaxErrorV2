@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
 import { ResenasCaso } from "@/components/comunidad/resenas-caso";
 import { PanelCaso } from "@/components/mision/panel-caso";
-import { casosParaPublicar, obtenerCaso } from "@/lib/contenido";
+import { casosParaPublicar, obtenerCaso, rutasParaPublicar } from "@/lib/contenido";
+import { requisitosDelCaso } from "@/lib/progreso/requisitos-contenido";
 
 export const dynamic = "error";
 export const dynamicParams = false;
@@ -20,6 +21,7 @@ export async function generateMetadata({ params }: Parametros) {
 export default async function CasoPage({ params }: Parametros) {
   const caso = await obtenerCaso((await params).caso);
   if (!caso) notFound();
+  const requisitos = requisitosDelCaso(await rutasParaPublicar(), await casosParaPublicar(), caso.slug);
   return (
     <main className="mx-auto grid max-w-4xl gap-8 px-4 py-12 sm:px-6">
       <header className="grid gap-3">
@@ -27,7 +29,12 @@ export default async function CasoPage({ params }: Parametros) {
         <h1 className="text-3xl font-black">{caso.titulo}</h1>
         <p className="leading-7 text-muted-foreground">{`Llegas como ${caso.cargo.toLowerCase()} a ${caso.empresa}. Datos del caso: ${caso.dataset}.`}</p>
       </header>
-      <PanelCaso caso={caso.slug} entregable={caso.entregable} misiones={caso.misiones.map((mision) => ({ slug: mision.slug, titulo: mision.titulo, tiempo: mision.tiempo, tareas: tareasDeMision(mision).map((tarea) => tarea.props.id) }))} />
+      <PanelCaso
+        caso={caso.slug}
+        entregable={caso.entregable}
+        requisitos={requisitos}
+        misiones={caso.misiones.map((mision) => ({ slug: mision.slug, titulo: mision.titulo, tiempo: mision.tiempo, sinGuia: mision.sinGuia, tareas: tareasDeMision(mision).map((tarea) => tarea.props.id) }))}
+      />
       <ResenasCaso caso={caso.slug} />
     </main>
   );

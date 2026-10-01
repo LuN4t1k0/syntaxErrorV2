@@ -9,7 +9,7 @@ function directorio(): string {
   return process.env.CONTENT_DIR ?? path.resolve(process.cwd(), "../../content");
 }
 
-function incluirBorradores(): boolean {
+export function incluirBorradores(): boolean {
   return process.env.CONTENT_INCLUDE_DRAFTS === "true";
 }
 

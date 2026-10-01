@@ -22,4 +22,5 @@ export const ETIQUETAS_ACCION: Record<AuditAction, string> = {
   teacher_request_decided: "Solicitud docente resuelta",
   report_resolved: "Reporte resuelto",
   tutor_cache_deleted: "Respuesta del tutor borrada",
+  deliverable_reviewed: "Entregable revisado",
 };

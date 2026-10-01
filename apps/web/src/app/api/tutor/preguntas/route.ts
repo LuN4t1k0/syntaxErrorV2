@@ -4,6 +4,7 @@ import { getDb } from "@syntaxerror/db/client";
 import { obtenerCaso } from "@/lib/contenido";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { obtenerUsuarioId } from "@/lib/sesion";
+import { estadoTutor } from "@/lib/tutor/acceso";
 import { encolarTutor } from "@/lib/tutor/cola";
 import { proveedorIA } from "@/lib/tutor/proveedor";
 import { preguntarAlTutor } from "@/lib/tutor/servicio";
@@ -29,6 +30,12 @@ export async function POST(request: Request) {
   const caso = await obtenerCaso(parsed.data.caso);
   const mision = caso?.misiones.find((candidata) => candidata.slug === parsed.data.mision);
   if (!caso || !mision) return NextResponse.json({ error: "mision_no_existe" }, { status: 404 });
+
+  // Primero intentar: el tutor se habilita tras los intentos fallidos de la misión (propuesta, sección 6).
+  const acceso = await estadoTutor(getDb(), userId, caso.slug, { slug: mision.slug, sinGuia: mision.sinGuia });
+  if (!acceso.habilitado) {
+    return NextResponse.json({ error: "tutor_bloqueado", fallidos: acceso.fallidos, umbral: acceso.umbral }, { status: 403 });
+  }
 
   const resultado = await preguntarAlTutor(
     getDb(),
