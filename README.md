@@ -123,6 +123,7 @@ Se basa en la propuesta pedagógica aprobada (`docs/propuesta-pedagogica-data-an
   - Deben ser un repositorio de GitHub.
   - Al enviarlo se verifica que sea público, tenga README y los archivos de `archivos` en `caso.yaml`.
   - Luego un docente de la clase, o administración, lo revisa en `/profesor/entregables` con la rúbrica del caso (`rubrica` en `caso.yaml`, con una base común).
+  - Al enviarlo se informa el plazo de revisión: 5 días hábiles (`apps/web/src/lib/entregables/plazo.ts`).
   - Solo un entregable aprobado completa el caso y emite el certificado.
   - En local y en e2e, `ENTREGABLES_VERIFICACION=prueba` evita consultar GitHub (un repositorio con `vacio` en el nombre simula uno sin README).
   - En producción conviene definir `GITHUB_TOKEN`.
@@ -145,3 +146,19 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
 - **Planilla:** ayuda de la función mientras se escribe la fórmula, sugerencias de funciones y explicación del error de la celda.
 - **Regla:** una explicación explica el error, nunca entrega la solución de la tarea.
 - **Rutas futuras:** las consolas comparten un contrato común. Ver `packages/engines/README.md` para agregar una nueva (terminal, registros, desarrollo web).
+
+## Caso 0: Herramientas del oficio
+
+- **Lo primero de la ruta:** es el primer caso de `data-analyst` y se hace completo desde la web de GitHub.
+- **Dos tipos de tarea propios:**
+  - `MarkdownTask`: se escribe Markdown con vista previa y se revisa en el navegador.
+  - `GithubTask`: revisa el repositorio real de la persona por la API de GitHub (`POST /api/github/revisar`, 20 revisiones cada 10 minutos por IP).
+- **Requisitos de una `GithubTask`:**
+  - `publico`, `readme`, `nombres-limpios`;
+  - `commits:N`: mensajes escritos por la persona, no los automáticos de GitHub;
+  - `carpeta:x`, `extension:.ext`;
+  - `readme:<requisito de Markdown>`, por ejemplo `readme:subtitulos:2`.
+- **Configuración:**
+  - En producción, define `GITHUB_TOKEN`: sin token, GitHub permite 60 consultas por hora para todo el servidor.
+  - En local y en e2e, `ENTREGABLES_VERIFICACION=prueba` evita llamar a GitHub: el usuario `no-existe` simula una cuenta inexistente.
+- **El caso demo** (`demo-motor`) vive en la ruta `demo`, en borrador: lo usan las pruebas y nunca se publica.

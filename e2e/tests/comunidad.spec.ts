@@ -96,5 +96,6 @@ test("una clase: el docente la crea, la estudiante se une con el código y queda
 
   await page.reload();
   await expect(page.getByText("Activa", { exact: true })).toBeVisible();
-  await expect(page.locator('a[href="/casos/demo-motor"]')).toBeVisible();
+  // La clase muestra los casos de su ruta (la primera, Data Analyst), en orden: el primero es el Caso 0.
+  await expect(page.locator('a[href="/casos/herramientas-del-oficio"]')).toBeVisible();
 });
