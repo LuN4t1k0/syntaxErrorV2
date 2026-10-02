@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
 import { ResenasCaso } from "@/components/comunidad/resenas-caso";
+import { DatosDelCaso } from "@/components/mision/datos-del-caso";
 import { PanelCaso } from "@/components/mision/panel-caso";
 import { casosParaPublicar, obtenerCaso, rutasParaPublicar } from "@/lib/contenido";
 import { requisitosDelCaso } from "@/lib/progreso/requisitos-contenido";
@@ -35,6 +36,7 @@ export default async function CasoPage({ params }: Parametros) {
         requisitos={requisitos}
         misiones={caso.misiones.map((mision) => ({ slug: mision.slug, titulo: mision.titulo, tiempo: mision.tiempo, sinGuia: mision.sinGuia, tareas: tareasDeMision(mision).map((tarea) => tarea.props.id) }))}
       />
+      <DatosDelCaso caso={caso.slug} datos={caso.datos} />
       <ResenasCaso caso={caso.slug} />
     </main>
   );
