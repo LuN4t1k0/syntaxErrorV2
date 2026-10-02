@@ -58,6 +58,18 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["08-revisar-el-codigo-de-la-ia", "corregir-codigo-ia"],
     ["09-recomendaciones-para-el-negocio", "cinco-respuestas"],
   ],
+  "clinica-cordillera-central": [
+    ["01-la-pregunta-del-dashboard", "ficha-del-dashboard"],
+    ["02-preparar-los-datos", "atenciones-con-nombres"],
+    ["02-preparar-los-datos", "control-por-tipo"],
+    ["03-calcular-indicadores", "tasa-de-inasistencia"],
+    ["03-calcular-indicadores", "espera-por-sede"],
+    ["04-elegir-el-grafico", "serie-mensual-de-urgencias"],
+    ["04-elegir-el-grafico", "ranking-de-inasistencia"],
+    ["05-disenar-el-dashboard", "boceto-del-dashboard"],
+    ["06-construir-el-dashboard", "dashboard-publicado"],
+    ["07-presentar-en-cinco-minutos", "presentacion-al-directorio"],
+  ],
 };
 
 export async function registrarse(page: Page, nombre: string): Promise<string> {
@@ -89,14 +101,14 @@ export async function completarCaso(page: Page, admin: Page, ip: string, email: 
   await page.getByLabel("Enlace a tu repositorio de GitHub").fill(`https://github.com/e2e/${caso}`);
   await page.getByRole("button", { name: "Enviar a revisión" }).click();
   await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
-  // Se aprueba por la API de revisión: es más rápido y no depende de que la página hidrate. La aprobación con
-  // clics en la rúbrica ya la prueban misiones.spec y cuenta.spec (aprobarEntregable).
+  // Se aprueba por la API de revisión, con todos los criterios marcados: es más rápido y no depende de que la página
+  // hidrate. La revisión con clics en la rúbrica ya la prueban misiones.spec, cuenta.spec y recorrido.spec.
   await admin.goto("/profesor/entregables");
   const tarjeta = admin.locator("li", { hasText: email });
   await expect(tarjeta).toHaveCount(1);
   const entregableId = await tarjeta.locator("[data-entregable-id]").getAttribute("data-entregable-id");
-  const criterios = await tarjeta.getByRole("checkbox").count();
   expect(entregableId, `${caso}: entregable sin id`).not.toBeNull();
+  const criterios = await tarjeta.locator('input[type="checkbox"]').count();
   const respuesta = await admin.request.post(`/api/revision/entregables/${entregableId}`, {
     headers: { Origin: "http://localhost:3000", "x-forwarded-for": ip },
     data: { decision: "aprobado", criterios: Array.from({ length: criterios }, () => true), comentario: null },

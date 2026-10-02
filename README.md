@@ -113,7 +113,8 @@ Se basa en la propuesta pedagógica aprobada (`docs/propuesta-pedagogica-data-an
   - El servidor rechaza con 409 los intentos fuera de orden.
 - **Primero intentar:**
   - La primera pista aparece tras 2 intentos fallidos de la tarea y luego una por intento.
-  - El tutor IA se habilita tras 3 intentos fallidos en la misión (5 en una misión sin guía).
+  - El tutor IA se habilita tras 5 intentos fallidos en la misión.
+  - Un intento fallido es un resultado incorrecto. Un error de código (`errorDeCodigo` en `ResultadoTarea`) se explica al instante y no cuenta.
   - Los umbrales están en `apps/web/src/lib/progreso/ayudas.ts`.
 - **Misión sin guía:**
   - `sinGuia: true` en el frontmatter.
@@ -202,8 +203,14 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
   - Dentro se resuelven la ficha y el boceto (`MarkdownTask`), los datos e indicadores (`SqlTask`) y el criterio (decisiones).
   - El dashboard se construye en Power BI Desktop (Windows) o Looker Studio (navegador) y se entrega en GitHub con capturas: `GithubTask` verifica el repositorio y la rúbrica evalúa el dashboard.
 
+## Caso 5: Proyecto final
+
+- **Datos de la persona:** elige un conjunto de una lista curada de seis fuentes (datos.gob.cl, INE, SINIM, DEIS, Centro de Estudios Mineduc y SINCA). La plataforma no puede correr su análisis: lo verifican `GithubTask` (repositorio, carpetas, notebook, gráficos y README) y la rúbrica de tres dimensiones.
+- **Muestra de práctica:** `packages/content/src/generadores/proyecto-final.ts` genera la matrícula escolar del Maule 2020–2024 (números inventados) con el formato de un portal público: separador `;`, miles con punto, `s/i` y filas de «Total regional» mezcladas con el detalle. Con ella se practica leer el archivo, revisar el análisis de una IA contra el total de control y calcular una variación por comuna.
+
 ## Datos de los casos
 
 - Cada caso con datos muestra "Datos del caso" en su página, con enlaces para descargar sus CSV: `/casos/<caso>/datos/<tabla>.csv`.
 - Los CSV van en UTF-8, separados por coma y sin BOM. En Excel se abren con Datos → Obtener datos → Desde texto/CSV.
+  - La excepción es la muestra del proyecto final: imita un archivo público, separado por punto y coma. Su generador entrega el texto del archivo tal cual.
 - Las rutas se generan en el build, solo para los casos publicados.
