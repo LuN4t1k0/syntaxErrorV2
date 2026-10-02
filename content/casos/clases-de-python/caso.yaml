@@ -1,0 +1,39 @@
+slug: clases-de-python
+tipo: clases
+titulo: "Clases de Python: de las variables a pandas"
+dataset: "pequeñas tablas de ventas, encuestas y sensores, preparadas en cada lección"
+misiones:
+  - 01-variables-y-tipos
+  - 02-operadores
+  - 03-print-fstrings
+  - 04-errores-comunes
+  - 05-listas
+  - 06-diccionarios
+  - 07-tuplas
+  - 08-listas-anidadas
+  - 09-if-else
+  - 10-for
+  - 11-while
+  - 12-funciones
+  - 13-series
+  - 14-dataframe
+  - 15-explorar-dataframe
+  - 16-cargar-csv-excel
+  - 17-seleccionar-columnas
+  - 18-loc-iloc
+  - 19-filtros-booleanos
+  - 20-crear-columnas
+  - 21-apply
+  - 22-limpieza-texto
+  - 23-fechas
+  - 24-ordenar
+  - 25-groupby
+  - 26-agg
+  - 27-value-counts
+  - 28-merge
+  - 29-valores-nulos
+  - 30-duplicados
+  - 31-exportar-resultados
+  - 32-visualizacion-datos
+  - 33-python-vs-excel-sql
+  - 34-proyecto-final-pandas

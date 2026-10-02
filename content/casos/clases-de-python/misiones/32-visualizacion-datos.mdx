@@ -1,0 +1,24 @@
+---
+titulo: "Visualización de datos"
+tiempo: 12
+---
+
+<Concepto>
+Una tabla de números es difícil de interpretar de un vistazo -- un gráfico bien elegido comunica un patrón mucho más rápido. Esta lección es conceptual: graficar con matplotlib u otra librería queda fuera de esta primera versión del laboratorio, pero vale la pena saber que herramienta usar para que pregunta.
+
+La elección del tipo de gráfico depende de la pregunta que quieres responder, no de qué gráfico te parece más lindo.
+
+**Gráfico de barras: comparar categorias.** Sirve para comparar un valor entre categorias distintas -- por ejemplo, el total de ventas por region. Es el equivalente visual de un groupby con sum().
+
+**Gráfico de líneas: evolución en el tiempo.** Sirve para mostrar cómo cambia un valor a lo largo del tiempo -- por ejemplo, ventas diarias durante un mes. El eje horizontal casi siempre es una fecha.
+
+**Histograma: distribución de un valor.** Sirve para ver cómo se reparten los valores de una columna numérica -- por ejemplo, cuántas respuestas de una encuesta cayeron en cada rango de calificacion.
+
+**matplotlib y seaborn.** matplotlib es la librería base de gráficos en Python; seaborn se construye sobre ella y ofrece gráficos más prolijos con menos código. Ambas funcionan sobre DataFrames y Series de pandas directamente.
+</Concepto>
+
+<LecturaTask
+  id="visualizacion-datos"
+  pregunta={"Si quisieras mostrar cómo cambió la calificación promedio de una encuesta mes a mes durante un año, ¿qué tipo de gráfico usarías?"}
+  respuesta={"Un gráfico de líneas: la pregunta es sobre la evolución de un valor a lo largo del tiempo, que es exactamente el caso de uso de un gráfico de líneas."}
+/>

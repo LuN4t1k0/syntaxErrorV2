@@ -1,0 +1,41 @@
+---
+titulo: "agg"
+tiempo: 16
+---
+
+<Concepto>
+Cuando hacen falta varias funciones de resumen a la vez (por ejemplo, suma y promedio juntos), agg permite pedirlas todas en una sola línea, en vez de escribir un groupby por cada una.
+
+Se le pasa una lista con los nombres de las funciones a calcular, y devuelve una tabla con una columna por cada una.
+
+<Sintaxis lenguaje="python" codigo={"df.groupby(\"columna\")[\"otra\"].agg([\"sum\",\"mean\"])"} />
+
+**Varias funciones de resumen a la vez.** agg(["sum","mean"]) calcula la suma y el promedio de cada grupo, devolviendo un DataFrame con esas dos columnas.
+
+```python
+ventas.groupby("region")["monto"].agg(["sum","mean"])
+```
+
+**Acceder a un valor específico del resultado.** Sobre el resultado de agg, .loc["grupo","columna"] permite acceder al valor de una función en particular para un grupo en particular.
+
+```python
+resumen.loc["sur","mean"]
+```
+
+**agg también acepta un diccionario.** Para aplicar funciones distintas a columnas distintas, agg también acepta un diccionario (&#123;"columna": "función"&#125;) -- por ahora alcanza con la lista de funciones sobre una sola columna.
+</Concepto>
+
+<PythonTask
+  id="agg"
+  enunciado={"Usa agg([\"sum\",\"mean\"]) para calcular la suma y el promedio de monto por region, y asigna a resultado el promedio de la region 'sur'."}
+  preparacion={"import pandas as pd\nventas = pd.DataFrame({\"fecha\":[\"01/03/2026\",\"02/03/2026\",\"01/03/2026\",\"02/03/2026\"],\"region\":[\"norte\",\"norte\",\"sur\",\"sur\"],\"monto\":[100000,150000,80000,120000]})"}
+  inicial={"resumen = ventas.groupby(\"region\")[\"monto\"].agg([\"sum\",\"mean\"])\nresultado = None"}
+  solucion={"resumen = ventas.groupby(\"region\")[\"monto\"].agg([\"sum\",\"mean\"])\nresultado = float(resumen.loc[\"sur\",\"mean\"])"}
+  pruebas={"import numbers\nesperado = 100000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["La tabla resumen ya tiene una fila por región y las columnas sum y mean.", "Con .loc se lee una celda indicando la fila y la columna."]}
+/>
+
+<Debrief>
+resultado = float(resumen.loc["sur","mean"]) = (80000+120000)/2 = 100000.
+</Debrief>

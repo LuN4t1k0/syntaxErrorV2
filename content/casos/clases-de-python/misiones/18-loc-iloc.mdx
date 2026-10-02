@@ -1,0 +1,41 @@
+---
+titulo: "loc e iloc"
+tiempo: 14
+---
+
+<Concepto>
+loc e iloc seleccionan filas (y opcionalmente columnas) de un DataFrame. La diferencia está en cómo se indica la posición: loc usa etiquetas, iloc usa posiciones numéricas.
+
+Mientras el DataFrame no tenga un índice personalizado, iloc[0] y loc[0] suelen coincidir -- pero conceptualmente son cosas distintas, y vale la pena distinguirlas desde el principio.
+
+<Sintaxis lenguaje="python" codigo={"df.iloc[posicion]"} />
+
+**iloc: por posición.** df.iloc[0] devuelve la primera fila del DataFrame, sin importar cómo se llame su índice -- funciona igual que acceder a una lista por posición.
+
+```python
+encuesta.iloc[0]
+```
+
+**Combinar con una columna.** df.iloc[posición]["columna"] devuelve el valor de esa columna en esa fila específica.
+
+```python
+encuesta.iloc[3]["canal"]
+```
+
+**loc: por etiqueta.** df.loc[etiqueta] busca la fila cuyo índice sea exactamente esa etiqueta -- si el índice son los números por defecto (0, 1, 2...), loc y iloc coinciden, pero loc también funciona con indices con nombres.
+</Concepto>
+
+<PythonTask
+  id="loc-iloc"
+  enunciado={"Asigna a resultado el canal de la cuarta fila (posición 3, empezando en 0) usando iloc."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = encuesta.iloc[3][\"canal\"]"}
+  pruebas={"import numbers\nesperado = \"telefono\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["iloc selecciona por posición, empezando en 0.", "La cuarta fila es la posición 3; de esa fila, lee la columna canal."]}
+/>
+
+<Debrief>
+resultado = encuesta.iloc[3]["canal"] = "telefono".
+</Debrief>

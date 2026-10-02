@@ -1,0 +1,45 @@
+---
+titulo: "Crear columnas nuevas"
+tiempo: 14
+---
+
+<Concepto>
+Agregar una columna calculada a partir de otras es una de las transformaciones más frecuentes -- por ejemplo, marcar qué respuestas fueron de clientes satisfechos.
+
+Asignar a df["columna_nueva"] crea la columna si no existía, aplicando la operación a cada fila automáticamente.
+
+<Sintaxis lenguaje="python" codigo={"df[\"nueva\"] = df[\"col1\"] operador df[\"col2\"]"} />
+
+**Asignar una columna nueva.** df["nueva"] = expresión crea la columna nueva -- la expresión se calcula fila por fila, sin necesidad de un for.
+
+```python
+encuesta["satisfecho"] = encuesta["calificacion"] >= 4
+```
+
+**Operaciones entre columnas.** Se pueden combinar dos o más columnas con operadores aritméticos o de comparación, igual que con Series sueltas.
+
+```python
+encuesta["calificacion"] * 2
+```
+
+**Sumar una columna booleana.** Al sumar una columna de True/False, pandas cuenta cada True como 1 y cada False como 0 -- una forma rápida de contar cuántas filas cumplen una condición.
+
+```python
+int(encuesta["satisfecho"].sum())
+```
+</Concepto>
+
+<PythonTask
+  id="crear-columnas"
+  enunciado={"Crea la columna satisfecho (calificacion >= 4) y asigna a resultado la cantidad de respuestas satisfechas, sumando esa columna."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"encuesta[\"satisfecho\"] = encuesta[\"calificacion\"] >= 4\nresultado = None"}
+  solucion={"encuesta[\"satisfecho\"] = encuesta[\"calificacion\"] >= 4\nresultado = int(encuesta[\"satisfecho\"].sum())"}
+  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["La columna satisfecho ya tiene True o False por respuesta.", "Al sumar una columna de True y False, cada True cuenta como 1."]}
+/>
+
+<Debrief>
+resultado = int(encuesta["satisfecho"].sum()) = 3.
+</Debrief>

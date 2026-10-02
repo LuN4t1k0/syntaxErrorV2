@@ -1,0 +1,33 @@
+---
+titulo: "Proyecto final: limpieza y análisis de ventas"
+tiempo: 25
+---
+
+<Concepto>
+Este es el proyecto final del curso: un archivo de ventas exportado de un sistema real, con filas duplicadas, una categoria sin dato, texto inconsistente y fechas en distintos meses.
+
+El ejercicio combina todo lo visto: cargar el CSV, quitar duplicados y nulos, normalizar texto, convertir fechas, resumir con groupby, exportar el resultado y volver a leerlo -- el ciclo completo de un análisis con pandas.
+
+<Sintaxis lenguaje="python" codigo={"cargar -> limpiar -> transformar -> agrupar -> exportar"} />
+
+**El dataset viene sucio a propósito.** Una fila duplicada exacta, una categoria vacía, la misma categoria escrita de tres formas distintas, y ventas de dos meses distintos -- son los problemas más comunes en datos reales, todos juntos en un solo archivo.
+
+**El orden de limpieza importa.** Primero se quitan duplicados y filas sin categoria (así no se arrastran errores al resto del proceso), después se convierte la fecha y se normaliza el texto, y recien al final se agrupa.
+
+**Cerrar el ciclo con to_csv y read_csv.** Exportar el resumen con to_csv(index=False) y volver a leerlo con read_csv(io.StringIO(...)) prueba que el archivo exportado es válido -- es el mismo paso que harías antes de compartirlo con otra persona.
+</Concepto>
+
+<PythonTask
+  id="proyecto-final-pandas"
+  enunciado={"A partir de ventas_crudo: quita filas duplicadas y filas sin categoria, convierte fecha a datetime y quédate solo con enero de 2026, normaliza categoria (sin espacios, en minúsculas), agrupa por categoria sumando monto, exporta ese resumen con to_csv(index=False) y vuelve a leerlo con pd.read_csv(io.StringIO(...)). Asigna a resultado el monto total de la categoria tecnologia en ese resumen final."}
+  preparacion={"import pandas as pd\nimport io"}
+  inicial={"texto_csv = \"fecha,categoria,monto\\n2026-01-05, Tecnologia,50000\\n2026-01-05, Tecnologia,50000\\n2026-01-12,HOGAR,8000\\n2026-01-20,hogar ,12000\\n2026-02-02,Tecnologia,30000\\n2026-02-10,,9000\"\nventas_crudo = pd.read_csv(io.StringIO(texto_csv))\nresultado = None"}
+  solucion={"texto_csv = \"fecha,categoria,monto\\n2026-01-05, Tecnologia,50000\\n2026-01-05, Tecnologia,50000\\n2026-01-12,HOGAR,8000\\n2026-01-20,hogar ,12000\\n2026-02-02,Tecnologia,30000\\n2026-02-10,,9000\"\nventas_crudo = pd.read_csv(io.StringIO(texto_csv))\nventas = ventas_crudo.drop_duplicates().dropna(subset=[\"categoria\"]).copy()\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nventas = ventas[(ventas[\"fecha\"] >= \"2026-01-01\") & (ventas[\"fecha\"] < \"2026-02-01\")].copy()\nventas[\"categoria\"] = ventas[\"categoria\"].str.strip().str.lower()\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nfinal = pd.read_csv(io.StringIO(resumen.to_csv(index=False)))\nresultado = int(final.loc[final[\"categoria\"] == \"tecnologia\", \"monto\"].iloc[0])"}
+  pruebas={"import numbers\nesperado = 50000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["Avanza paso a paso y revisa la tabla después de cada uno: duplicados, filas sin categoría, fechas de enero.", "Antes de agrupar, deja la categoría sin espacios y en minúsculas, para que HOGAR y hogar sean el mismo grupo."]}
+/>
+
+<Debrief>
+Tras quitar el duplicado (fila 2, idéntica a la 1) y la fila sin categoria (monto 9000), y filtrar solo enero, quedan: 2026-01-05 Tecnologia 50000, 2026-01-12 HOGAR 8000, 2026-01-20 hogar 12000 (la venta de Tecnologia del 02-02 queda fuera por ser de febrero). Al normalizar categoria, HOGAR y hogar se unen en hogar (20000) y tecnologia queda con 50000 -- ese es el resultado.
+</Debrief>

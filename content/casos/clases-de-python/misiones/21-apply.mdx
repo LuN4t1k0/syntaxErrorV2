@@ -1,0 +1,46 @@
+---
+titulo: "apply"
+tiempo: 16
+---
+
+<Concepto>
+Cuando la transformación que necesitas no es una simple operación aritmética o de comparación, apply permite usar una función propia y aplicarla a cada valor de una columna.
+
+Primero se define la función (con las lecciones de funciones ya vistas), y después se la pasa a .apply() sin llamarla (sin paréntesis).
+
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"].apply(funcion)"} />
+
+**Definir la función a aplicar.** La función recibe un solo valor (el de la celda) y devuelve el valor transformado.
+
+```python
+def grupo_edad(e):
+    return "joven" if e < 30 else "adulto"
+```
+
+**Aplicarla con .apply().** df["columna"].apply(función) llama a esa función una vez por cada valor de la columna, y devuelve una Series nueva con los resultados.
+
+```python
+encuesta["edad"].apply(grupo_edad)
+```
+
+**Guardar el resultado como columna nueva.** Igual que con cualquier transformación, el resultado de apply se puede asignar directamente a una columna nueva del DataFrame.
+
+```python
+encuesta["grupo"] = encuesta["edad"].apply(grupo_edad)
+```
+</Concepto>
+
+<PythonTask
+  id="apply"
+  enunciado={"Completa grupo_edad para que devuelva 'joven' si la edad es menor a 30, y si no, 'adulto'. Aplícala con apply y asigna a resultado la cantidad de 'joven'."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"def grupo_edad(e):\n    return None  # completa: \"joven\" si e < 30, sino \"adulto\"\n\nencuesta[\"grupo\"] = encuesta[\"edad\"].apply(grupo_edad)\nresultado = None"}
+  solucion={"def grupo_edad(e):\n    if e < 30:\n        return \"joven\"\n    return \"adulto\"\n\nencuesta[\"grupo\"] = encuesta[\"edad\"].apply(grupo_edad)\nresultado = int((encuesta[\"grupo\"] == \"joven\").sum())"}
+  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["La función recibe una edad y devuelve un texto: usa un if para decidir cuál.", "Después de apply, cuenta las filas cuyo grupo es 'joven'."]}
+/>
+
+<Debrief>
+Las edades son 25,34,19,45,31 -- joven (menor a 30): 25 y 19, es decir 2.
+</Debrief>

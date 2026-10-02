@@ -1,0 +1,48 @@
+---
+titulo: "Operadores"
+tiempo: 12
+---
+
+<Concepto>
+Los operadores combinan valores para producir un resultado nuevo -- los aritméticos calculan números, los de comparación dan verdadero o falso, y los lógicos combinan condiciones.
+
+Son la base de cualquier cálculo o decisión que vas a escribir en Python, y funcionan igual sobre números sueltos que sobre valores guardados en variables.
+
+<Sintaxis lenguaje="python" codigo={"resultado = a + b"} />
+
+**Operadores aritméticos.** + suma, - resta, * multiplica, / divide (con decimales), // divide y descarta el resto (división entera), % da el resto de una división, ** eleva a una potencia.
+
+```python
+precio = 450000
+descuento = 0.1
+precio_final = precio*(1-descuento)
+```
+
+**Operadores de comparación.** == compara si son iguales, != si son distintos, >, &lt;, >=, &lt;= comparan magnitud -- todos devuelven True o False.
+
+```python
+stock = 3
+stock < 5
+```
+
+**Operadores lógicos.** and exige que ambas condiciones sean verdaderas, or alcanza con que una lo sea, not invierte una condición.
+
+```python
+stock < 5 and precio > 100000
+```
+</Concepto>
+
+<PythonTask
+  id="operadores"
+  enunciado={"Asigna a resultado el precio con el descuento aplicado: precio * (1 - descuento)."}
+  preparacion={"precio = 450000\ndescuento = 0.1"}
+  inicial={"resultado = None"}
+  solucion={"resultado = precio*(1-descuento)"}
+  pruebas={"import numbers\nesperado = 405000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Primero calcula qué parte del precio se paga: 1 menos el descuento.", "Usa paréntesis para que esa resta se haga antes de multiplicar."]}
+/>
+
+<Debrief>
+resultado = precio*(1-descuento) = 450000*0.9 = 405000.
+</Debrief>

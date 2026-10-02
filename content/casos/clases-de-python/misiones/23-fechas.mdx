@@ -1,0 +1,45 @@
+---
+titulo: "Fechas con to_datetime"
+tiempo: 14
+---
+
+<Concepto>
+Una fecha guardada como texto ("2026-03-15") no se puede comparar ni ordenar como fecha real hasta que pandas la convierte con pd.to_datetime().
+
+Una vez convertida, se puede extraer el año o el mes de cada fecha, y filtrar un rango completo con comparaciones normales.
+
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"] = pd.to_datetime(df[\"columna\"])"} />
+
+**Convertir texto a fecha.** pd.to_datetime() reconoce formatos comunes de fecha y los convierte a un tipo datetime que pandas sabe ordenar y comparar.
+
+```python
+ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+```
+
+**Extraer año y mes con .dt.** .dt da acceso a partes de la fecha: .dt.year, .dt.month, .dt.day.
+
+```python
+ventas["fecha"].dt.month
+```
+
+**Filtrar por rango de fechas.** Una vez que la columna es datetime, se puede filtrar igual que con números: mayor o igual que una fecha y menor que otra.
+
+```python
+ventas[(ventas["fecha"] >= "2026-03-01") & (ventas["fecha"] < "2026-04-01")]
+```
+</Concepto>
+
+<PythonTask
+  id="fechas"
+  enunciado={"Filtra ventas para quedarte solo con las fechas de marzo de 2026 y asigna a resultado la suma de monto de esas filas."}
+  preparacion={"import pandas as pd"}
+  inicial={"ventas = pd.DataFrame({\"fecha\": [\"2026-02-20\", \"2026-03-05\", \"2026-03-18\", \"2026-04-02\"], \"monto\": [10000, 20000, 15000, 30000]})\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nresultado = None"}
+  solucion={"ventas = pd.DataFrame({\"fecha\": [\"2026-02-20\", \"2026-03-05\", \"2026-03-18\", \"2026-04-02\"], \"monto\": [10000, 20000, 15000, 30000]})\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nresultado = int(ventas[(ventas[\"fecha\"] >= \"2026-03-01\") & (ventas[\"fecha\"] < \"2026-04-01\")][\"monto\"].sum())"}
+  pruebas={"import numbers\nesperado = 35000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["La columna fecha ya es de tipo fecha: se puede comparar con un texto como \"2026-03-01\".", "Filtra las filas desde el 1 de marzo y antes del 1 de abril, y suma el monto."]}
+/>
+
+<Debrief>
+resultado = int(ventas[(ventas["fecha"] >= "2026-03-01") & (ventas["fecha"] &lt; "2026-04-01")]["monto"].sum()) = 35000 (20000 + 15000), las dos ventas de marzo.
+</Debrief>

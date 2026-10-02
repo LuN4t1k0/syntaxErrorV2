@@ -1,0 +1,45 @@
+---
+titulo: "if / else"
+tiempo: 14
+---
+
+<Concepto>
+if permite que un programa tome decisiones: ejecuta un bloque de código solo si una condición es verdadera.
+
+else agrega una alternativa para cuando la condición es falsa -- entre los dos cubren los dos caminos posibles de una decisión simple.
+
+<Sintaxis lenguaje="python" codigo={"if condicion:\n    # se ejecuta si es verdadera\nelse:\n    # se ejecuta si es falsa"} />
+
+**if simple.** El bloque debajo de if (con sangría, indentado) solo se ejecuta si la condición es verdadera. Si es falsa, se lo salta por completo.
+
+```python
+if stock < 5:
+    print("Reponer")
+```
+
+**if / else.** Agregando else, se define que hacer cuando la condición NO se cumple -- siempre se ejecuta uno de los dos bloques, nunca ninguno ni los dos.
+
+```python
+if stock < 5:
+    estado = "Reponer"
+else:
+    estado = "OK"
+```
+
+**elif para más de dos casos.** Cuando hacen falta más de dos caminos, elif (contracción de else if) agrega condiciones adicionales antes del else final.
+</Concepto>
+
+<PythonTask
+  id="if-else"
+  enunciado={"Asigna a resultado el texto 'Reponer' si stock es menor a 5, y 'OK' si no, usando if/else."}
+  preparacion={"stock = 3"}
+  inicial={"resultado = None"}
+  solucion={"if stock < 5:\n    resultado = \"Reponer\"\nelse:\n    resultado = \"OK\""}
+  pruebas={"import numbers\nesperado = \"Reponer\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["La condición compara stock con 5.", "Cada camino del if y del else asigna su propio texto a resultado."]}
+/>
+
+<Debrief>
+Cómo stock (3) es menor a 5, resultado debe ser "Reponer".
+</Debrief>

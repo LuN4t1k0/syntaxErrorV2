@@ -1,0 +1,41 @@
+---
+titulo: "Listas anidadas y de diccionarios"
+tiempo: 14
+---
+
+<Concepto>
+Una lista puede contener cualquier tipo de valor, incluidos otros diccionarios o listas. Una lista de diccionarios, donde cada diccionario tiene las mismas claves, es la forma más natural de representar una tabla de datos en Python puro -- antes de conocer pandas.
+
+Cada elemento de la lista es una fila, y cada clave del diccionario es una columna.
+
+<Sintaxis lenguaje="python" codigo={"tabla = [{\"col1\": valor, \"col2\": valor}, {...}]"} />
+
+**Una lista de diccionarios.** Cada elemento de la lista es un diccionario independiente -- no hace falta que todos tengan exactamente las mismas claves, aunque para representar una tabla conviene que si.
+
+```python
+ventas = [{"producto": "Notebook", "monto": 450000}, {"producto": "Mouse", "monto": 12000}]
+```
+
+**Acceder a un elemento y después a una clave.** Primero se accede a la posición de la lista, y después a la clave del diccionario en esa posición: lista[índice]["clave"].
+
+```python
+ventas[0]["producto"]
+```
+
+**Recorrer con un for (adelanto).** La próxima lección muestra cómo recorrer una colección con un for -- con una lista de diccionarios, eso permite procesar cada fila una por una.
+</Concepto>
+
+<PythonTask
+  id="listas-anidadas"
+  enunciado={"Asigna a resultado el producto de la segunda venta de la lista (índice 1)."}
+  preparacion={"ventas = [{\"producto\": \"Notebook\", \"monto\": 450000}, {\"producto\": \"Mouse\", \"monto\": 12000}]"}
+  inicial={"resultado = None"}
+  solucion={"resultado = ventas[1][\"producto\"]"}
+  pruebas={"import numbers\nesperado = \"Mouse\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["La lista ventas tiene diccionarios: primero eliges uno por su posición.", "Después lees la clave producto de ese diccionario."]}
+/>
+
+<Debrief>
+resultado = ventas[1]["producto"] = "Mouse".
+</Debrief>

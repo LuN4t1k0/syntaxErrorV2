@@ -1,0 +1,41 @@
+---
+titulo: "Explorar un DataFrame"
+tiempo: 12
+---
+
+<Concepto>
+Antes de trabajar con un DataFrame que no conoces, conviene explorarlo: cuántas filas y columnas tiene, qué tipo de dato guarda cada columna, y cómo se ven las primeras filas.
+
+head(), shape e info() son las tres herramientas más usadas para esa primera mirada.
+
+<Sintaxis lenguaje="python" codigo={"df.shape"} />
+
+**head(): las primeras filas.** df.head() devuelve las primeras 5 filas por defecto -- df.head(3) devuelve las primeras 3. Sirve para dar un vistazo rápido sin imprimir la tabla completa.
+
+```python
+encuesta.head(3)
+```
+
+**shape: filas y columnas.** df.shape devuelve una tupla (cantidad_de_filas, cantidad_de_columnas). df.shape[0] da solo la cantidad de filas.
+
+```python
+encuesta.shape
+```
+
+**info(): tipos de dato.** df.info() muestra un resumen de cada columna: su nombre, cuantos valores no nulos tiene, y su tipo de dato -- muy útil para detectar columnas con datos faltantes antes de trabajar con ellas.
+</Concepto>
+
+<PythonTask
+  id="explorar-dataframe"
+  enunciado={"Asigna a resultado la cantidad de filas del DataFrame encuesta, usando shape."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = encuesta.shape[0]"}
+  pruebas={"import numbers\nesperado = 5\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["shape devuelve una tupla: (filas, columnas).", "La cantidad de filas es el primer elemento de esa tupla."]}
+/>
+
+<Debrief>
+resultado = encuesta.shape[0] = 5.
+</Debrief>

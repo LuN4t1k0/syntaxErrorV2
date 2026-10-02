@@ -1,0 +1,46 @@
+---
+titulo: "Series"
+tiempo: 12
+---
+
+<Concepto>
+pandas es la librería más usada para trabajar con datos tabulares en Python. Su estructura más simple es la Series: una columna de datos, cada uno con una posición (índice).
+
+Se parece a una lista, pero trae funciones ya construidas para operar sobre todos sus valores a la vez, sin necesidad de escribir un for.
+
+<Sintaxis lenguaje="python" codigo={"serie = pd.Series([valor1, valor2, valor3])"} />
+
+**Crear una Series.** pd.Series(lista) convierte una lista común en una Series de pandas.
+
+```python
+import pandas as pd
+calificaciones = pd.Series([5,3,4,2,4])
+```
+
+**Operaciones sobre toda la Series.** Funciones como .sum(), .mean(), .max() y .min() operan sobre todos los valores a la vez, sin necesidad de un for.
+
+```python
+calificaciones.sum()
+```
+
+**Escalares de pandas y conversión explicita.** El resultado de .sum() (y de otras funciones similares) es un número especial de pandas, no un int común de Python -- conviene envolverlo en int(...) o float(...) antes de usarlo como respuesta final.
+
+```python
+int(calificaciones.sum())
+```
+</Concepto>
+
+<PythonTask
+  id="series"
+  enunciado={"Asigna a resultado la suma de calificaciones, convertida a int con int(...)."}
+  preparacion={"import pandas as pd\ncalificaciones = pd.Series([5,3,4,2,4])"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(calificaciones.sum())"}
+  pruebas={"import numbers\nesperado = 18\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["Una Series tiene métodos para resumir sus valores, como .sum().", "Convierte el resultado con int(...) para que sea un número de Python."]}
+/>
+
+<Debrief>
+resultado = int(calificaciones.sum()) = 5+3+4+2+4 = 18.
+</Debrief>

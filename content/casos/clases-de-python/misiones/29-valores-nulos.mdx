@@ -1,0 +1,45 @@
+---
+titulo: "Valores nulos"
+tiempo: 14
+---
+
+<Concepto>
+Los datos reales casi siempre tienen huecos: una lectura de sensor que fallo, una encuesta sin responder. pandas representa esos valores faltantes como None (en Python) o NaN (Not a Number, dentro de una columna numérica).
+
+Antes de calcular cualquier resumen, conviene saber cuantos valores nulos hay y en que columnas, para decidir si conviene eliminarlos o reemplazarlos.
+
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"].isna()"} />
+
+**Detectar valores nulos con isna().** df["columna"].isna() devuelve una Series de True/False -- True donde el valor es nulo. Sumar esa Series cuenta cuantos nulos hay.
+
+```python
+sensor["temperatura"].isna()
+```
+
+**Eliminar filas con nulos: dropna().** df.dropna() elimina todas las filas que tengan al menos un valor nulo en cualquier columna.
+
+```python
+sensor.dropna()
+```
+
+**Reemplazar nulos: fillna().** df["columna"].fillna(valor) reemplaza los nulos de esa columna por un valor específico -- por ejemplo, el promedio de la columna.
+
+```python
+sensor["temperatura"].fillna(sensor["temperatura"].mean())
+```
+</Concepto>
+
+<PythonTask
+  id="valores-nulos"
+  enunciado={"Asigna a resultado la cantidad de valores nulos en la columna temperatura, usando isna().sum()."}
+  preparacion={"import pandas as pd\nsensor = pd.DataFrame({\"timestamp\":[1,2,3,4],\"temperatura\":[22.5, None, 21.0, None]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(sensor[\"temperatura\"].isna().sum())"}
+  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["isna devuelve True donde falta el valor.", "Sumar esos True cuenta los valores faltantes."]}
+/>
+
+<Debrief>
+resultado = int(sensor["temperatura"].isna().sum()) = 2.
+</Debrief>

@@ -1,0 +1,41 @@
+---
+titulo: "Duplicados"
+tiempo: 12
+---
+
+<Concepto>
+Una fila duplicada (idéntica a otra en todas sus columnas) suele ser un error de carga de datos -- por ejemplo, una misma lectura de sensor registrada dos veces.
+
+pandas trae funciones específicas para detectarlas y eliminarlas sin tener que compararlas a mano.
+
+<Sintaxis lenguaje="python" codigo={"df.drop_duplicates()"} />
+
+**Detectar duplicados con duplicated().** df.duplicated() devuelve True en cada fila que sea idéntica a una fila anterior -- la primera aparición siempre da False.
+
+```python
+sensor.duplicated()
+```
+
+**Eliminar duplicados.** df.drop_duplicates() devuelve un DataFrame nuevo sin las filas duplicadas, conservando la primera aparición de cada una.
+
+```python
+sensor.drop_duplicates()
+```
+
+**Contar cuántas quedan.** Sobre el resultado de drop_duplicates(), .shape[0] da la cantidad de filas que quedaron después de la limpieza.
+</Concepto>
+
+<PythonTask
+  id="duplicados"
+  enunciado={"Ya se eliminaron los duplicados en la variable limpio. Asigna a resultado la cantidad de filas que quedaron."}
+  preparacion={"import pandas as pd\nsensor = pd.DataFrame({\"timestamp\":[1,2,2,3],\"temperatura\":[22.5, 21.0, 21.0, 20.0]})"}
+  inicial={"limpio = sensor.drop_duplicates()\nresultado = None"}
+  solucion={"limpio = sensor.drop_duplicates()\nresultado = len(limpio)"}
+  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["La tabla limpio ya no tiene filas repetidas.", "Cuenta sus filas con len o con shape."]}
+/>
+
+<Debrief>
+La fila con timestamp 2 y temperatura 21.0 aparece dos veces idéntica -- drop_duplicates() deja solo la primera, quedando 3 filas en total.
+</Debrief>

@@ -1,0 +1,38 @@
+---
+titulo: "Errores comunes y como leerlos"
+tiempo: 10
+---
+
+<Concepto>
+Un error en Python no significa que rompiste algo para siempre -- es el intérprete diciéndote en qué línea y por qué no pudo seguir. Aprender a leer un error es más útil que evitarlos por completo.
+
+Los tres errores más comunes al empezar son SyntaxError (la sintaxis está mal escrita), NameError (usaste un nombre que no existe) e IndentationError (la sangría no coincide).
+
+**Cómo leer un traceback.** Python muestra el error de abajo hacia arriba: la última línea dice que tipo de error es y un mensaje corto; las líneas de arriba muestran en que parte del código ocurrió.
+
+**NameError: un nombre que no existe.** Aparece cuando usas una variable que nunca fue asignada, casi siempre por un error de tipeo.
+
+```python
+precio = 1000
+print(precio_total)
+```
+
+**IndentationError: la sangría no coincide.** Python usa la sangría (los espacios al inicio de la línea) para saber qué código pertenece a un bloque. Una línea con más o menos espacios de los que corresponde rompe el bloque.
+
+**SyntaxError: falta algo en la escritura.** Un paréntesis sin cerrar, dos puntos faltantes después de un if, o una comilla sin cerrar generan este error antes de que el código llegue a ejecutarse.
+</Concepto>
+
+<PythonTask
+  id="errores-comunes"
+  enunciado={"El código tiene un error de tipeo que genera un NameError. Corrígelo para que resultado sea precio multiplicado por cantidad."}
+  preparacion={""}
+  inicial={"precio = 1000\ncantidad = 3\nresultado = precio * cantida"}
+  solucion={"precio = 1000\ncantidad = 3\nresultado = precio * cantidad"}
+  pruebas={"import numbers\nesperado = 3000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Lee el nombre que el error dice que no existe.", "Compáralo letra por letra con el nombre de la variable que definiste arriba."]}
+/>
+
+<Debrief>
+La variable se llama cantidad, no cantida -- el error de tipeo genera un NameError porque Python busca un nombre que no existe.
+</Debrief>

@@ -1,0 +1,41 @@
+---
+titulo: "merge"
+tiempo: 16
+---
+
+<Concepto>
+merge combina dos DataFrames en uno solo, cruzando filas según el valor de una columna en común -- por ejemplo, agregar el nombre del encargado de cada region a una tabla de ventas.
+
+Es el equivalente en pandas a un JOIN de SQL: conecta datos que viven en tablas separadas a traves de una clave compartida.
+
+<Sintaxis lenguaje="python" codigo={"df1.merge(df2, on=\"columna_en_comun\")"} />
+
+**Dos tablas relacionadas por una columna.** En este ejemplo, ventas tiene una columna region, y regiones tiene esa misma columna region junto con el nombre del encargado.
+
+```python
+regiones = pd.DataFrame({"region":["norte","sur"],"encargado":["Camila","Diego"]})
+```
+
+**merge con on.** df1.merge(df2, on="columna") cruza ambas tablas por esa columna, agregando a cada fila de df1 los datos de df2 que correspondan según ese valor.
+
+```python
+ventas.merge(regiones, on="region")
+```
+
+**Cantidad de filas del resultado.** Si cada valor de la columna de cruce aparece una sola vez en la segunda tabla (como region en regiones), el resultado tiene la misma cantidad de filas que la primera tabla.
+</Concepto>
+
+<PythonTask
+  id="merge"
+  enunciado={"Combina ventas con regiones usando merge por la columna region, y asigna a resultado la cantidad de filas del resultado."}
+  preparacion={"import pandas as pd\nregiones = pd.DataFrame({\"region\":[\"norte\",\"sur\"],\"encargado\":[\"Camila\",\"Diego\"]})\nventas = pd.DataFrame({\"region\":[\"norte\",\"sur\",\"norte\"],\"monto\":[100000,80000,150000]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(ventas.merge(regiones, on=\"region\").shape[0])"}
+  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["merge une dos tablas por una columna que tienen en común: on=\"region\".", "Después cuenta las filas del resultado."]}
+/>
+
+<Debrief>
+resultado = int(ventas.merge(regiones, on="region").shape[0]) = 3, porque cada una de las 3 filas de ventas encuentra su region correspondiente en regiones.
+</Debrief>

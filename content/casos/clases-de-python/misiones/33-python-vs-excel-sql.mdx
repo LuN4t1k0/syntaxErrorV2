@@ -1,0 +1,24 @@
+---
+titulo: "Python y pandas frente a Excel y SQL"
+tiempo: 12
+---
+
+<Concepto>
+Si ya viste SQL Aula y Excel Aula, llegaste al tercer vertice de un mismo triangulo: tres formas distintas de trabajar con datos, cada una mejor para un tipo de tarea distinto.
+
+Esta última lección conecta los tres cursos: no se trata de elegir uno para siempre, sino de saber cuál conviene según el problema.
+
+**Excel: rápido para explorar y reportar.** Para un análisis puntual, un reporte chico, o mirar datos por primera vez, una hoja de cálculo sigue siendo lo más rápido de armar -- sin escribir una línea de código.
+
+**SQL: cuando los datos viven en una base de datos.** Si los datos ya estan en una base de datos (o crecen a millones de filas, o los consultan muchas personas a la vez), SQL es la herramienta correcta para traer exactamente lo que necesitas.
+
+**Python y pandas: cuando el análisis se vuelve complejo o repetitivo.** Cuando un análisis tiene muchos pasos, se repite seguido, o combina datos de varias fuentes (una base de datos, un archivo, una API), Python y pandas permiten automatizar todo ese proceso de punta a punta -- algo que ni Excel ni SQL solos pueden hacer.
+
+**Las tres se combinan en el trabajo real.** Es común traer datos de una base con SQL, procesarlos con pandas, y exportar el resultado final a una hoja de cálculo para compartirlo con alguien que no usa Python -- ninguna de las tres reemplaza del todo a las otras dos.
+</Concepto>
+
+<LecturaTask
+  id="python-vs-excel-sql"
+  pregunta={"Te piden un análisis que combina datos de una base de datos con un archivo Excel que te mandó otro equipo, y el proceso hay que repetirlo cada semana. ¿Qué herramienta usarías como base, y por qué?"}
+  respuesta={"Python y pandas: es el único de los tres que permite automatizar de punta a punta un proceso que combina múltiples fuentes y se repite -- se puede leer de la base con SQL desde Python, cargar el archivo Excel, combinarlos, y dejar todo el proceso listo para correr de nuevo la semana siguiente sin rehacer nada a mano."}
+/>

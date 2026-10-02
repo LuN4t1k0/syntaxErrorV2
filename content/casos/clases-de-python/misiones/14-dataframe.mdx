@@ -1,0 +1,41 @@
+---
+titulo: "DataFrame"
+tiempo: 14
+---
+
+<Concepto>
+Un DataFrame es una tabla completa: filas y columnas, donde cada columna es una Series. Es la estructura que vas a usar la gran mayoría del tiempo en pandas.
+
+Se puede crear a partir de un diccionario donde cada clave es el nombre de una columna y cada valor es una lista con los datos de esa columna.
+
+<Sintaxis lenguaje="python" codigo={"df = pd.DataFrame({\"columna\": [valores]})"} />
+
+**Crear un DataFrame desde un diccionario.** Cada clave del diccionario se convierte en el nombre de una columna, y su lista de valores en los datos de esa columna -- todas las listas deben tener la misma cantidad de elementos.
+
+```python
+encuesta = pd.DataFrame({"respondent_id":[1,2,3],"calificacion":[5,3,4]})
+```
+
+**Acceder a una columna.** df["columna"] devuelve esa columna como una Series -- se le pueden aplicar las mismas funciones que a cualquier Series (.sum(), .mean(), etc.).
+
+```python
+encuesta["calificacion"]
+```
+
+**Un DataFrame combina varias Series.** Internamente, cada columna de un DataFrame es una Series -- por eso todo lo aprendido sobre Series se aplica directo a las columnas de un DataFrame.
+</Concepto>
+
+<PythonTask
+  id="dataframe"
+  enunciado={"Asigna a resultado la suma de la columna calificacion del DataFrame encuesta, convertida a int."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(encuesta[\"calificacion\"].sum())"}
+  pruebas={"import numbers\nesperado = 18\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["Primero selecciona la columna calificacion con corchetes.", "Después súmala y conviértela con int(...)."]}
+/>
+
+<Debrief>
+resultado = int(encuesta["calificacion"].sum()) = 5+3+4+2+4 = 18.
+</Debrief>

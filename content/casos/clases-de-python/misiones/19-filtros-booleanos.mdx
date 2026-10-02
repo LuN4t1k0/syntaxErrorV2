@@ -1,0 +1,45 @@
+---
+titulo: "Filtros booleanos"
+tiempo: 16
+---
+
+<Concepto>
+Una condición sobre una columna (como encuesta["calificacion"] >= 4) no devuelve un solo valor, sino una Series de True/False -- una por cada fila. Esa máscara booleana se puede usar para filtrar el DataFrame.
+
+Es la forma más común de responder preguntas como «¿cuántas filas cumplen tal condición?» o «muéstrame solo las filas que...».
+
+<Sintaxis lenguaje="python" codigo={"df[df[\"columna\"] > valor]"} />
+
+**Crear una máscara booleana.** encuesta["calificacion"] >= 4 devuelve una Series de True/False, una por fila, según si esa fila cumple la condición.
+
+```python
+encuesta["calificacion"] >= 4
+```
+
+**Filtrar con la máscara.** Pasando esa máscara entre corchetes al DataFrame, df[máscara] devuelve solo las filas donde la máscara es True.
+
+```python
+encuesta[encuesta["calificacion"] >= 4]
+```
+
+**Combinar condiciones con & y |.** Para combinar más de una condición sobre un DataFrame se usan & (y) y | (o) en vez de and/or, con cada condición entre paréntesis.
+
+```python
+(encuesta["calificacion"] >= 4) & (encuesta["canal"] == "web")
+```
+</Concepto>
+
+<PythonTask
+  id="filtros-booleanos"
+  enunciado={"Asigna a resultado la cantidad de respuestas con calificacion mayor o igual a 4."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(encuesta[encuesta[\"calificacion\"] >= 4].shape[0])"}
+  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["Una comparación sobre una columna devuelve True o False por fila.", "Usa esa comparación entre corchetes para filtrar, y cuenta las filas que quedan."]}
+/>
+
+<Debrief>
+resultado = int(encuesta[encuesta["calificacion"] >= 4].shape[0]) = 3 (las calificaciones 5, 4 y 4).
+</Debrief>

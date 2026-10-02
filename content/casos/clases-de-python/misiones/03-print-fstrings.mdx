@@ -1,0 +1,47 @@
+---
+titulo: "print y f-strings"
+tiempo: 10
+---
+
+<Concepto>
+print muestra un valor en la salida -- es la forma más básica de ver qué está pasando dentro de un programa mientras se ejecuta.
+
+Los f-strings (textos con una f antes de las comillas) permiten insertar el valor de una variable directamente dentro de un texto, sin concatenar a mano con +.
+
+<Sintaxis lenguaje="python" codigo={"f\"texto {variable} mas texto\""} />
+
+**print básico.** print(valor) muestra ese valor en la consola. Se le puede pasar texto, un número, o el resultado de una expresión.
+
+```python
+print("hola")
+```
+
+**f-strings.** Escribiendo una f antes de las comillas, cualquier cosa entre llaves &#123; &#125; dentro del texto se reemplaza por su valor.
+
+```python
+producto = "Mouse"
+precio = 12000
+print(f"{producto}: ${precio}")
+```
+
+**Expresiones dentro de las llaves.** Dentro de las llaves de un f-string se puede escribir cualquier expresión, no solo el nombre de una variable -- por ejemplo, un cálculo.
+
+```python
+print(f"total: {precio*2}")
+```
+</Concepto>
+
+<PythonTask
+  id="print-fstrings"
+  enunciado={"Asigna a resultado el texto \"Mouse: $12000\" usando un f-string con las variables producto y precio."}
+  preparacion={"producto = \"Mouse\"\nprecio = 12000"}
+  inicial={"resultado = None"}
+  solucion={"resultado = f\"{producto}: ${precio}\""}
+  pruebas={"import numbers\nesperado = \"Mouse: $12000\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Un f-string empieza con f antes de las comillas.", "Dentro del texto, cada variable va entre llaves; el signo $ se escribe tal cual."]}
+/>
+
+<Debrief>
+resultado = f"&#123;producto&#125;: $&#123;precio&#125;" produce el texto "Mouse: $12000".
+</Debrief>

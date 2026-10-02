@@ -1,0 +1,39 @@
+---
+titulo: "while"
+tiempo: 12
+---
+
+<Concepto>
+while repite un bloque de código mientras una condición siga siendo verdadera -- a diferencia de for, no sabe de antemano cuántas veces va a repetir.
+
+Es útil cuando la cantidad de repeticiones depende de un cálculo que va cambiando, no de recorrer una colección de tamaño fijo.
+
+<Sintaxis lenguaje="python" codigo={"while condicion:\n    # se repite mientras sea verdadera"} />
+
+**while básico.** Antes de cada vuelta, Python revisa la condición -- si es verdadera, ejecuta el bloque y vuelve a revisar; si es falsa, sigue con lo que viene después del while.
+
+```python
+contador = 0
+while contador < 3:
+    contador = contador + 1
+```
+
+**Cuidado con los loops infinitos.** Si la condición nunca se vuelve falsa (por ejemplo, si te olvidas de actualizar la variable dentro del bloque), el while se repite para siempre y el programa se queda colgado.
+
+**Contar repeticiones dentro de un while.** Igual que con for, se puede usar una variable adicional para contar cuántas vueltas se hicieron.
+</Concepto>
+
+<PythonTask
+  id="while"
+  enunciado={"El código ya reduce el stock de a 3 unidades por venta mientras alcance. Ejecútalo y asigna a resultado la cantidad de ventas realizadas."}
+  preparacion={"stock = 20"}
+  inicial={"ventas = 0\nwhile stock >= 3:\n    stock = stock - 3\n    ventas = ventas + 1\nresultado = ventas"}
+  solucion={"ventas = 0\nwhile stock >= 3:\n    stock = stock - 3\n    ventas = ventas + 1\nresultado = ventas"}
+  pruebas={"import numbers\nesperado = 6\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["El while ya está completo: ejecútalo y mira cuántas veces se repite.", "Cada vuelta suma una venta y resta 3 unidades al stock."]}
+/>
+
+<Debrief>
+Con stock inicial de 20, se pueden hacer 6 ventas de 3 unidades (18 en total), quedando 2 unidades -- menos que 3, así que el while se detiene ahí. resultado = 6.
+</Debrief>

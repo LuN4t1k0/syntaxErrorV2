@@ -1,0 +1,41 @@
+---
+titulo: "Ordenar datos"
+tiempo: 10
+---
+
+<Concepto>
+sort_values ordena un DataFrame según el valor de una o más columnas -- ascendente por defecto, o descendente si se lo indica.
+
+Igual que la mayoría de las funciones de pandas, sort_values no modifica el DataFrame original: devuelve uno nuevo, que hay que guardar en una variable si se lo quiere conservar.
+
+<Sintaxis lenguaje="python" codigo={"df.sort_values(\"columna\", ascending=False)"} />
+
+**Ordenar ascendente.** df.sort_values("columna") ordena de menor a mayor por esa columna -- es el comportamiento por defecto.
+
+```python
+encuesta.sort_values("calificacion")
+```
+
+**Ordenar descendente.** Pasando ascending=False, el orden queda de mayor a menor.
+
+```python
+encuesta.sort_values("calificacion", ascending=False)
+```
+
+**Combinar con iloc.** Después de ordenar, iloc[0] sobre el resultado da la fila con el valor más alto (o más bajo, según el orden elegido) de esa columna.
+</Concepto>
+
+<PythonTask
+  id="ordenar"
+  enunciado={"Ordena encuesta por calificacion de forma descendente, y asigna a resultado el respondent_id de la primera fila de ese resultado."}
+  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(encuesta.sort_values(\"calificacion\", ascending=False).iloc[0][\"respondent_id\"])"}
+  pruebas={"import numbers\nesperado = 1\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["sort_values ordena por una columna; ascending=False ordena de mayor a menor.", "De la primera fila del resultado, lee respondent_id."]}
+/>
+
+<Debrief>
+resultado = int(encuesta.sort_values("calificacion", ascending=False).iloc[0]["respondent_id"]) = 1 (la calificacion más alta, 5, es única y corresponde al respondent_id 1).
+</Debrief>

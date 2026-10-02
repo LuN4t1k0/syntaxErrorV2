@@ -1,0 +1,37 @@
+---
+titulo: "Exportar resultados con to_csv"
+tiempo: 12
+---
+
+<Concepto>
+Después de limpiar y resumir datos, el último paso es guardarlos para que otra persona (o otra herramienta, como Excel o Power BI) los pueda usar.
+
+to_csv() escribe un DataFrame como texto CSV; en este curso se usa sin escribir a disco, revisando directamente el texto que genera.
+
+<Sintaxis lenguaje="python" codigo={"df.to_csv(index=False)"} />
+
+**to_csv() genera texto CSV.** Sin especificar una ruta de archivo, to_csv() devuelve el CSV completo como un string -- útil para revisar el resultado antes de guardarlo.
+
+```python
+resumen.to_csv(index=False)
+```
+
+**index=False evita una columna extra.** Por defecto pandas agrega el índice como primera columna del CSV. index=False lo omite, dejando solo las columnas de datos.
+
+**to_excel() para hojas de cálculo.** to_excel("archivo.xlsx", index=False) guarda el resultado como un archivo de Excel real en disco -- funciona igual en tu propia computadora.
+</Concepto>
+
+<PythonTask
+  id="exportar-resultados"
+  enunciado={"Genera el CSV de resumen con to_csv(index=False) y asigna a resultado la cantidad de líneas que tiene ese texto (encabezado + una línea por categoria)."}
+  preparacion={"import pandas as pd"}
+  inicial={"ventas = pd.DataFrame({\"categoria\": [\"Hogar\", \"Hogar\", \"Tecnologia\"], \"monto\": [10000, 5000, 20000]})\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nresultado = None"}
+  solucion={"ventas = pd.DataFrame({\"categoria\": [\"Hogar\", \"Hogar\", \"Tecnologia\"], \"monto\": [10000, 5000, 20000]})\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nresultado = len(resumen.to_csv(index=False).strip().split(\"\\n\"))"}
+  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["to_csv(index=False) devuelve el CSV como un texto.", "Separa ese texto en líneas y cuéntalas; quita antes el salto de línea final."]}
+/>
+
+<Debrief>
+resultado = len(resumen.to_csv(index=False).strip().split("\n")) = 3: una línea de encabezado (categoria,monto) más dos categorias (Hogar y Tecnologia).
+</Debrief>

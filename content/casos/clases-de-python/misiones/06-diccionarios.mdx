@@ -1,0 +1,45 @@
+---
+titulo: "Diccionarios"
+tiempo: 14
+---
+
+<Concepto>
+Un diccionario guarda pares clave-valor: en vez de acceder a un elemento por su posición (como en una lista), se accede por un nombre (la clave).
+
+Es una forma natural de representar un registro con varios campos -- por ejemplo, un producto con su nombre, precio y stock.
+
+<Sintaxis lenguaje="python" codigo={"diccionario = {\"clave\": valor}"} />
+
+**Crear un diccionario.** Se escribe entre llaves, con cada clave entre comillas seguida de : y su valor, separando los pares con comas.
+
+```python
+producto = {"nombre": "Notebook", "precio": 450000}
+```
+
+**Acceder a un valor por su clave.** diccionario["clave"] devuelve el valor asociado a esa clave. Si la clave no existe, da un error.
+
+```python
+producto["precio"]
+```
+
+**Agregar o modificar una clave.** Asignar un valor a diccionario["clave"] agrega esa clave si no existía, o actualiza su valor si ya existía.
+
+```python
+producto["stock"] = 3
+```
+</Concepto>
+
+<PythonTask
+  id="diccionarios"
+  enunciado={"Agrega la clave 'categoria' con el valor 'tecnologia', y asigna a resultado el precio del producto."}
+  preparacion={"producto = {\"nombre\": \"Notebook\", \"precio\": 450000, \"stock\": 3}"}
+  inicial={"producto[\"categoria\"] = \"tecnologia\"\nresultado = None"}
+  solucion={"producto[\"categoria\"] = \"tecnologia\"\nresultado = producto[\"precio\"]"}
+  pruebas={"import numbers\nesperado = 450000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Para agregar una clave, asígnale un valor con corchetes: diccionario[\"clave\"] = valor.", "Para leer un valor, usa el nombre de su clave entre corchetes."]}
+/>
+
+<Debrief>
+resultado = producto["precio"] = 450000. Agregar la clave categoria no cambia el precio ya guardado.
+</Debrief>

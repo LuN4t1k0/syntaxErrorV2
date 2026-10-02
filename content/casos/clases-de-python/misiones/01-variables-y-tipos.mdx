@@ -1,0 +1,50 @@
+---
+titulo: "Variables y tipos de datos"
+tiempo: 12
+---
+
+<Concepto>
+Una variable es un nombre que guarda un valor para poder usarlo después. En Python no hace falta declarar de antemano qué tipo de dato va a tener -- se define solo con asignarle un valor.
+
+Los tipos de datos básicos son int (números enteros), float (números con decimales), str (texto) y bool (verdadero o falso). Python los distingue automáticamente por cómo se escribe el valor.
+
+<Sintaxis lenguaje="python" codigo={"nombre_variable = valor"} />
+
+**Asignar una variable.** El signo = asigna un valor a un nombre de variable. A la izquierda va el nombre, a la derecha el valor.
+
+```python
+precio = 450000
+```
+
+**Tipos básicos.** int para números enteros (450000), float para números con decimales (0.1), str para texto entre comillas ("Notebook"), y bool para True o False.
+
+```python
+precio = 450000
+descuento = 0.1
+producto = "Notebook"
+disponible = True
+```
+
+**Cambiar el valor de una variable.** Una variable no queda fija: se le puede asignar un valor nuevo en cualquier momento, y el valor anterior se pierde.
+
+**Comentarios con #.** Cualquier texto después de # en una línea es un comentario -- Python lo ignora por completo. Sirve para explicar el código a quien lo lea después (incluyéndote a vos mismo).
+
+```python
+# esto es un comentario, no se ejecuta
+```
+</Concepto>
+
+<PythonTask
+  id="variables-y-tipos"
+  enunciado={"Completa el código para que resultado sea el precio multiplicado por el stock."}
+  preparacion={""}
+  inicial={"producto = \"Notebook\"\nprecio = 450000\nstock = 3\nresultado = None"}
+  solucion={"producto = \"Notebook\"\nprecio = 450000\nstock = 3\nresultado = precio*stock"}
+  pruebas={"import numbers\nesperado = 1350000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Las variables precio y stock ya tienen sus valores: úsalas por su nombre.", "En Python, la multiplicación se escribe con *."]}
+/>
+
+<Debrief>
+resultado = precio*stock = 450000*3 = 1350000.
+</Debrief>

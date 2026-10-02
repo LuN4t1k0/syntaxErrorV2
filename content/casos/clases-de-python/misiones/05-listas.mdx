@@ -1,0 +1,46 @@
+---
+titulo: "Listas"
+tiempo: 14
+---
+
+<Concepto>
+Una lista guarda varios valores en un orden específico, escritos entre corchetes y separados por comas. Es una de las estructuras que más vas a usar en Python.
+
+A diferencia de una variable común, una lista se puede modificar después de creada: agregar elementos, quitarlos o cambiar uno en particular.
+
+<Sintaxis lenguaje="python" codigo={"lista = [valor1, valor2, valor3]"} />
+
+**Crear una lista.** Se escriben los valores entre corchetes, separados por comas. Una lista puede tener cualquier cantidad de elementos, incluida ninguna.
+
+```python
+precios = [450000, 12000, 25000]
+```
+
+**Acceder por índice.** Cada elemento tiene una posición (índice), empezando en 0. precios[0] es el primer elemento, precios[1] el segundo, y así.
+
+```python
+precios[0]
+```
+
+**len() y append().** len(lista) devuelve la cantidad de elementos. lista.append(valor) agrega un elemento nuevo al final.
+
+```python
+precios.append(180000)
+len(precios)
+```
+</Concepto>
+
+<PythonTask
+  id="listas"
+  enunciado={"Agrega 95000 a la lista precios con append, y asigna a resultado la cantidad total de elementos con len()."}
+  preparacion={"precios = [450000, 12000, 25000, 180000]"}
+  inicial={"precios.append(95000)\nresultado = None"}
+  solucion={"precios.append(95000)\nresultado = len(precios)"}
+  pruebas={"import numbers\nesperado = 5\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["append agrega un elemento al final de la lista.", "len devuelve cuántos elementos tiene una lista."]}
+/>
+
+<Debrief>
+Después de precios.append(95000), la lista tiene 5 elementos: resultado = len(precios) = 5.
+</Debrief>

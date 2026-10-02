@@ -1,0 +1,43 @@
+---
+titulo: "Cargar datos desde CSV y Excel"
+tiempo: 14
+---
+
+<Concepto>
+Hasta ahora los DataFrames se armaron a mano con pd.DataFrame(...). En la practica, los datos casi siempre llegan desde un archivo -- un CSV exportado de un sistema, o una planilla de Excel.
+
+pd.read_csv() lee un archivo CSV y lo convierte directamente en un DataFrame. Cuando el archivo no viene de disco sino de texto en memoria, io.StringIO lo envuelve para que read_csv lo pueda leer igual.
+
+<Sintaxis lenguaje="python" codigo={"pd.read_csv(ruta_o_buffer)"} />
+
+**Un CSV es texto con comas.** Cada línea es una fila y cada valor separado por coma es una columna. La primera línea suele ser el encabezado con los nombres de columna.
+
+**Leer un CSV en memoria con io.StringIO.** io.StringIO envuelve un string para que se comporte como un archivo -- así read_csv puede leerlo sin que exista un archivo real en disco.
+
+```python
+import pandas as pd
+import io
+
+texto_csv = "producto,precio\nMouse,12000\nTeclado,25000"
+ventas = pd.read_csv(io.StringIO(texto_csv))
+```
+
+**read_excel para archivos de Excel.** pd.read_excel("archivo.xlsx") funciona igual que read_csv pero para hojas de cálculo -- requiere el archivo real en disco, algo que este curso no puede simular en el navegador, pero se usa exactamente así en tu propia computadora.
+
+**Primeras filas con head().** Después de cargar cualquier archivo conviene mirar las primeras filas con head() antes de seguir trabajando.
+</Concepto>
+
+<PythonTask
+  id="cargar-csv-excel"
+  enunciado={"Carga texto_csv con pd.read_csv(io.StringIO(...)) y asigna a resultado la cantidad de filas del DataFrame resultante."}
+  preparacion={"import pandas as pd\nimport io"}
+  inicial={"texto_csv = \"producto,precio,stock\\nMouse,12000,10\\nTeclado,25000,4\\nMonitor,150000,2\"\nresultado = None"}
+  solucion={"texto_csv = \"producto,precio,stock\\nMouse,12000,10\\nTeclado,25000,4\\nMonitor,150000,2\"\nresultado = pd.read_csv(io.StringIO(texto_csv)).shape[0]"}
+  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["io.StringIO envuelve el texto para que read_csv lo lea como un archivo.", "Después de cargarlo, la cantidad de filas está en shape."]}
+/>
+
+<Debrief>
+resultado = pd.read_csv(io.StringIO(texto_csv)).shape[0] = 3, porque el CSV tiene 3 filas de datos además del encabezado.
+</Debrief>

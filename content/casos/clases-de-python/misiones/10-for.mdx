@@ -1,0 +1,44 @@
+---
+titulo: "for"
+tiempo: 14
+---
+
+<Concepto>
+for recorre una colección (una lista, por ejemplo) y ejecuta un bloque de código una vez por cada elemento, sin tener que escribir manualmente cada acceso por índice.
+
+Es la forma más común de procesar todos los elementos de una lista uno por uno -- por ejemplo, para acumular un total.
+
+<Sintaxis lenguaje="python" codigo={"for elemento in coleccion:\n    # se ejecuta una vez por elemento"} />
+
+**for básico.** En cada vuelta, la variable después de for toma el valor del siguiente elemento de la colección, hasta recorrerla completa.
+
+```python
+for monto in [450000, 12000, 25000]:
+    print(monto)
+```
+
+**Acumular un total dentro de un for.** Una variable creada antes del for (por ejemplo, en 0) se puede ir actualizando en cada vuelta para acumular una suma.
+
+```python
+total = 0
+for monto in montos:
+    total = total + monto
+```
+
+**Recorrer una lista de diccionarios.** Si la colección es una lista de diccionarios, en cada vuelta se puede acceder a las claves del diccionario actual.
+</Concepto>
+
+<PythonTask
+  id="for"
+  enunciado={"Completa el for para que sume cada monto a total (reemplaza pass por total = total + monto), y asigna el total final a resultado."}
+  preparacion={"montos = [450000, 12000, 25000]"}
+  inicial={"total = 0\nfor monto in montos:\n    pass  # suma monto a total\nresultado = total"}
+  solucion={"total = 0\nfor monto in montos:\n    total = total + monto\nresultado = total"}
+  pruebas={"import numbers\nesperado = 487000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Dentro del for, cada vuelta tiene un monto distinto.", "Reemplaza pass por una línea que sume ese monto a total."]}
+/>
+
+<Debrief>
+resultado = 450000+12000+25000 = 487000.
+</Debrief>

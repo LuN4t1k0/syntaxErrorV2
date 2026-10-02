@@ -1,0 +1,41 @@
+---
+titulo: "value_counts"
+tiempo: 10
+---
+
+<Concepto>
+value_counts cuenta cuántas veces aparece cada valor distinto de una columna -- una forma rápida de responder «¿cuántas filas hay de cada categoría?», sin necesidad de un groupby completo.
+
+Es especialmente útil para columnas categóricas, como una region, un canal o un estado.
+
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"].value_counts()"} />
+
+**Contar valores distintos.** df["columna"].value_counts() devuelve una Series con cada valor distinto como índice, y la cantidad de veces que aparece como valor -- ordenada de más a menos frecuente.
+
+```python
+ventas["region"].value_counts()
+```
+
+**Acceder a un valor específico.** Igual que con groupby, .loc["etiqueta"] sobre el resultado devuelve la cantidad de esa categoria en particular.
+
+```python
+ventas["region"].value_counts().loc["norte"]
+```
+
+**value_counts frente a groupby.** value_counts es un atajo para cuando solo necesitas contar filas por categoria -- si necesitas sumar o promediar otra columna por grupo, hace falta groupby.
+</Concepto>
+
+<PythonTask
+  id="value-counts"
+  enunciado={"Asigna a resultado la cantidad de filas con region 'norte', usando value_counts sobre la columna region."}
+  preparacion={"import pandas as pd\nventas = pd.DataFrame({\"fecha\":[\"01/03/2026\",\"02/03/2026\",\"01/03/2026\",\"02/03/2026\"],\"region\":[\"norte\",\"norte\",\"sur\",\"sur\"],\"monto\":[100000,150000,80000,120000]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(ventas[\"region\"].value_counts().loc[\"norte\"])"}
+  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["value_counts devuelve cuántas veces aparece cada valor de la columna.", "Lee el conteo de norte con .loc."]}
+/>
+
+<Debrief>
+resultado = int(ventas["region"].value_counts().loc["norte"]) = 2.
+</Debrief>

@@ -1,0 +1,41 @@
+---
+titulo: "Tuplas"
+tiempo: 10
+---
+
+<Concepto>
+Una tupla es una colección ordenada, como una lista, pero no se puede modificar después de creada -- ni agregar, ni quitar, ni cambiar un elemento.
+
+Se usan para representar valores que van juntos y no deberían cambiar por separado, como las coordenadas de un punto o un par de valores fijos.
+
+<Sintaxis lenguaje="python" codigo={"tupla = (valor1, valor2)"} />
+
+**Crear una tupla.** Se escriben los valores entre paréntesis, separados por comas -- muy parecido a una lista, pero con paréntesis en vez de corchetes.
+
+```python
+punto = (10, 20)
+```
+
+**Acceder por índice.** Igual que en una lista, cada posición se accede con un índice que empieza en 0.
+
+```python
+punto[0]
+```
+
+**Por que son inmutables.** Intentar hacer punto[0] = 5 da un error -- una tupla no permite cambiar sus elementos una vez creada, a diferencia de una lista.
+</Concepto>
+
+<PythonTask
+  id="tuplas"
+  enunciado={"Asigna a resultado la suma de los dos elementos de la tupla punto."}
+  preparacion={"punto = (10, 20)"}
+  inicial={"resultado = None"}
+  solucion={"resultado = punto[0]+punto[1]"}
+  pruebas={"import numbers\nesperado = 30\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["Los elementos de una tupla se leen por posición, empezando en 0.", "Suma el elemento de la posición 0 con el de la posición 1."]}
+/>
+
+<Debrief>
+resultado = punto[0]+punto[1] = 10+20 = 30.
+</Debrief>

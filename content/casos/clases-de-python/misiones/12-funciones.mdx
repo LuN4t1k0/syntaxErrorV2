@@ -1,0 +1,46 @@
+---
+titulo: "Funciones"
+tiempo: 16
+---
+
+<Concepto>
+Una función agrupa un bloque de código reutilizable bajo un nombre, para no repetir la misma lógica varias veces. Se define con def y puede recibir parametros.
+
+return indica que valor devuelve la función cuando se la llama -- sin return, la función no devuelve nada útil para usar después.
+
+<Sintaxis lenguaje="python" codigo={"def nombre_funcion(parametro1, parametro2):\n    return resultado"} />
+
+**Definir una función.** def, el nombre de la función, y sus parametros entre paréntesis. El bloque indentado debajo es el cuerpo de la función.
+
+```python
+def calcular_total(precio, cantidad):
+    return precio*cantidad
+```
+
+**Llamar una función.** Se escribe el nombre de la función seguido de los valores entre paréntesis, en el mismo orden que los parametros definidos.
+
+```python
+calcular_total(450000, 3)
+```
+
+**Guardar el resultado en una variable.** El valor que devuelve return se puede asignar a una variable, igual que el resultado de cualquier otra expresión.
+
+```python
+total = calcular_total(450000, 3)
+```
+</Concepto>
+
+<PythonTask
+  id="funciones"
+  enunciado={"Completa la función calcular_total para que devuelva precio multiplicado por cantidad."}
+  preparacion={"precio = 450000\ncantidad = 3"}
+  inicial={"def calcular_total(precio, cantidad):\n    return None  # completa\n\nresultado = calcular_total(precio, cantidad)"}
+  solucion={"def calcular_total(precio, cantidad):\n    return precio * cantidad\n\nresultado = calcular_total(precio, cantidad)"}
+  pruebas={"import numbers\nesperado = 1350000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={[]}
+  pistas={["return es lo que la función devuelve a quien la llama.", "Cambia el None del return por el cálculo con los dos parámetros."]}
+/>
+
+<Debrief>
+calcular_total debe hacer return precio*cantidad; llamada con 450000 y 3, devuelve 1350000.
+</Debrief>

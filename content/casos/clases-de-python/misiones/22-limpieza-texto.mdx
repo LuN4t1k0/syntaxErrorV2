@@ -1,0 +1,42 @@
+---
+titulo: "Limpieza de texto con str"
+tiempo: 12
+---
+
+<Concepto>
+Los datos que llegan de sistemas reales casi nunca estan prolijos: categorias escritas distinto (" Tecnologia", "TECNOLOGIA", "tecnologia") terminan contando como grupos separados en un groupby si no se normalizan antes.
+
+pandas trae los mismos metodos de texto de Python (strip, upper, lower) pero aplicados a una columna completa a traves de .str.
+
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"].str.strip().str.lower()"} />
+
+**.str.strip() saca espacios de los bordes.** Quita espacios en blanco al principio y al final del texto, no los que estan en el medio.
+
+```python
+categorias = pd.Series([" Tecnologia", "Hogar ", "tecnologia"])
+categorias.str.strip()
+```
+
+**.str.lower() normaliza mayúsculas.** Convierte todo el texto a minúsculas para que "Tecnologia" y "TECNOLOGIA" queden iguales.
+
+```python
+categorias.str.strip().str.lower()
+```
+
+**Encadenar metodos de texto.** Los metodos .str se pueden encadenar en la misma línea, igual que otros metodos de pandas.
+</Concepto>
+
+<PythonTask
+  id="limpieza-texto"
+  enunciado={"Normaliza categorias quitando espacios y pasando a minúsculas, y asigna a resultado la cantidad de categorias distintas (únicas) que quedan."}
+  preparacion={"import pandas as pd"}
+  inicial={"categorias = pd.Series([\" Tecnologia\", \"TECNOLOGIA \", \"tecnologia\", \"Hogar\"])\nresultado = None"}
+  solucion={"categorias = pd.Series([\" Tecnologia\", \"TECNOLOGIA \", \"tecnologia\", \"Hogar\"])\nresultado = int(categorias.str.strip().str.lower().nunique())"}
+  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["Con .str se aplican funciones de texto a toda la Series: strip quita espacios y lower pasa a minúsculas.", "nunique cuenta cuántos valores distintos quedan."]}
+/>
+
+<Debrief>
+resultado = int(categorias.str.strip().str.lower().nunique()) = 2 ("tecnologia" y "hogar"), porque las tres primeras categorias son la misma una vez normalizadas.
+</Debrief>

@@ -1,0 +1,41 @@
+---
+titulo: "groupby"
+tiempo: 16
+---
+
+<Concepto>
+groupby agrupa las filas de un DataFrame según el valor de una columna, para calcular resúmenes por grupo en vez de sobre toda la tabla -- por ejemplo, el total de ventas por region.
+
+Después de agrupar, se elige una columna a resumir y una función de agregación (como sum) para obtener un resultado por grupo.
+
+<Sintaxis lenguaje="python" codigo={"df.groupby(\"columna\")[\"otra_columna\"].sum()"} />
+
+**Agrupar y sumar.** df.groupby("region")["monto"].sum() agrupa las filas por region y suma el monto de cada grupo, devolviendo una Series indexada por region.
+
+```python
+ventas.groupby("region")["monto"].sum()
+```
+
+**Acceder a un grupo específico.** Sobre el resultado agrupado, .loc["etiqueta"] devuelve el valor de ese grupo en particular.
+
+```python
+ventas.groupby("region")["monto"].sum().loc["norte"]
+```
+
+**Otras funciones de agregación.** Además de sum(), se pueden usar mean(), count(), max(), min() de la misma forma, sobre el resultado de groupby.
+</Concepto>
+
+<PythonTask
+  id="groupby"
+  enunciado={"Agrupa ventas por region, suma el monto de cada grupo, y asigna a resultado el total de la region 'norte'."}
+  preparacion={"import pandas as pd\nventas = pd.DataFrame({\"fecha\":[\"01/03/2026\",\"02/03/2026\",\"01/03/2026\",\"02/03/2026\"],\"region\":[\"norte\",\"norte\",\"sur\",\"sur\"],\"monto\":[100000,150000,80000,120000]})"}
+  inicial={"resultado = None"}
+  solucion={"resultado = int(ventas.groupby(\"region\")[\"monto\"].sum().loc[\"norte\"])"}
+  pruebas={"import numbers\nesperado = 250000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  paquetes={["pandas"]}
+  pistas={["groupby agrupa las filas; después eliges la columna monto y la sumas.", "El resultado tiene un valor por región: lee el de norte con .loc."]}
+/>
+
+<Debrief>
+resultado = int(ventas.groupby("region")["monto"].sum().loc["norte"]) = 100000+150000 = 250000.
+</Debrief>
