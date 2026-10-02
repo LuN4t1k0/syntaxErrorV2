@@ -5,7 +5,9 @@
 // Lo que sale de aquí es un borrador: después viene la revisión editorial (tildes que el diccionario no cubre, tono
 // de tú, pistas que orientan sin dar la respuesta). El validador de contenido revisa que cada solución pase.
 
-export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null };
+// Una sección del concepto: párrafos y, si la tiene, una consulta que se puede probar (ejemplo) o una fórmula de
+// planilla que solo se muestra (formula).
+export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null };
 
 export type TareaSql = {
   tipo: "SqlTask";
@@ -17,14 +19,32 @@ export type TareaSql = {
   pistas: string[];
 };
 
+export type Celda = string | number | null;
+
+export type TareaHoja = {
+  tipo: "SheetTask";
+  id: string;
+  enunciado: string;
+  // La planilla de la lección, fila por fila desde A1.
+  grilla: Celda[][];
+  celdas: { celda: string; valor: string | number }[];
+  solucion: Record<string, string | number>;
+  pistas: string[];
+};
+
+// Una lección de lectura: una pregunta para pensar y la respuesta del curso.
+export type TareaLectura = { tipo: "LecturaTask"; id: string; pregunta: string; respuesta: string };
+
+export type Tarea = TareaSql | TareaHoja | TareaLectura;
+
 export type Leccion = {
   slug: string;
   titulo: string;
   minutos: number;
   intro: string[];
-  sintaxis: { lenguaje: "sql" | "python"; codigo: string } | null;
+  sintaxis: { lenguaje: "sql" | "python" | "planilla"; codigo: string } | null;
   secciones: Seccion[];
-  tarea: TareaSql;
+  tarea: Tarea;
   // Se muestra al aprobar la lección: explica por qué la solución funciona.
   cierre: string | null;
 };
@@ -40,7 +60,37 @@ const atributo = (valor: string) => `{${JSON.stringify(valor)}}`;
 function seccionMdx(seccion: Seccion): string {
   const partes = [`**${escaparTexto(seccion.titulo)}.** ${seccion.parrafos.map(escaparTexto).join(" ")}`];
   if (seccion.ejemplo) partes.push(`<SqlEjemplo consulta=${atributo(seccion.ejemplo)} />`);
+  if (seccion.formula) partes.push(`<Sintaxis lenguaje="planilla" codigo=${atributo(seccion.formula)} />`);
   return partes.join("\n\n");
+}
+
+function tareaMdx(tarea: Tarea): string[] {
+  switch (tarea.tipo) {
+    case "SqlTask":
+      return [
+        "<SqlTask",
+        `  id="${tarea.id}"`,
+        `  enunciado=${atributo(tarea.enunciado)}`,
+        `  inicial=${atributo(tarea.inicial)}`,
+        `  solucion=${atributo(tarea.solucion)}`,
+        `  comparar="${tarea.comparar}"`,
+        `  pistas={${JSON.stringify(tarea.pistas)}}`,
+        "/>",
+      ];
+    case "SheetTask":
+      return [
+        "<SheetTask",
+        `  id="${tarea.id}"`,
+        `  enunciado=${atributo(tarea.enunciado)}`,
+        `  grilla={${JSON.stringify(tarea.grilla)}}`,
+        `  celdas={${JSON.stringify(tarea.celdas)}}`,
+        `  solucion={${JSON.stringify(tarea.solucion)}}`,
+        `  pistas={${JSON.stringify(tarea.pistas)}}`,
+        "/>",
+      ];
+    case "LecturaTask":
+      return ["<LecturaTask", `  id="${tarea.id}"`, `  pregunta=${atributo(tarea.pregunta)}`, `  respuesta=${atributo(tarea.respuesta)}`, "/>"];
+  }
 }
 
 export function leccionAMdx(leccion: Leccion): string {
@@ -49,7 +99,6 @@ export function leccionAMdx(leccion: Leccion): string {
     ...(leccion.sintaxis ? [`<Sintaxis lenguaje="${leccion.sintaxis.lenguaje}" codigo=${atributo(leccion.sintaxis.codigo)} />`] : []),
     ...leccion.secciones.map(seccionMdx),
   ];
-  const { tarea } = leccion;
   const lineas = [
     "---",
     `titulo: ${JSON.stringify(leccion.titulo)}`,
@@ -60,14 +109,7 @@ export function leccionAMdx(leccion: Leccion): string {
     concepto.join("\n\n"),
     "</Concepto>",
     "",
-    "<SqlTask",
-    `  id="${tarea.id}"`,
-    `  enunciado=${atributo(tarea.enunciado)}`,
-    `  inicial=${atributo(tarea.inicial)}`,
-    `  solucion=${atributo(tarea.solucion)}`,
-    `  comparar="${tarea.comparar}"`,
-    `  pistas={${JSON.stringify(tarea.pistas)}}`,
-    "/>",
+    ...tareaMdx(leccion.tarea),
   ];
   if (leccion.cierre) lineas.push("", "<Debrief>", escaparTexto(leccion.cierre), "</Debrief>");
   return `${lineas.join("\n")}\n`;
@@ -80,61 +122,111 @@ const TILDES: Record<string, string> = {
   accion: "acción",
   ademas: "además",
   agregacion: "agregación",
+  ahi: "ahí",
   alfabetico: "alfabético",
   analisis: "análisis",
   analitica: "analítica",
   anio: "año",
   anios: "años",
+  antiguedad: "antigüedad",
   aqui: "aquí",
+  area: "área",
   aritmeticos: "aritméticos",
+  asi: "así",
+  automaticos: "automáticos",
   basico: "básico",
+  botin: "botín",
   busqueda: "búsqueda",
   calculo: "cálculo",
+  calculos: "cálculos",
   categoria: "categoría",
+  categorias: "categorías",
   cirugia: "cirugía",
   codigo: "código",
+  codigos: "códigos",
   como: "cómo",
+  comodo: "cómodo",
   comun: "común",
   condicion: "condición",
+  configuracion: "configuración",
+  critico: "crítico",
+  criticos: "críticos",
+  cupon: "cupón",
+  deberia: "debería",
+  decision: "decisión",
+  desafio: "desafío",
+  descripcion: "descripción",
   despues: "después",
   dia: "día",
+  diagnostico: "diagnóstico",
   dias: "días",
   dificil: "difícil",
+  dinamica: "dinámica",
+  dinamicas: "dinámicas",
   dinamico: "dinámico",
+  direccion: "dirección",
+  dolar: "dólar",
+  dolio: "dolió",
   donde: "dónde",
+  edicion: "edición",
   especifica: "específica",
   especificas: "específicas",
   evalua: "evalúa",
+  exploracion: "exploración",
   expresion: "expresión",
   facil: "fácil",
+  formula: "fórmula",
+  formulas: "fórmulas",
   funcion: "función",
+  graficos: "gráficos",
   informacion: "información",
   inscribio: "inscribió",
   inscripcion: "inscripción",
+  instruccion: "instrucción",
+  intentaria: "intentaría",
+  interseccion: "intersección",
   leccion: "lección",
+  linea: "línea",
   logica: "lógica",
   manipulacion: "manipulación",
+  margenes: "márgenes",
+  matematicas: "matemáticas",
   maximo: "máximo",
   mayusculas: "mayúsculas",
+  mecanicos: "mecánicos",
   minimo: "mínimo",
   minusculas: "minúsculas",
+  mision: "misión",
   numerica: "numérica",
   numericas: "numéricas",
   numero: "número",
   numeros: "números",
   operacion: "operación",
   pagina: "página",
-  quedarian: "quedarían",
+  parentesis: "paréntesis",
+  pelicula: "película",
+  piensalo: "piénsalo",
+  posicion: "posición",
   presentacion: "presentación",
   proximo: "próximo",
+  quedarian: "quedarían",
+  quedate: "quédate",
+  rapida: "rápida",
   rapido: "rápido",
+  region: "región",
   relacion: "relación",
   repeticion: "repetición",
   segun: "según",
+  semaforo: "semáforo",
   sesion: "sesión",
+  simultanea: "simultánea",
+  solucion: "solución",
   tambien: "también",
   tendran: "tendrán",
+  tenias: "tenías",
+  tipico: "típico",
   todavia: "todavía",
+  trio: "trío",
   ultima: "última",
   ultimo: "último",
   unica: "única",
@@ -143,6 +235,7 @@ const TILDES: Record<string, string> = {
   vacia: "vacía",
   vacio: "vacío",
   valido: "válido",
+  vendio: "vendió",
 };
 
 // «como» y «donde» solo llevan tilde en preguntas o títulos: se corrigen al inicio del texto o después de «¿»

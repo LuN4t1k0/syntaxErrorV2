@@ -55,7 +55,7 @@ describe("leccionAMdx", () => {
     const bloques = await extraerBloques(archivo.content);
     expect(bloques.map((bloque) => bloque.tipo)).toEqual(["Concepto", "Sintaxis", "SqlEjemplo", "SqlTask", "Debrief"]);
     const tarea = bloques.find((bloque) => bloque.tipo === "SqlTask");
-    expect(tarea?.props).toMatchObject({ id: "where-filtros", enunciado: 'Muestra los de "Santiago".', solucion: leccion.tarea.solucion, pistas: ["El filtro va en WHERE."] });
+    expect(tarea?.props).toMatchObject({ id: "where-filtros", enunciado: 'Muestra los de "Santiago".', solucion: "SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago';", pistas: ["El filtro va en WHERE."] });
     expect(mdx).toContain("WHERE decide qué filas pasan &#123;siempre&#125; y &lt; todas.");
   });
 

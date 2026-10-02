@@ -53,7 +53,7 @@ describe("convertirLeccionSql", () => {
 
   it("sin ORDER BY compara sin importar el orden; una lección que no es de consulta no se importa", () => {
     const sinOrden = convertirLeccionSql({ ...v1, expected: "SELECT nombre FROM estudiantes;" }, 1, new Set());
-    expect(sinOrden.tarea.comparar).toBe("filas-sin-orden");
+    expect(sinOrden.tarea).toMatchObject({ comparar: "filas-sin-orden" });
     expect(() => convertirLeccionSql({ ...v1, type: "exercise-dml" }, 1, new Set())).toThrow("solo importa SELECT");
   });
 });
