@@ -1,0 +1,37 @@
+id,nombre,categoria,precio,proveedor
+101,Leche entera 1 L,Lácteos,1190,Lechería del Ñuble
+102,Leche descremada 1 L,Lácteos,1190,Lechería del Ñuble
+103,Queso gauda 500 g,Lácteos,5490,Quesería Llanquihue
+104,Queso fresco 300 g,Lácteos,2990,Quesería Llanquihue
+105,Yogur natural 1 kg,Lácteos,2290,Lechería del Ñuble
+106,Mantequilla 250 g,Lácteos,2690,Quesería Llanquihue
+201,Pan amasado 1 kg,Panadería,2290,Panificadora Austral
+202,Hallulla 1 kg,Panadería,2190,Panificadora Austral
+203,Kuchen de murta,Panadería,6990,Panificadora Austral
+204,Pan integral molde,Panadería,2890,Panificadora Austral
+301,Arroz grado 1 1 kg,Abarrotes,1690,Distribuidora Sur
+302,Tallarines 400 g,Abarrotes,990,Distribuidora Sur
+303,Aceite vegetal 1 L,Abarrotes,2790,Distribuidora Sur
+304,Azúcar 1 kg,Abarrotes,1290,Distribuidora Sur
+305,Harina 1 kg,Abarrotes,1190,Molino del Maule
+306,Porotos 1 kg,Abarrotes,2490,Molino del Maule
+401,"Agua mineral 1,5 L",Bebidas,990,Aguas de la Cordillera
+402,Bebida cola 2 L,Bebidas,1990,Embotelladora Sur
+403,Jugo de manzana 1 L,Bebidas,1490,Embotelladora Sur
+404,Café en grano 250 g,Bebidas,5990,Tostaduría Valdivia
+405,Té 100 bolsitas,Bebidas,2990,Distribuidora Sur
+406,Kombucha artesanal,Bebidas,3490,Fermentos del Sur
+501,Detergente 3 L,Aseo,7990,Limpieza Total
+502,Papel higiénico 12 rollos,Aseo,6490,Limpieza Total
+503,Lavalozas 750 ml,Aseo,1890,Limpieza Total
+504,Cloro 1 L,Aseo,990,Limpieza Total
+601,Papas fritas 250 g,Snacks,2490,Snacks del Biobío
+602,Galletas de avena,Snacks,1290,Snacks del Biobío
+603,Maní salado 200 g,Snacks,1590,Snacks del Biobío
+604,Chocolate de leche 100 g,Snacks,1390,Snacks del Biobío
+701,Manzanas 1 kg,Frutas y verduras,1490,Huertos del Maule
+702,Papas 2 kg,Frutas y verduras,1990,Huertos del Maule
+703,Tomates 1 kg,Frutas y verduras,1790,Huertos del Maule
+704,Paltas 1 kg,Frutas y verduras,4990,Huertos del Maule
+801,Hamburguesas congeladas 4 un,Congelados,4490,Frigorífico Austral
+802,Helado de vainilla 1 L,Congelados,3990,Frigorífico Austral
