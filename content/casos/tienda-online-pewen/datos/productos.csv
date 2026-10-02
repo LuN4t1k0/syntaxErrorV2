@@ -1,0 +1,25 @@
+producto_id,nombre,categoria,precio
+P01,Juego de sábanas 2 plazas,Hogar,24990
+P02,Toalla de baño,Hogar,8990
+P03,Plumón nórdico,Hogar,39990
+P04,Almohada viscoelástica,Hogar,14990
+P05,Cortina blackout,Hogar,19990
+P06,Manta de lana,Hogar,22990
+P07,Sartén antiadherente,Cocina,17990
+P08,Set de cuchillos,Cocina,29990
+P09,Tetera eléctrica,Cocina,21990
+P10,Juego de tazas,Cocina,12990
+P11,Tabla de madera nativa,Cocina,15990
+P12,Olla de greda,Cocina,18990
+P13,Cojín de lino,Decoración,11990
+P14,Lámpara de mimbre,Decoración,34990
+P15,Florero de cerámica,Decoración,13990
+P16,Cuadro de paisaje,Decoración,27990
+P17,Vela aromática,Decoración,7990
+P18,Polerón de algodón,Vestuario,24990
+P19,Chaqueta impermeable,Vestuario,49990
+P20,Pantalón de buzo,Vestuario,19990
+P21,Polera básica,Vestuario,9990
+P22,Calcetines de lana,Vestuario,6990
+P23,Pijama polar,Vestuario,21990
+P24,Gorro tejido,Vestuario,8990
