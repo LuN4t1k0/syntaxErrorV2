@@ -157,13 +157,17 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
   - Se completan al aprobar todas sus lecciones y habilitan el caso siguiente de la ruta. Cuentan para el certificado de la ruta, pero no van al portafolio.
   - Cada lección es una misión con `<Concepto>`, `<Sintaxis>` (la forma general, que no se ejecuta), ejemplos, un ejercicio y un `<Debrief>` sin consejo de entrevista.
   - La última lección no tiene que ser sin guía: el caso siguiente cumple ese papel.
+  - En la ruta Data Analyst: clases de Excel antes del Caso 1 y clases de SQL antes del Caso 2.
+- **Planillas propias:** una tarea de planilla (`SheetTask`) toma su hoja de un CSV de `datos/` (`hoja`) o la trae escrita en la lección (`grilla`, fila por fila desde A1), como las aulas de la v1.
+- **Lecturas:** `<LecturaTask pregunta respuesta />` es una lección sin validación automática, como las lecturas de la v1: se piensa la pregunta y, al marcarla como completada, aparece la respuesta del curso.
 - **Importar un aula de la v1:**
   1. Exporta sus datos a JSON, con el Node de tu equipo: `node packages/content/scripts/exportar-aula-v1.mjs ../cursos/aula-sql > tmp/aula-sql.json`.
-  2. Escribe el borrador: `docker compose run --rm tools pnpm --filter @syntaxerror/content importar sql /app/tmp/aula-sql.json /app/content/casos/<carpeta> <lección,lección,...>`.
+  2. Escribe el borrador: `docker compose run --rm tools pnpm --filter @syntaxerror/content importar <sql|excel> /app/tmp/aula-<aula>.json /app/content/casos/<carpeta> <lección,lección,...>`.
   3. Revisa el borrador: tildes que el diccionario no corrige solo (`mas`, `aun`, `que` en preguntas), dos pistas por lección que orienten sin dar la respuesta, y el título y el dataset de `caso.yaml`. Después corre `npm run content:validate`.
-- **El importador** (`packages/content/src/importar/`) tiene un formato común (`leccion.ts`) y un adaptador por aula (`aula-sql.ts`). Para Excel, Python o Power BI se agrega su adaptador.
-  - Corrige tildes con un diccionario y nombres propios de los datos (Concepción, Tomás), pero no toca los valores entre comillas simples ni los nombres de tablas y columnas, para que los ejercicios sigan calzando con sus soluciones.
-  - Descarta las pistas de la v1 que traían la consulta: el validador rechaza una pista con la solución completa.
+- **El importador** (`packages/content/src/importar/`) tiene un formato común (`leccion.ts`: consultas, planillas y lecturas) y un adaptador por aula (`aula-sql.ts`, `aula-excel.ts`). Para Python o Power BI se agrega su adaptador.
+  - En Excel, la v1 guardaba solo el valor esperado de cada celda: la fórmula de la solución se saca de la pista ("En D2 escribe =B2*C2"), se repite fila abajo cuando la pista dice "repite la misma lógica", y el validador comprueba que dé el valor esperado.
+  - Corrige tildes con un diccionario y nombres propios de los datos (Concepción, Tomás), pero no toca los valores entre comillas simples, los nombres de tablas y columnas de SQL ni las planillas, para que los ejercicios sigan calzando con sus soluciones.
+  - Descarta las pistas de la v1 que traían la consulta o la fórmula: el validador rechaza una pista de SQL o Python con la solución completa.
 
 ## Caso 0: Herramientas del oficio
 

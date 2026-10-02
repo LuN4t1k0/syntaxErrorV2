@@ -22,7 +22,7 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
   const email = await registrarse(page, "Valentina Soto");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "despachos-rapidos"]) await completarCaso(page, admin, ip, email, caso);
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos"]) await completarCaso(page, admin, ip, email, caso);
 
   await page.goto(`/casos/${CLASES}/01-select-basico`);
   await expect(page.getByText("> lección 1/18 · 12 min")).toBeVisible();
@@ -44,4 +44,37 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
   await expect(page.getByText("Clases completas", { exact: false })).toBeVisible();
   await page.goto("/casos/minimarkets-del-sur");
   await expect(page.getByText("sus tareas se habilitan al completar", { exact: false })).toHaveCount(0);
+});
+
+test("con el Caso 0 completo: las clases de Excel traen su propia planilla y una lectura se completa al marcarla", async ({ page, ip, nuevaPagina }) => {
+  test.setTimeout(180_000);
+  const email = await registrarse(page, "Martina Rojas");
+  const admin = await nuevaPagina();
+  await entrarComoAdmin(admin);
+  await completarCaso(page, admin, ip, email, "herramientas-del-oficio");
+  const excel = MISIONES["clases-de-excel"];
+  await aprobar(page, ip, "clases-de-excel", excel.slice(0, 1));
+
+  await page.goto("/casos/clases-de-excel/02-primera-formula");
+  await expect(page.getByText("> lección 2/23", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Celda A2", exact: true })).toHaveText("Notebook");
+  await expect(async () => {
+    await page.getByRole("button", { name: "Celda D2", exact: true }).click();
+    await page.getByLabel("Fórmula").fill("=B2*C2");
+    await page.getByLabel("Fórmula").press("Enter");
+    await expect(page.getByRole("button", { name: "Celda D2", exact: true })).toHaveText("1350000", { timeout: 2_000 });
+  }).toPass({ timeout: 20_000 });
+  const aprobada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  await page.getByRole("button", { name: "Validar" }).click();
+  await aprobada;
+  await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
+
+  await aprobar(page, ip, "clases-de-excel", excel.slice(2, 21));
+  await page.goto("/casos/clases-de-excel/22-excel-vs-base-de-datos");
+  await expect(page.getByText("¿usarías Excel o una base de datos?", { exact: false })).toBeVisible();
+  const marcada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  await page.getByRole("button", { name: "Ver la respuesta y marcar como completada" }).click();
+  await marcada;
+  await expect(page.getByText("Una base de datos: el volumen y la edición simultánea", { exact: false })).toBeVisible();
+  await expect(page.getByText("Aprobada", { exact: true })).toBeVisible();
 });

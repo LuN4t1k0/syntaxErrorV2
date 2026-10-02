@@ -12,6 +12,31 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["06-tu-perfil-de-github", "perfil"],
     ["07-tu-presentacion", "presentacion"],
   ],
+  "clases-de-excel": [
+    ["01-que-es-una-hoja-de-calculo", "que-es-una-hoja-de-calculo"],
+    ["02-primera-formula", "primera-formula"],
+    ["03-orden-de-operaciones", "orden-de-operaciones"],
+    ["04-funcion-suma", "funcion-suma"],
+    ["05-funcion-promedio", "funcion-promedio"],
+    ["06-contar-max-min", "contar-max-min"],
+    ["07-referencias-relativas", "referencias-relativas"],
+    ["08-referencias-absolutas", "referencias-absolutas"],
+    ["09-la-funcion-si", "la-funcion-si"],
+    ["10-y-o-condiciones", "y-o-condiciones"],
+    ["11-si-anidados", "si-anidados"],
+    ["12-sumar-si", "sumar-si"],
+    ["13-contar-si", "contar-si"],
+    ["14-funciones-conjunto", "funciones-conjunto"],
+    ["15-buscarv", "buscarv"],
+    ["16-indice-coincidir", "indice-coincidir"],
+    ["17-buscarv-vs-indice", "buscarv-vs-indice"],
+    ["18-funciones-de-texto", "funciones-de-texto"],
+    ["19-fechas", "fechas"],
+    ["20-descripcion-de-venta", "descripcion-de-venta"],
+    ["21-errores-comunes", "errores-comunes"],
+    ["22-excel-vs-base-de-datos", "excel-vs-base-de-datos"],
+    ["23-proyecto-final-reporte-ventas", "proyecto-final-reporte-ventas"],
+  ],
   "despachos-rapidos": [
     ["01-conoce-la-planilla", "costo-con-iva"],
     ["02-totales-del-mes", "totales"],
@@ -115,7 +140,7 @@ export async function aprobar(page: Page, ip: string, caso: string, misiones: [s
 }
 
 // Las clases no tienen entregable: se completan al aprobar todas sus lecciones.
-export const CLASES = new Set(["clases-de-sql"]);
+export const CLASES = new Set(["clases-de-excel", "clases-de-sql"]);
 
 // Completa un caso entero: todas sus misiones y, si es un caso, el entregable aprobado por administración.
 export async function completarCaso(page: Page, admin: Page, ip: string, email: string, caso: string) {

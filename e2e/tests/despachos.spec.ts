@@ -16,14 +16,15 @@ async function validarYEsperar(page: Page) {
   await reportado;
 }
 
-test("con el Caso 0 completo: busca en otra hoja, rellena hacia abajo y corrige la fórmula de la IA", async ({ page, ip, nuevaPagina }) => {
+test("con el Caso 0 y las clases de Excel completos: busca en otra hoja, rellena hacia abajo y corrige la fórmula de la IA", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(240_000);
   const email = await registrarse(page, "Ignacia Soto");
 
-  // El Caso 1 se habilita al completar el Caso 0, con su entregable aprobado.
+  // El Caso 1 se habilita al completar el Caso 0, con su entregable aprobado, y las clases de Excel.
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
   await completarCaso(page, admin, ip, email, "herramientas-del-oficio");
+  await completarCaso(page, admin, ip, email, "clases-de-excel");
 
   await aprobar(page, ip, "despachos-rapidos", CASO_1.slice(0, 3));
   await page.goto(`${CASO}/04-buscar-en-otra-tabla`);
