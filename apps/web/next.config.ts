@@ -5,6 +5,8 @@ import { construirCsp } from "./src/lib/csp";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  // En el monorepo, el standalone tiene que incluir los paquetes del workspace: se traza desde la raíz.
+  outputFileTracingRoot: path.join(process.cwd(), "../.."),
   devIndicators: false,
   // Solo en desarrollo: Next mantiene compiladas 5 páginas y descarta las inactivas al minuto. Con las pruebas
   // e2e en paralelo eso recompila sin parar y cada recompilación recarga páginas abiertas de otras pruebas.
