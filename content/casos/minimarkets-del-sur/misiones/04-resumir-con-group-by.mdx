@@ -1,0 +1,55 @@
+---
+titulo: Resumir con GROUP BY
+tiempo: 25
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+El directorio quiere dos resúmenes del trimestre. Primero, cuánto vendió cada local, en pesos. Segundo, cómo nos pagan los clientes: cuántas ventas hubo con cada medio de pago y cuánto dinero entró por cada uno.
+</Brief>
+
+<Concepto>
+En las planillas resumiste por comuna con una tabla dinámica (o con `CONTAR.SI` y `SUMAR.SI`). En SQL eso se hace con `GROUP BY`: junta las filas que comparten un valor y calcula algo para cada grupo.
+
+<SqlEjemplo consulta="SELECT categoria, COUNT(*) AS productos FROM productos GROUP BY categoria" />
+
+Las funciones de resumen más usadas:
+
+| Función | Calcula |
+| --- | --- |
+| `COUNT(*)` | cuántas filas tiene el grupo |
+| `SUM(columna)` | la suma |
+| `AVG(columna)` | el promedio |
+| `MIN(columna)` y `MAX(columna)` | el menor y el mayor |
+
+`AS` le pone nombre a la columna calculada: `SUM(monto) AS ventas`.
+
+La regla de oro: todo lo que aparece en el `SELECT` y no es una función de resumen, tiene que estar en el `GROUP BY`.
+</Concepto>
+
+<SqlTask
+  id="ventas-por-local"
+  enunciado="Trae el id de cada local (local_id) y la suma de sus montos de venta."
+  solucion="SELECT local_id, SUM(monto) AS ventas FROM ventas GROUP BY local_id"
+  comparar="filas-sin-orden"
+  pistas={["Agrupa la tabla ventas por local_id.", "La suma de los montos es SUM(monto)."]}
+/>
+
+<SqlTask
+  id="ventas-por-medio-de-pago"
+  enunciado="Trae cada medio de pago, cuántas ventas tuvo y la suma de sus montos, en ese orden de columnas."
+  solucion="SELECT medio_pago, COUNT(*) AS ventas, SUM(monto) AS monto FROM ventas GROUP BY medio_pago"
+  comparar="filas-sin-orden"
+  pistas={["Agrupa por medio_pago.", "COUNT(*) cuenta las ventas de cada grupo y SUM(monto) suma lo que entró."]}
+/>
+
+<Decision
+  pregunta="El resumen por local muestra local_id 1, 2, 3… Rodrigo te dice: 'No sé qué local es el 3'. ¿Qué haces?"
+  opciones={[
+    { texto: "Traigo el nombre del local desde la tabla locales: eso se hace cruzando tablas, y lo vemos en la misión 6.", correcta: true, porque: "Un informe para personas usa nombres, no códigos. Los códigos sirven para unir tablas, no para leer." },
+    { texto: "Le mando la tabla de locales aparte para que él cruce los códigos.", porque: "Le traspasas un trabajo que la consulta puede hacer, y es fácil que se equivoque al cruzar." },
+  ]}
+/>
+
+<Debrief entrevista="Si te piden 'las ventas por categoría' en una prueba, la respuesta es casi siempre un GROUP BY. Un error frecuente que conviene evitar: poner en el SELECT una columna que no está en el GROUP BY.">
+`GROUP BY` resume filas por grupo, como una tabla dinámica. `COUNT`, `SUM`, `AVG`, `MIN` y `MAX` calculan un valor para cada grupo, y `AS` les da un nombre legible.
+</Debrief>

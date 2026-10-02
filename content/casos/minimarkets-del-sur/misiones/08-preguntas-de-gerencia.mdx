@@ -1,0 +1,56 @@
+---
+titulo: Cinco preguntas de gerencia
+tiempo: 45
+sinGuia: true
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Mañana presento el trimestre al directorio y llevo cinco preguntas. Necesito una consulta para cada una, con nombres y no códigos. Primero, qué local vendió menos en marzo. Segundo, cómo le fue a ese mismo local mes a mes. Tercero, qué categoría vendió más en pesos en el trimestre. Cuarto, el ticket promedio de cada ciudad, redondeado a pesos, de mayor a menor. Y quinto, qué productos vendieron 50 unidades o más, con sus unidades.
+</Brief>
+
+<SqlTask
+  id="local-con-menos-ventas-en-marzo"
+  enunciado="1. ¿Qué local vendió menos en marzo? Trae su nombre y lo que vendió."
+  solucion="SELECT l.nombre, SUM(v.monto) AS ventas FROM ventas v JOIN locales l ON v.local_id = l.id WHERE v.fecha >= '2025-03-01' AND v.fecha < '2025-04-01' GROUP BY l.nombre ORDER BY ventas LIMIT 1"
+  comparar="filas-en-orden"
+/>
+
+<SqlTask
+  id="ese-local-mes-a-mes"
+  enunciado="2. ¿Cómo le fue a ese local mes a mes? Trae el número del mes y sus ventas, ordenado por mes."
+  solucion="SELECT MONTH(v.fecha) AS mes, SUM(v.monto) AS ventas FROM ventas v JOIN locales l ON v.local_id = l.id WHERE l.nombre = 'Osorno Centro' GROUP BY MONTH(v.fecha) ORDER BY mes"
+  comparar="filas-en-orden"
+/>
+
+<SqlTask
+  id="categoria-mas-vendida"
+  enunciado="3. ¿Qué categoría vendió más en pesos en el trimestre? Trae la categoría y su total."
+  solucion="SELECT p.categoria, SUM(v.monto) AS ventas FROM ventas v JOIN productos p ON v.producto_id = p.id GROUP BY p.categoria ORDER BY ventas DESC LIMIT 1"
+  comparar="filas-en-orden"
+/>
+
+<SqlTask
+  id="ticket-por-ciudad"
+  enunciado="4. ¿Cuál es el ticket promedio de cada ciudad, redondeado a pesos? Trae la ciudad y el ticket, de mayor a menor."
+  solucion="SELECT l.ciudad, ROUND(AVG(v.monto), 0) AS ticket FROM ventas v JOIN locales l ON v.local_id = l.id GROUP BY l.ciudad ORDER BY ticket DESC"
+  comparar="filas-en-orden"
+/>
+
+<SqlTask
+  id="productos-de-50-unidades"
+  enunciado="5. ¿Qué productos vendieron 50 unidades o más? Trae el nombre y las unidades."
+  solucion="SELECT p.nombre, SUM(v.cantidad) AS unidades FROM ventas v JOIN productos p ON v.producto_id = p.id GROUP BY p.nombre HAVING SUM(v.cantidad) >= 50"
+  comparar="filas-sin-orden"
+/>
+
+<Decision
+  pregunta="Tienes las cinco respuestas. ¿Cómo se las presentas a Rodrigo?"
+  opciones={[
+    { texto: "Con cada número, lo que significa y una recomendación; por ejemplo, que la caída de Osorno en marzo es puntual y conviene confirmar la causa antes de tomar medidas.", correcta: true, porque: "Gerencia decide con conclusiones, no con tablas. Tu trabajo es conectar los resultados con una acción." },
+    { texto: "Le mando las cinco consultas para que las ejecute él.", porque: "Las consultas son tu herramienta, no el entregable. Él necesita las respuestas y lo que significan." },
+  ]}
+/>
+
+<Debrief entrevista="Muchas pruebas técnicas terminan con un caso abierto como este: varias preguntas de negocio y una base de datos. Lo que más se valora es que cada consulta responda exactamente lo que se pidió y que puedas explicar el resultado en una frase.">
+Este es tu entregable: guarda cada consulta en un archivo .sql con un comentario que diga qué pregunta responde, súbelas a un repositorio con un README que cuente lo que encontraste (incluido lo de Osorno) y envíalo desde la página del caso.
+</Debrief>

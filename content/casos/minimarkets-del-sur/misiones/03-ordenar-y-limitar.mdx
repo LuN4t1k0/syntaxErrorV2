@@ -1,0 +1,48 @@
+---
+titulo: Ordenar y limitar
+tiempo: 20
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Para la vitrina de verano quiero los cinco productos más caros del catálogo. Y el área de prevención de fraudes me pide las diez ventas de mayor monto del trimestre, para revisarlas una por una. Si dos ventas tienen el mismo monto, ponlas en el orden en que se registraron.
+</Brief>
+
+<Concepto>
+`ORDER BY` ordena el resultado. Por defecto es de menor a mayor (`ASC`); con `DESC`, de mayor a menor. `LIMIT` deja solo las primeras filas:
+
+<SqlEjemplo consulta="SELECT nombre, precio FROM productos ORDER BY precio LIMIT 3" />
+
+Cuando dos filas empatan en lo que ordenas, la base puede devolverlas en cualquier orden, y tu top 10 podría cambiar de un día para otro. Para que el resultado sea siempre el mismo, agrega una segunda columna de desempate:
+
+`ORDER BY monto DESC, id` → primero por monto, de mayor a menor; si empatan, por id, de menor a mayor.
+
+`ORDER BY` y `LIMIT` van al final de la consulta, en ese orden.
+</Concepto>
+
+<SqlTask
+  id="productos-mas-caros"
+  enunciado="Trae el nombre y el precio de los cinco productos más caros, del más caro al más barato."
+  solucion="SELECT nombre, precio FROM productos ORDER BY precio DESC LIMIT 5"
+  comparar="filas-en-orden"
+  pistas={["Ordena por precio de mayor a menor: DESC.", "LIMIT 5 deja solo las cinco primeras filas."]}
+/>
+
+<SqlTask
+  id="ventas-mas-grandes"
+  enunciado="Trae el id y el monto de las diez ventas de mayor monto. Si dos ventas tienen el mismo monto, va primero la de id menor."
+  solucion="SELECT id, monto FROM ventas ORDER BY monto DESC, id LIMIT 10"
+  comparar="filas-en-orden"
+  pistas={["Las ventas están en la tabla ventas.", "Hay montos repetidos: agrega id como segunda columna en el ORDER BY.", "El monto va de mayor a menor (DESC) y el id de menor a mayor (sin DESC)."]}
+/>
+
+<Decision
+  pregunta="Tu top 10 de ventas de mayor monto termina en una venta de 27.960, y la siguiente (la 11) también es de 27.960. ¿Qué le dices a prevención de fraudes?"
+  opciones={[
+    { texto: "Que hay un empate en el corte y que la venta 11 merece la misma revisión; o les entrego todas las que empatan.", correcta: true, porque: "Un corte arbitrario en un empate deja fuera un caso igual de relevante. Avisarlo es parte de un buen análisis." },
+    { texto: "Nada: pidieron diez.", porque: "Técnicamente cumples, pero la venta 11 es igual de sospechosa y queda sin revisar." },
+  ]}
+/>
+
+<Debrief entrevista="El 'top N' es una de las preguntas de SQL más comunes en entrevistas. Mencionar los empates y cómo los desempatas (o que usarías funciones de ventana como RANK) muestra experiencia.">
+`ORDER BY` ordena, `DESC` invierte el orden y `LIMIT` corta el resultado. Siempre que un orden decida qué filas quedan, piensa en los empates y desempata con otra columna.
+</Debrief>

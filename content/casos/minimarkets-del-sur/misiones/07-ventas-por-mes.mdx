@@ -1,0 +1,52 @@
+---
+titulo: Ventas por mes
+tiempo: 25
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Gerencia general quiere ver cómo vamos mes a mes en el trimestre. Además, necesito el ranking de locales de marzo, del que más vendió al que menos, con el nombre de cada local. Algo pasó en marzo en uno de ellos y quiero verlo en los números.
+</Brief>
+
+<Concepto>
+En esta base las fechas están escritas como texto con el formato año-mes-día: `2025-03-14`. Eso permite dos cosas:
+
+**Filtrar por período**, comparando como texto. Funciona porque en ese formato el orden alfabético es el orden de las fechas:
+
+`WHERE fecha >= '2025-03-01' AND fecha < '2025-04-01'` → todo marzo.
+
+Usar `< '2025-04-01'` en vez de `<= '2025-03-31'` evita olvidar el último día de un mes de 30 o de 28 días.
+
+**Agrupar por mes** con `MONTH(fecha)`, que devuelve el número del mes:
+
+<SqlEjemplo consulta="SELECT MONTH(fecha) AS mes, COUNT(*) AS ventas FROM ventas GROUP BY MONTH(fecha) ORDER BY mes" />
+
+`YEAR(fecha)` devuelve el año. Si los datos tuvieran más de un año, se agrupa por los dos: `GROUP BY YEAR(fecha), MONTH(fecha)`.
+</Concepto>
+
+<SqlTask
+  id="ventas-por-mes"
+  enunciado="Trae el número de cada mes y la suma de los montos vendidos, ordenado por mes."
+  solucion="SELECT MONTH(fecha) AS mes, SUM(monto) AS ventas FROM ventas GROUP BY MONTH(fecha) ORDER BY mes"
+  comparar="filas-en-orden"
+  pistas={["MONTH(fecha) da el número del mes.", "Agrupa por MONTH(fecha) y ordena por el mes."]}
+/>
+
+<SqlTask
+  id="ranking-de-marzo"
+  enunciado="Trae el nombre de cada local y lo que vendió en marzo de 2025, del que más vendió al que menos."
+  solucion="SELECT l.nombre, SUM(v.monto) AS ventas FROM ventas v JOIN locales l ON v.local_id = l.id WHERE v.fecha >= '2025-03-01' AND v.fecha < '2025-04-01' GROUP BY l.nombre ORDER BY ventas DESC"
+  comparar="filas-en-orden"
+  pistas={["Necesitas el nombre del local: cruza ventas con locales, como en la misión 6.", "Filtra marzo con WHERE antes de agrupar: fecha >= '2025-03-01' AND fecha < '2025-04-01'.", "Ordena por la suma, de mayor a menor."]}
+/>
+
+<Decision
+  pregunta="En marzo, Osorno Centro aparece último, muy lejos del resto. ¿Qué haces antes de informarlo?"
+  opciones={[
+    { texto: "Reviso sus ventas de enero y febrero para ver si es una caída nueva y le pregunto a Rodrigo si hubo algo especial en ese local en marzo.", correcta: true, porque: "Un número bajo puede tener una explicación operativa (cierre, remodelación, falla de caja). Compararlo con su propia historia y preguntar evita conclusiones equivocadas." },
+    { texto: "Lo informo como el peor local de la cadena.", porque: "Si en enero y febrero vendía bien, calificarlo como el peor por un solo mes puede ser injusto y llevar a una mala decisión." },
+  ]}
+/>
+
+<Debrief entrevista="Las preguntas de fechas son frecuentes: 'ventas por mes', 'el mes con más ventas', 'comparar este mes con el anterior'. Explicar por qué filtras con < al primer día del mes siguiente muestra cuidado con los bordes.">
+Con fechas en formato año-mes-día puedes filtrar períodos comparando textos y agrupar con `MONTH` y `YEAR`. Mirar la evolución en el tiempo es lo que convierte un número suelto en una historia.
+</Debrief>

@@ -1,0 +1,62 @@
+---
+titulo: Filtrar
+tiempo: 25
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Tres preguntas rápidas de la reunión de hoy. Compras quiere revisar los lácteos que cuestan más de 2.500 pesos. Marketing prepara una campaña de quesos y necesita todos los productos que tengan "queso" en el nombre, con mayúscula o sin ella. Y operaciones quiere la lista de locales de las regiones de Los Lagos y Los Ríos.
+</Brief>
+
+<Concepto>
+`WHERE` deja solo las filas que cumplen una condición. Es el mismo filtro que usaste en las planillas, escrito como texto:
+
+<SqlEjemplo consulta="SELECT nombre, precio FROM productos WHERE precio > 5000" />
+
+Para combinar condiciones:
+- `AND`: se tienen que cumplir las dos. `WHERE categoria = 'Bebidas' AND precio < 2000`.
+- `OR`: basta con una. `WHERE ciudad = 'Talca' OR ciudad = 'Chillán'`.
+
+`LIKE` busca un patrón en un texto, y `%` reemplaza cualquier cantidad de caracteres: `'%pan%'` es "pan" en cualquier parte.
+
+Algunas bases distinguen mayúsculas en `LIKE` y otras no. Para que la consulta funcione en cualquiera, pasa el texto a minúsculas primero:
+
+<SqlEjemplo consulta="SELECT nombre FROM productos WHERE LOWER(nombre) LIKE '%pan%'" />
+
+Los textos van entre comillas simples: `'Lácteos'`.
+</Concepto>
+
+<SqlTask
+  id="lacteos-caros"
+  enunciado="Trae el nombre y el precio de los productos de la categoría Lácteos que cuestan más de 2500 pesos."
+  solucion="SELECT nombre, precio FROM productos WHERE categoria = 'Lácteos' AND precio > 2500"
+  comparar="filas-sin-orden"
+  pistas={["Son dos condiciones que se cumplen a la vez: van unidas con AND.", "La categoría se escribe igual que en la tabla, con tilde: 'Lácteos'."]}
+/>
+
+<SqlTask
+  id="productos-de-queso"
+  enunciado="Trae el nombre de todos los productos que tienen la palabra queso en el nombre, sin importar mayúsculas."
+  solucion="SELECT nombre FROM productos WHERE LOWER(nombre) LIKE '%queso%'"
+  comparar="filas-sin-orden"
+  pistas={["LIKE con % antes y después busca la palabra en cualquier parte del nombre.", "LOWER(nombre) pasa el nombre a minúsculas antes de comparar."]}
+/>
+
+<SqlTask
+  id="locales-del-sur"
+  enunciado="Trae el nombre de los locales que están en la región de Los Lagos o en la de Los Ríos."
+  solucion="SELECT nombre FROM locales WHERE region = 'Los Lagos' OR region = 'Los Ríos'"
+  comparar="filas-sin-orden"
+  pistas={["Basta con que se cumpla una de las dos condiciones: OR.", "La región está en la tabla locales, columna region."]}
+/>
+
+<Decision
+  pregunta="Quieres los locales de Los Lagos o Los Ríos con más de 180 m², y escribes WHERE region = 'Los Lagos' OR region = 'Los Ríos' AND metros2 > 180. El resultado trae Osorno Centro, que tiene 170 m². ¿Qué pasó?"
+  opciones={[
+    { texto: "AND se evalúa antes que OR: la consulta se lee como «Los Lagos, o (Los Ríos y más de 180 m²)». Hay que agrupar con paréntesis.", correcta: true, porque: "Igual que en matemática, el orden importa. Con (region = 'Los Lagos' OR region = 'Los Ríos') AND metros2 > 180 se lee como querías." },
+    { texto: "Un error de la base de datos.", porque: "La base hizo exactamente lo que dice la consulta; el problema está en cómo se escribió." },
+  ]}
+/>
+
+<Debrief entrevista="Una trampa común en pruebas de SQL es mezclar AND y OR sin paréntesis. Si te toca, dilo en voz alta: 'pongo paréntesis para que no dependa del orden en que se evalúan'.">
+`WHERE` filtra filas con condiciones que se combinan con `AND` y `OR`. `LIKE` busca patrones en textos. Cuando mezcles `AND` y `OR`, usa paréntesis siempre: es más claro y evita errores.
+</Debrief>

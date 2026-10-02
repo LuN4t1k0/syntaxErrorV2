@@ -1,0 +1,56 @@
+---
+titulo: Conoce las tablas
+tiempo: 20
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Hola, qué bueno que llegaste. Tenemos ocho minimarkets entre Talca y Puerto Montt, y todo lo que vendemos queda en una base de datos. Hasta ahora alguien exportaba planillas a mano y cada informe tardaba días. Quiero que aprendas a preguntarle directo a la base. Partamos por reconocer el terreno: dime dónde están nuestros locales y qué categorías de productos vendemos.
+</Brief>
+
+<Concepto>
+Una base de datos guarda la información en **tablas**, como las hojas de una planilla. Este caso tiene tres:
+
+| Tabla | Una fila es | Columnas |
+| --- | --- | --- |
+| `locales` | un minimarket | id, nombre, ciudad, region, metros2 |
+| `productos` | un producto del catálogo | id, nombre, categoria, precio, proveedor |
+| `ventas` | una venta en caja | id, fecha, local_id, producto_id, cantidad, monto, medio_pago |
+
+**SQL** es el lenguaje para preguntarle a la base. La pregunta más básica elige columnas de una tabla:
+
+<SqlEjemplo consulta="SELECT nombre, precio FROM productos" />
+
+- `SELECT *` trae todas las columnas; sirve para mirar, pero en un informe conviene elegir solo las que se necesitan.
+- `SELECT DISTINCT` quita los valores repetidos: con él ves cada categoría una sola vez, en vez de una por producto.
+
+Las tablas del caso están siempre a mano en "Tablas disponibles", sobre el editor.
+</Concepto>
+
+<SqlTask
+  id="locales-y-ciudades"
+  enunciado="Trae el nombre y la ciudad de cada local."
+  inicial="SELECT "
+  solucion="SELECT nombre, ciudad FROM locales"
+  comparar="filas-sin-orden"
+  pistas={["Los locales están en la tabla locales.", "Después de SELECT van las columnas separadas por coma, y después de FROM, la tabla."]}
+/>
+
+<SqlTask
+  id="categorias"
+  enunciado="Trae la lista de categorías de productos, cada una una sola vez."
+  solucion="SELECT DISTINCT categoria FROM productos"
+  comparar="filas-sin-orden"
+  pistas={["La categoría está en la tabla productos.", "Sin DISTINCT, cada categoría aparece una vez por producto."]}
+/>
+
+<Decision
+  pregunta="Rodrigo te pide 'todo lo de ventas' para revisarlo él. ¿Qué le entregas?"
+  opciones={[
+    { texto: "Le pregunto qué quiere saber; con eso elijo las columnas y filas que responden su pregunta.", correcta: true, porque: "650 filas con siete columnas no responden nada por sí solas. La pregunta define la consulta." },
+    { texto: "Un SELECT * FROM ventas y que él busque.", porque: "Le traspasas el trabajo de análisis y es probable que se pierda en los datos." },
+  ]}
+/>
+
+<Debrief entrevista="En entrevistas suelen mostrar un esquema de tablas y preguntar '¿qué representa una fila de esta tabla?'. Responder eso antes de escribir cualquier consulta muestra que entiendes los datos.">
+Antes de consultar, entiende qué es una fila en cada tabla: un local, un producto o una venta. `SELECT` elige columnas y `DISTINCT` quita repetidos. Con eso ya puedes explorar cualquier tabla nueva.
+</Debrief>

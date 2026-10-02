@@ -1,0 +1,50 @@
+---
+titulo: Filtrar grupos
+tiempo: 25
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Vamos a negociar con proveedores y necesito saber qué productos vendieron 55 unidades o más en el trimestre. También quiero saber en qué locales el ticket promedio, lo que gasta un cliente por venta, supera los 6.000 pesos: ahí vamos a probar productos más caros.
+</Brief>
+
+<Concepto>
+`WHERE` filtra **filas** antes de agrupar. Para filtrar **grupos** después de calcularlos se usa `HAVING`:
+
+<SqlEjemplo consulta="SELECT categoria, COUNT(*) AS productos FROM productos GROUP BY categoria HAVING COUNT(*) >= 5" />
+
+El orden de las cláusulas siempre es el mismo:
+
+```
+SELECT … FROM … WHERE … GROUP BY … HAVING … ORDER BY … LIMIT …
+```
+
+Una forma de recordarlo: `WHERE` decide qué filas entran a los grupos y `HAVING` decide qué grupos salen en el resultado. En `HAVING` se repite la función de resumen: `HAVING SUM(cantidad) >= 55`.
+</Concepto>
+
+<SqlTask
+  id="productos-populares"
+  enunciado="Trae el id de cada producto (producto_id) y la suma de sus unidades vendidas, solo para los que vendieron 55 unidades o más."
+  solucion="SELECT producto_id, SUM(cantidad) AS unidades FROM ventas GROUP BY producto_id HAVING SUM(cantidad) >= 55"
+  comparar="filas-sin-orden"
+  pistas={["Agrupa por producto_id y suma la columna cantidad.", "El filtro es sobre la suma, que existe después de agrupar: va en HAVING, no en WHERE."]}
+/>
+
+<SqlTask
+  id="locales-con-ticket-alto"
+  enunciado="Trae el id de cada local y su ticket promedio redondeado a pesos, solo para los locales con un ticket promedio mayor a 6000."
+  solucion="SELECT local_id, ROUND(AVG(monto), 0) AS ticket FROM ventas GROUP BY local_id HAVING AVG(monto) > 6000"
+  comparar="filas-sin-orden"
+  pistas={["El ticket promedio es el promedio del monto de cada venta: AVG(monto).", "ROUND(valor, 0) lo deja sin decimales.", "El filtro va en HAVING, sobre AVG(monto)."]}
+/>
+
+<Decision
+  pregunta="Un compañero escribió WHERE SUM(cantidad) >= 55 y la base le respondió con un error. ¿Por qué?"
+  opciones={[
+    { texto: "Porque WHERE se aplica a cada fila antes de agrupar, y en ese momento la suma todavía no existe.", correcta: true, porque: "Las sumas existen recién al agrupar. Por eso los filtros sobre ellas van en HAVING." },
+    { texto: "Porque SUM no se puede usar con números enteros.", porque: "SUM funciona con cualquier número; el problema es dónde está escrito el filtro." },
+  ]}
+/>
+
+<Debrief entrevista="'¿Cuál es la diferencia entre WHERE y HAVING?' es de las preguntas más repetidas en entrevistas de SQL. Responde con el orden: WHERE filtra filas antes de agrupar; HAVING filtra grupos después.">
+`HAVING` filtra grupos usando funciones de resumen. Con `WHERE` y `HAVING` en la misma consulta puedes, por ejemplo, contar solo las ventas con tarjeta y quedarte con los locales que superan cierto número.
+</Debrief>

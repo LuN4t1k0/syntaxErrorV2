@@ -1,0 +1,55 @@
+---
+titulo: Cruzar tablas
+tiempo: 30
+---
+
+<Brief de="Rodrigo Henríquez, gerente comercial de Minimarkets del Sur">
+Los resúmenes con códigos no me sirven para el directorio. Necesito las ventas por ciudad, con el nombre de la ciudad, y el top 10 de productos más vendidos en unidades, con su nombre. Si dos productos venden lo mismo, ordénalos alfabéticamente.
+</Brief>
+
+<Concepto>
+La tabla `ventas` guarda `local_id` y `producto_id`, no los nombres. Para traerlos se **cruzan** las tablas con `JOIN`, igual que el `BUSCARV` de las planillas, pero para todas las filas a la vez:
+
+<SqlEjemplo consulta="SELECT v.id, v.monto, l.nombre FROM ventas v JOIN locales l ON v.local_id = l.id LIMIT 5" />
+
+- `ventas v` y `locales l` les dan un **alias** corto a las tablas.
+- `ON v.local_id = l.id` dice qué columnas tienen que coincidir.
+- Con alias, cada columna se escribe con su tabla: `v.monto`, `l.nombre`. Así no hay dudas cuando dos tablas tienen una columna con el mismo nombre, como `id`.
+
+Después del `JOIN` se puede agrupar, filtrar y ordenar como siempre:
+
+```
+SELECT l.ciudad, SUM(v.monto) AS ventas
+FROM ventas v
+JOIN locales l ON v.local_id = l.id
+GROUP BY l.ciudad
+```
+</Concepto>
+
+<SqlTask
+  id="ventas-por-ciudad"
+  enunciado="Trae cada ciudad y la suma de los montos de venta de su local."
+  solucion="SELECT l.ciudad, SUM(v.monto) AS ventas FROM ventas v JOIN locales l ON v.local_id = l.id GROUP BY l.ciudad"
+  comparar="filas-sin-orden"
+  pistas={["Cruza ventas con locales: el local_id de la venta coincide con el id del local.", "Agrupa por la ciudad, que está en la tabla locales."]}
+/>
+
+<SqlTask
+  id="top-10-productos"
+  enunciado="Trae el nombre de los diez productos con más unidades vendidas y sus unidades, de mayor a menor. Si empatan, ordénalos por nombre."
+  solucion="SELECT p.nombre, SUM(v.cantidad) AS unidades FROM ventas v JOIN productos p ON v.producto_id = p.id GROUP BY p.nombre ORDER BY unidades DESC, p.nombre LIMIT 10"
+  comparar="filas-en-orden"
+  pistas={["Cruza ventas con productos por producto_id.", "Agrupa por el nombre del producto y suma la cantidad.", "Hay empates en el corte del top 10: ordena por unidades (DESC) y luego por nombre."]}
+/>
+
+<Decision
+  pregunta="Al cruzar productos con ventas, la Kombucha artesanal no aparece en ningún resultado, aunque está en el catálogo. ¿Qué significa?"
+  opciones={[
+    { texto: "Que no tiene ventas: JOIN solo deja las filas que coinciden en las dos tablas. Para ver los productos sin ventas se usa LEFT JOIN.", correcta: true, porque: "Un producto sin ventas es un dato valioso (¿se debe sacar del catálogo?), y JOIN lo esconde sin avisar." },
+    { texto: "Que la consulta tiene un error.", porque: "La consulta está bien: hace exactamente lo que JOIN hace con las filas que no coinciden." },
+  ]}
+/>
+
+<Debrief entrevista="Cruzar tablas es la base de casi toda prueba de SQL. Prepárate para explicar la diferencia entre JOIN (o INNER JOIN), que deja solo lo que coincide, y LEFT JOIN, que conserva todas las filas de la tabla de la izquierda.">
+`JOIN` une tablas por una columna en común y permite reportar con nombres en vez de códigos. Recuerda que un `JOIN` deja fuera lo que no tiene pareja: cuando eso importa, `LEFT JOIN` lo conserva.
+</Debrief>

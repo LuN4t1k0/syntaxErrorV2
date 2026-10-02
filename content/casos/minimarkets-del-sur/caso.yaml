@@ -1,0 +1,21 @@
+slug: minimarkets-del-sur
+titulo: "Minimarkets del Sur: responder a gerencia con SQL"
+cargo: Analista de datos junior
+empresa: Minimarkets del Sur
+dataset: Ventas de enero a marzo de 2025 de ocho locales entre Talca y Puerto Montt (datos generados con un script reproducible)
+entregable: Un repositorio en GitHub con tus consultas en archivos .sql, cada una con un comentario que diga qué pregunta responde, y un README con lo que encontraste y qué le recomiendas a gerencia.
+archivos:
+  - .sql
+rubrica:
+  - "Cada consulta responde una pregunta concreta, y el comentario dice cuál."
+  - "Las consultas se pueden leer: alias claros, una cláusula por línea y orden explícito cuando importa."
+  - "El README explica qué se encontró, por ejemplo qué pasó con Osorno en marzo, y lo respalda con resultados de las consultas."
+misiones:
+  - 01-conoce-las-tablas
+  - 02-filtrar
+  - 03-ordenar-y-limitar
+  - 04-resumir-con-group-by
+  - 05-filtrar-grupos
+  - 06-cruzar-tablas
+  - 07-ventas-por-mes
+  - 08-preguntas-de-gerencia
