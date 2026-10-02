@@ -18,4 +18,6 @@ const carpeta = path.resolve(aula, "public", "datasets");
 const archivos = existsSync(carpeta)
   ? Object.fromEntries(readdirSync(carpeta).filter((nombre) => nombre.endsWith(".csv")).sort().map((nombre) => [nombre, readFileSync(path.join(carpeta, nombre), "utf8")]))
   : {};
-process.stdout.write(`${JSON.stringify({ modules: lecciones.modules ?? [], lessons: lecciones.lessons, datasets, archivos }, null, 2)}\n`);
+// Lo que algunas aulas guardan aparte de cada lección (en IA para datos: conceptos, caso y quiz).
+const enhancements = lecciones.lessonEnhancements ?? {};
+process.stdout.write(`${JSON.stringify({ modules: lecciones.modules ?? [], lessons: lecciones.lessons, datasets, archivos, enhancements }, null, 2)}\n`);

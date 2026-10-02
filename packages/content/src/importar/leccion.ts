@@ -8,7 +8,7 @@
 // Una sección del concepto: párrafos y, si la tiene, una consulta que se puede probar (ejemplo), una fórmula de
 // planilla que solo se muestra (formula) o código de Python que solo se muestra (codigo), porque usa los datos de la
 // preparación de la tarea.
-export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null; codigo?: string | null; lenguaje?: string };
+export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null; codigo?: string | null; lenguaje?: string; lista?: string[] };
 
 // Una práctica fuera de la plataforma (por ejemplo, en Power BI Desktop): qué se hace, los pasos y el archivo de datos.
 export type Practica = { enunciado: string; pasos: string[]; datos: { nombre: string; enlace: string } | null };
@@ -51,7 +51,15 @@ export type TareaPython = {
 // Una lección de lectura: una pregunta para pensar y la respuesta del curso.
 export type TareaLectura = { tipo: "LecturaTask"; id: string; pregunta: string; respuesta: string };
 
-export type Tarea = TareaSql | TareaHoja | TareaPython | TareaLectura;
+// Un quiz de opción única: se aprueba con todas las respuestas correctas.
+export type TareaQuiz = {
+  tipo: "QuizTask";
+  id: string;
+  preguntas: { pregunta: string; opciones: string[]; correcta: number; explicacion: string }[];
+  pistas: string[];
+};
+
+export type Tarea = TareaSql | TareaHoja | TareaPython | TareaLectura | TareaQuiz;
 
 export type Leccion = {
   slug: string;
@@ -75,7 +83,8 @@ export function escaparTexto(texto: string): string {
 const atributo = (valor: string) => `{${JSON.stringify(valor)}}`;
 
 function seccionMdx(seccion: Seccion): string {
-  const partes = [`**${escaparTexto(seccion.titulo)}.** ${seccion.parrafos.map(escaparTexto).join(" ")}`];
+  const partes = [[`**${escaparTexto(seccion.titulo)}.**`, ...seccion.parrafos.map(escaparTexto)].join(" ")];
+  if (seccion.lista?.length) partes.push(seccion.lista.map((item) => `- ${escaparTexto(item)}`).join("\n"));
   if (seccion.ejemplo) partes.push(`<SqlEjemplo consulta=${atributo(seccion.ejemplo)} />`);
   if (seccion.formula) partes.push(`<Sintaxis lenguaje="planilla" codigo=${atributo(seccion.formula)} />`);
   // Un bloque de código de MDX se muestra tal cual: no necesita escaparse.
@@ -125,6 +134,8 @@ function tareaMdx(tarea: Tarea): string[] {
         `  pistas={${JSON.stringify(tarea.pistas)}}`,
         "/>",
       ];
+    case "QuizTask":
+      return ["<QuizTask", `  id="${tarea.id}"`, `  preguntas={${JSON.stringify(tarea.preguntas)}}`, `  pistas={${JSON.stringify(tarea.pistas)}}`, "/>"];
     case "LecturaTask":
       return ["<LecturaTask", `  id="${tarea.id}"`, `  pregunta=${atributo(tarea.pregunta)}`, `  respuesta=${atributo(tarea.respuesta)}`, "/>"];
   }
@@ -167,18 +178,22 @@ const TILDES: Record<string, string> = {
   analitica: "analítica",
   anio: "año",
   anios: "años",
+  anonimizacion: "anonimización",
   antiguedad: "antigüedad",
   aparicion: "aparición",
   aplicacion: "aplicación",
   aplicala: "aplícala",
   aqui: "aquí",
   area: "área",
+  areas: "áreas",
   aritmetica: "aritmética",
   aritmeticos: "aritméticos",
   asi: "así",
+  asignacion: "asignación",
   automaticamente: "automáticamente",
   automaticas: "automáticas",
   automaticos: "automáticos",
+  autorizacion: "autorización",
   basica: "básica",
   basicas: "básicas",
   basico: "básico",
@@ -192,6 +207,7 @@ const TILDES: Record<string, string> = {
   categorias: "categorías",
   categoricas: "categóricas",
   cirugia: "cirugía",
+  clasificacion: "clasificación",
   codigo: "código",
   codigos: "códigos",
   coleccion: "colección",
@@ -199,7 +215,9 @@ const TILDES: Record<string, string> = {
   como: "cómo",
   comodo: "cómodo",
   comparacion: "comparación",
+  comprobacion: "comprobación",
   comun: "común",
+  conclusion: "conclusión",
   condicion: "condición",
   conexion: "conexión",
   configuracion: "configuración",
@@ -213,9 +231,11 @@ const TILDES: Record<string, string> = {
   deberia: "debería",
   deberian: "deberían",
   decision: "decisión",
+  definicion: "definición",
   desafio: "desafío",
   descripcion: "descripción",
   despues: "después",
+  devolucion: "devolución",
   dia: "día",
   diagnostico: "diagnóstico",
   dias: "días",
@@ -226,12 +246,14 @@ const TILDES: Record<string, string> = {
   dinamicas: "dinámicas",
   dinamico: "dinámico",
   direccion: "dirección",
+  dispersion: "dispersión",
   distribucion: "distribución",
   division: "división",
   dolar: "dólar",
   dolio: "dolió",
   donde: "dónde",
   edicion: "edición",
+  ejecucion: "ejecución",
   ejecutalo: "ejecútalo",
   eleccion: "elección",
   especifica: "específica",
@@ -242,8 +264,11 @@ const TILDES: Record<string, string> = {
   evalua: "evalúa",
   evolucion: "evolución",
   existia: "existía",
+  explicacion: "explicación",
+  explicita: "explícita",
   explicitamente: "explícitamente",
   exploracion: "exploración",
+  exposicion: "exposición",
   expresion: "expresión",
   facil: "fácil",
   formula: "fórmula",
@@ -251,6 +276,7 @@ const TILDES: Record<string, string> = {
   funcion: "función",
   grafico: "gráfico",
   graficos: "gráficos",
+  guia: "guía",
   harias: "harías",
   identica: "idéntica",
   incluyendote: "incluyéndote",
@@ -262,7 +288,10 @@ const TILDES: Record<string, string> = {
   instruccion: "instrucción",
   intentaria: "intentaría",
   interaccion: "interacción",
+  interpretacion: "interpretación",
   interseccion: "intersección",
+  intuicion: "intuición",
+  inutil: "inútil",
   jerarquia: "jerarquía",
   jerarquias: "jerarquías",
   jerarquicos: "jerárquicos",
@@ -281,17 +310,21 @@ const TILDES: Record<string, string> = {
   mayusculas: "mayúsculas",
   mecanicos: "mecánicos",
   metrica: "métrica",
+  metricas: "métricas",
+  minimizacion: "minimización",
   minimo: "mínimo",
   minusculas: "minúsculas",
   mision: "misión",
   moderacion: "moderación",
   muestrame: "muéstrame",
   multiples: "múltiples",
+  normalizacion: "normalización",
   numerica: "numérica",
   numericas: "numéricas",
   numero: "número",
   numeros: "números",
   obligaria: "obligaría",
+  observacion: "observación",
   ocurrio: "ocurrió",
   operacion: "operación",
   origenes: "orígenes",
@@ -308,6 +341,7 @@ const TILDES: Record<string, string> = {
   posicion: "posición",
   precision: "precisión",
   presentacion: "presentación",
+  produccion: "producción",
   proporcion: "proporción",
   proxima: "próxima",
   proximo: "próximo",
@@ -316,9 +350,12 @@ const TILDES: Record<string, string> = {
   rapida: "rápida",
   rapido: "rápido",
   razon: "razón",
+  recomendacion: "recomendación",
   region: "región",
   relacion: "relación",
   repeticion: "repetición",
+  revision: "revisión",
+  sabras: "sabrás",
   sangria: "sangría",
   seccion: "sección",
   segmentacion: "segmentación",
@@ -327,16 +364,22 @@ const TILDES: Record<string, string> = {
   semaforo: "semáforo",
   sesion: "sesión",
   simultanea: "simultánea",
+  sistematicos: "sistemáticos",
   solucion: "solución",
   subexpresion: "subexpresión",
+  suposicion: "suposición",
   tambien: "también",
+  taxonomia: "taxonomía",
+  tecnica: "técnica",
   tecnicamente: "técnicamente",
+  telefonicos: "telefónicos",
   tendran: "tendrán",
   tenias: "tenías",
   teoria: "teoría",
   tipicamente: "típicamente",
   tipico: "típico",
   tipicos: "típicos",
+  tipografia: "tipografía",
   todavia: "todavía",
   transformacion: "transformación",
   trio: "trío",
@@ -350,6 +393,7 @@ const TILDES: Record<string, string> = {
   utiles: "útiles",
   vacia: "vacía",
   vacio: "vacío",
+  validacion: "validación",
   valido: "válido",
   vendio: "vendió",
   verificacion: "verificación",

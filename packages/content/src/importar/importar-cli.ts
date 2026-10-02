@@ -3,28 +3,29 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { aCsv } from "../generadores/despachos-rapidos";
 import { convertirLeccionExcel, type LeccionExcelV1 } from "./aula-excel";
+import { convertirLeccionIa, type LeccionIaV1, type MejoraIaV1 } from "./aula-ia";
 import { columnasDeDatasets, convertirLeccionPowerBi, type LeccionPowerBiV1 } from "./aula-powerbi";
 import { convertirLeccionPython, identificadoresPython, type LeccionPythonV1 } from "./aula-python";
 import { convertirLeccionSql, datosSql, identificadores, type AulaV1 } from "./aula-sql";
 import { leccionAMdx, type Leccion } from "./leccion";
 
 // Escribe el borrador de unas clases a partir de un aula de la v1 exportada a JSON (scripts/exportar-aula-v1.mjs).
-// Uso: pnpm --filter @syntaxerror/content importar <sql|excel|python|powerbi> <aula.json> <carpeta de destino> <lecciones separadas por coma>
+// Uso: pnpm --filter @syntaxerror/content importar <sql|excel|python|powerbi|ia> <aula.json> <carpeta de destino> <lecciones separadas por coma>
 // Escribe misiones/NN-<lección>.mdx, un caso.yaml para completar y, en SQL, datos/<tabla>.csv con las tablas que usan
 // (en Excel cada lección trae su planilla y en Python, su preparación). En Power BI copia los datasets del aula. No pisa contenido: la carpeta de destino no debe existir. Después del
 // borrador viene la revisión editorial.
 
-const AULAS = { sql: "Clases de SQL", excel: "Clases de Excel", python: "Clases de Python", powerbi: "Clases de Power BI" } as const;
+const AULAS = { sql: "Clases de SQL", excel: "Clases de Excel", python: "Clases de Python", powerbi: "Clases de Power BI", ia: "Clases de IA para datos" } as const;
 type Aula = keyof typeof AULAS;
 
 const [aula, entrada, destino, seleccion] = process.argv.slice(2);
 if (!(aula in AULAS) || !entrada || !destino || !seleccion) {
-  console.error("Uso: importar <sql|excel|python|powerbi> <aula.json> <carpeta de destino> <lección,lección,...>");
+  console.error("Uso: importar <sql|excel|python|powerbi|ia> <aula.json> <carpeta de destino> <lección,lección,...>");
   process.exit(1);
 }
 
 // Cada aula tiene la forma de sus lecciones: se leen como tales en su rama.
-const datos = JSON.parse(await readFile(entrada, "utf8")) as { lessons: { slug: string }[]; datasets: AulaV1["datasets"]; archivos?: Record<string, string> };
+const datos = JSON.parse(await readFile(entrada, "utf8")) as { lessons: { slug: string }[]; datasets: AulaV1["datasets"]; archivos?: Record<string, string>; enhancements?: Record<string, MejoraIaV1> };
 const slugs = seleccion.split(",").map((slug) => slug.trim()).filter(Boolean);
 const elegidas = slugs.map((slug) => {
   const v1 = datos.lessons.find((leccion) => leccion.slug === slug);
@@ -41,6 +42,8 @@ if ((aula as Aula) === "sql") {
   tablas = [...new Set(sql.flatMap((v1) => v1.datasetTables ?? []))].sort();
 } else if ((aula as Aula) === "excel") {
   lecciones = (elegidas as LeccionExcelV1[]).map((v1, indice) => convertirLeccionExcel(v1, indice + 1));
+} else if ((aula as Aula) === "ia") {
+  lecciones = (elegidas as LeccionIaV1[]).map((v1, indice) => convertirLeccionIa(v1, datos.enhancements?.[v1.slug], indice + 1));
 } else if ((aula as Aula) === "powerbi") {
   const excepto = columnasDeDatasets(datos.archivos ?? {});
   lecciones = (elegidas as LeccionPowerBiV1[]).map((v1, indice) => convertirLeccionPowerBi(v1, indice + 1, path.basename(destino), excepto));
