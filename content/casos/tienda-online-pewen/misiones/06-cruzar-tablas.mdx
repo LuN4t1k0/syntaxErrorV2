@@ -1,0 +1,43 @@
+---
+titulo: Cruzar tablas
+tiempo: 30
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Para planificar el próximo año necesito dos cosas: cuánto vendimos por categoría de producto y cuánto por región de nuestros clientes, siempre en pedidos entregados. La categoría está en productos y la región en clientes: vas a tener que juntar las tablas.
+</Brief>
+
+<Concepto>
+`merge` une dos tablas por una columna en común, como `JOIN` en SQL o `BUSCARV` en una planilla:
+
+<PythonEjemplo codigo={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nproductos = pd.read_csv(\"datos/productos.csv\")\ncon_producto = pedidos.merge(productos, on=\"producto_id\")\nprint(con_producto[[\"pedido_id\", \"nombre\", \"categoria\"]].head())"} />
+
+- `on="producto_id"` dice qué columna tienen que compartir las dos tablas.
+- El resultado tiene las columnas de ambas tablas, y luego se filtra y agrupa como siempre.
+- Revisa que la cantidad de filas no cambie: si sube, la columna de unión tenía valores repetidos en la otra tabla.
+
+En esta misión, `pedidos` ya viene limpio y con la columna `monto`.
+</Concepto>
+
+<PythonTask
+  id="ventas-por-categoria-y-region"
+  enunciado="Une pedidos con productos en con_producto y guarda en ventas_por_categoria el monto de los pedidos entregados de cada categoría. Luego une pedidos con clientes en con_cliente y guarda en ventas_por_region el monto entregado de cada región."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nclientes = pd.read_csv(\"datos/clientes.csv\")\nproductos = pd.read_csv(\"datos/productos.csv\")\npedidos = pedidos.drop_duplicates().dropna(subset=[\"cantidad\"])\npedidos[\"cantidad\"] = pedidos[\"cantidad\"].astype(int)\npedidos[\"fecha\"] = pd.to_datetime(pedidos[\"fecha\"])\nclientes[\"region\"] = clientes[\"region\"].fillna(\"Sin región\")\npedidos[\"monto\"] = pedidos[\"cantidad\"] * pedidos[\"precio_unitario\"]"}
+  inicial={"con_producto = None\nventas_por_categoria = None\ncon_cliente = None\nventas_por_region = None"}
+  solucion={"con_producto = pedidos.merge(productos, on=\"producto_id\")\nventas_por_categoria = con_producto[con_producto[\"estado\"] == \"entregado\"].groupby(\"categoria\")[\"monto\"].sum()\ncon_cliente = pedidos.merge(clientes, on=\"cliente_id\")\nventas_por_region = con_cliente[con_cliente[\"estado\"] == \"entregado\"].groupby(\"region\")[\"monto\"].sum()"}
+  pruebas={"assert len(con_producto) == 415, \"con_producto debe tener una fila por pedido.\"\nassert \"categoria\" in con_producto.columns, \"con_producto debe traer la categoría desde productos.\"\nassert ventas_por_categoria[\"Hogar\"] == 3300350, \"ventas_por_categoria debe sumar el monto de los pedidos entregados de cada categoría.\"\nassert len(con_cliente) == 415, \"con_cliente debe tener una fila por pedido.\"\nassert ventas_por_region[\"Metropolitana\"] == 6466700, \"ventas_por_region debe sumar el monto entregado de cada región.\"\nassert ventas_por_region[\"Sin región\"] == 341800, \"ventas_por_region debe incluir a los clientes Sin región.\""}
+  paquetes={["pandas"]}
+  pistas={["pedidos.merge(productos, on=\"producto_id\") trae la categoría a cada pedido.", "Filtra los entregados y agrupa por categoria, sumando monto.", "Para la región es lo mismo con clientes y la columna cliente_id."]}
+/>
+
+<Decision
+  pregunta="Después de un merge, la tabla tiene más filas que pedidos. ¿Qué significa?"
+  opciones={[
+    { texto: "Que en la otra tabla hay valores repetidos en la columna de unión, y cada pedido se cruzó con más de una fila. Hay que revisarlo antes de sumar.", correcta: true, porque: "Un merge que multiplica filas infla los totales sin dar error. Comparar la cantidad de filas antes y después es el control más simple." },
+    { texto: "Que el merge agregó información nueva, así que está bien.", porque: "Un merge de búsqueda (traer la categoría) no debería cambiar cuántos pedidos hay." },
+  ]}
+/>
+
+<Debrief entrevista="Si te preguntan por merge o JOIN, menciona el control de filas: 'antes y después del cruce reviso que la cantidad de filas tenga sentido'. Es una señal clara de experiencia.">
+`merge` cruza tablas por una columna en común. Con él puedes llevar a cada pedido los datos de su producto o de su cliente, y después resumir por cualquiera de ellos.
+</Debrief>

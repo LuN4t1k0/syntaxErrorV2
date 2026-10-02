@@ -1,0 +1,45 @@
+---
+titulo: Detectar patrones
+tiempo: 30
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Tengo dos sospechas y quiero datos. Primero, que la ropa se nos devuelve mucho más que lo demás. Segundo, que nos jugamos el año en noviembre, con el Black Friday. Calcula la tasa de devolución de cada categoría y las ventas de cada mes, y dime cuál fue el mes más fuerte.
+</Brief>
+
+<Concepto>
+Una **tasa** es una proporción: de cada 100 pedidos, cuántos se devolvieron. En pandas hay un truco útil: el promedio de una columna de `True`/`False` es la proporción de `True`.
+
+`con_producto["devuelto"] = con_producto["estado"] == "devuelto"` crea una columna con `True` o `False`, y `groupby("categoria")["devuelto"].mean()` da la tasa de cada categoría.
+
+Con fechas de verdad (las convertiste en la misión de limpieza), `.dt` da acceso a sus partes: `.dt.month` es el mes, `.dt.year` el año y `.dt.dayofweek` el día de la semana:
+
+<PythonEjemplo codigo={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\npedidos[\"fecha\"] = pd.to_datetime(pedidos[\"fecha\"])\nprint(pedidos.groupby(pedidos[\"fecha\"].dt.month)[\"pedido_id\"].count())"} />
+
+`idxmax()` devuelve la etiqueta del valor más alto, por ejemplo el mes con más ventas.
+
+En esta misión ya tienes `pedidos` limpio con `monto`, `entregados` y `con_producto`.
+</Concepto>
+
+<PythonTask
+  id="devoluciones-y-meses"
+  enunciado="Guarda en tasa_devolucion la proporción de pedidos devueltos de cada categoría, redondeada a 2 decimales. Guarda en ventas_por_mes el monto de los pedidos entregados de cada mes (el número del mes) y en mes_top el mes con más ventas."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nproductos = pd.read_csv(\"datos/productos.csv\")\npedidos = pedidos.drop_duplicates().dropna(subset=[\"cantidad\"])\npedidos[\"cantidad\"] = pedidos[\"cantidad\"].astype(int)\npedidos[\"fecha\"] = pd.to_datetime(pedidos[\"fecha\"])\npedidos[\"monto\"] = pedidos[\"cantidad\"] * pedidos[\"precio_unitario\"]\nentregados = pedidos[pedidos[\"estado\"] == \"entregado\"]\ncon_producto = pedidos.merge(productos, on=\"producto_id\")"}
+  inicial={"tasa_devolucion = None\nventas_por_mes = None\nmes_top = None"}
+  solucion={"con_producto[\"devuelto\"] = con_producto[\"estado\"] == \"devuelto\"\ntasa_devolucion = con_producto.groupby(\"categoria\")[\"devuelto\"].mean().round(2)\nventas_por_mes = entregados.groupby(entregados[\"fecha\"].dt.month)[\"monto\"].sum()\nmes_top = ventas_por_mes.idxmax()"}
+  pruebas={"assert round(float(tasa_devolucion[\"Vestuario\"]), 2) == 0.23, \"tasa_devolucion debe ser la proporción de pedidos devueltos de cada categoría.\"\nassert round(float(tasa_devolucion[\"Cocina\"]), 2) == 0.05, \"tasa_devolucion no coincide en Cocina: revisa que cuentes todos los pedidos de la categoría.\"\nassert ventas_por_mes[11] == 3585120, \"ventas_por_mes debe sumar el monto de los pedidos entregados de cada mes, con el mes como número.\"\nassert mes_top == 11, \"mes_top debe ser el mes con más ventas.\""}
+  paquetes={["pandas"]}
+  pistas={["Crea en con_producto una columna con estado == \"devuelto\" y promedia esa columna por categoría.", "El mes de una fecha es entregados[\"fecha\"].dt.month; úsalo dentro del groupby.", "idxmax() da el mes del valor más alto."]}
+/>
+
+<Decision
+  pregunta="Vestuario se devuelve 23 % de las veces y lo demás entre 5 % y 7 %. ¿Qué le recomiendas a Antonia?"
+  opciones={[
+    { texto: "Investigar por qué: si es por tallas, mejorar la guía de tallas puede bajar las devoluciones. Y medir de nuevo en unos meses.", correcta: true, porque: "Un patrón en los datos es el punto de partida, no la respuesta. La recomendación propone una causa a verificar y cómo medir si funcionó." },
+    { texto: "Dejar de vender ropa.", porque: "Vestuario igual vende mucho. Cortar una categoría por un problema que tal vez tiene arreglo es una decisión apurada." },
+  ]}
+/>
+
+<Debrief entrevista="Un clásico de entrevistas: 'encontraste que X sube en noviembre, ¿qué haces?'. Distingue entre describir (subió) y explicar (por qué), y propone cómo verificar la explicación.">
+Las tasas comparan grupos de distinto tamaño de forma justa, y las fechas permiten ver estacionalidad. Juntas convierten sospechas en datos: Vestuario se devuelve casi cuatro veces más que el resto y noviembre vende más del doble que un mes normal.
+</Debrief>

@@ -1,0 +1,22 @@
+slug: tienda-online-pewen
+titulo: "Tienda Online Pewen: analizar ventas con Python y pandas"
+cargo: Analista de datos junior
+empresa: Tienda Online Pewen
+dataset: Pedidos, productos y clientes de julio a diciembre de 2025 (datos generados con un script reproducible)
+entregable: Un repositorio en GitHub con tu notebook de análisis (.ipynb, por ejemplo hecho en Google Colab), que cargue y limpie los datos, responda las preguntas de Antonia y cierre con recomendaciones, más un README que resuma lo que encontraste.
+archivos:
+  - .ipynb
+rubrica:
+  - "El notebook se puede ejecutar de principio a fin y cada paso tiene una explicación breve en texto."
+  - "La limpieza está documentada: qué problemas había, cuántas filas afectaba cada uno y qué se hizo."
+  - "Las recomendaciones se apoyan en resultados del notebook, como las devoluciones de Vestuario o el peso de noviembre."
+misiones:
+  - 01-de-la-planilla-a-python
+  - 02-cargar-y-explorar
+  - 03-filtrar-y-seleccionar
+  - 04-limpiar
+  - 05-agrupar-y-resumir
+  - 06-cruzar-tablas
+  - 07-detectar-patrones
+  - 08-revisar-el-codigo-de-la-ia
+  - 09-recomendaciones-para-el-negocio

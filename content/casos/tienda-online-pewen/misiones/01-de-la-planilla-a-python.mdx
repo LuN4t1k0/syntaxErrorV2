@@ -1,0 +1,63 @@
+---
+titulo: De la planilla a Python
+tiempo: 25
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Hola, bienvenida o bienvenido a Pewen. Vendemos productos de hogar y vestuario por internet, y cada semana alguien arma los informes a mano en planillas. Queremos automatizarlos con Python. Antes de tocar los datos reales, quiero que te sientas cómoda o cómodo con lo básico: guardar valores, calcular con listas y armar tu primera tabla.
+</Brief>
+
+<Concepto>
+En Python, una **variable** guarda un valor con un nombre: `precio = 24990`. Ese nombre se usa después en los cálculos, como una celda con nombre en una planilla.
+
+Una **lista** guarda varios valores en orden, entre corchetes: `precios = [24990, 8990, 39990]`. Algunas funciones que vas a usar mucho:
+
+| Python | Qué hace | En planilla |
+| --- | --- | --- |
+| `sum(precios)` | suma la lista | `SUMA` |
+| `len(precios)` | cuenta los elementos | `CONTAR` |
+| `max(precios)` | el mayor | `MAX` |
+| `round(valor)` | redondea al entero | `REDONDEAR(valor; 0)` |
+
+<PythonEjemplo codigo={"precios = [24990, 8990, 39990]\ntotal = sum(precios)\nprint(\"Total:\", total)\nprint(\"Productos:\", len(precios))"} />
+
+Para trabajar con tablas se usa **pandas**. Una tabla de pandas se llama `DataFrame` y se puede crear a partir de columnas:
+
+<PythonEjemplo codigo={"import pandas as pd\ntabla = pd.DataFrame({\"producto\": [\"Toalla\", \"Manta\"], \"precio\": [8990, 22990]})\nprint(tabla)"} />
+
+Después de **Ejecutar**, las tablas que quedan en variables se muestran ordenadas bajo el editor.
+</Concepto>
+
+<PythonTask
+  id="totales-del-carrito"
+  enunciado="La lista precios tiene los productos de un carrito. Guarda en total la suma de los precios y en promedio el precio promedio, redondeado a pesos."
+  preparacion={"precios = [24990, 8990, 39990, 14990]"}
+  inicial={"total = None\npromedio = None"}
+  solucion={"total = sum(precios)\npromedio = round(total / len(precios))"}
+  pruebas={"assert total == 88960, \"total debe ser la suma de los precios de la lista.\"\nassert promedio == 22240, \"promedio debe ser el total dividido por la cantidad de productos, redondeado.\""}
+  paquetes={["pandas"]}
+  pistas={["sum(precios) suma la lista y len(precios) cuenta cuántos precios hay.", "El promedio es el total dividido por la cantidad; round() lo deja sin decimales."]}
+/>
+
+<PythonTask
+  id="primera-tabla"
+  enunciado="Crea un DataFrame llamado catalogo con dos columnas: nombre (Juego de sábanas, Toalla de baño y Plumón nórdico) y precio (24990, 8990 y 39990). Luego guarda en mas_caro el precio más alto de la tabla."
+  preparacion={"import pandas as pd"}
+  inicial={"catalogo = None\nmas_caro = None"}
+  solucion={"catalogo = pd.DataFrame({\"nombre\": [\"Juego de sábanas\", \"Toalla de baño\", \"Plumón nórdico\"], \"precio\": [24990, 8990, 39990]})\nmas_caro = catalogo[\"precio\"].max()"}
+  pruebas={"assert isinstance(catalogo, pd.DataFrame), \"catalogo debe ser un DataFrame de pandas.\"\nassert list(catalogo.columns) == [\"nombre\", \"precio\"], \"catalogo debe tener las columnas nombre y precio, en ese orden.\"\nassert len(catalogo) == 3, \"catalogo debe tener tres productos.\"\nassert mas_caro == 39990, \"mas_caro debe ser el precio más alto de la columna precio.\""}
+  paquetes={["pandas"]}
+  pistas={["pd.DataFrame recibe un diccionario: cada clave es una columna y su valor, una lista.", "Una columna se lee con catalogo[\"precio\"], y .max() da el mayor valor."]}
+/>
+
+<Decision
+  pregunta="¿Por qué conviene pasar de la planilla a Python para el informe semanal?"
+  opciones={[
+    { texto: "Porque el código se puede volver a ejecutar cada semana con datos nuevos y hace siempre los mismos pasos, sin copiar y pegar.", correcta: true, porque: "Automatizar no es hacer algo más difícil: es dejar escrito el proceso para que sea repetible y revisable." },
+    { texto: "Porque Python da resultados más exactos que una planilla.", porque: "Ambos calculan bien. La ventaja está en repetir el análisis sin errores manuales y en manejar más datos." },
+  ]}
+/>
+
+<Debrief entrevista="Es común que pregunten '¿qué diferencia hay entre una lista y un DataFrame?'. Una respuesta clara: la lista guarda valores en orden; el DataFrame es una tabla con columnas con nombre, como una hoja de planilla.">
+Variables, listas y funciones como `sum` y `len` son la base de todo lo que viene. pandas agrega las tablas (`DataFrame`), y con ellas vas a hacer en Python lo mismo que en la planilla y en SQL: filtrar, resumir y cruzar.
+</Debrief>

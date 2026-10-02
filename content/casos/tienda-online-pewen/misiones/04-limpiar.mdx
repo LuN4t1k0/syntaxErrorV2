@@ -1,0 +1,49 @@
+---
+titulo: Limpiar
+tiempo: 30
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Con lo que encontraste me quedé preocupada: pedidos sin cantidad, fechas que parecen texto y clientes sin región. Antes de calcular ventas, deja los datos listos. Y cuéntame cuántos pedidos venían sin cantidad, para hablarlo con quien carga los datos.
+</Brief>
+
+<Concepto>
+Cuatro herramientas para los problemas más comunes:
+
+**Vacíos.** `isna()` marca las celdas vacías (en pandas se llaman `NaN`) y `.sum()` las cuenta:
+
+`pedidos["cantidad"].isna().sum()`
+
+Después se decide qué hacer: `dropna(subset=["cantidad"])` quita esas filas, y `fillna("Sin región")` las rellena con un valor.
+
+**Duplicados.** `drop_duplicates()` quita las filas idénticas a otra.
+
+**Tipos.** Una columna con vacíos queda como decimal (`4.0`). `astype(int)` la pasa a entero, una vez que ya no tiene vacíos. Las fechas llegan como texto: `pd.to_datetime` las convierte en fechas de verdad, con las que se puede agrupar por mes.
+
+<PythonEjemplo codigo={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nprint(pedidos.dtypes)\nprint(\"Duplicados:\", pedidos.duplicated().sum())"} />
+
+Un cambio sobre una columna se guarda asignándolo: `pedidos["fecha"] = pd.to_datetime(pedidos["fecha"])`. Las operaciones sobre la tabla completa devuelven una tabla nueva, así que hay que guardarla: `pedidos = pedidos.drop_duplicates()`.
+</Concepto>
+
+<PythonTask
+  id="limpiar-pedidos"
+  enunciado="Guarda en nulos cuántos pedidos vienen sin cantidad. Después limpia pedidos: quita los duplicados y las filas sin cantidad, deja cantidad como entero y fecha como fecha. Por último, rellena las regiones vacías de clientes con «Sin región»."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nclientes = pd.read_csv(\"datos/clientes.csv\")"}
+  inicial="nulos = None"
+  solucion={"nulos = pedidos[\"cantidad\"].isna().sum()\npedidos = pedidos.drop_duplicates()\npedidos = pedidos.dropna(subset=[\"cantidad\"])\npedidos[\"cantidad\"] = pedidos[\"cantidad\"].astype(int)\npedidos[\"fecha\"] = pd.to_datetime(pedidos[\"fecha\"])\nclientes[\"region\"] = clientes[\"region\"].fillna(\"Sin región\")"}
+  pruebas={"assert nulos == 5, \"nulos debe contar los pedidos sin cantidad, antes de quitar nada.\"\nassert len(pedidos) == 415, \"pedidos debe quedar sin duplicados y sin filas sin cantidad.\"\nassert pedidos.duplicated().sum() == 0, \"pedidos todavía tiene filas duplicadas.\"\nassert str(pedidos[\"cantidad\"].dtype).startswith(\"int\"), \"La columna cantidad debe quedar como número entero.\"\nassert pd.api.types.is_datetime64_any_dtype(pedidos[\"fecha\"]), \"La columna fecha debe quedar como fecha, no como texto.\"\nassert clientes[\"region\"].isna().sum() == 0 and (clientes[\"region\"] == \"Sin región\").sum() == 6, \"Las regiones vacías de clientes deben quedar como «Sin región».\""}
+  paquetes={["pandas"]}
+  pistas={["Cuenta los vacíos antes de quitarlos: después ya no estarán.", "Cada operación sobre la tabla se guarda: pedidos = pedidos.drop_duplicates().", "astype(int) falla si quedan vacíos: quítalos primero con dropna(subset=[\"cantidad\"])."]}
+/>
+
+<Decision
+  pregunta="Hay 5 pedidos sin cantidad. ¿Por qué no rellenarlos con 1, que es la cantidad más común?"
+  opciones={[
+    { texto: "Porque inventaría ventas que no sabemos si ocurrieron así. Prefiero quitarlos, contarlos y avisar a quien carga los datos.", correcta: true, porque: "Rellenar es razonable cuando el valor por defecto es seguro (como «Sin región»), no cuando cambia los montos que se van a informar." },
+    { texto: "Porque pandas no permite rellenar números.", porque: "fillna rellena números sin problema; la decisión es de criterio, no técnica." },
+  ]}
+/>
+
+<Debrief entrevista="Casi siempre preguntan: '¿qué haces con los valores faltantes?'. La mejor respuesta no es una regla fija: depende de qué representa el dato, cuántos son y cómo afecta el resultado, y siempre se documenta.">
+Limpiar es medir el problema (cuántos vacíos y cuántos duplicados), decidir qué hacer con cada uno y dejarlo escrito. Desde la próxima misión, este código de limpieza corre automáticamente antes del tuyo.
+</Debrief>

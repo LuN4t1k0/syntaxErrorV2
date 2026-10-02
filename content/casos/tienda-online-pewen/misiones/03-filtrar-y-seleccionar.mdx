@@ -1,0 +1,58 @@
+---
+titulo: Filtrar y seleccionar
+tiempo: 25
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Atención al cliente me pide los pedidos devueltos para llamar a esos clientes. Y logística quiere los pedidos entregados de 3 unidades o más, solo con el número de pedido y la cantidad, para revisar el embalaje de los envíos grandes.
+</Brief>
+
+<Concepto>
+Para **filtrar filas**, se escribe una condición entre corchetes. La condición da `True` o `False` para cada fila, y quedan solo las `True`:
+
+<PythonEjemplo codigo={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\ncancelados = pedidos[pedidos[\"estado\"] == \"cancelado\"]\nprint(len(cancelados))"} />
+
+Para combinar condiciones se usan `&` (y) y `|` (o), con **cada condición entre paréntesis**:
+
+`pedidos[(pedidos["cantidad"] >= 3) & (pedidos["estado"] == "entregado")]`
+
+Para **elegir columnas**, se pasa una lista de nombres: `pedidos[["pedido_id", "cantidad"]]`. Filtrar filas y elegir columnas a la vez se hace con `.loc[filas, columnas]`:
+
+`pedidos.loc[pedidos["cantidad"] >= 3, ["pedido_id", "cantidad"]]`
+
+Es lo mismo que un `WHERE` con un `SELECT` de columnas en SQL.
+</Concepto>
+
+<PythonTask
+  id="devueltos"
+  enunciado="Guarda en devueltos los pedidos cuyo estado es devuelto."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")"}
+  inicial="devueltos = None"
+  solucion={"devueltos = pedidos[pedidos[\"estado\"] == \"devuelto\"]"}
+  pruebas={"assert isinstance(devueltos, pd.DataFrame), \"devueltos debe ser una tabla filtrada de pedidos.\"\nassert len(devueltos) == 52, \"devueltos debe tener solo los pedidos con estado devuelto.\"\nassert (devueltos[\"estado\"] == \"devuelto\").all(), \"devueltos tiene pedidos con otro estado.\""}
+  paquetes={["pandas"]}
+  pistas={["La condición es pedidos[\"estado\"] == \"devuelto\".", "La condición va entre corchetes, después de pedidos."]}
+/>
+
+<PythonTask
+  id="envios-grandes"
+  enunciado="Guarda en grandes los pedidos entregados de 3 unidades o más, solo con las columnas pedido_id y cantidad."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")"}
+  inicial="grandes = None"
+  solucion={"grandes = pedidos.loc[(pedidos[\"cantidad\"] >= 3) & (pedidos[\"estado\"] == \"entregado\"), [\"pedido_id\", \"cantidad\"]]"}
+  pruebas={"assert isinstance(grandes, pd.DataFrame), \"grandes debe ser una tabla.\"\nassert list(grandes.columns) == [\"pedido_id\", \"cantidad\"], \"grandes debe tener solo las columnas pedido_id y cantidad, en ese orden.\"\nassert len(grandes) == 71, \"grandes debe tener los pedidos entregados de 3 unidades o más.\""}
+  paquetes={["pandas"]}
+  pistas={["Son dos condiciones a la vez: únelas con & y pon cada una entre paréntesis.", "Para quedarte con dos columnas usa .loc[condición, [\"pedido_id\", \"cantidad\"]]."]}
+/>
+
+<Decision
+  pregunta={"Escribes pedidos[pedidos[\"cantidad\"] >= 3 & pedidos[\"estado\"] == \"entregado\"] y Python responde con un error. ¿Por qué?"}
+  opciones={[
+    { texto: "Porque & se evalúa antes que >= y ==: cada condición tiene que ir entre paréntesis.", correcta: true, porque: "Es la misma idea que los paréntesis con AND y OR en SQL: sin ellos, el orden de evaluación cambia el significado." },
+    { texto: "Porque en pandas se escribe and en vez de &.", porque: "and funciona con un solo valor; para comparar columnas completas, fila por fila, pandas usa & y |." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta técnica frecuente: '¿cómo filtras un DataFrame por dos condiciones?'. Responde con el código y menciona los paréntesis: es el error que más se comete.">
+Filtrar es escribir una condición que da `True` o `False` por fila. `&` y `|` combinan condiciones (siempre con paréntesis), y `.loc` filtra filas y elige columnas a la vez.
+</Debrief>

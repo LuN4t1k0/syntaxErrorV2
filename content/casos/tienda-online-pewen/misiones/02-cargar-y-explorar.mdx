@@ -1,0 +1,49 @@
+---
+titulo: Cargar y explorar
+tiempo: 25
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Te dejé los pedidos de julio a diciembre en datos/pedidos.csv. Antes de analizar nada, quiero que me cuentes qué hay en el archivo: cuántas filas trae y cuántos pedidos hay en cada estado. Ojo, que nunca lo hemos revisado a fondo.
+</Brief>
+
+<Concepto>
+`pd.read_csv` lee un archivo CSV y lo convierte en un DataFrame:
+
+<PythonEjemplo codigo={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nprint(pedidos.head())"} />
+
+Lo primero que se hace con una tabla nueva es conocerla:
+
+| Código | Qué muestra |
+| --- | --- |
+| `pedidos.head()` | las primeras 5 filas |
+| `len(pedidos)` | cuántas filas tiene |
+| `pedidos.columns` | los nombres de las columnas |
+| `pedidos.info()` | columnas, tipos y celdas no vacías |
+| `pedidos["estado"].value_counts()` | cuántas veces aparece cada valor de una columna |
+
+`value_counts()` es como un `CONTAR.SI` de cada valor a la vez.
+</Concepto>
+
+<PythonTask
+  id="explorar-pedidos"
+  enunciado="Carga datos/pedidos.csv en la variable pedidos. Guarda en filas la cantidad de filas y en estados la cantidad de pedidos de cada estado."
+  preparacion={"import pandas as pd"}
+  inicial={"pedidos = None\nfilas = None\nestados = None"}
+  solucion={"pedidos = pd.read_csv(\"datos/pedidos.csv\")\nfilas = len(pedidos)\nestados = pedidos[\"estado\"].value_counts()"}
+  pruebas={"assert isinstance(pedidos, pd.DataFrame), \"pedidos debe ser la tabla leída desde datos/pedidos.csv.\"\nassert filas == 424, \"filas debe ser la cantidad de filas de pedidos.\"\nassert estados[\"entregado\"] == 362 and estados[\"devuelto\"] == 52, \"estados debe contar cuántos pedidos hay en cada estado.\""}
+  paquetes={["pandas"]}
+  pistas={["pd.read_csv(\"datos/pedidos.csv\") lee el archivo.", "len(pedidos) cuenta las filas.", "La columna se llama estado; value_counts() cuenta cada valor."]}
+/>
+
+<Decision
+  pregunta="info() muestra que la columna cantidad tiene 419 valores y la tabla tiene 424 filas. ¿Qué haces?"
+  opciones={[
+    { texto: "Lo anoto: hay 5 pedidos sin cantidad. Antes de calcular montos hay que decidir qué hacer con ellos.", correcta: true, porque: "Explorar sirve justamente para encontrar estos problemas antes de que se cuelen en los resultados." },
+    { texto: "Nada: pandas los ignora solo.", porque: "Algunos cálculos los ignoran y otros no, y el resultado puede cambiar sin avisar. Hay que decidirlo a propósito." },
+  ]}
+/>
+
+<Debrief entrevista="Si te dan un archivo nuevo en una prueba técnica, empieza en voz alta: 'primero veo cuántas filas tiene, qué columnas, de qué tipo y si hay vacíos'. Eso muestra método.">
+`read_csv`, `head`, `info` y `value_counts` son tu primera mirada a cualquier tabla. Explorar antes de analizar evita conclusiones construidas sobre datos con problemas.
+</Debrief>

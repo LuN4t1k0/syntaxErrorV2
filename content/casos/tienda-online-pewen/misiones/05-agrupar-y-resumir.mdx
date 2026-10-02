@@ -1,0 +1,47 @@
+---
+titulo: Agrupar y resumir
+tiempo: 25
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Con los datos limpios, quiero conocer a nuestros mejores clientes. Calcula cuánto vale cada pedido, cuánto nos compró cada cliente en pedidos entregados y dame el top 5. Les vamos a enviar un regalo de fin de año.
+</Brief>
+
+<Concepto>
+Una **columna nueva** se calcula con otras columnas, fila por fila, como una fórmula rellenada hacia abajo:
+
+`pedidos["monto"] = pedidos["cantidad"] * pedidos["precio_unitario"]`
+
+`groupby` agrupa y resume, igual que `GROUP BY` en SQL o una tabla dinámica:
+
+<PythonEjemplo codigo={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nprint(pedidos.groupby(\"estado\")[\"cantidad\"].sum())"} />
+
+Se lee así: agrupa por `estado`, toma la columna `cantidad` y súmala. En vez de `sum()` puedes usar `mean()`, `count()`, `max()` o `min()`.
+
+Para un top: `sort_values(ascending=False)` ordena de mayor a menor y `head(5)` deja los primeros cinco.
+
+En esta misión, `pedidos` ya viene limpio: el código de la misión anterior corre antes del tuyo.
+</Concepto>
+
+<PythonTask
+  id="mejores-clientes"
+  enunciado="Agrega a pedidos la columna monto (cantidad por precio unitario). Guarda en entregados los pedidos entregados, en ventas_por_cliente la suma del monto de cada cliente en esos pedidos, y en top_5 los cinco clientes que más compraron, de mayor a menor."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\nclientes = pd.read_csv(\"datos/clientes.csv\")\npedidos = pedidos.drop_duplicates().dropna(subset=[\"cantidad\"])\npedidos[\"cantidad\"] = pedidos[\"cantidad\"].astype(int)\npedidos[\"fecha\"] = pd.to_datetime(pedidos[\"fecha\"])\nclientes[\"region\"] = clientes[\"region\"].fillna(\"Sin región\")"}
+  inicial={"entregados = None\nventas_por_cliente = None\ntop_5 = None"}
+  solucion={"pedidos[\"monto\"] = pedidos[\"cantidad\"] * pedidos[\"precio_unitario\"]\nentregados = pedidos[pedidos[\"estado\"] == \"entregado\"]\nventas_por_cliente = entregados.groupby(\"cliente_id\")[\"monto\"].sum()\ntop_5 = ventas_por_cliente.sort_values(ascending=False).head(5)"}
+  pruebas={"assert \"monto\" in pedidos.columns, \"Falta la columna monto en pedidos.\"\nassert pedidos[\"monto\"].sum() == (pedidos[\"cantidad\"] * pedidos[\"precio_unitario\"]).sum(), \"monto debe ser la cantidad por el precio unitario.\"\nassert len(entregados) == 353, \"entregados debe tener solo los pedidos con estado entregado.\"\nassert ventas_por_cliente[\"C055\"] == 660720, \"ventas_por_cliente debe sumar el monto de los pedidos entregados de cada cliente.\"\nassert list(top_5.index) == [\"C055\", \"C073\", \"C064\", \"C046\", \"C028\"], \"top_5 debe tener los cinco clientes que más compraron, de mayor a menor.\""}
+  paquetes={["pandas"]}
+  pistas={["La columna nueva se crea asignándola: pedidos[\"monto\"] = ...", "Agrupa entregados por cliente_id y suma la columna monto.", "Ordena con sort_values(ascending=False) y quédate con head(5)."]}
+/>
+
+<Decision
+  pregunta="El top 5 suma solo pedidos entregados. Un cliente con muchos pedidos devueltos queda fuera. ¿Está bien?"
+  opciones={[
+    { texto: "Sí, para un regalo por compras conviene contar solo lo que de verdad compraron, y vale la pena decirlo en el informe.", correcta: true, porque: "Qué se cuenta depende de la pregunta. Lo importante es elegirlo a propósito y dejarlo explícito." },
+    { texto: "No, hay que sumar todos los pedidos sin importar el estado.", porque: "Un pedido devuelto o cancelado no es una venta: premiarlo distorsiona quiénes son los mejores clientes." },
+  ]}
+/>
+
+<Debrief entrevista="groupby es la operación más usada de pandas en entrevistas. Si te piden 'el top N de algo', muestra los tres pasos: agrupar, ordenar y cortar, y aclara qué filas incluiste.">
+`groupby` resume una tabla por grupos, como `GROUP BY` o una tabla dinámica. Las columnas calculadas, como `monto`, se crean una vez y se usan en todo el análisis.
+</Debrief>

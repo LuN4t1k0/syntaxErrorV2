@@ -1,0 +1,31 @@
+---
+titulo: Recomendaciones para el negocio
+tiempo: 45
+sinGuia: true
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Mañana es la planificación del próximo año con mi socio y necesito cinco respuestas, solo con pedidos entregados salvo que diga lo contrario. Qué categoría vendió más en pesos. Qué tasa de devolución tuvo Vestuario, sobre todos sus pedidos, con dos decimales. Qué mes vendió más. Cuántos clientes compraron dos veces o más. Y qué canal de captación de clientes nos trajo más ventas. Los datos vienen tal como están en los archivos.
+</Brief>
+
+<PythonTask
+  id="cinco-respuestas"
+  enunciado="Guarda las respuestas en categoria_mas_vendida, tasa_devolucion_vestuario, mes_mas_vendido (el número del mes), clientes_recurrentes y canal_que_mas_vende."
+  preparacion={"import pandas as pd"}
+  inicial={"categoria_mas_vendida = None\ntasa_devolucion_vestuario = None\nmes_mas_vendido = None\nclientes_recurrentes = None\ncanal_que_mas_vende = None"}
+  solucion={"pedidos = pd.read_csv(\"datos/pedidos.csv\")\nclientes = pd.read_csv(\"datos/clientes.csv\")\nproductos = pd.read_csv(\"datos/productos.csv\")\npedidos = pedidos.drop_duplicates().dropna(subset=[\"cantidad\"])\npedidos[\"cantidad\"] = pedidos[\"cantidad\"].astype(int)\npedidos[\"fecha\"] = pd.to_datetime(pedidos[\"fecha\"])\npedidos[\"monto\"] = pedidos[\"cantidad\"] * pedidos[\"precio_unitario\"]\ncompleto = pedidos.merge(productos, on=\"producto_id\").merge(clientes, on=\"cliente_id\")\nentregados = completo[completo[\"estado\"] == \"entregado\"]\ncategoria_mas_vendida = entregados.groupby(\"categoria\")[\"monto\"].sum().idxmax()\nvestuario = completo[completo[\"categoria\"] == \"Vestuario\"]\ntasa_devolucion_vestuario = round((vestuario[\"estado\"] == \"devuelto\").mean(), 2)\nmes_mas_vendido = entregados.groupby(entregados[\"fecha\"].dt.month)[\"monto\"].sum().idxmax()\nclientes_recurrentes = (entregados.groupby(\"cliente_id\").size() >= 2).sum()\ncanal_que_mas_vende = entregados.groupby(\"canal\")[\"monto\"].sum().idxmax()"}
+  pruebas={"assert categoria_mas_vendida == \"Hogar\", \"categoria_mas_vendida no coincide.\"\nassert round(float(tasa_devolucion_vestuario), 2) == 0.23, \"tasa_devolucion_vestuario no coincide.\"\nassert mes_mas_vendido == 11, \"mes_mas_vendido no coincide.\"\nassert clientes_recurrentes == 67, \"clientes_recurrentes no coincide.\"\nassert canal_que_mas_vende == \"google\", \"canal_que_mas_vende no coincide.\""}
+  paquetes={["pandas"]}
+/>
+
+<Decision
+  pregunta="Vestuario no es la categoría que más vende, aunque tiene más pedidos que las demás. ¿Cómo lo explicas en tu informe?"
+  opciones={[
+    { texto: "Por las devoluciones: casi uno de cada cuatro pedidos de ropa vuelve. Si se reducen, Vestuario podría pasar a ser la primera.", correcta: true, porque: "Conectar dos resultados (ventas y devoluciones) en una sola historia es lo que convierte números en una recomendación." },
+    { texto: "Porque la ropa es más barata.", porque: "Es una hipótesis que los datos no muestran: las devoluciones sí están medidas y explican la diferencia." },
+  ]}
+/>
+
+<Debrief entrevista="Un caso final como este es típico de las pruebas técnicas para analista. Lo que más se valora es la última parte: dos o tres recomendaciones concretas, cada una con el dato que la respalda.">
+Este es tu entregable: arma un notebook (por ejemplo en Google Colab) que cargue, limpie y analice los datos, responda estas cinco preguntas y termine con tus recomendaciones. Súbelo a un repositorio con un README y envíalo desde la página del caso.
+</Debrief>

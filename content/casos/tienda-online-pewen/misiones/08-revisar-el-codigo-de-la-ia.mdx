@@ -1,0 +1,41 @@
+---
+titulo: Revisar el código de la IA
+tiempo: 20
+---
+
+<Brief de="Antonia Llancaqueo, cofundadora de Tienda Online Pewen">
+Le pedí a un asistente de IA el código para dos números del directorio: el ticket promedio de los pedidos entregados y cuántos clientes compraron algo. Lo pegué en el editor tal cual. No da error, pero el ticket sale «nan» y los clientes salen 0. Cuando lo arregles, revisa también que la cantidad de clientes tenga sentido: somos una tienda chica.
+</Brief>
+
+<Concepto>
+Igual que con la fórmula del Caso 1, el código de un asistente de IA se revisa antes de usarlo:
+
+1. **Ejecútalo y mira las tablas y valores intermedios.** Si `entregados` queda vacía, todo lo que se calcula después está mal.
+2. **Compara con lo que ya sabes.** Ya contaste los pedidos por estado en la misión de explorar: ¿calza?
+3. **Lee cada línea preguntando qué cuenta.** ¿Cuenta pedidos o clientes? ¿Filas o valores distintos?
+
+`nan` significa «no es un número»: aparece, por ejemplo, al promediar una tabla vacía. En pandas, `nunique()` cuenta cuántos valores **distintos** tiene una columna.
+</Concepto>
+
+<PythonTask
+  id="corregir-codigo-ia"
+  enunciado="Revisa y corrige el código del asistente para que ticket_promedio sea el monto promedio de los pedidos entregados y clientes_activos la cantidad de clientes que tuvieron al menos un pedido entregado."
+  preparacion={"import pandas as pd\npedidos = pd.read_csv(\"datos/pedidos.csv\")\npedidos = pedidos.drop_duplicates().dropna(subset=[\"cantidad\"])\npedidos[\"cantidad\"] = pedidos[\"cantidad\"].astype(int)\npedidos[\"monto\"] = pedidos[\"cantidad\"] * pedidos[\"precio_unitario\"]"}
+  inicial={"# Código sugerido por un asistente de IA\nentregados = pedidos[pedidos[\"estado\"] == \"Entregado\"]\nticket_promedio = entregados[\"monto\"].mean()\nclientes_activos = len(entregados[\"cliente_id\"])"}
+  solucion={"entregados = pedidos[pedidos[\"estado\"] == \"entregado\"]\nticket_promedio = entregados[\"monto\"].mean()\nclientes_activos = entregados[\"cliente_id\"].nunique()"}
+  pruebas={"assert len(entregados) == 353, \"entregados no tiene los pedidos entregados: revisa la condición del filtro.\"\nassert abs(ticket_promedio - 32286.01) < 0.01, \"ticket_promedio no es el monto promedio de los pedidos entregados.\"\nassert clientes_activos == 85, \"clientes_activos no coincide con la cantidad de clientes que tuvieron al menos un pedido entregado.\""}
+  paquetes={["pandas"]}
+  pistas={["Ejecuta el código y mira la tabla entregados: ¿tiene filas?", "Compara el texto del filtro con los valores de la columna estado: ¿se escriben igual?", "len() cuenta filas, no clientes distintos."]}
+/>
+
+<Decision
+  pregunta="El código del asistente no daba ningún error. ¿Qué te dice eso?"
+  opciones={[
+    { texto: "Nada sobre si el resultado es correcto: los errores más peligrosos son los que no avisan. Por eso se verifica contra los datos.", correcta: true, porque: "Un filtro con mayúsculas distintas o un conteo de filas en vez de clientes producen números creíbles y equivocados." },
+    { texto: "Que el código está bien: si hubiera un problema, Python lo diría.", porque: "Python solo avisa cuando no puede ejecutar algo; no sabe qué querías calcular." },
+  ]}
+/>
+
+<Debrief entrevista="Al hablar de IA en entrevistas, un ejemplo concreto vale más que una opinión: 'un asistente me dio un filtro con «Entregado» en mayúscula; no fallaba, pero dejaba la tabla vacía. Desde entonces reviso los resultados intermedios'.">
+El asistente escribió un filtro que no calzaba con los datos (mayúscula) y contó filas en vez de clientes distintos. Ninguno de los dos errores avisa: aparecen solo al mirar los resultados intermedios y compararlos con lo que ya sabes de los datos.
+</Debrief>
