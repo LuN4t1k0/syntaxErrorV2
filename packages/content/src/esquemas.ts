@@ -27,7 +27,8 @@ export const rutaSchema = z.object({
 // Qué se espera en cada dimensión de la rúbrica estándar, descrito para el entregable del caso.
 const rubricaSchema = z.object({ claridad: texto, ejecucion: texto, coherencia: texto }, { invalid_type_error: "la rúbrica describe claridad, ejecucion y coherencia" }).strict();
 
-export const casoSchema = z.object({
+const casoDeTrabajoSchema = z.object({
+  tipo: z.literal("caso"),
   slug,
   titulo: texto,
   cargo: texto,
@@ -38,6 +39,24 @@ export const casoSchema = z.object({
   rubrica: rubricaSchema.default(RUBRICA_BASE),
   misiones: z.array(slug).min(1, "el caso necesita al menos una misión"),
 });
+
+// Clases: una lección por tema, traídas de las aulas de la v1, antes del caso que las aplica. No tienen empresa,
+// entregable ni rúbrica: se completan al aprobar todas sus lecciones.
+const casoDeClasesSchema = z
+  .object({
+    tipo: z.literal("clases"),
+    slug,
+    titulo: texto,
+    dataset: texto,
+    misiones: z.array(slug).min(1, "las clases necesitan al menos una lección"),
+  })
+  .strict();
+
+// Sin "tipo", es un caso de trabajo: así los caso.yaml anteriores siguen igual.
+export const casoSchema = z.preprocess(
+  (datos) => (datos && typeof datos === "object" && !("tipo" in datos) ? { ...datos, tipo: "caso" } : datos),
+  z.discriminatedUnion("tipo", [casoDeTrabajoSchema, casoDeClasesSchema], { errorMap: () => ({ message: "tipo debe ser caso o clases" }) })
+);
 
 export const frontmatterSchema = z.object({
   titulo: texto,
@@ -124,7 +143,10 @@ export const bloqueSchemas = {
       .min(2, "necesita al menos dos opciones")
       .refine((opciones) => opciones.some((opcion) => opcion.correcta), "al menos una opción debe ser correcta"),
   }),
-  Debrief: z.object({ entrevista: texto }),
+  // En una lección de clases, el cierre explica la solución sin consejo de entrevista.
+  Debrief: z.object({ entrevista: texto.optional() }),
+  // La forma general de una instrucción, con nombres de ejemplo: se muestra pero no se ejecuta.
+  Sintaxis: z.object({ codigo: texto, lenguaje: z.enum(["sql", "python"]) }),
 };
 
 export type TipoBloque = keyof typeof bloqueSchemas;

@@ -93,6 +93,8 @@ export const casos = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     slug: text("slug").notNull(),
+    // "caso" (con entregable) o "clases" (lecciones de las aulas de la v1, sin entregable).
+    tipo: text("tipo").notNull().default("caso"),
     titulo: text("titulo").notNull(),
     cargo: text("cargo").notNull(),
     empresa: text("empresa").notNull(),

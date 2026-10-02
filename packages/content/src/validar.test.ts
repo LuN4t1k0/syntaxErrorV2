@@ -89,6 +89,12 @@ describe("validarContenido", () => {
     ).toBe(true);
   });
 
+  it("una pista no puede traer la solución completa, aunque cambien los espacios o las mayúsculas", async () => {
+    const tarea = bloque(mision("01-filtrar"), "SqlTask");
+    tarea.props.pistas = ["Filtra con WHERE.", `Usa:   ${tarea.props.solucion.toUpperCase()};`];
+    expect(await validar()).toContain('casos/ventas/misiones/01-filtrar.mdx: una pista de la tarea "fuera-de-santiago" trae la solución completa');
+  });
+
   it("rechaza una solución de planilla incorrecta", async () => {
     bloque(mision("02-hoja"), "SheetTask").props.solucion = { F2: "=SUMA(D2:D3)" };
     expect(await validar()).toContain(
@@ -117,6 +123,12 @@ describe("validarContenido", () => {
     mision("03-python").sinGuia = false;
     expect(await validar()).toContain("casos/ventas: la última misión (03-python) debe ser sin guía: agrega sinGuia: true a su frontmatter");
     contenido.rutas[0].estado = "borrador";
+    expect(await validar()).toEqual([]);
+  });
+
+  it("en unas clases publicadas la última lección no tiene que ser sin guía", async () => {
+    mision("03-python").sinGuia = false;
+    contenido.casos[0].tipo = "clases";
     expect(await validar()).toEqual([]);
   });
 });

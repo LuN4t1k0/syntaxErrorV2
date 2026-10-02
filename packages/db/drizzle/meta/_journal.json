@@ -64,6 +64,13 @@
       "when": 1790954463780,
       "tag": "0008_quitar_criterios",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790974048749,
+      "tag": "0009_tipo_de_caso",
+      "breakpoints": true
     }
   ]
 }

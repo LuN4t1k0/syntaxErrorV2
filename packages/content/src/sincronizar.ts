@@ -15,7 +15,7 @@ export async function sincronizarContenido(db: AppDb, contenido: Contenido): Pro
         titulo: mision.titulo,
         tareas: tareasDeMision(mision).map((tarea) => tarea.props.id),
       }));
-      const datos = { titulo: caso.titulo, cargo: caso.cargo, empresa: caso.empresa, entregable: caso.entregable, misiones, actualizadoEn: ahora };
+      const datos = { tipo: caso.tipo, titulo: caso.titulo, cargo: caso.cargo, empresa: caso.empresa, entregable: caso.entregable, misiones, actualizadoEn: ahora };
       const [fila] = await tx.insert(casos).values({ slug: caso.slug, ...datos }).onConflictDoUpdate({ target: casos.slug, set: datos }).returning({ id: casos.id });
       idPorCaso.set(caso.slug, fila.id);
     }

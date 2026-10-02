@@ -93,6 +93,28 @@ describe("cargarContenido", () => {
     expect(problemas).toContain("casos/ventas/caso.yaml: entregable: el caso debe declarar su entregable");
   });
 
+  it("unas clases no tienen empresa, entregable ni rúbrica, y no aceptan esos campos", async () => {
+    const clases = "slug: ventas\ntipo: clases\ntitulo: Clases de SQL\ndataset: Datos de práctica\nmisiones:\n  - 01-filtrar\n  - 02-hoja\n  - 03-python\n";
+    const dir = await mkdtemp(path.join(tmpdir(), "contenido-"));
+    try {
+      await cp(FIXTURE, dir, { recursive: true });
+      await writeFile(enCaso(dir, "caso.yaml"), clases);
+      const { casos } = await cargarContenido(dir);
+      expect(casos[0]).toMatchObject({ tipo: "clases", titulo: "Clases de SQL", cargo: "", empresa: "", entregable: "", archivos: [], rubrica: RUBRICA_BASE });
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+    const conEntregable = await problemasCon((dir) => writeFile(enCaso(dir, "caso.yaml"), `${clases}entregable: Un repositorio\n`));
+    expect(conEntregable.some((problema) => problema.startsWith("casos/ventas/caso.yaml: ") && problema.includes("entregable"))).toBe(true);
+    const sinTipoValido = await problemasCon((dir) => writeFile(enCaso(dir, "caso.yaml"), clases.replace("tipo: clases", "tipo: taller")));
+    expect(sinTipoValido).toContain("casos/ventas/caso.yaml: tipo: tipo debe ser caso o clases");
+  });
+
+  it("un caso sin tipo es un caso de trabajo", async () => {
+    const { casos } = await cargarContenido(FIXTURE);
+    expect(casos[0].tipo).toBe("caso");
+  });
+
   it("la rúbrica describe las tres dimensiones estándar, no una lista de criterios", async () => {
     const lista = await problemasCon((dir) => appendFile(enCaso(dir, "caso.yaml"), 'rubrica:\n  - "Responde la pregunta."\n'));
     expect(lista).toContain("casos/ventas/caso.yaml: rubrica: la rúbrica describe claridad, ejecucion y coherencia");

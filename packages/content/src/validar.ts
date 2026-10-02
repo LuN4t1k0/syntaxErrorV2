@@ -10,7 +10,18 @@ import type { Caso, Contenido } from "./tipos";
 export type RevisorPython = (tarea: PropsBloque<"PythonTask">, caso: Caso) => Promise<ResultadoTarea>;
 
 const MAXIMO_PALABRAS_BRIEF = 150;
-const BLOQUES_DE_GUIA = new Set(["Concepto", "SqlEjemplo", "PythonEjemplo"]);
+const BLOQUES_DE_GUIA = new Set(["Concepto", "SqlEjemplo", "PythonEjemplo", "Sintaxis"]);
+
+// Para comparar una pista con la solución sin que importen los espacios, el punto y coma final ni las mayúsculas.
+const normalizarCodigo = (codigo: string) => codigo.replace(/\s+/g, " ").replace(/;\s*$/, "").trim().toLowerCase();
+
+// Las pistas orientan; la respuesta la escribe la persona (propuesta pedagógica, sección 6). Las aulas de la v1 tenían
+// pistas con la consulta completa: esta regla evita que se cuelen al importarlas.
+function pistaConSolucion(tarea: BloqueTarea): string | undefined {
+  if (tarea.tipo !== "SqlTask" && tarea.tipo !== "PythonTask") return undefined;
+  const solucion = normalizarCodigo(tarea.props.solucion);
+  return tarea.props.pistas.find((pista) => normalizarCodigo(pista).includes(solucion));
+}
 
 function contarPalabras(texto: string): number {
   return texto.split(/\s+/).filter(Boolean).length;
@@ -64,6 +75,7 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
         }
       }
       for (const tarea of tareas) {
+        if (pistaConSolucion(tarea)) problemas.push(`${donde}: una pista de la tarea "${tarea.props.id}" trae la solución completa`);
         let resultado: ResultadoTarea;
         try {
           resultado = await revisarSolucion(tarea, caso, revisarPython);
@@ -77,7 +89,8 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
     }
     const publicado = contenido.rutas.some((ruta) => ruta.estado === "publicada" && ruta.casos.includes(caso.slug));
     const ultima = caso.misiones.at(-1);
-    if (publicado && ultima && !ultima.sinGuia) {
+    // En unas clases no se exige: el caso que viene después hace de misión sin guía.
+    if (publicado && caso.tipo === "caso" && ultima && !ultima.sinGuia) {
       problemas.push(`casos/${caso.slug}: la última misión (${ultima.slug}) debe ser sin guía: agrega sinGuia: true a su frontmatter`);
     }
   }

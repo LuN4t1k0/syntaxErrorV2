@@ -31,6 +31,7 @@ function contenido(): Contenido {
     ],
     casos: [
       {
+        tipo: "caso",
         slug: "ventas",
         titulo: "Ventas",
         cargo: "Analista junior",
@@ -73,16 +74,18 @@ describe("sincronizarContenido", () => {
     expect(await db.select().from(rutaCasos)).toHaveLength(1);
   });
 
-  it("actualiza títulos y tareas sin cambiar el id del caso", async () => {
+  it("actualiza el tipo, los títulos y las tareas sin cambiar el id del caso", async () => {
     await sincronizarContenido(db, contenido());
     const [antes] = await db.select().from(casos);
     const cambiado = contenido();
     cambiado.casos[0].titulo = "Ventas de marzo";
+    cambiado.casos[0].tipo = "clases";
     cambiado.casos[0].misiones[1].bloques.push(tarea("t4"));
     await sincronizarContenido(db, cambiado);
     const [despues] = await db.select().from(casos).where(eq(casos.slug, "ventas"));
+    expect(antes.tipo).toBe("caso");
     expect(despues.id).toBe(antes.id);
-    expect(despues.titulo).toBe("Ventas de marzo");
+    expect(despues).toMatchObject({ titulo: "Ventas de marzo", tipo: "clases" });
     expect(despues.misiones[1].tareas).toEqual(["t3", "t4"]);
   });
 

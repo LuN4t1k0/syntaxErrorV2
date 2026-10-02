@@ -1,0 +1,1 @@
+ALTER TABLE "casos" ADD COLUMN "tipo" text DEFAULT 'caso' NOT NULL;

@@ -7,6 +7,7 @@ import type { z } from "zod";
 import type { Fila } from "@syntaxerror/engines/tipos";
 import { extraerBloques, type BloqueCrudo } from "./bloques";
 import { bloqueSchemas, casoSchema, formatearErrorZod, frontmatterSchema, rutaSchema, type Bloque, type TipoBloque } from "./esquemas";
+import { RUBRICA_BASE } from "./rubrica";
 import type { Caso, Contenido, Mision, Ruta, Tabla } from "./tipos";
 
 export class ErrorDeContenido extends Error {
@@ -137,15 +138,17 @@ async function cargarCaso(dirCaso: string, carpeta: string, problemas: string[])
     if (mision) misiones.push(mision);
   }
 
+  const trabajo = datos.tipo === "caso" ? datos : { cargo: "", empresa: "", entregable: "", archivos: [], rubrica: RUBRICA_BASE };
   return {
+    tipo: datos.tipo,
     slug: datos.slug,
     titulo: datos.titulo,
-    cargo: datos.cargo,
-    empresa: datos.empresa,
+    cargo: trabajo.cargo,
+    empresa: trabajo.empresa,
     dataset: datos.dataset,
-    entregable: datos.entregable,
-    archivos: datos.archivos,
-    rubrica: datos.rubrica,
+    entregable: trabajo.entregable,
+    archivos: trabajo.archivos,
+    rubrica: trabajo.rubrica,
     misiones,
     datos: await cargarTablas(dirCaso, donde, problemas),
   };
