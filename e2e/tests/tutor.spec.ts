@@ -20,7 +20,7 @@ test("el tutor responde con el contexto de la misión y reutiliza la respuesta",
   await page.getByRole("button", { name: "Preguntar al tutor" }).click();
   await expect(page.getByText("Primero intenta resolver la tarea.", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "Cerrar" }).click();
-  for (let intento = 0; intento < 3; intento += 1) {
+  for (let intento = 0; intento < 5; intento += 1) {
     const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
     await page.getByLabel("Consulta SQL").fill("SELECT nombre FROM clientes");
     await page.getByRole("button", { name: "Validar" }).click();

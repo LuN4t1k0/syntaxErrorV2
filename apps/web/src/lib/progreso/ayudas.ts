@@ -1,7 +1,7 @@
-// Umbrales de la ayuda escalonada (propuesta pedagógica, sección 6). El equipo los ajusta aquí.
+// Umbrales de la ayuda escalonada (propuesta pedagógica, sección 6), acordados por el equipo el 2026-10-02.
+// Un intento fallido es un resultado incorrecto: un error de código (que no corre) se explica al instante y no cuenta.
 export const INTENTOS_PARA_PISTA = 2;
-export const INTENTOS_PARA_TUTOR = 3;
-export const INTENTOS_PARA_TUTOR_SIN_GUIA = 5;
+export const INTENTOS_PARA_TUTOR = 5;
 
 // La primera pista llega tras INTENTOS_PARA_PISTA fallidos; después, una más por cada intento fallido.
 export function pistasDisponibles(fallidos: number, total: number): number {
@@ -9,10 +9,6 @@ export function pistasDisponibles(fallidos: number, total: number): number {
   return Math.min(total, fallidos - INTENTOS_PARA_PISTA + 1);
 }
 
-export function umbralTutor(sinGuia: boolean): number {
-  return sinGuia ? INTENTOS_PARA_TUTOR_SIN_GUIA : INTENTOS_PARA_TUTOR;
-}
-
-export function tutorHabilitado({ fallidos, aprobada, sinGuia }: { fallidos: number; aprobada: boolean; sinGuia: boolean }): boolean {
-  return aprobada || fallidos >= umbralTutor(sinGuia);
+export function tutorHabilitado({ fallidos, aprobada }: { fallidos: number; aprobada: boolean }): boolean {
+  return aprobada || fallidos >= INTENTOS_PARA_TUTOR;
 }

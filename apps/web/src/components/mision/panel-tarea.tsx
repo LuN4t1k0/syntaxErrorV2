@@ -89,7 +89,7 @@ export function PanelTarea({
         </TareaDeshabilitada.Provider>
       </fieldset>
       {pistas.length > 0 && disponibles === 0 && !aprobada && !bloqueo ? (
-        <p className="text-sm text-muted-foreground">{`Primero intenta: las pistas aparecen después de ${INTENTOS_PARA_PISTA} intentos. Llevas ${fallidos}.`}</p>
+        <p className="text-sm text-muted-foreground">{`Primero intenta: las pistas aparecen después de ${INTENTOS_PARA_PISTA} intentos con un resultado incorrecto (los errores de código no cuentan). Llevas ${fallidos}.`}</p>
       ) : null}
       {pistasVistas > 0 ? (
         <ol className="grid list-decimal gap-1 pl-5 text-sm text-muted-foreground">

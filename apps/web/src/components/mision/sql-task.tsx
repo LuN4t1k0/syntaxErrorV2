@@ -41,7 +41,7 @@ export function SqlTask({ id, enunciado, inicial, comparar, verificar, esperadas
   function validar() {
     const revision = compararSql(tablas, { comparar, verificar, esperadas }, consulta);
     setResultado(revision);
-    registrarResultado(id, revision.aprobada);
+    registrarResultado(id, revision);
   }
   return (
     <PanelTarea id={id} titulo="tarea SQL" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" variant="secondary" onClick={ejecutar}>Ejecutar</Button><Button type="button" onClick={validar}>Validar</Button></>}>

@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { OpcionesPython } from "@syntaxerror/engines/python";
+import type { ResultadoTarea } from "@syntaxerror/engines/tipos";
 import { cargarProgreso, dependenciasNavegador, leerFallidos, reportarTarea, sumarFallido } from "@/lib/progreso/cliente";
 import type { CasoCorto } from "@/lib/progreso/requisitos";
 import { PythonProvider } from "./python-contexto";
@@ -19,7 +20,7 @@ type ContextoMision = {
   fallidosMision: number;
   tareaAprobada: (id: string) => boolean;
   fallidosDe: (id: string) => number;
-  registrarResultado: (id: string, aprobada: boolean) => void;
+  registrarResultado: (id: string, resultado: Pick<ResultadoTarea, "aprobada" | "errorDeCodigo">) => void;
 };
 
 const Contexto = createContext<ContextoMision | null>(null);
@@ -75,7 +76,9 @@ export function MisionProvider({
   }, [caso, mision, claveTareas, anterior, requisitos]);
 
   const registrarResultado = useCallback(
-    (id: string, aprobada: boolean) => {
+    (id: string, { aprobada, errorDeCodigo }: Pick<ResultadoTarea, "aprobada" | "errorDeCodigo">) => {
+      // Un error de código ya se explica en la consola: no es un intento fallido y no se registra.
+      if (errorDeCodigo) return;
       if (aprobada) {
         setAprobadas((actuales) => new Set(actuales).add(id));
       } else {

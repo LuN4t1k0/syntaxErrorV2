@@ -62,14 +62,14 @@ export function GithubTask({ id, enunciado, repositorio, requisitos, pistas }: G
       if (datos.aprobada) {
         setProblemas([]);
         setResultado({ aprobada: true, diagnostico: null });
-        registrarResultado(id, true);
+        registrarResultado(id, { aprobada: true });
         return;
       }
       // Si GitHub no respondió no es un intento fallido de la persona: no suma para las pistas.
       if (datos.reintentable) return avisar(datos.problemas[0]);
       setProblemas(datos.problemas);
       setResultado({ aprobada: false, diagnostico: datos.problemas.length === 1 ? datos.problemas[0] : `Revisamos tu repositorio y faltan ${datos.problemas.length} cosas:` });
-      registrarResultado(id, false);
+      registrarResultado(id, { aprobada: false });
     } catch {
       avisar("No pudimos conectarnos. Revisa tu conexión e intenta de nuevo.");
     } finally {

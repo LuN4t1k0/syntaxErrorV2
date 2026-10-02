@@ -160,7 +160,7 @@ export function revisarHoja(hoja: Hoja, tarea: SheetTarea): ResultadoTarea {
     const valor = leerValor(hoja, esperada.celda);
     const error = explicarErrorHoja(valor);
     if (error) {
-      return { aprobada: false, diagnostico: `La celda ${esperada.celda} tiene el error ${error.original}. ${textoDeError(error)}` };
+      return { aprobada: false, diagnostico: `La celda ${esperada.celda} tiene el error ${error.original}. ${textoDeError(error)}`, errorDeCodigo: true };
     }
     if (esperada.funcion) {
       const formula = leerFormula(hoja, esperada.celda);

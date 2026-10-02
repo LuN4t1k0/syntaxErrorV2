@@ -51,11 +51,13 @@ describe("crearSesionPython", () => {
   it("da un mensaje genérico si el assert no tiene mensaje", async () => {
     const resultado = await sesion.revisar({ preparacion: "", pruebas: "assert total == 1" }, "total = 2");
     expect(resultado.diagnostico).toBe("Una prueba no pasó. Revisa el resultado de tu código.");
+    expect(resultado.errorDeCodigo).toBeUndefined();
   });
 
   it("informa el error de sintaxis del alumno, explicado", async () => {
     const resultado = await sesion.revisar(totalTarea, "total = (");
     expect(resultado.diagnostico).toBe("Tu código tiene un error. Línea 1: Abriste «(» y nunca lo cerraste. Agrega el «)» que falta.");
+    expect(resultado.errorDeCodigo).toBe(true);
   });
 
   it("no arrastra variables de una ejecución anterior", async () => {
@@ -90,6 +92,10 @@ describe("crearSesionPython", () => {
 });
 
 describe("columnasDeArchivos", () => {
+  it("lee los encabezados separados por punto y coma", () => {
+    expect(columnasDeArchivos([{ ruta: "datos/matricula.csv", contenido: "agno;comuna;matricula\n2024;Talca;14.918\n" }])).toEqual(["agno", "comuna", "matricula"]);
+  });
+
   it("lee los encabezados de los CSV sin repetir y sin comillas", () => {
     expect(
       columnasDeArchivos([

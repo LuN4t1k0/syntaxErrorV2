@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   if (!caso || !mision) return NextResponse.json({ error: "mision_no_existe" }, { status: 404 });
 
   // Primero intentar: el tutor se habilita tras los intentos fallidos de la misión (propuesta, sección 6).
-  const acceso = await estadoTutor(getDb(), userId, caso.slug, { slug: mision.slug, sinGuia: mision.sinGuia });
+  const acceso = await estadoTutor(getDb(), userId, caso.slug, mision.slug);
   if (!acceso.habilitado) {
     return NextResponse.json({ error: "tutor_bloqueado", fallidos: acceso.fallidos, umbral: acceso.umbral }, { status: 403 });
   }

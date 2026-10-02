@@ -17,9 +17,13 @@ test("una misión se lee pero no se resuelve hasta aprobar la anterior", async (
   await expect(page.getByRole("button", { name: "Validar" })).toBeDisabled();
 });
 
-test("las pistas aparecen después de dos intentos fallidos", async ({ page }) => {
+test("las pistas aparecen después de dos resultados incorrectos; un error de código no cuenta", async ({ page }) => {
   await page.goto(MISION_SQL);
   await expect(page.getByRole("button", { name: "Ver pista" })).toHaveCount(0);
+  await page.getByLabel("Consulta SQL").fill("SELEC nombre FROM clientes");
+  await page.getByRole("button", { name: "Validar" }).click();
+  await expect(page.getByText("«SELEC» no es una palabra de SQL.", { exact: false }).first()).toBeVisible();
+  await expect(page.getByText("los errores de código no cuentan). Llevas 0.", { exact: false })).toBeVisible();
   await page.getByLabel("Consulta SQL").fill("SELECT nombre FROM clientes");
   await validarYEsperar(page);
   await expect(page.getByText("Llevas 1.", { exact: false })).toBeVisible();

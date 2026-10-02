@@ -33,24 +33,38 @@ export function PythonTask({ id, enunciado, inicial, preparacion, pruebas, pista
     };
     return (texto: string, posicion: number) => completarPython(texto, posicion, datos);
   }, [python.opciones, preparacion]);
-  async function correr(accion: () => Promise<void>) {
+  async function ejecutar() {
     setCorriendo(true);
-    try { await accion(); } catch { setSalida(null); setTablas([]); setError(errorSimple(FALLO)); } finally { setCorriendo(false); }
+    try {
+      const ejecucion = await python.cliente().ejecutar(preparacion, codigo);
+      setSalida(ejecucion.salida || null);
+      setError(ejecucion.ok ? null : ejecucion.error);
+      setTablas(ejecucion.ok ? ejecucion.tablas : []);
+    } catch {
+      setSalida(null);
+      setTablas([]);
+      setError(errorSimple(FALLO));
+    } finally {
+      setCorriendo(false);
+    }
   }
-  const ejecutar = () => correr(async () => {
-    const ejecucion = await python.cliente().ejecutar(preparacion, codigo);
-    setSalida(ejecucion.salida || null);
-    setError(ejecucion.ok ? null : ejecucion.error);
-    setTablas(ejecucion.ok ? ejecucion.tablas : []);
-  });
-  const validar = () => correr(async () => {
-    const revision = await python.cliente().revisar({ preparacion, pruebas }, codigo);
-    setResultado(revision);
-    setSalida(revision.salida || null);
-    setError(null);
-    setTablas([]);
-    registrarResultado(id, revision.aprobada);
-  });
+  async function validar() {
+    setCorriendo(true);
+    try {
+      const revision = await python.cliente().revisar({ preparacion, pruebas }, codigo);
+      setResultado(revision);
+      setSalida(revision.salida || null);
+      setError(null);
+      setTablas([]);
+      registrarResultado(id, revision);
+    } catch {
+      setSalida(null);
+      setTablas([]);
+      setError(errorSimple(FALLO));
+    } finally {
+      setCorriendo(false);
+    }
+  }
   const disponible = python.estado === "listo" && !corriendo;
   return (
     <PanelTarea id={id} titulo="tarea Python" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" variant="secondary" disabled={!disponible} onClick={() => void ejecutar()}>Ejecutar</Button><Button type="button" disabled={!disponible} onClick={() => void validar()}>{corriendo ? "Ejecutando…" : "Validar"}</Button></>}>

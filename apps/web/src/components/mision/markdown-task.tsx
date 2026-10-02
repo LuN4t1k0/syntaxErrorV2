@@ -33,7 +33,7 @@ export function MarkdownTask({ id, enunciado, inicial, requisitos, pistas }: Mar
     if (!motor) return;
     const revision = motor.revisarMarkdown(texto, requisitos);
     setResultado(revision);
-    registrarResultado(id, revision.aprobada);
+    registrarResultado(id, revision);
   }
   return (
     <PanelTarea id={id} titulo="tarea de Markdown" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<Button type="button" disabled={!motor} onClick={validar}>Validar</Button>}>

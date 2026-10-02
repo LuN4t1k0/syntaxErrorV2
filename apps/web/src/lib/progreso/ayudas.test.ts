@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pistasDisponibles, tutorHabilitado, umbralTutor } from "./ayudas";
+import { INTENTOS_PARA_TUTOR, pistasDisponibles, tutorHabilitado } from "./ayudas";
 
 describe("ayudas", () => {
   it("la primera pista llega tras 2 intentos fallidos y luego una por intento, sin pasarse del total", () => {
@@ -7,12 +7,10 @@ describe("ayudas", () => {
     expect(pistasDisponibles(5, 0)).toBe(0);
   });
 
-  it("el tutor se habilita a los 3 intentos, a los 5 sin guía, o con la misión aprobada", () => {
-    expect(umbralTutor(false)).toBe(3);
-    expect(umbralTutor(true)).toBe(5);
-    expect(tutorHabilitado({ fallidos: 2, aprobada: false, sinGuia: false })).toBe(false);
-    expect(tutorHabilitado({ fallidos: 3, aprobada: false, sinGuia: false })).toBe(true);
-    expect(tutorHabilitado({ fallidos: 4, aprobada: false, sinGuia: true })).toBe(false);
-    expect(tutorHabilitado({ fallidos: 0, aprobada: true, sinGuia: true })).toBe(true);
+  it("el tutor se habilita a los 5 intentos fallidos o con la misión aprobada", () => {
+    expect(INTENTOS_PARA_TUTOR).toBe(5);
+    expect(tutorHabilitado({ fallidos: 4, aprobada: false })).toBe(false);
+    expect(tutorHabilitado({ fallidos: 5, aprobada: false })).toBe(true);
+    expect(tutorHabilitado({ fallidos: 0, aprobada: true })).toBe(true);
   });
 });

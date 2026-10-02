@@ -7,7 +7,7 @@ import { cn } from "@syntaxerror/ui/cn";
 import { Button } from "@syntaxerror/ui/components/button";
 import { EVENTO_TUTOR, PROPOSITO_TUTOR, type EventoTutor } from "@syntaxerror/queue/eventos";
 import { enviarJson } from "@/lib/cuenta/cliente";
-import { tutorHabilitado, umbralTutor } from "@/lib/progreso/ayudas";
+import { INTENTOS_PARA_TUTOR, tutorHabilitado } from "@/lib/progreso/ayudas";
 import { useMisionOpcional } from "./mision-provider";
 
 type EstadoMensaje = "pendiente" | "respondida" | "desde_cache" | "fuera_de_tema" | "error";
@@ -30,18 +30,19 @@ function idDelNavegador(): string {
   }
 }
 
-export function Tutor({ caso, mision, sinGuia = false }: { caso: string; mision: string; sinGuia?: boolean }) {
+export function Tutor({ caso, mision }: { caso: string; mision: string }) {
   const [abierto, setAbierto] = useState(false);
   const [sesion, setSesion] = useState<"cargando" | "si" | "no">("cargando");
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [pregunta, setPregunta] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [aviso, setAviso] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const clienteRef = useRef("");
   const socketRef = useRef<Socket | null>(null);
   const contexto = useMisionOpcional();
   const fallidos = contexto?.fallidosMision ?? 0;
-  const habilitado = !contexto || tutorHabilitado({ fallidos, aprobada: contexto.completa, sinGuia });
+  const habilitado = !contexto || tutorHabilitado({ fallidos, aprobada: contexto.completa });
 
   const actualizar = useCallback((id: string, cambios: Partial<Mensaje>) => {
     setMensajes((actuales) => actuales.map((mensaje) => (mensaje.id === id ? { ...mensaje, ...cambios } : mensaje)));
@@ -60,15 +61,7 @@ export function Tutor({ caso, mision, sinGuia = false }: { caso: string; mision:
         }
         setSesion("si");
         const { token } = respuesta.ok ? ((await respuesta.json()) as { token?: string }) : {};
-        if (!token || !SOCKET_URL) return;
-        const socket = io(SOCKET_URL, {
-          query: { clientId: clienteRef.current, token, proposito: PROPOSITO_TUTOR },
-          transports: ["websocket", "polling"],
-        });
-        socket.on(EVENTO_TUTOR, (evento: EventoTutor) =>
-          actualizar(evento.preguntaId, { estado: evento.estado, respuesta: evento.respuesta })
-        );
-        socketRef.current = socket;
+        setToken(token ?? null);
       })
       .catch(() => {
         if (vigente) setSesion("si");
@@ -76,7 +69,24 @@ export function Tutor({ caso, mision, sinGuia = false }: { caso: string; mision:
     return () => {
       vigente = false;
     };
-  }, [abierto, sesion, actualizar]);
+  }, [abierto, sesion]);
+
+  useEffect(() => {
+    if (!abierto || sesion !== "si" || !token || !SOCKET_URL) return;
+    const manejarEvento = (evento: EventoTutor) =>
+      actualizar(evento.preguntaId, { estado: evento.estado, respuesta: evento.respuesta });
+    const socket = io(SOCKET_URL, {
+      query: { clientId: clienteRef.current, token, proposito: PROPOSITO_TUTOR },
+      transports: ["websocket", "polling"],
+    });
+    socket.on(EVENTO_TUTOR, manejarEvento);
+    socketRef.current = socket;
+    return () => {
+      socket.off(EVENTO_TUTOR, manejarEvento);
+      socket.close();
+      if (socketRef.current === socket) socketRef.current = null;
+    };
+  }, [abierto, sesion, token, actualizar]);
 
   useEffect(() => () => void socketRef.current?.close(), []);
 
@@ -167,7 +177,7 @@ export function Tutor({ caso, mision, sinGuia = false }: { caso: string; mision:
         </p>
       ) : !habilitado ? (
         <p role="status" className="text-sm leading-6">
-          {`Primero intenta resolver la tarea. El tutor se habilita con ${umbralTutor(sinGuia)} intentos fallidos en esta misión; llevas ${fallidos}.`}
+          {`Primero intenta resolver la tarea. El tutor se habilita con ${INTENTOS_PARA_TUTOR} intentos fallidos en esta misión; llevas ${fallidos}.`}
         </p>
       ) : (
         <>

@@ -41,7 +41,7 @@ const pregunta = (texto = "¿Cómo filtro los clientes?") => ({
 async function iniciarSesion(): Promise<string> {
   const [usuario] = await db.insert(users).values({ email: `ana-${Date.now()}@correo.cl` }).returning({ id: users.id });
   const [caso] = await db.select({ id: casos.id }).from(casos);
-  await db.insert(misionProgreso).values({ userId: usuario.id, casoId: caso.id, mision: "01-clientes-de-regiones", fallidos: 3 });
+  await db.insert(misionProgreso).values({ userId: usuario.id, casoId: caso.id, mision: "01-clientes-de-regiones", fallidos: 5 });
   vi.mocked(obtenerUsuarioId).mockResolvedValue(usuario.id);
   return usuario.id;
 }
@@ -101,7 +101,7 @@ describe("/api/tutor", () => {
     vi.mocked(obtenerUsuarioId).mockResolvedValue(usuario.id);
     const respuesta = await preguntar(pregunta());
     expect(respuesta.status).toBe(403);
-    expect(await respuesta.json()).toEqual({ error: "tutor_bloqueado", fallidos: 0, umbral: 3 });
+    expect(await respuesta.json()).toEqual({ error: "tutor_bloqueado", fallidos: 0, umbral: 5 });
     expect(encolarTutor).not.toHaveBeenCalled();
   });
 });

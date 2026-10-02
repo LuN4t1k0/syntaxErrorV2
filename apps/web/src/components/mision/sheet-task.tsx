@@ -91,7 +91,7 @@ export function SheetTask({ id, enunciado, grilla, opciones = {}, celdas, pistas
   function validar() {
     const revision = revisarHoja(hoja, { celdas });
     setResultado(revision);
-    registrarResultado(id, revision.aprobada);
+    registrarResultado(id, revision);
   }
   function reiniciar() {
     setHoja(crearHoja(grilla, opciones));

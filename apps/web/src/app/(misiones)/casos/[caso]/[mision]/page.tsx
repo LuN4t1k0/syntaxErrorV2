@@ -64,7 +64,7 @@ export default async function MisionPage({ params }: Parametros) {
         sinGuia={sinGuia}
       >
         <article className="grid gap-6"><Contenido components={componentesMision(caso)} /></article>
-        <Tutor caso={caso.slug} mision={mision.slug} sinGuia={sinGuia} />
+        <Tutor caso={caso.slug} mision={mision.slug} />
       </MisionProvider>
       <PreguntaDocente caso={caso.slug} mision={mision.slug} />
       <nav className="flex justify-between gap-4 text-sm font-bold" aria-label="Misiones cercanas">

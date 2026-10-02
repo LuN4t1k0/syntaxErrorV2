@@ -73,7 +73,8 @@ function ultimaLinea(traceback: string): string {
 export function columnasDeArchivos(archivos: Archivo[]): string[] {
   const columnas = archivos
     .filter((archivo) => archivo.ruta.endsWith(".csv"))
-    .flatMap((archivo) => (archivo.contenido.split(/\r?\n/, 1)[0] ?? "").split(","))
+    // Los archivos de portales públicos suelen separar con punto y coma.
+    .flatMap((archivo) => (archivo.contenido.split(/\r?\n/, 1)[0] ?? "").split(/[,;]/))
     .map((columna) => columna.trim().replace(/^"(.*)"$/, "$1"))
     .filter(Boolean);
   return [...new Set(columnas)];
@@ -137,7 +138,7 @@ export async function crearSesionPython(py: PyodideLike, opciones: OpcionesPytho
     async revisar(tarea, codigo) {
       const resultado = await correr(tarea.preparacion, codigo, false);
       if (!resultado.ok) {
-        return { aprobada: false, diagnostico: `Tu código tiene un error. ${textoDeError(resultado.error)}`, salida: resultado.salida };
+        return { aprobada: false, diagnostico: `Tu código tiene un error. ${textoDeError(resultado.error)}`, salida: resultado.salida, errorDeCodigo: true };
       }
       try {
         await py.runPythonAsync(tarea.pruebas);

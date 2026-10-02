@@ -166,7 +166,7 @@ export function compararSql(tablas: Tablas, tarea: SqlComparacion, consulta: str
       actuales = ejecutarSql(base, consulta);
     }
   } catch (error) {
-    return { aprobada: false, diagnostico: `Tu consulta tiene un error. ${textoDeError(explicarErrorSql(consulta, mensajeDe(error), tablas))}` };
+    return { aprobada: false, diagnostico: `Tu consulta tiene un error. ${textoDeError(explicarErrorSql(consulta, mensajeDe(error), tablas))}`, errorDeCodigo: true };
   }
 
   const sinOrden = tarea.comparar === "filas-sin-orden";

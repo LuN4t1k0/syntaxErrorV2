@@ -128,15 +128,17 @@ describe("revisarHoja", () => {
   it("muestra el valor obtenido y el esperado", () => {
     const hoja = crearHoja(ventas);
     escribirCelda(hoja, "C2", "=SUMA(B2:B3)");
-    expect(revisarHoja(hoja, total).diagnostico).toBe('La celda C2 muestra "247000" y se espera "487000".');
+    expect(revisarHoja(hoja, total)).toStrictEqual({ aprobada: false, diagnostico: 'La celda C2 muestra "247000" y se espera "487000".' });
   });
 
   it("informa los errores de fórmula", () => {
     const hoja = crearHoja(ventas);
     escribirCelda(hoja, "C2", "=B2/0");
-    expect(revisarHoja(hoja, total).diagnostico).toBe(
-      "La celda C2 tiene el error #¡DIV/0!. La fórmula divide por cero o por una celda vacía. Revisa la celda del divisor. Si puede valer 0, usa SI.ERROR(fórmula; 0)."
-    );
+    expect(revisarHoja(hoja, total)).toEqual({
+      aprobada: false,
+      diagnostico: "La celda C2 tiene el error #¡DIV/0!. La fórmula divide por cero o por una celda vacía. Revisa la celda del divisor. Si puede valer 0, usa SI.ERROR(fórmula; 0).",
+      errorDeCodigo: true,
+    });
   });
 
   it("tolera diferencias de decimales menores a 0,0001", () => {

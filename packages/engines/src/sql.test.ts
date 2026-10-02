@@ -68,7 +68,7 @@ describe("revisarSql", () => {
 
   it("dice cuántas filas trae y cuántas se esperan", () => {
     const resultado = revisarSql(tablas, fueraDeSantiago, "SELECT nombre, ciudad FROM clientes");
-    expect(resultado).toEqual({ aprobada: false, diagnostico: "Tu consulta trae 4 filas, se esperan 2." });
+    expect(resultado).toStrictEqual({ aprobada: false, diagnostico: "Tu consulta trae 4 filas, se esperan 2." });
   });
 
   it("avisa cuando solo falla el orden", () => {
@@ -83,6 +83,7 @@ describe("revisarSql", () => {
     expect(resultado).toEqual({
       aprobada: false,
       diagnostico: "Tu consulta tiene un error. Línea 1: «SELEC» no es una palabra de SQL. ¿Quisiste decir SELECT?",
+      errorDeCodigo: true,
     });
   });
 
