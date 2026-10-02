@@ -192,3 +192,18 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
   - Desde la misión 5, la `preparacion` incluye la limpieza de la misión 4.
   - La misión 9, sin guía, parte de los archivos sin limpiar.
 - **Entregable:** un notebook (`.ipynb`, por ejemplo hecho en Google Colab) con el análisis y las recomendaciones.
+
+## Caso 4: Clínica Cordillera Central
+
+- **Datos generados:** `packages/content/src/generadores/clinica-cordillera-central.ts`, con semilla fija.
+  - 4 sedes, 8 especialidades y 1200 atenciones de enero a junio de 2025, sin ningún dato de pacientes.
+  - Lo que el dashboard tiene que mostrar: en invierno la espera en urgencia se duplica (en Maipú llega a 129 minutos en junio, con todos los abandonos) y Dermatología tiene 21 % de inasistencia.
+- **Dentro y fuera de la plataforma:**
+  - Dentro se resuelven la ficha y el boceto (`MarkdownTask`), los datos e indicadores (`SqlTask`) y el criterio (decisiones).
+  - El dashboard se construye en Power BI Desktop (Windows) o Looker Studio (navegador) y se entrega en GitHub con capturas: `GithubTask` verifica el repositorio y la rúbrica evalúa el dashboard.
+
+## Datos de los casos
+
+- Cada caso con datos muestra "Datos del caso" en su página, con enlaces para descargar sus CSV: `/casos/<caso>/datos/<tabla>.csv`.
+- Los CSV van en UTF-8, separados por coma y sin BOM. En Excel se abren con Datos → Obtener datos → Desde texto/CSV.
+- Las rutas se generan en el build, solo para los casos publicados.

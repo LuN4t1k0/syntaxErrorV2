@@ -45,6 +45,19 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["08-preguntas-de-gerencia", "ticket-por-ciudad"],
     ["08-preguntas-de-gerencia", "productos-de-50-unidades"],
   ],
+  "tienda-online-pewen": [
+    ["01-de-la-planilla-a-python", "totales-del-carrito"],
+    ["01-de-la-planilla-a-python", "primera-tabla"],
+    ["02-cargar-y-explorar", "explorar-pedidos"],
+    ["03-filtrar-y-seleccionar", "devueltos"],
+    ["03-filtrar-y-seleccionar", "envios-grandes"],
+    ["04-limpiar", "limpiar-pedidos"],
+    ["05-agrupar-y-resumir", "mejores-clientes"],
+    ["06-cruzar-tablas", "ventas-por-categoria-y-region"],
+    ["07-detectar-patrones", "devoluciones-y-meses"],
+    ["08-revisar-el-codigo-de-la-ia", "corregir-codigo-ia"],
+    ["09-recomendaciones-para-el-negocio", "cinco-respuestas"],
+  ],
 };
 
 export async function registrarse(page: Page, nombre: string): Promise<string> {

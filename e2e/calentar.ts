@@ -18,6 +18,8 @@ const RUTAS = [
   "/casos/minimarkets-del-sur/06-cruzar-tablas",
   "/casos/tienda-online-pewen",
   "/casos/tienda-online-pewen/03-filtrar-y-seleccionar",
+  "/casos/clinica-cordillera-central",
+  "/casos/clinica-cordillera-central/03-calcular-indicadores",
   "/casos/demo-motor",
   "/casos/demo-motor/01-clientes-de-regiones",
   "/casos/demo-motor/02-total-de-ventas",
