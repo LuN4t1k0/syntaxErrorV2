@@ -11,5 +11,7 @@ allowBuilds:
   "@google/genai": false
   '@sentry/cli': true
   esbuild: true
+  # Aceleración nativa opcional de msgpackr (dependencia de bullmq): sin ella usa JavaScript puro.
+  msgpackr-extract: false
   protobufjs: false
   sharp: true
