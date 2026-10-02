@@ -14,8 +14,8 @@ Solo Docker (con Compose v2.24+) y npm. Todo lo demás corre en contenedores.
 | `npm run stop` | Baja todo y conserva los datos |
 | `npm run reset` | Baja todo y borra los datos (base, `node_modules`) |
 | `npm test` | Tests unitarios y de integración contra `postgres-test` |
-| `npm run test:e2e` | Tests end-to-end con Playwright contra `next dev` (requiere `npm run dev` arriba). Reinicia `web` antes de correr y usa 3 navegadores en paralelo: `next dev` acumula memoria y compila cada página al vuelo. Antes de empezar, `e2e/calentar.ts` pide cada ruta una vez, y `onDemandEntries` en `next.config.ts` mantiene compiladas las páginas: si no, las recompilaciones recargan páginas de otras pruebas a mitad de camino |
-| `npm run test:e2e:prod` | Compila `web` como en producción (CSP real, páginas estáticas) y corre los e2e contra ese build |
+| `npm run test:e2e` | Tests end-to-end con Playwright contra el build de producción (`next build` + `next start`, con la CSP real y las páginas estáticas): es la verificación que vale para publicar. Al terminar deja `web` en modo desarrollo. Para correr solo algunas pruebas: `npm run test:e2e -- tests/despachos.spec.ts` |
+| `npm run test:e2e:dev` | Los mismos tests contra `next dev`, para depurar una prueba mientras se edita el código: `npm run test:e2e:dev -- npx playwright test tests/despachos.spec.ts`. La suite completa en este modo falla al azar porque `next dev` compila cada página al vuelo y con 3 navegadores en paralelo se satura. `e2e/calentar.ts` y `onDemandEntries` en `next.config.ts` lo reducen, pero no lo eliminan |
 | `npm run sh` | Shell dentro del contenedor de herramientas (`pnpm`, `tsc`, etc.) |
 | `npm run db:generate` | Genera una migración Drizzle a partir de `packages/db/src/schema.ts` |
 | `npm run content:validate` | Valida `content/`: schemas, tareas prácticas, briefs, entregable declarado y que cada solución pase su motor |
