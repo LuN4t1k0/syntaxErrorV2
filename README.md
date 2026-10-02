@@ -14,7 +14,7 @@ Solo Docker (con Compose v2.24+) y npm. Todo lo demás corre en contenedores.
 | `npm run stop` | Baja todo y conserva los datos |
 | `npm run reset` | Baja todo y borra los datos (base, `node_modules`) |
 | `npm test` | Tests unitarios y de integración contra `postgres-test` |
-| `npm run test:e2e` | Tests end-to-end con Playwright contra el build de producción (`next build` + `next start`, con la CSP real y las páginas estáticas): es la verificación que vale para publicar. Al terminar deja `web` en modo desarrollo. Para correr solo algunas pruebas: `npm run test:e2e -- tests/despachos.spec.ts` |
+| `npm run test:e2e` | Tests end-to-end con Playwright contra las imágenes de producción (`docker/compose.prod.yml`: las mismas que se publican, con la CSP real y las páginas estáticas): es la verificación que vale para publicar. Al terminar deja `web` y `worker` en modo desarrollo. Para correr solo algunas pruebas: `npm run test:e2e -- tests/despachos.spec.ts` |
 | `npm run test:e2e:dev` | Los mismos tests contra `next dev`, para depurar una prueba mientras se edita el código: `npm run test:e2e:dev -- npx playwright test tests/despachos.spec.ts`. La suite completa en este modo falla al azar porque `next dev` compila cada página al vuelo y con 3 navegadores en paralelo se satura. `e2e/calentar.ts` y `onDemandEntries` en `next.config.ts` lo reducen, pero no lo eliminan |
 | `npm run sh` | Shell dentro del contenedor de herramientas (`pnpm`, `tsc`, etc.) |
 | `npm run db:generate` | Genera una migración Drizzle a partir de `packages/db/src/schema.ts` |
@@ -217,3 +217,27 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
 - Los CSV van en UTF-8, separados por coma y sin BOM. En Excel se abren con Datos → Obtener datos → Desde texto/CSV.
   - La excepción es la muestra del proyecto final: imita un archivo público, separado por punto y coma. Su generador entrega el texto del archivo tal cual.
 - Las rutas se generan en el build, solo para los casos publicados.
+
+## Producción
+
+- **Imágenes:** `docker/web.Dockerfile` y `docker/worker.Dockerfile`. Las dos se construyen desde la raíz del repositorio.
+  - **Web:**
+    - Next en modo standalone, más el contenido (`CONTENT_DIR=/app/content`) y las migraciones (`MIGRATIONS_DIR=/app/drizzle`).
+    - `release.mjs` corre antes de cada deploy (`apps/web/src/db/release.ts`): migra la base y sincroniza el contenido. Si hay `SEED_ADMIN_PASSWORD`, también deja listo el admin. Es idempotente.
+    - Las variables `NEXT_PUBLIC_*` se fijan al compilar: en Railway llegan como build args.
+  - **Worker:** empaquetado con esbuild (`dist/index.mjs`), sin `tsx`. Solo `bullmq` y `@sentry/node` quedan como dependencias en disco.
+- **Probarlas en local:** `npm run test:e2e` las construye y corre las pruebas contra ellas, con el Postgres, el Redis y el Mailpit locales.
+- **Railway:** cada servicio usa su archivo de configuración: `railway.web.json` (healthcheck en `/api/health` y `node release.mjs` antes del deploy) y `railway.worker.json`.
+- **Variables de web:**
+  - `DATABASE_URL`, `REDIS_URL` y `AUTH_SECRET`;
+  - `AUTH_URL` y `PLATFORM_ALLOWED_ORIGINS`, con el dominio público, y `AUTH_TRUST_HOST=true`;
+  - `AUTH_GOOGLE_ID` y `AUTH_GOOGLE_SECRET`;
+  - `CHAT_SOCKET_SECRET`, la misma del worker, y `GITHUB_TOKEN`;
+  - al compilar: `NEXT_PUBLIC_SITE_URL` y `NEXT_PUBLIC_CHAT_SOCKET_URL`, con el dominio del worker;
+  - opcionales: `NEXT_PUBLIC_SENTRY_DSN` (con `SENTRY_ORG`, `SENTRY_PROJECT` y `SENTRY_AUTH_TOKEN` para los sourcemaps), y `SEED_ADMIN_EMAIL` con `SEED_ADMIN_PASSWORD`, solo en el primer deploy.
+- **Variables del worker:**
+  - `DATABASE_URL`, `REDIS_URL` y `CHAT_SOCKET_SECRET`;
+  - `APP_URL`, con el dominio público;
+  - `GEMINI_API_KEY`, `RESEND_API_KEY` y `EMAIL_FROM`;
+  - `CHAT_SOCKET_PORT` (4001), que es el puerto del dominio público del worker para el socket del tutor;
+  - opcional: `SENTRY_DSN`.

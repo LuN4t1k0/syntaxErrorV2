@@ -1,6 +1,0 @@
-# Levanta web como en producción (next build + next start) para probar la CSP y las páginas estáticas.
-services:
-  web:
-    command: sh -c "pnpm --filter web build && pnpm --filter web start -H 0.0.0.0 -p 3000"
-    environment:
-      CONTENT_INCLUDE_DRAFTS: "true"

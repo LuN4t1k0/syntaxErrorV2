@@ -1,0 +1,58 @@
+# Levanta las imágenes de producción (docker/web.Dockerfile y docker/worker.Dockerfile) contra el Postgres, el Redis y
+# el Mailpit locales: es lo mismo que se publica en Railway. Lo usa scripts/e2e.sh.
+# Las imágenes no montan el código: !reset quita los volúmenes y el código de desarrollo heredados de docker-compose.yml.
+services:
+  release:
+    image: syntaxerror-web:local
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: http://localhost:3000
+        NEXT_PUBLIC_CHAT_SOCKET_URL: http://localhost:4001
+        # La ruta Data Analyst sigue en borrador: las pruebas necesitan sus páginas.
+        CONTENT_INCLUDE_DRAFTS: "true"
+    working_dir: /app
+    volumes: !reset []
+    command: node release.mjs
+    restart: "no"
+    environment:
+      DATABASE_URL: postgres://platform:platform@postgres:5432/platform_dev
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@local.test}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-admin123456}
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  web:
+    image: syntaxerror-web:local
+    build: !reset null
+    working_dir: /app
+    volumes: !reset []
+    command: node apps/web/server.js
+    environment:
+      CI: !reset null
+      NODE_OPTIONS: --max-old-space-size=384
+      WATCHPACK_POLLING: !reset null
+      CONTENT_INCLUDE_DRAFTS: "true"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 3s
+      timeout: 5s
+      retries: 60
+    depends_on: !override
+      release: { condition: service_completed_successfully }
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  worker:
+    image: syntaxerror-worker:local
+    build:
+      context: .
+      dockerfile: docker/worker.Dockerfile
+    working_dir: /app
+    volumes: !reset []
+    command: node dist/index.mjs
+    depends_on: !override
+      release: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+      mailpit: { condition: service_started }
