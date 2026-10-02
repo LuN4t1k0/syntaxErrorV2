@@ -69,4 +69,20 @@ describe("tareas de planilla con varias hojas", () => {
     expect(bloqueSchemas.SheetTask.safeParse({ ...base, solucion: { i2: "=1" } }).success).toBe(false);
     expect(bloqueSchemas.SheetTask.safeParse({ ...base, otras: ["Comunas"], solucion: { I2: "=1" } }).success).toBe(false);
   });
+
+  it("la planilla viene de un CSV (hoja) o escrita en la lección (grilla), una de las dos", async () => {
+    const { bloqueSchemas } = await import("./esquemas");
+    const base = { id: "x", celdas: [{ celda: "B3", valor: 310000 }], solucion: { B3: 310000 } };
+    expect(bloqueSchemas.SheetTask.parse({ ...base, grilla: [["vendedor", "monto"], ["Diego", null]] })).toMatchObject({ grilla: [["vendedor", "monto"], ["Diego", null]] });
+    expect(bloqueSchemas.SheetTask.safeParse(base).success).toBe(false);
+    expect(bloqueSchemas.SheetTask.safeParse({ ...base, hoja: "ventas", grilla: [["a"]] }).success).toBe(false);
+  });
+});
+
+describe("lecturas", () => {
+  it("tienen una pregunta y la respuesta del curso", async () => {
+    const { bloqueSchemas } = await import("./esquemas");
+    expect(bloqueSchemas.LecturaTask.parse({ id: "x", pregunta: "¿Excel o una base?", respuesta: "Una base." })).toEqual({ id: "x", pregunta: "¿Excel o una base?", respuesta: "Una base.", pistas: [] });
+    expect(bloqueSchemas.LecturaTask.safeParse({ id: "x", pregunta: "¿Excel o una base?" }).success).toBe(false);
+  });
 });

@@ -35,7 +35,7 @@ async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: Re
       return revisarSql(tablas, tarea.props, tarea.props.solucion);
     }
     case "SheetTask": {
-      if (tarea.props.otras.includes(tarea.props.hoja)) return { aprobada: false, diagnostico: `la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta` };
+      if (tarea.props.hoja && tarea.props.otras.includes(tarea.props.hoja)) return { aprobada: false, diagnostico: `la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta` };
       const { grilla, opciones } = hojaDeTarea(caso, tarea.props);
       return revisarHoja(aplicarSolucion(grilla, tarea.props.solucion, opciones), tarea.props);
     }
@@ -46,6 +46,9 @@ async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: Re
     case "GithubTask":
       // Se revisa contra el repositorio de cada persona: no hay una solución que validar de antemano.
       return { aprobada: true, diagnostico: null };
+    case "LecturaTask":
+      // Una lectura se completa al marcarla: no hay solución que validar.
+      return { aprobada: true, diagnostico: null };
   }
 }
 
@@ -55,7 +58,7 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
     for (const mision of caso.misiones) {
       const donde = `casos/${caso.slug}/misiones/${mision.slug}.mdx`;
       const tareas = tareasDeMision(mision);
-      if (tareas.length === 0) problemas.push(`${donde}: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask o GithubTask)`);
+      if (tareas.length === 0) problemas.push(`${donde}: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask, GithubTask o LecturaTask)`);
       for (const bloque of mision.bloques) {
         if (bloque.tipo !== "Brief") continue;
         const palabras = contarPalabras(bloque.texto ?? "");

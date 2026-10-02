@@ -105,18 +105,25 @@ export const bloqueSchemas = {
     paquetes: z.array(z.enum(["pandas"])).default([]),
     pistas,
   }),
-  SheetTask: z.object({
-    id: idTarea,
-    enunciado: z.string().optional(),
-    hoja: nombreHoja,
-    // Hojas de consulta (por ejemplo comunas), que se leen con referencias como comunas!A2:E13.
-    otras: z.array(nombreHoja).default([]),
-    // Celdas escritas de antemano: títulos de columna, un valor de referencia o una fórmula a corregir.
-    inicial: z.record(rangoCeldas, contenidoCelda).default({}),
-    celdas: z.array(celdaEsperada).min(1, "indica al menos una celda a revisar"),
-    solucion: z.record(rangoCeldas, contenidoCelda),
-    pistas,
-  }),
+  SheetTask: z
+    .object({
+      id: idTarea,
+      enunciado: z.string().optional(),
+      // La planilla sale de un CSV de datos/ (hoja) o viene escrita en la lección (grilla), como en las aulas de la v1.
+      hoja: nombreHoja.optional(),
+      grilla: z.array(z.array(z.union([z.string(), z.number(), z.null()]))).min(1, "la grilla necesita al menos una fila").optional(),
+      // Hojas de consulta (por ejemplo comunas), que se leen con referencias como comunas!A2:E13.
+      otras: z.array(nombreHoja).default([]),
+      // Celdas escritas de antemano: títulos de columna, un valor de referencia o una fórmula a corregir.
+      inicial: z.record(rangoCeldas, contenidoCelda).default({}),
+      celdas: z.array(celdaEsperada).min(1, "indica al menos una celda a revisar"),
+      solucion: z.record(rangoCeldas, contenidoCelda),
+      pistas,
+    })
+    .refine((tarea) => (tarea.hoja === undefined) !== (tarea.grilla === undefined), {
+      message: "indica la hoja (un CSV de datos/) o la grilla, una de las dos",
+      path: ["hoja"],
+    }),
   MarkdownTask: z.object({
     id: idTarea,
     enunciado: z.string().optional(),
@@ -143,15 +150,18 @@ export const bloqueSchemas = {
       .min(2, "necesita al menos dos opciones")
       .refine((opciones) => opciones.some((opcion) => opcion.correcta), "al menos una opción debe ser correcta"),
   }),
+  // Una lección de lectura de las aulas de la v1: una pregunta para pensar y la respuesta del curso, que se ve al
+  // marcarla como completada. No tiene validación automática.
+  LecturaTask: z.object({ id: idTarea, pregunta: texto, respuesta: texto, pistas }),
   // En una lección de clases, el cierre explica la solución sin consejo de entrevista.
   Debrief: z.object({ entrevista: texto.optional() }),
   // La forma general de una instrucción, con nombres de ejemplo: se muestra pero no se ejecuta.
-  Sintaxis: z.object({ codigo: texto, lenguaje: z.enum(["sql", "python"]) }),
+  Sintaxis: z.object({ codigo: texto, lenguaje: z.enum(["sql", "python", "planilla"]) }),
 };
 
 export type TipoBloque = keyof typeof bloqueSchemas;
 export const TIPOS_BLOQUE = Object.keys(bloqueSchemas) as TipoBloque[];
-export const TIPOS_TAREA = ["SqlTask", "PythonTask", "SheetTask", "MarkdownTask", "GithubTask"] as const;
+export const TIPOS_TAREA = ["SqlTask", "PythonTask", "SheetTask", "MarkdownTask", "GithubTask", "LecturaTask"] as const;
 
 export type PropsBloque<T extends TipoBloque> = z.output<(typeof bloqueSchemas)[T]>;
 export type Bloque = { [T in TipoBloque]: { tipo: T; props: PropsBloque<T>; texto: string | null } }[TipoBloque];

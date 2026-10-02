@@ -36,7 +36,7 @@ describe("validarContenido", () => {
     const filtrar = mision("01-filtrar");
     filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
     expect(await validar()).toContain(
-      "casos/ventas/misiones/01-filtrar.mdx: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask o GithubTask)"
+      "casos/ventas/misiones/01-filtrar.mdx: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask, GithubTask o LecturaTask)"
     );
   });
 
@@ -51,19 +51,39 @@ describe("validarContenido", () => {
     );
   });
 
+  it("una tarea de planilla no puede consultar su propia hoja", async () => {
+    const tarea = bloque(mision("02-hoja"), "SheetTask");
+    tarea.props.otras = [tarea.props.hoja ?? ""];
+    expect(await validar()).toContain(
+      `casos/ventas/misiones/02-hoja.mdx: la solución de la tarea "total" no pasa su propio validador: la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta`
+    );
+  });
+
+  it("una tarea de planilla con su propia grilla se valida con su solución", async () => {
+    const filtrar = mision("01-filtrar");
+    const tarea = (solucion: Record<string, string | number>) => ({
+      tipo: "SheetTask" as const,
+      props: { id: "primera-formula", grilla: [["producto", "precio", "cantidad", "total"], ["Notebook", 450000, 3, null]], otras: [], inicial: {}, celdas: [{ celda: "D2", valor: 1350000 }], solucion, pistas: [] },
+      texto: null,
+    });
+    filtrar.bloques.push(tarea({ D2: "=B2*C2" }));
+    expect(await validar()).toEqual([]);
+    filtrar.bloques.push({ ...tarea({ D2: "=B2+C2" }), props: { ...tarea({ D2: "=B2+C2" }).props, id: "otra" } });
+    expect(await validar()).toContain('casos/ventas/misiones/01-filtrar.mdx: la solución de la tarea "otra" no pasa su propio validador: La celda D2 muestra "450003" y se espera "1350000".');
+  });
+
+  it("una lectura cuenta como tarea práctica y no tiene solución que validar", async () => {
+    const filtrar = mision("01-filtrar");
+    filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
+    filtrar.bloques.push({ tipo: "LecturaTask", props: { id: "lectura", pregunta: "¿Excel o una base de datos?", respuesta: "Una base de datos.", pistas: [] }, texto: null });
+    expect(await validar()).toEqual([]);
+  });
+
   it("una tarea de GitHub cuenta como tarea práctica y no tiene solución que validar", async () => {
     const filtrar = mision("01-filtrar");
     filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
     filtrar.bloques.push({ tipo: "GithubTask", props: { id: "repo", repositorio: "{usuario}/mi-primer-repositorio", requisitos: ["publico", "readme"], pistas: [] }, texto: null });
     expect(await validar()).toEqual([]);
-  });
-
-  it("una tarea de planilla no puede consultar su propia hoja", async () => {
-    const tarea = bloque(mision("02-hoja"), "SheetTask");
-    tarea.props.otras = [tarea.props.hoja];
-    expect(await validar()).toContain(
-      `casos/ventas/misiones/02-hoja.mdx: la solución de la tarea "total" no pasa su propio validador: la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta`
-    );
   });
 
   it("rechaza un Brief de más de 150 palabras", async () => {

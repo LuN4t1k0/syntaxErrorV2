@@ -18,8 +18,14 @@ export function grillaDeHoja(caso: Caso, hoja: string): Grilla {
 }
 
 // La hoja principal de una tarea de planilla, con sus hojas de consulta y sus celdas iniciales.
-export function hojaDeTarea(caso: Caso, tarea: { hoja: string; otras: string[]; inicial: Record<string, string | number> }): { grilla: Grilla; opciones: OpcionesHoja } {
+export function hojaDeTarea(
+  caso: Caso,
+  tarea: { hoja?: string; grilla?: (string | number | null)[][]; otras: string[]; inicial: Record<string, string | number> }
+): { grilla: Grilla; opciones: OpcionesHoja } {
   const otras = Object.fromEntries(tarea.otras.map((nombre) => [nombre, grillaDeHoja(caso, nombre)]));
+  // Una grilla escrita en la lección no viene de datos/: la hoja se llama como en una planilla nueva.
+  if (tarea.grilla) return { grilla: tarea.grilla.map((fila) => fila.map((celda) => celda ?? "")), opciones: { nombre: "Hoja1", otras, inicial: tarea.inicial } };
+  if (!tarea.hoja) throw new Error("La tarea de planilla necesita hoja o grilla");
   return { grilla: grillaDeHoja(caso, tarea.hoja), opciones: { nombre: tarea.hoja, otras, inicial: tarea.inicial } };
 }
 

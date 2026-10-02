@@ -10,6 +10,7 @@ import { Brief, Concepto } from "./bloques";
 import { Debrief } from "./debrief";
 import { Decision } from "./decision";
 import { GithubTask } from "./github-task";
+import { LecturaTask } from "./lectura-task";
 import { MarkdownTask } from "./markdown-task";
 import { PythonEjemplo } from "./python-ejemplo";
 import { PythonTask } from "./python-task";
@@ -40,7 +41,7 @@ export function componentesMision(caso: Caso): MDXComponents {
     SheetTask: (props: PropsMdx) => {
       const { solucion: _solucion, ...resto } = bloqueSchemas.SheetTask.parse(props);
       const { grilla, opciones } = hojaDeTarea(caso, resto);
-      const { hoja: _hoja, otras: _otras, inicial: _inicial, ...tarea } = resto;
+      const { hoja: _hoja, grilla: _grilla, otras: _otras, inicial: _inicial, ...tarea } = resto;
       return <SheetTask {...tarea} grilla={grilla} opciones={opciones} />;
     },
     PythonTask: (props: PropsMdx) => {
@@ -52,6 +53,10 @@ export function componentesMision(caso: Caso): MDXComponents {
       return <MarkdownTask {...tarea} />;
     },
     GithubTask: (props: PropsMdx) => <GithubTask {...bloqueSchemas.GithubTask.parse(props)} />,
+    LecturaTask: (props: PropsMdx) => {
+      const { pistas: _pistas, ...tarea } = bloqueSchemas.LecturaTask.parse(props);
+      return <LecturaTask {...tarea} />;
+    },
     Decision: (props: PropsMdx) => <Decision {...bloqueSchemas.Decision.parse(props)} />,
     Debrief: ({ children, ...props }: PropsMdx) => (
       <Debrief {...bloqueSchemas.Debrief.parse(props)} unidad={unidad(caso.tipo)}>
@@ -63,7 +68,8 @@ export function componentesMision(caso: Caso): MDXComponents {
       return (
         <figure className="grid gap-2 rounded-md border border-dashed border-border p-4">
           <figcaption className="font-mono text-xs font-bold uppercase text-muted-foreground">Sintaxis</figcaption>
-          <CodigoResaltado codigo={codigo} lenguaje={lenguaje} />
+          {/* Las fórmulas de planilla no tienen resaltado: se muestran tal cual. */}
+          {lenguaje === "planilla" ? <pre className="overflow-x-auto font-mono text-sm leading-6">{codigo}</pre> : <CodigoResaltado codigo={codigo} lenguaje={lenguaje} />}
         </figure>
       );
     },
