@@ -9,6 +9,7 @@ import { PreguntaDocente } from "@/components/mision/pregunta-docente";
 import { Tutor } from "@/components/mision/tutor";
 import { casosParaPublicar, obtenerCaso, rutasParaPublicar } from "@/lib/contenido";
 import { requisitosDelCaso } from "@/lib/progreso/requisitos-contenido";
+import { unidad } from "@/lib/unidad";
 
 export const dynamic = "error";
 export const dynamicParams = false;
@@ -45,7 +46,7 @@ export default async function MisionPage({ params }: Parametros) {
     <main className="mx-auto grid max-w-4xl gap-6 px-4 py-10 sm:px-6">
       <nav className="text-sm" aria-label="Volver al caso"><Link className="font-bold text-primary hover:underline" href={`/casos/${caso.slug}`}>{`← ${caso.titulo}`}</Link></nav>
       <header className="grid gap-2">
-        <p className="font-mono text-sm font-bold text-primary">{`> misión ${indice + 1}/${caso.misiones.length} · ${mision.tiempo} min`}</p>
+        <p className="font-mono text-sm font-bold text-primary">{`> ${unidad(caso.tipo).nombre} ${indice + 1}/${caso.misiones.length} · ${mision.tiempo} min`}</p>
         <h1 className="text-3xl font-black">{mision.titulo}</h1>
         {sinGuia ? (
           <p className="card border-primary p-3 text-sm leading-6">

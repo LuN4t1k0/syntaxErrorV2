@@ -99,7 +99,8 @@ export async function obtenerPortafolio(db: AppDb, usuario: string): Promise<Por
     .from(casoInscripciones)
     .innerJoin(casos, eq(casos.id, casoInscripciones.casoId))
     .leftJoin(entregables, and(eq(entregables.casoId, casoInscripciones.casoId), eq(entregables.userId, dueno.id)))
-    .where(and(eq(casoInscripciones.userId, dueno.id), isNotNull(casoInscripciones.completadoEn)))
+    // Las clases no van al portafolio: lo que se muestra son los casos, que dejan evidencia de trabajo.
+    .where(and(eq(casoInscripciones.userId, dueno.id), isNotNull(casoInscripciones.completadoEn), eq(casos.tipo, "caso")))
     .orderBy(desc(casoInscripciones.completadoEn));
 
   return {

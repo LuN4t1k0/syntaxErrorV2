@@ -14,7 +14,8 @@ export type CodigoErrorProgreso =
   | "mision_bloqueada"
   | "caso_bloqueado"
   | "misiones_pendientes"
-  | "entregable_aprobado";
+  | "entregable_aprobado"
+  | "sin_entregable";
 
 const SOLO_PUBLICADAS: OpcionesRequisitos = { incluirBorradores: false };
 
@@ -62,8 +63,10 @@ async function actualizarCompletitud(tx: DbClient, userId: string, caso: CasoGua
     .select({ estado: entregables.estado })
     .from(entregables)
     .where(and(eq(entregables.userId, userId), eq(entregables.casoId, caso.id)));
-  // El caso se completa con todas las misiones aprobadas y el entregable aprobado por una persona con la rúbrica.
-  const completo = caso.misiones.length > 0 && caso.misiones.every((mision) => slugsAprobados.has(mision.slug)) && entregable?.estado === "aprobado";
+  // Un caso se completa con todas las misiones aprobadas y el entregable aprobado por una persona con la rúbrica.
+  // Unas clases no tienen entregable: se completan al aprobar todas sus lecciones.
+  const misionesAprobadas = caso.misiones.length > 0 && caso.misiones.every((mision) => slugsAprobados.has(mision.slug));
+  const completo = misionesAprobadas && (caso.tipo === "clases" || entregable?.estado === "aprobado");
   if (!completo) return false;
 
   await tx
@@ -132,6 +135,7 @@ export async function enviarEntregable(
   opciones: OpcionesRequisitos = SOLO_PUBLICADAS
 ): Promise<ResultadoEntrega> {
   const caso = await buscarCaso(db, entrada.caso);
+  if (caso.tipo === "clases") throw new ErrorProgreso("sin_entregable");
   if (await casoPendiente(db, userId, caso.id, opciones)) throw new ErrorProgreso("caso_bloqueado");
   const aprobadas = await db
     .select({ mision: misionProgreso.mision })

@@ -105,6 +105,17 @@ describe("registrarIntento", () => {
     expect(await registrarIntento(db, userId, intento("m2", "t3"))).toMatchObject({ misionAprobada: true });
   });
 
+  it("unas clases se completan al aprobar todas sus lecciones, sin entregable, y no aceptan uno", async () => {
+    const { userId } = await prepararCaso();
+    await db.update(casos).set({ tipo: "clases" });
+    await aprobarM1(userId);
+    expect(await registrarIntento(db, userId, intento("m2", "t3"))).toEqual({ misionAprobada: true, casoCompleto: true });
+    expect(await obtenerProgresoCaso(db, userId, "ventas")).toMatchObject({ completo: true, entregable: null });
+    await expect(enviarEntregable(db, userId, { caso: "ventas", url: "https://github.com/alumna/ventas", archivos: [] }, { verificar: verificadorPrueba })).rejects.toMatchObject({
+      codigo: "sin_entregable",
+    });
+  });
+
   it("rechaza intentos en un caso cuyo caso anterior en la ruta no está completo", async () => {
     const { userId, rutaId, casoId } = await prepararCaso();
     const [siguiente] = await db

@@ -24,20 +24,26 @@ export default async function CasoPage({ params }: Parametros) {
   const caso = await obtenerCaso((await params).caso);
   if (!caso) notFound();
   const requisitos = requisitosDelCaso(await rutasParaPublicar(), await casosParaPublicar(), caso.slug);
+  const esClases = caso.tipo === "clases";
   return (
     <main className="mx-auto grid max-w-4xl gap-8 px-4 py-12 sm:px-6">
       <header className="grid gap-3">
-        <p className="font-mono text-sm font-bold text-primary">{`> caso: ${caso.empresa}`}</p>
+        <p className="font-mono text-sm font-bold text-primary">{esClases ? "> clases" : `> caso: ${caso.empresa}`}</p>
         <h1 className="text-3xl font-black">{caso.titulo}</h1>
-        <p className="leading-7 text-muted-foreground">{`Llegas como ${caso.cargo.toLowerCase()} a ${caso.empresa}. Datos del caso: ${caso.dataset}.`}</p>
+        <p className="leading-7 text-muted-foreground">
+          {esClases
+            ? `Una lección por tema, paso a paso y con datos de práctica: ${caso.dataset}. Al aprobarlas todas se habilita el caso siguiente, donde las usas en un trabajo real.`
+            : `Llegas como ${caso.cargo.toLowerCase()} a ${caso.empresa}. Datos del caso: ${caso.dataset}.`}
+        </p>
       </header>
       <PanelCaso
         caso={caso.slug}
+        tipo={caso.tipo}
         entregable={caso.entregable}
         requisitos={requisitos}
         misiones={caso.misiones.map((mision) => ({ slug: mision.slug, titulo: mision.titulo, tiempo: mision.tiempo, sinGuia: mision.sinGuia, tareas: tareasDeMision(mision).map((tarea) => tarea.props.id) }))}
       />
-      <RubricaDelCaso rubrica={caso.rubrica} />
+      {esClases ? null : <RubricaDelCaso rubrica={caso.rubrica} />}
       <DatosDelCaso caso={caso.slug} datos={caso.datos} />
       <ResenasCaso caso={caso.slug} />
     </main>

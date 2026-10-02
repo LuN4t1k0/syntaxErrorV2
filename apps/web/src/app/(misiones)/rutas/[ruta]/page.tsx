@@ -27,15 +27,20 @@ export default async function RutaPage({ params }: Parametros) {
         <p className="leading-7 text-muted-foreground">{ruta.descripcion}</p>
       </header>
       <ol className="grid gap-3">
-        {casos.map((caso, indice) => (
-          <li key={caso.slug}>
-            <Link href={`/casos/${caso.slug}`} className="card grid gap-1 p-5 hover:border-primary">
-              <span className="font-mono text-xs text-muted-foreground">{`Caso ${indice + 1} · ${caso.empresa}`}</span>
-              <span className="text-lg font-black">{caso.titulo}</span>
-              <span className="text-sm text-muted-foreground">{`${caso.misiones.length} misiones`}</span>
-            </Link>
-          </li>
-        ))}
+        {casos.map((caso, indice) => {
+          // Las clases van antes del caso que las aplica y no cuentan en la numeración de los casos.
+          const esClases = caso.tipo === "clases";
+          const numero = casos.slice(0, indice + 1).filter((anterior) => anterior.tipo === "caso").length;
+          return (
+            <li key={caso.slug}>
+              <Link href={`/casos/${caso.slug}`} className="card grid gap-1 p-5 hover:border-primary">
+                <span className="font-mono text-xs text-muted-foreground">{esClases ? "Clases" : `Caso ${numero} · ${caso.empresa}`}</span>
+                <span className="text-lg font-black">{caso.titulo}</span>
+                <span className="text-sm text-muted-foreground">{`${caso.misiones.length} ${esClases ? "lecciones" : "misiones"}`}</span>
+              </Link>
+            </li>
+          );
+        })}
       </ol>
     </main>
   );

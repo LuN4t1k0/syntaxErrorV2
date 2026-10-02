@@ -5,6 +5,7 @@ import { bloqueSchemas } from "@syntaxerror/content/esquemas";
 import type { Caso } from "@syntaxerror/content/tipos";
 import { calcularEsperado } from "@syntaxerror/engines/sql";
 import { CodigoResaltado } from "@/components/consola/codigo-resaltado";
+import { unidad } from "@/lib/unidad";
 import { Brief, Concepto } from "./bloques";
 import { Debrief } from "./debrief";
 import { Decision } from "./decision";
@@ -52,6 +53,19 @@ export function componentesMision(caso: Caso): MDXComponents {
     },
     GithubTask: (props: PropsMdx) => <GithubTask {...bloqueSchemas.GithubTask.parse(props)} />,
     Decision: (props: PropsMdx) => <Decision {...bloqueSchemas.Decision.parse(props)} />,
-    Debrief: ({ children, ...props }: PropsMdx) => <Debrief {...bloqueSchemas.Debrief.parse(props)}>{children}</Debrief>,
+    Debrief: ({ children, ...props }: PropsMdx) => (
+      <Debrief {...bloqueSchemas.Debrief.parse(props)} unidad={unidad(caso.tipo)}>
+        {children}
+      </Debrief>
+    ),
+    Sintaxis: (props: PropsMdx) => {
+      const { codigo, lenguaje } = bloqueSchemas.Sintaxis.parse(props);
+      return (
+        <figure className="grid gap-2 rounded-md border border-dashed border-border p-4">
+          <figcaption className="font-mono text-xs font-bold uppercase text-muted-foreground">Sintaxis</figcaption>
+          <CodigoResaltado codigo={codigo} lenguaje={lenguaje} />
+        </figure>
+      );
+    },
   };
 }

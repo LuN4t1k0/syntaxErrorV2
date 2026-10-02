@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { casoInscripciones, casos, entregables, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
@@ -65,13 +66,16 @@ describe("actualizarPortafolio", () => {
 });
 
 describe("obtenerPortafolio", () => {
-  it("muestra solo los casos completos, con su entregable y sus certificados", async () => {
+  it("muestra solo los casos completos, sin las clases, con su entregable y sus certificados", async () => {
     const id = await crearUsuaria();
     const completo = await crearCaso("ventas", "Ventas de marzo");
     const enCurso = await crearCaso("clientes", "Clientes de regiones");
+    const clases = await crearCaso("clases-de-sql", "Clases de SQL");
+    await db.update(casos).set({ tipo: "clases" }).where(eq(casos.id, clases));
     await db.insert(casoInscripciones).values([
       { userId: id, casoId: completo, completadoEn: new Date() },
       { userId: id, casoId: enCurso },
+      { userId: id, casoId: clases, completadoEn: new Date() },
     ]);
     await db.insert(entregables).values({ userId: id, casoId: completo, url: "https://github.com/ana/ventas" });
     await emitirCertificadosDelCaso(db, id, "ventas");

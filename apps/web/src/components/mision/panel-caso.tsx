@@ -7,7 +7,9 @@ import { Input } from "@syntaxerror/ui/components/input";
 import { Label } from "@syntaxerror/ui/components/label";
 import { PLAZO_REVISION_DIAS_HABILES } from "@/lib/entregables/plazo";
 import { cargarProgreso, dependenciasNavegador, type ProgresoVisible } from "@/lib/progreso/cliente";
+import type { TipoCaso } from "@syntaxerror/content/tipos";
 import type { CasoCorto } from "@/lib/progreso/requisitos";
+import { unidad } from "@/lib/unidad";
 import { ResultadoRevision } from "./resultado-revision";
 
 type MisionDelCaso = { slug: string; titulo: string; tiempo: number; tareas: string[]; sinGuia: boolean };
@@ -24,7 +26,7 @@ function etiquetaEstado(estado: "en_curso" | "aprobada" | undefined): string {
   return "Pendiente";
 }
 
-export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: string; misiones: MisionDelCaso[]; entregable: string; requisitos: CasoCorto[] }) {
+export function PanelCaso({ caso, tipo = "caso", misiones, entregable, requisitos }: { caso: string; tipo?: TipoCaso; misiones: MisionDelCaso[]; entregable: string; requisitos: CasoCorto[] }) {
   const [progreso, setProgreso] = useState<ProgresoVisible | null>(null);
   const [url, setUrl] = useState("");
   const [mensaje, setMensaje] = useState<string | null>(null);
@@ -96,7 +98,7 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
           <li key={mision.slug}>
             <Link href={`/casos/${caso}/${mision.slug}`} className="card flex items-center justify-between gap-4 p-4 hover:border-primary">
               <span>
-                <span className="block font-mono text-xs text-muted-foreground">{`Misión ${indice + 1} · ${mision.tiempo} min${mision.sinGuia ? " · sin guía" : ""}`}</span>
+                <span className="block font-mono text-xs text-muted-foreground">{`${unidad(tipo).Nombre} ${indice + 1} · ${mision.tiempo} min${mision.sinGuia ? " · sin guía" : ""}`}</span>
                 <span className="block font-bold">{mision.titulo}</span>
               </span>
               <span data-testid={`estado-${mision.slug}`} className="badge">{etiquetaEstado(progreso?.misiones[mision.slug]?.estado)}</span>
@@ -104,6 +106,17 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
           </li>
         ))}
       </ol>
+      {tipo === "clases" ? (
+        // Unas clases no tienen entregable: se completan al aprobar todas sus lecciones.
+        <section className="card grid gap-3 p-5">
+          <h2 className="text-xl font-black">Tu avance</h2>
+          {progreso?.completo ? (
+            <p role="status" className="font-bold text-primary">Clases completas: ya puedes seguir con el caso siguiente de la ruta.</p>
+          ) : (
+            <p className="text-sm text-muted-foreground">Aprueba todas las lecciones para completar las clases y habilitar el caso siguiente.</p>
+          )}
+        </section>
+      ) : (
       <section className="card grid gap-4 p-5">
         <h2 className="text-xl font-black">Tu entregable</h2>
         <p className="leading-7 text-muted-foreground">{entregable}</p>
@@ -159,6 +172,7 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
         ) : null}
         {mensaje ? <p role="status" className="text-sm font-bold">{mensaje}</p> : null}
       </section>
+      )}
     </div>
   );
 }

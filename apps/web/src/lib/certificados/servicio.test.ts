@@ -90,6 +90,12 @@ describe("emitirCertificadosDelCaso", () => {
     expect(fila.nombreAlumno).toBe("ana");
   });
 
+  it("unas clases completas no emiten certificado propio, pero sí el de la ruta", async () => {
+    const userId = await escenario();
+    await db.update(casos).set({ tipo: "clases" });
+    expect((await emitirCertificadosDelCaso(db, userId, "ventas")).map((certificado) => certificado.tipo)).toEqual(["ruta"]);
+  });
+
   it("un caso que no existe no emite nada", async () => {
     const userId = await escenario();
     expect(await emitirCertificadosDelCaso(db, userId, "otro")).toEqual([]);

@@ -107,7 +107,9 @@ export async function emitirCertificadosDelCaso(db: AppDb, userId: string, casoS
     .from(casoInscripciones)
     .where(and(eq(casoInscripciones.userId, userId), eq(casoInscripciones.casoId, caso.id)));
 
-  if (inscripcion?.completadoEn) {
+  // Las clases no tienen certificado propio: certifican los casos, que dejan evidencia de trabajo. Sí cuentan para
+  // completar la ruta.
+  if (inscripcion?.completadoEn && caso.tipo === "caso") {
     const codigo = await insertarCertificadoCaso(db, {
       userId,
       casoId: caso.id,
