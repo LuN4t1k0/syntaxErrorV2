@@ -74,7 +74,12 @@ function sangria(detalle: string): Explicacion {
   return { mensaje: "La sangría (los espacios al inicio de la línea) no es correcta.", sugerencia: "Usa 4 espacios por nivel." };
 }
 
+const SIN_PARENTESIS = "Pon cada condición entre paréntesis: (tabla[\"cantidad\"] >= 3) & (tabla[\"estado\"] == \"entregado\").";
+
 function tipos(detalle: string): Explicacion {
+  if (/Cannot perform '(?:r?and_|r?or_)' with a dtyped/.test(detalle) || /unsupported operand type\(s\) for [&|]/.test(detalle)) {
+    return { mensaje: "Combinaste condiciones con & o | sin paréntesis.", sugerencia: SIN_PARENTESIS };
+  }
   const concatenar = /can only concatenate str \(not "(\w+)"\) to str/.exec(detalle)?.[1];
   if (concatenar === "int" || concatenar === "float") {
     return { mensaje: "No puedes unir un texto con un número usando «+».", sugerencia: 'Convierte el número con str(...) o usa un f-string: f"Total: {total}".' };
@@ -152,6 +157,12 @@ const REGLAS: Record<string, Regla> = {
       ? { mensaje: "Pediste con iloc una posición que no existe.", sugerencia: "Las posiciones parten en 0: en una tabla de 5 filas, la última es la 4." }
       : { mensaje: "Pediste una posición que no existe.", sugerencia: "Las posiciones parten en 0: en una lista de 3 elementos, la última es la 2." },
   ValueError: (detalle) => {
+    if (detalle.startsWith("The truth value of a")) {
+      return {
+        mensaje: "Usaste and, or o un if con una columna completa.",
+        sugerencia: "Para combinar condiciones fila por fila, pandas usa & (y) y | (o), con cada condición entre paréntesis.",
+      };
+    }
     const entero = /invalid literal for int\(\) with base 10: (.+)$/.exec(detalle)?.[1];
     if (entero) return { mensaje: `No se puede convertir «${sinComillas(entero)}» en un número entero.`, sugerencia: "int() solo convierte textos con dígitos, como '42'." };
     const decimal = /could not convert string to float: (.+)$/.exec(detalle)?.[1];

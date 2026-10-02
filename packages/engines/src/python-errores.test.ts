@@ -107,6 +107,16 @@ describe("explicarErrorPython", () => {
     );
   });
 
+  it("los errores típicos de pandas al combinar condiciones", () => {
+    expect(explicarErrorPython(traza(enLinea(1), "TypeError: Cannot perform 'rand_' with a dtyped [object] array and scalar of type [bool]"))).toMatchObject({
+      mensaje: "Combinaste condiciones con & o | sin paréntesis.",
+      sugerencia: 'Pon cada condición entre paréntesis: (tabla["cantidad"] >= 3) & (tabla["estado"] == "entregado").',
+    });
+    expect(explicarErrorPython(traza(enLinea(1), "ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all()."))).toMatchObject({
+      mensaje: "Usaste and, or o un if con una columna completa.",
+    });
+  });
+
   it("archivo, módulo, posición y conversión", () => {
     expect(explicarErrorPython(traza(enLinea(1), "FileNotFoundError: [Errno 44] No such file or directory: 'datos/venta.csv'"), { archivos: ["datos/clientes.csv", "datos/ventas.csv"] })).toMatchObject({
       mensaje: "No existe el archivo «datos/venta.csv».",
