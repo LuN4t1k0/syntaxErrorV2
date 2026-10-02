@@ -9,15 +9,19 @@ export async function entrarComoAdmin(page: Page) {
   await expect(page).toHaveURL(/\/dashboard/);
 }
 
+// Aprueba por la API, con 2 en las tres dimensiones: no depende de que la página hidrate. La revisión con clics en
+// el formulario la prueba recorrido.spec.
 export async function aprobarEntregable(admin: Page, email: string) {
   await admin.goto("/profesor/entregables");
   const tarjeta = admin.locator("li", { hasText: email });
   await expect(tarjeta).toHaveCount(1);
-  // Si los criterios se marcan antes de que la página hidrate, React no los registra y el servidor responde
-  // que falta la rúbrica completa. Se reintenta hasta que el entregable sale de la lista.
-  await expect(async () => {
-    for (const criterio of await tarjeta.getByRole("checkbox").all()) await criterio.check();
-    await tarjeta.getByRole("button", { name: "Aprobar entregable" }).click();
-    await expect(tarjeta).toHaveCount(0, { timeout: 3_000 });
-  }).toPass({ timeout: 30_000 });
+  const entregableId = await tarjeta.locator("[data-entregable-id]").getAttribute("data-entregable-id");
+  expect(entregableId, `entregable sin id para ${email}`).not.toBeNull();
+  const respuesta = await admin.request.post(`/api/revision/entregables/${entregableId}`, {
+    headers: { Origin: "http://localhost:3000" },
+    data: { puntajes: { claridad: 2, ejecucion: 2, coherencia: 2 }, observaciones: {}, comentario: null },
+  });
+  expect(respuesta.ok(), `aprobación de entregable para ${email}`).toBe(true);
+  await admin.reload();
+  await expect(admin.locator("li", { hasText: email })).toHaveCount(0);
 }

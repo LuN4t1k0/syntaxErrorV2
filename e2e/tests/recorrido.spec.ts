@@ -32,7 +32,7 @@ test("las pistas aparecen después de dos resultados incorrectos; un error de c�
   await expect(page.getByText("Parte con SELECT nombre, ciudad FROM clientes.")).toBeVisible();
 });
 
-test("un repositorio sin README no pasa y una observación vuelve a quien entregó", async ({ page, ip, nuevaPagina }) => {
+test("un repositorio sin README no pasa, y con un 1 en la rúbrica la observación vuelve a quien entregó", async ({ page, ip, nuevaPagina }) => {
   const email = `recorrido-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`;
   await page.goto("/registro");
   await page.locator('input[name="name"]').fill("Fernanda Lagos");
@@ -49,6 +49,7 @@ test("un repositorio sin README no pasa y una observación vuelve a quien entreg
   }
 
   await page.goto(CASO);
+  await expect(page.getByRole("heading", { name: "Cómo se revisa tu entregable" })).toBeVisible();
   const enlace = page.getByLabel("Enlace a tu repositorio de GitHub");
   await enlace.fill("https://github.com/fernanda/repo-vacio");
   await page.getByRole("button", { name: "Enviar a revisión" }).click();
@@ -61,12 +62,22 @@ test("un repositorio sin README no pasa y una observación vuelve a quien entreg
   await entrarComoAdmin(admin);
   await admin.goto("/profesor/entregables");
   const tarjeta = admin.locator("li", { hasText: email });
-  await tarjeta.getByLabel("Comentario para la persona", { exact: false }).fill("Falta explicar tus conclusiones en el README.");
-  await tarjeta.getByRole("button", { name: "Pedir cambios" }).click();
-  await expect(tarjeta).toHaveCount(0);
+  // Se reintenta por si los puntajes se marcan antes de que la página hidrate: React no los registraría.
+  await expect(async () => {
+    await tarjeta.getByRole("group", { name: "Claridad del README y la explicación" }).getByLabel("3 · Destacado").check();
+    await tarjeta.getByRole("group", { name: "Ejecución técnica del análisis" }).getByLabel("2 · Aceptable").check();
+    const coherencia = tarjeta.getByRole("group", { name: "Coherencia de las conclusiones" });
+    await coherencia.getByLabel("1 · Insuficiente").check();
+    await coherencia.getByLabel("Qué debe corregir (obligatorio)").fill("Falta explicar tus conclusiones en el README.");
+    await expect(tarjeta.getByText("Resultado: se piden cambios.", { exact: false })).toBeVisible({ timeout: 3_000 });
+    await tarjeta.getByRole("button", { name: "Enviar revisión" }).click({ timeout: 3_000 });
+    await expect(tarjeta).toHaveCount(0, { timeout: 3_000 });
+  }).toPass({ timeout: 30_000 });
 
   await page.reload();
   await expect(page.getByText("Tu docente pidió cambios:")).toBeVisible();
+  await expect(page.getByText("Coherencia de las conclusiones: 1 · Insuficiente")).toBeVisible();
   await expect(page.getByText("Falta explicar tus conclusiones en el README.")).toBeVisible();
+  await expect(page.getByText("Claridad del README y la explicación: 3 · Destacado")).toBeVisible();
   await expect(page.getByRole("button", { name: "Enviar a revisión" })).toBeVisible();
 });

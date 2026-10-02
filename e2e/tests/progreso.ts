@@ -101,17 +101,16 @@ export async function completarCaso(page: Page, admin: Page, ip: string, email: 
   await page.getByLabel("Enlace a tu repositorio de GitHub").fill(`https://github.com/e2e/${caso}`);
   await page.getByRole("button", { name: "Enviar a revisión" }).click();
   await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
-  // Se aprueba por la API de revisión, con todos los criterios marcados: es más rápido y no depende de que la página
-  // hidrate. La revisión con clics en la rúbrica ya la prueban misiones.spec, cuenta.spec y recorrido.spec.
+  // Se aprueba por la API de revisión, con 2 en las tres dimensiones: es más rápido y no depende de que la página
+  // hidrate. La revisión con clics en la rúbrica la prueba recorrido.spec.
   await admin.goto("/profesor/entregables");
   const tarjeta = admin.locator("li", { hasText: email });
   await expect(tarjeta).toHaveCount(1);
   const entregableId = await tarjeta.locator("[data-entregable-id]").getAttribute("data-entregable-id");
   expect(entregableId, `${caso}: entregable sin id`).not.toBeNull();
-  const criterios = await tarjeta.locator('input[type="checkbox"]').count();
   const respuesta = await admin.request.post(`/api/revision/entregables/${entregableId}`, {
     headers: { Origin: "http://localhost:3000", "x-forwarded-for": ip },
-    data: { decision: "aprobado", criterios: Array.from({ length: criterios }, () => true), comentario: null },
+    data: { puntajes: { claridad: 2, ejecucion: 2, coherencia: 2 }, observaciones: {}, comentario: null },
   });
   expect(respuesta.ok(), `${caso}: aprobación de entregable`).toBe(true);
 }

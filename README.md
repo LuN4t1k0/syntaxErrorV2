@@ -123,7 +123,10 @@ Se basa en la propuesta pedagógica aprobada (`docs/propuesta-pedagogica-data-an
 - **Entregables:**
   - Deben ser un repositorio de GitHub.
   - Al enviarlo se verifica que sea público, tenga README y los archivos de `archivos` en `caso.yaml`.
-  - Luego un docente de la clase, o administración, lo revisa en `/profesor/entregables` con la rúbrica del caso (`rubrica` en `caso.yaml`, con una base común).
+  - Luego un docente de la clase, o administración, lo revisa en `/profesor/entregables` con la rúbrica estándar (`packages/content/src/rubrica.ts`).
+    - Tiene tres dimensiones (claridad, ejecución técnica y coherencia), cada una con puntaje de 1 (Insuficiente) a 3 (Destacado).
+    - `rubrica` en `caso.yaml` describe qué se espera en cada dimensión para ese caso, y la página del caso la muestra.
+    - La decisión sale de los puntajes (`apps/web/src/lib/entregables/rubrica.ts`): con 2 o más en las tres se aprueba. Con un 1 se piden cambios, esa dimensión necesita un comentario, y la persona corrige y reenvía sin penalización.
   - Al enviarlo se informa el plazo de revisión: 5 días hábiles (`apps/web/src/lib/entregables/plazo.ts`).
   - Solo un entregable aprobado completa el caso y emite el certificado.
   - En local y en e2e, `ENTREGABLES_VERIFICACION=prueba` evita consultar GitHub (un repositorio con `vacio` en el nombre simula uno sin README).
