@@ -1,0 +1,27 @@
+---
+titulo: Publicar tu proyecto
+tiempo: 60
+sinGuia: true
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Último paso: deja el proyecto listo para que cualquiera lo entienda sin ti. El README tiene que contar la pregunta, los datos con su fuente, cómo los preparaste, lo que encontraste con tus gráficos, tus conclusiones y sus limitaciones, en ese orden. Que el historial muestre cómo lo construiste. Cuando esté, pega el enlace y envíalo a revisión desde la página del caso.
+</Brief>
+
+<GithubTask
+  id="proyecto-publicado"
+  enunciado="Pega el enlace del repositorio de tu proyecto final."
+  requisitos={["publico", "nombres-limpios", "carpeta:datos", "carpeta:notebooks", "extension:.ipynb", "carpeta:graficos", "extension:.png", "commits:5", "readme:titulo", "readme:subtitulos:5", "readme:lista-numerada", "readme:imagen", "readme:enlace"]}
+/>
+
+<Decision
+  pregunta="¿Cómo presentas este proyecto en tu CV o en LinkedIn?"
+  opciones={[
+    { texto: "Con una frase que dice la pregunta, los datos y el hallazgo principal, más el enlace al repositorio.", correcta: true, porque: "Quien contrata lee en segundos: el hallazgo y el enlace lo invitan a entrar a ver el resto." },
+    { texto: "Con la lista de herramientas que usé: Python, pandas y GitHub.", porque: "Las herramientas importan, pero sin el problema que resolviste no dicen qué sabes hacer con ellas." },
+  ]}
+/>
+
+<Debrief entrevista="Este proyecto es tu mejor respuesta a 'cuéntame de un análisis que hayas hecho'. Practica contarlo en dos minutos: la pregunta, los datos, un problema que resolviste, el hallazgo y una limitación.">
+Terminaste la ruta con un proyecto propio, de principio a fin: elegiste la pregunta y los datos, los limpiaste dejando registro, analizaste, visualizaste y escribiste conclusiones con sus límites. Envíalo desde la página del caso para que lo revisen con la rúbrica.
+</Debrief>

@@ -1,0 +1,23 @@
+slug: proyecto-final
+titulo: "Proyecto final: tu propio análisis con datos públicos"
+cargo: Analista de datos
+empresa: Tu propio proyecto
+dataset: Un conjunto de datos abiertos chilenos que eliges tú, de una lista de seis fuentes; para practicar, una muestra de matrícula escolar del Maule con el formato de un portal público (datos generados con un script reproducible)
+entregable: Un repositorio en GitHub con tus datos y su fuente, el notebook de análisis (.ipynb), los gráficos (.png) y un README que cuente la pregunta, cómo preparaste los datos, lo que encontraste, tus conclusiones y sus limitaciones.
+archivos:
+  - .ipynb
+  - .png
+# Las tres dimensiones estándar de la rúbrica del equipo (propuesta pedagógica, sección 9).
+rubrica:
+  - "Claridad: el README explica la pregunta, los datos con su fuente, cómo se prepararon y lo que se encontró, de modo que lo entiende alguien que no conoce el proyecto."
+  - "Ejecución técnica: el notebook lee y limpia los datos de forma correcta y repetible, cada decisión de limpieza está documentada y los cálculos responden las preguntas."
+  - "Coherencia: las conclusiones se apoyan en los resultados y los gráficos, y las limitaciones dicen lo que los datos no permiten afirmar."
+misiones:
+  - 01-elegir-tus-datos
+  - 02-leer-un-archivo-publico
+  - 03-revisar-el-analisis-de-la-ia
+  - 04-tu-repositorio-y-tus-datos
+  - 05-explorar-y-limpiar
+  - 06-analizar-y-visualizar
+  - 07-conclusiones-y-limitaciones
+  - 08-publicar-tu-proyecto

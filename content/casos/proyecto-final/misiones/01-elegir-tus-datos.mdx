@@ -1,0 +1,53 @@
+---
+titulo: Elegir tus datos y tu pregunta
+tiempo: 40
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Llegaste al proyecto final. Ya no hay empresa ni encargo: tú eliges los datos y la pregunta. Este proyecto será la pieza principal de tu portafolio, así que elige un tema que te importe y que puedas explicar en una entrevista. Antes de descargar nada, escríbeme una propuesta corta: qué quieres responder, con qué datos y por qué importa.
+</Brief>
+
+<Concepto>
+Los datos salen de una de estas seis fuentes públicas chilenas. Todas publican archivos descargables y se encuentran buscando su nombre:
+
+| Fuente | Qué publica | Una pregunta posible |
+| --- | --- | --- |
+| **datos.gob.cl** | El portal de datos abiertos del Estado, con conjuntos de ministerios, servicios y municipios, como patentes comerciales, permisos de circulación o catastros municipales | ¿En qué comunas crecen más las patentes comerciales? |
+| **INE** (Instituto Nacional de Estadísticas) | La Encuesta Nacional de Empleo, el IPC y los índices de actividad económica | ¿Cómo cambió la desocupación de cada región desde 2019? |
+| **SINIM** (SUBDERE) | Indicadores de cada municipio: presupuesto, educación, salud y fondos de desarrollo | ¿Qué comunas dependen más del Fondo Común Municipal? |
+| **DEIS** (MINSAL) | Estadísticas de salud: atenciones de urgencia, listas de espera e indicadores hospitalarios | ¿En qué semanas del año se saturan las urgencias respiratorias? |
+| **Centro de Estudios Mineduc** | Matrícula por establecimiento y comuna, Índice de Vulnerabilidad Escolar y resultados de la educación superior | ¿Dónde baja más la matrícula de la educación municipal? |
+| **SINCA** | Las mediciones históricas de las estaciones de monitoreo de la calidad del aire | ¿En qué meses se supera más la norma de MP2,5 en tu ciudad? |
+
+Antes de quedarte con un conjunto de datos, revísalo con cinco preguntas:
+
+1. **¿Responde mi pregunta?** Que el tema coincida no basta: tienen que estar las columnas que necesitas.
+2. **¿Qué es cada fila?** Una persona, un establecimiento o una comuna en un año. Eso define qué puedes contar.
+3. **¿Qué período cubre?** Para hablar de tendencias necesitas varios años, medidos de la misma forma.
+4. **¿Cuánto pesa?** GitHub acepta archivos de hasta 25 MB al subirlos desde la web. Si el tuyo pesa más, sube una parte y deja el enlace a la fuente.
+5. **¿Trae datos de personas?** Si identifica a alguien (nombre, RUT o dirección), no sirve para un repositorio público: busca la versión agregada.
+
+Una buena pregunta es **concreta** (dice qué, dónde y cuándo), **se puede responder con los datos** y **le importa a alguien** que tomaría una decisión con la respuesta.
+</Concepto>
+
+<Decision
+  pregunta="¿Cuál de estas preguntas sirve mejor para tu proyecto?"
+  opciones={[
+    { texto: "¿En qué comunas de la Región de Valparaíso bajó más la matrícula municipal entre 2019 y 2024?", correcta: true, porque: "Dice qué, dónde y cuándo, y se responde con la matrícula por comuna y año que publica el Centro de Estudios Mineduc." },
+    { texto: "¿Cómo está la educación en Chile?", porque: "Es un tema, no una pregunta: no dice qué medir, dónde ni en qué período." },
+    { texto: "¿Por qué los estudiantes se cambian de colegio?", porque: "Los datos de matrícula muestran cuántos estudiantes hay en cada colegio, no por qué se cambian. Esa respuesta necesita encuestas o entrevistas." },
+  ]}
+/>
+
+<MarkdownTask
+  id="propuesta-del-proyecto"
+  enunciado="Escribe la propuesta de tu proyecto: un título, tres secciones (por ejemplo Pregunta, Datos y Por qué importa), un enlace a la página de los datos que elegiste y una lista numerada con tres preguntas más chicas que te ayuden a responder la principal."
+  inicial="Propuesta del proyecto"
+  requisitos={["titulo", "subtitulos:3", "enlace", "lista-numerada"]}
+  solucion={"# Matrícula municipal en la Región de Valparaíso\n\n## Pregunta\n\n¿En qué comunas de la Región de Valparaíso bajó más la matrícula municipal entre 2019 y 2024?\n\n1. ¿Cuánto cambió la matrícula municipal de la región en esos años?\n2. ¿Qué comunas perdieron más, en porcentaje?\n3. ¿Creció la matrícula particular subvencionada en esas mismas comunas?\n\n## Datos\n\nMatrícula por establecimiento del [portal de datos abiertos](https://datos.gob.cl), de 2019 a 2024.\n\n## Por qué importa\n\nUna comuna que pierde matrícula municipal tiene que decidir qué hacer con sus escuelas y su presupuesto."}
+  pistas={["Un enlace se escribe [texto](https://...): copia la dirección de la página de tus datos.", "Las tres preguntas más chicas parten de la principal: por ejemplo, cuánto cambió, dónde cambió más y qué pasó al mismo tiempo.", "Cada sección empieza con ## y un espacio."]}
+/>
+
+<Debrief entrevista="En una entrevista, el proyecto final se cuenta en tres frases: la pregunta, los datos y lo que encontraste. Elegir un tema que te importe hace que esa conversación salga natural.">
+Elegiste una pregunta concreta, una fuente que la puede responder y tres preguntas más chicas que ordenan el trabajo. En la próxima misión practicas, con una muestra, cómo vienen de verdad los archivos públicos.
+</Debrief>

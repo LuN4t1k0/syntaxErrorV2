@@ -1,0 +1,44 @@
+---
+titulo: Conclusiones y limitaciones
+tiempo: 40
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Tienes cálculos y gráficos. Ahora escribe lo que significan: qué respondes a tu pregunta, con qué números, y qué no se puede afirmar con estos datos. Las limitaciones no son una debilidad del proyecto: escribirlas muestra que entiendes tus datos.
+</Brief>
+
+<Concepto>
+Una conclusión tiene tres partes: **la respuesta** a la pregunta, **el número** que la respalda y **la evidencia** de donde sale. Con la muestra del Maule:
+
+> La matrícula municipal bajó en las ocho comunas entre 2020 y 2024. En Cauquenes cayó 26,7 %, casi el triple que en el resto (gráfico de caída municipal).
+
+Las limitaciones dicen hasta dónde llega esa conclusión:
+
+- **Cobertura:** qué período, lugares o grupos quedan fuera.
+- **Calidad:** datos faltantes o cambios en cómo se midió, como los «s/i» de 2022.
+- **Causa:** los datos muestran qué pasó, casi nunca por qué. «La matrícula municipal cayó» se puede afirmar; «cayó porque las familias prefieren otros colegios» necesita otra evidencia.
+- **Alcance:** los datos de una región no hablan por todo el país.
+
+Cierra con una recomendación o una pregunta abierta: qué haría alguien con tu respuesta, o qué habría que investigar después.
+</Concepto>
+
+<MarkdownTask
+  id="conclusiones-y-limitaciones"
+  enunciado="Escribe las conclusiones de tu proyecto: un título, una sección Conclusiones con una lista numerada (una conclusión por pregunta, cada una con su número) y una sección Limitaciones con una lista de lo que tus datos no permiten afirmar."
+  inicial="Conclusiones del proyecto"
+  requisitos={["titulo", "subtitulos:2", "lista-numerada", "lista"]}
+  solucion={"# Conclusiones del proyecto\n\n## Conclusiones\n\n1. La matrícula municipal del Maule bajó en las ocho comunas entre 2020 y 2024.\n2. En Cauquenes cayó 26,7 %, casi el triple que en el resto.\n3. La matrícula total de la región bajó solo 1,7 %, y en esos años la particular subvencionada creció.\n\n## Limitaciones\n\n- En 2022 faltan datos de Linares y Parral.\n- Los datos muestran cuánto cambió la matrícula, no por qué.\n- Es una sola región: no habla por el país."}
+  pistas={["Cada conclusión responde una de tus preguntas chicas y lleva su número: «cayó 26,7 %», no «cayó harto».", "Una lista con viñetas empieza cada línea con - y un espacio.", "Revisa las cuatro limitaciones del concepto: cobertura, calidad, causa y alcance. ¿Cuáles aplican a tus datos?"]}
+/>
+
+<Decision
+  pregunta="En tu análisis, las comunas donde más creció la matrícula particular subvencionada son las que más perdieron matrícula municipal. ¿Qué escribes?"
+  opciones={[
+    { texto: "Que las dos cosas ocurren juntas en estos datos, y que para saber si una explica la otra se necesitaría otra evidencia, como seguir a cada estudiante o encuestar a las familias.", correcta: true, porque: "Dos números que se mueven juntos no prueban que uno cause el otro: puede haber otra explicación, como un cambio en la población de la comuna." },
+    { texto: "Que las familias se están cambiando de los colegios municipales a los subvencionados.", porque: "Es una explicación posible, pero los datos por comuna no siguen a cada estudiante: no muestran desde dónde ni hacia dónde se cambió." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta típica es '¿qué le falta a tu análisis o qué harías distinto?'. Si ya escribiste tus limitaciones, tienes la respuesta lista, y muestra que conoces el alcance de tu trabajo.">
+Una conclusión responde la pregunta con un número y su evidencia; las limitaciones dicen hasta dónde llega. Separar lo que los datos muestran de lo que no pueden mostrar es lo que hace confiable un análisis.
+</Debrief>

@@ -1,0 +1,59 @@
+---
+titulo: Explorar y limpiar
+tiempo: 60
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Abre tus datos en un notebook (Google Colab sirve, como en el Caso 3) y explóralos: cuántas filas tienen, qué columnas, qué tipos, qué falta y qué se repite. Limpia lo necesario y anota cada problema en una bitácora: qué encontraste, cuántas filas afectaba y qué hiciste. Escríbela aquí primero y después agrégala a tu README. El notebook va en la carpeta notebooks.
+</Brief>
+
+<Concepto>
+Lo mismo que hiciste en el Caso 3, ahora con datos que nadie preparó para ti:
+
+| Pregunta | Código |
+| --- | --- |
+| ¿Se leyó bien? | `df.columns`, `df.dtypes` y `df.head()` |
+| ¿Cuántas filas tiene? | `len(df)` |
+| ¿Qué falta? | `df.isna().sum()` |
+| ¿Hay filas repetidas? | `df.duplicated().sum()` |
+| ¿Qué valores toma una columna? | `df["columna"].value_counts()` |
+| ¿Hay valores raros? | `df.describe()` |
+
+Cada decisión de limpieza cambia el resultado, así que se anota. Con la muestra del Maule, la bitácora se vería así:
+
+| Problema | Filas afectadas | Qué hice |
+| --- | --- | --- |
+| Separador punto y coma y miles con punto | todas | Lo indiqué al leer: `sep=";"` y `thousands="."` |
+| Filas de total mezcladas con el detalle | 5 | Las separé en otra tabla y las usé como control |
+| «s/i» en 2022 | 3 | Quedaron como datos faltantes; lo explico en las limitaciones |
+
+Para subir el notebook desde Colab: **Archivo** → **Descargar** → **Descargar .ipynb**, y luego súbelo a la carpeta `notebooks`. Súbelo en varios commits, cada uno con un mensaje que diga qué cambiaste.
+</Concepto>
+
+<MarkdownTask
+  id="bitacora-de-limpieza"
+  enunciado="Escribe la bitácora de limpieza de tus datos: un título, una tabla con las columnas Problema, Filas afectadas y Qué hice (con al menos tres problemas) y una lista con lo que revisaste y estaba bien."
+  inicial="Bitácora de limpieza"
+  requisitos={["titulo", "tabla", "lista"]}
+  solucion={"# Bitácora de limpieza\n\n| Problema | Filas afectadas | Qué hice |\n| --- | --- | --- |\n| Separador punto y coma y miles con punto | todas | Lo indiqué al leer el archivo |\n| Filas de total mezcladas con el detalle | 5 | Las separé y las usé como control |\n| «s/i» en 2022 | 3 | Quedaron como datos faltantes |\n\nLo que revisé y estaba bien:\n\n- No hay filas repetidas.\n- Todas las comunas tienen las tres dependencias en cada año."}
+  pistas={["Una tabla en Markdown tiene una fila de encabezados, una fila con | --- | --- | --- | y una fila por problema.", "Si no encontraste vacíos o repetidos, también se anota: va en la lista de lo que revisaste y estaba bien.", "Las filas afectadas salen de tu notebook: isna().sum() y duplicated().sum() te dan los números."]}
+/>
+
+<GithubTask
+  id="notebook-de-limpieza"
+  enunciado="Sube tu notebook a la carpeta notebooks y pega el enlace del repositorio."
+  requisitos={["publico", "carpeta:notebooks", "extension:.ipynb", "commits:3"]}
+  pistas={["En Colab: Archivo → Descargar → Descargar .ipynb.", "Al subirlo, nómbralo notebooks/exploracion.ipynb para que quede dentro de la carpeta.", "Los mensajes automáticos como «Add files via upload» no cuentan: al subir cada archivo, escribe qué agregaste."]}
+/>
+
+<Decision
+  pregunta="Encuentras un valor muy distinto al resto: una comuna con diez veces más atenciones que las demás en un solo mes. ¿Qué haces?"
+  opciones={[
+    { texto: "Lo investigo antes de decidir: reviso la fuente y busco una explicación (un error de digitación o algo que pasó de verdad), y anoto la decisión en la bitácora.", correcta: true, porque: "Un valor extremo puede ser un error o el hallazgo más importante del análisis. Se decide con evidencia y queda escrito." },
+    { texto: "Lo borro: los valores extremos arruinan los promedios.", porque: "Si pasó de verdad, borrarlo esconde justo lo que había que contar. Se borra solo si se confirma que es un error, y se anota." },
+  ]}
+/>
+
+<Debrief entrevista="Es casi seguro que te pregunten cuánto tiempo de un análisis se va en preparar los datos. Responde con tu bitácora: qué problemas encontraste, cuántas filas afectaban y por qué decidiste lo que decidiste.">
+Explorar es conocer los datos antes de creerles; limpiar es decidir qué hacer con cada problema y dejarlo escrito. La bitácora permite que otra persona entienda y repita cada decisión.
+</Debrief>

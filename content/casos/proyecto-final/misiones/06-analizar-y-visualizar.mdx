@@ -1,0 +1,57 @@
+---
+titulo: Analizar y visualizar
+tiempo: 60
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Con los datos limpios, responde tus tres preguntas más chicas, cada una con un cálculo y un gráfico. Antes, practica con la muestra del Maule: ¿en qué comuna cayó más la matrícula municipal entre 2020 y 2024? Después haz lo mismo con tus datos y sube los gráficos a la carpeta graficos.
+</Brief>
+
+<Concepto>
+Para comparar dos años por grupo, `pivot_table` deja una fila por grupo y una columna por año:
+
+<PythonEjemplo codigo={"import pandas as pd\nmatricula = pd.read_csv(\"datos/matricula_comunal.csv\", sep=\";\", thousands=\".\", na_values=\"s/i\")\nmunicipal = matricula[matricula[\"dependencia\"] == \"Municipal\"]\ntabla = municipal.pivot_table(index=\"comuna\", columns=\"agno\", values=\"matricula\")\nprint(tabla)"} />
+
+Cada columna se usa como una serie: `tabla[2024] - tabla[2020]` resta comuna por comuna.
+
+Para el gráfico, repasa lo que viste en el Caso 4:
+
+| Lo que quieres mostrar | Gráfico |
+| --- | --- |
+| Cómo cambia algo en el tiempo | Líneas |
+| Qué grupo es mayor o menor (un ranking) | Barras horizontales ordenadas |
+| Si dos números se mueven juntos | Dispersión |
+
+El título dice la conclusión: «Cauquenes perdió más de un cuarto de su matrícula municipal» dice más que «Matrícula por comuna». Para subir un gráfico desde Colab, haz clic derecho en la imagen, guárdala como `.png` y súbela a la carpeta `graficos`.
+</Concepto>
+
+<PythonTask
+  id="caida-municipal"
+  enunciado="Con la muestra del Maule, guarda en caida la variación porcentual de la matrícula municipal entre 2020 y 2024 de cada comuna (una serie con una fila por comuna) y en comuna_mayor_caida el nombre de la comuna donde más cayó."
+  preparacion={"import pandas as pd\nmatricula = pd.read_csv(\"datos/matricula_comunal.csv\", sep=\";\", thousands=\".\", na_values=\"s/i\")"}
+  inicial={"municipal = matricula[matricula[\"dependencia\"] == \"Municipal\"]\ncaida = None\ncomuna_mayor_caida = None"}
+  solucion={"municipal = matricula[matricula[\"dependencia\"] == \"Municipal\"]\ntabla = municipal.pivot_table(index=\"comuna\", columns=\"agno\", values=\"matricula\")\ncaida = (tabla[2024] - tabla[2020]) / tabla[2020] * 100\ncomuna_mayor_caida = caida.idxmin()"}
+  pruebas={"assert len(caida) == 8, \"caida debe tener una fila por comuna.\"\nassert round(caida[\"Cauquenes\"], 1) == -26.7, \"caida debe ser (2024 − 2020) / 2020 × 100 en cada comuna.\"\nassert comuna_mayor_caida == \"Cauquenes\", \"comuna_mayor_caida debe ser la comuna con la variación más negativa.\""}
+  paquetes={["pandas"]}
+  pistas={["pivot_table(index=\"comuna\", columns=\"agno\", values=\"matricula\") deja una columna por año: tabla[2020] y tabla[2024].", "La variación es (nuevo − antiguo) / antiguo × 100, columna con columna.", "Una caída es una variación negativa: la mayor caída es el valor más bajo, e idxmin() devuelve su comuna."]}
+/>
+
+<GithubTask
+  id="graficos-del-proyecto"
+  enunciado="Sube los gráficos de tus tres preguntas a la carpeta graficos, muestra al menos uno en el README y pega el enlace del repositorio."
+  requisitos={["publico", "carpeta:graficos", "extension:.png", "readme:imagen"]}
+  pistas={["Al subir cada imagen, nómbrala graficos/nombre-del-grafico.png.", "En el README, una imagen del repositorio se muestra con ![La matrícula municipal cae en todas las comunas](graficos/caida-municipal.png)."]}
+/>
+
+<Decision
+  pregunta="Para mostrar la caída de la matrícula municipal en las ocho comunas del Maule, ¿qué gráfico usas?"
+  opciones={[
+    { texto: "Barras horizontales ordenadas de la mayor caída a la menor, con el título «Cauquenes perdió más de un cuarto de su matrícula municipal».", correcta: true, porque: "Un ranking se lee bien en barras ordenadas, y el título dice la conclusión." },
+    { texto: "Un gráfico de torta con la matrícula municipal de cada comuna.", porque: "Una torta muestra las partes de un todo en un momento; la pregunta es cuánto cambió cada comuna entre dos años." },
+    { texto: "Ocho gráficos de líneas, uno por comuna.", porque: "Obliga a comparar entre gráficos con escalas distintas. Un solo gráfico ordenado responde la pregunta de un vistazo." },
+  ]}
+/>
+
+<Debrief entrevista="Al mostrar un gráfico en una entrevista, parte por la conclusión del título y después muestra el dato que la respalda. Si un gráfico necesita mucha explicación, probablemente no es el gráfico correcto.">
+Cada pregunta chica se responde con un cálculo y un gráfico elegido para esa pregunta, con un título que dice la conclusión. Lo practicaste con la muestra y lo repetiste con tus datos.
+</Debrief>

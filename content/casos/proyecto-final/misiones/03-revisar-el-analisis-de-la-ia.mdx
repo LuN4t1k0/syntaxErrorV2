@@ -1,0 +1,42 @@
+---
+titulo: Revisar el análisis de la IA
+tiempo: 25
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Con la muestra del Maule le pedí a un asistente de IA la matrícula total de 2024 y cuánto cambió desde 2020, en porcentaje. Lo pegué en el editor tal cual. El código corre sin errores y dice que la matrícula creció 1,3 %, pero no le creo: el total de 2024 que calcula no se parece en nada al total regional que trae el archivo. Revísalo y corrígelo. Esto mismo te va a pasar con tus datos.
+</Brief>
+
+<Concepto>
+Un archivo público trae a veces sus propios controles: filas de total, conteos en la descripción del conjunto de datos o cifras publicadas en un informe. Son la mejor forma de revisar un cálculo, tuyo o de una IA:
+
+1. **Calcula lo mismo paso a paso** y mira los resultados intermedios.
+2. **Compara con el control.** Si no calza, busca en qué paso se separan.
+3. **Revisa cómo se leyó el archivo.** Un número leído como 14,918 en vez de 14918 no da error.
+
+La variación porcentual entre dos años se calcula como (nuevo − antiguo) / antiguo × 100. Un resultado negativo es una caída.
+</Concepto>
+
+<PythonTask
+  id="corregir-el-analisis"
+  enunciado="Corrige el código del asistente para que total_2024 sea la matrícula total de la región en 2024 y variacion el cambio porcentual entre 2020 y 2024, redondeado a un decimal."
+  preparacion={"import pandas as pd"}
+  inicial={"# Código sugerido por un asistente de IA\nmatricula = pd.read_csv(\"datos/matricula_comunal.csv\", sep=\";\", na_values=\"s/i\")\npor_agno = matricula.groupby(\"agno\")[\"matricula\"].sum()\ntotal_2024 = por_agno[2024]\nvariacion = round((por_agno[2024] - por_agno[2020]) / por_agno[2020] * 100, 1)"}
+  solucion={"matricula = pd.read_csv(\"datos/matricula_comunal.csv\", sep=\";\", thousands=\".\", na_values=\"s/i\")\ndetalle = matricula[matricula[\"comuna\"] != \"Total regional\"]\npor_agno = detalle.groupby(\"agno\")[\"matricula\"].sum()\ntotal_2024 = por_agno[2024]\nvariacion = round((por_agno[2024] - por_agno[2020]) / por_agno[2020] * 100, 1)"}
+  pruebas={"assert total_2024 == 148733, \"total_2024 no calza con la fila «Total regional» de 2024 del archivo: revisa cómo se leen los números y qué filas se suman.\"\nassert variacion == -1.7, \"variacion debe ser el cambio porcentual entre 2020 y 2024, redondeado a un decimal.\""}
+  paquetes={["pandas"]}
+  pistas={["Ejecuta el código y compara total_2024 con la fila «Total regional» de 2024: ¿cuánto se alejan?", "Mira matricula[\"matricula\"].head(): ¿14.918 quedó como catorce mil o como catorce?", "Si sumas el detalle y también la fila de total, cuentas todo dos veces."]}
+/>
+
+<Decision
+  pregunta="Ya corregiste el código del asistente. ¿Cómo vas a usar la IA en tu proyecto?"
+  opciones={[
+    { texto: "Para escribir código más rápido, revisando cada resultado contra un control: una fila de total, un conteo conocido o un cálculo hecho a mano.", correcta: true, porque: "Bien revisada, la IA ahorra tiempo. Lo que no sirve es usarla sin revisar." },
+    { texto: "Copio su resultado: escribe código más rápido que yo.", porque: "Este código corría y daba un número creíble, pero equivocado. La rapidez no sirve si el resultado no se revisa." },
+    { texto: "No la uso nunca: si se equivoca, no sirve.", porque: "Tú también te equivocas, y por eso revisas. Con la IA es igual: se revisa contra los datos." },
+  ]}
+/>
+
+<Debrief entrevista="Si te preguntan cómo validas un análisis, menciona los totales de control: 'comparo mi suma con el total que publica la fuente; si no calza, busco la diferencia antes de seguir'.">
+El asistente leyó los miles como decimales y sumó las filas de total junto con el detalle. Ninguno de los dos errores avisa. Los delató el total regional que trae el mismo archivo: usa siempre los controles que tengas a mano.
+</Debrief>

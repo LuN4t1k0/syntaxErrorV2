@@ -1,0 +1,62 @@
+---
+titulo: Leer un archivo público
+tiempo: 35
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Antes de abrir tus datos, practiquemos con una muestra: la matrícula escolar del Maule por comuna y dependencia, de 2020 a 2024, con el formato con que se publican muchos datos abiertos (los números son inventados). Los archivos públicos casi nunca vienen listos: si los lees como un CSV cualquiera, los números salen mal sin ningún error. Léelo bien y separa lo que no es detalle.
+</Brief>
+
+<Concepto>
+Antes de leer un archivo público con pandas, mira sus primeras líneas. En la muestra hay cuatro trampas comunes:
+
+| Lo que ves | Qué significa | Cómo se lee |
+| --- | --- | --- |
+| `;` entre columnas | El separador es punto y coma, porque en Chile la coma se usa para los decimales | `sep=";"` |
+| `14.918` | Catorce mil novecientos dieciocho: el punto separa los miles | `thousands="."` |
+| `s/i` | Sin información: el dato falta | `na_values="s/i"` |
+| `Total regional` | Una fila que suma las demás, mezclada con el detalle | se separa con un filtro |
+
+Muchos archivos escriben `agno` en vez de año, para evitar la ñ.
+
+Ninguna de estas trampas produce un error. Si lees el archivo sin indicar nada, obtienes una sola columna con todo junto:
+
+<PythonEjemplo codigo={"import pandas as pd\nmatricula = pd.read_csv(\"datos/matricula_comunal.csv\")\nprint(matricula.columns)\nprint(matricula.head())"} />
+
+Por eso, después de leer, revisa siempre `columns`, `dtypes` y algún valor que conozcas. Las filas de total se separan del detalle con un filtro: `matricula[matricula["comuna"] != "Total regional"]` deja todas las filas menos las de total.
+</Concepto>
+
+<PythonTask
+  id="leer-el-archivo"
+  enunciado="Lee datos/matricula_comunal.csv en la variable matricula, de modo que tenga sus cinco columnas, la matrícula como número (con los miles bien leídos) y los «s/i» como datos faltantes."
+  preparacion={"import pandas as pd"}
+  inicial={"matricula = pd.read_csv(\"datos/matricula_comunal.csv\")"}
+  solucion={"matricula = pd.read_csv(\"datos/matricula_comunal.csv\", sep=\";\", thousands=\".\", na_values=\"s/i\")"}
+  pruebas={"assert list(matricula.columns) == [\"agno\", \"region\", \"comuna\", \"dependencia\", \"matricula\"], \"matricula no tiene las cinco columnas: revisa con qué carácter se separan en el archivo.\"\nassert len(matricula) == 125, \"matricula debe tener las 125 filas del archivo.\"\nassert pd.api.types.is_numeric_dtype(matricula[\"matricula\"]), \"La columna matricula quedó como texto: ¿qué texto aparece donde falta el dato?\"\nassert matricula[\"matricula\"].isna().sum() == 3, \"Los «s/i» deben quedar como datos faltantes.\"\nassert matricula[\"matricula\"].max() == 151372, \"Los miles no se leyeron bien: en el archivo, 151.372 es ciento cincuenta y un mil trescientos setenta y dos.\""}
+  paquetes={["pandas"]}
+  pistas={["Mira la primera línea del archivo: ¿qué carácter separa las columnas? Se indica con sep.", "pd.read_csv acepta thousands para el separador de miles y na_values para el texto que significa «sin dato».", "Después de leer, revisa matricula.dtypes y matricula[\"matricula\"].max(): un total regional debería pasar de cien mil."]}
+/>
+
+<PythonTask
+  id="separar-los-totales"
+  enunciado="Guarda en detalle las filas por comuna y en totales las filas de «Total regional». Después guarda en faltan_2022 cuánta matrícula de 2022 no aparece en el detalle: el total regional de ese año menos la suma de su detalle."
+  preparacion={"import pandas as pd\nmatricula = pd.read_csv(\"datos/matricula_comunal.csv\", sep=\";\", thousands=\".\", na_values=\"s/i\")"}
+  inicial={"detalle = None\ntotales = None\nfaltan_2022 = None"}
+  solucion={"detalle = matricula[matricula[\"comuna\"] != \"Total regional\"]\ntotales = matricula[matricula[\"comuna\"] == \"Total regional\"]\nfaltan_2022 = totales[totales[\"agno\"] == 2022][\"matricula\"].sum() - detalle[detalle[\"agno\"] == 2022][\"matricula\"].sum()"}
+  pruebas={"assert len(detalle) == 120 and (detalle[\"comuna\"] != \"Total regional\").all(), \"detalle debe tener solo las filas por comuna, sin las de total.\"\nassert len(totales) == 5, \"totales debe tener una fila de «Total regional» por año.\"\nassert faltan_2022 == 4477, \"faltan_2022 debe ser el total regional de 2022 menos la suma del detalle de 2022.\""}
+  paquetes={["pandas"]}
+  pistas={["Un filtro con != deja todas las filas menos las que cumplen la condición.", "Filtra cada tabla por agno == 2022 antes de sumar.", "sum() se salta los datos faltantes: por eso la suma del detalle de 2022 queda corta."]}
+/>
+
+<Decision
+  pregunta="En 2022 faltan 4.477 estudiantes en el detalle, por los «s/i» de Linares y Parral. ¿Qué haces en tu análisis?"
+  opciones={[
+    { texto: "Para el total regional uso la fila de total; al comparar comunas, aviso que en 2022 faltan datos de Linares y Parral y no saco conclusiones de esas comunas ese año.", correcta: true, porque: "El dato que falta no se inventa ni se ignora: se usa lo confiable y la limitación queda escrita." },
+    { texto: "Relleno los «s/i» con 0.", porque: "Un 0 dice que no hubo estudiantes, y sí los hubo: solo no se informaron. Bajaría la matrícula de esas comunas sin razón." },
+    { texto: "Borro el año 2022 completo.", porque: "Pierdes 21 filas con datos buenos por 3 que faltan, y la serie de años queda con un hueco." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta frecuente es '¿qué problemas encontraste en los datos?'. Con datos públicos siempre hay algo: separadores, miles, filas de total o datos faltantes. Contar cómo lo detectaste demuestra criterio.">
+Los archivos públicos se leen con cuidado: el separador, los miles y el texto de los datos faltantes se indican al leer, y las filas de total se separan del detalle. Ninguna de esas trampas da error, así que después de leer siempre se revisan las columnas, los tipos y algún valor conocido.
+</Debrief>

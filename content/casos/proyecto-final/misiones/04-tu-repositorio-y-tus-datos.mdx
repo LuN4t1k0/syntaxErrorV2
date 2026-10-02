@@ -1,0 +1,46 @@
+---
+titulo: Tu repositorio y tus datos
+tiempo: 30
+---
+
+<Brief de="Daniela Fuentes, analista de datos y tu mentora en esta ruta">
+Ahora sí, tus datos. Crea el repositorio del proyecto con un nombre que diga de qué trata, por ejemplo matricula-municipal-valparaiso, y sube tus datos a una carpeta datos. En el README pon el título del proyecto y un enlace a la fuente: quien lo lea tiene que poder descargar lo mismo que tú. Cuando esté, pega el enlace.
+</Brief>
+
+<Concepto>
+Un proyecto de análisis se ordena así:
+
+| Carpeta o archivo | Qué va |
+| --- | --- |
+| `README.md` | La portada: pregunta, datos, hallazgos y conclusiones |
+| `datos/` | Los archivos tal como los descargaste |
+| `notebooks/` | El análisis, en uno o más `.ipynb` |
+| `graficos/` | Los gráficos, exportados como `.png` |
+
+**Los datos originales no se editan a mano.** Toda la limpieza se hace en el notebook: así cualquiera puede repetirla desde el archivo de la fuente.
+
+**La fuente se cita.** En el README, en una sección Datos, escribe la institución, el nombre del conjunto de datos, el enlace y la fecha en que lo descargaste. Revisa en la página del conjunto si tiene una licencia y cómo pide ser citado.
+
+**El tamaño importa.** GitHub no acepta desde la web archivos de más de 25 MB. Si el tuyo pesa más, sube un extracto (por ejemplo, solo tu región) y explica en el README cómo descargar el resto.
+
+Como en el Caso 0, nombra archivos y carpetas en minúsculas, sin tildes ni espacios: `matricula-2024.csv`, no `Matrícula 2024.csv`.
+</Concepto>
+
+<GithubTask
+  id="repositorio-del-proyecto"
+  enunciado="Pega el enlace del repositorio de tu proyecto."
+  requisitos={["publico", "carpeta:datos", "nombres-limpios", "readme:titulo", "readme:enlace"]}
+  pistas={["Para crear la carpeta, al subir el archivo nómbralo datos/nombre-del-archivo.csv.", "Si el archivo se descargó con un nombre con espacios o tildes, renómbralo antes de subirlo.", "Un enlace en Markdown se escribe [Nombre del conjunto de datos](https://...)."]}
+/>
+
+<Decision
+  pregunta="El conjunto de datos que encontraste trae el nombre y la dirección de cada persona. ¿Qué haces?"
+  opciones={[
+    { texto: "No lo subo a un repositorio público: busco la versión agregada (por comuna o por mes) que responde la misma pregunta.", correcta: true, porque: "Que un dato se pueda descargar no lo vuelve publicable en tu portafolio. Tu análisis no necesita saber quién es cada persona." },
+    { texto: "Lo subo igual: si el Estado lo publicó, es público.", porque: "Tu repositorio difunde esos datos de nuevo, quizás fuera de las condiciones en que se publicaron, y los datos que identifican a alguien no van en un portafolio." },
+  ]}
+/>
+
+<Debrief entrevista="Quien revisa un portafolio mira primero el README y cómo está ordenado el repositorio. Una carpeta de datos con la fuente citada dice que trabajas de forma que otros pueden repetir.">
+Un repositorio ordenado, con los datos originales y su fuente citada, permite repetir tu análisis desde cero. En la próxima misión exploras y limpias tus datos en un notebook.
+</Debrief>
