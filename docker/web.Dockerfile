@@ -32,6 +32,9 @@ ENV NODE_ENV=production \
     CONTENT_DIR=/app/content \
     MIGRATIONS_DIR=/app/drizzle \
     NODE_OPTIONS=--max-old-space-size=384
+# Node cierra las conexiones inactivas a los 5 s; un proxy (Railway) o un cliente que las reutiliza puede enviar justo
+# cuando se cierran y recibe ECONNRESET. Con más tiempo, cierra primero el que está adelante.
+ENV KEEP_ALIVE_TIMEOUT=65000
 COPY --from=build --chown=node:node /app/apps/web/.next/standalone ./
 COPY --from=build --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
 COPY --from=build --chown=node:node /app/apps/web/public ./apps/web/public
