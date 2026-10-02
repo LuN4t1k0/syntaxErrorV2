@@ -151,6 +151,20 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
 - **Regla:** una explicación explica el error, nunca entrega la solución de la tarea.
 - **Rutas futuras:** las consolas comparten un contrato común. Ver `packages/engines/README.md` para agregar una nueva (terminal, registros, desarrollo web).
 
+## Clases
+
+- **Qué son:** antes del caso que las aplica, una lección por tema, traída de las aulas de la v1. En `caso.yaml` llevan `tipo: clases` y solo `slug`, `titulo`, `dataset` y `misiones`: no tienen empresa, entregable, rúbrica ni certificado propio.
+  - Se completan al aprobar todas sus lecciones y habilitan el caso siguiente de la ruta. Cuentan para el certificado de la ruta, pero no van al portafolio.
+  - Cada lección es una misión con `<Concepto>`, `<Sintaxis>` (la forma general, que no se ejecuta), ejemplos, un ejercicio y un `<Debrief>` sin consejo de entrevista.
+  - La última lección no tiene que ser sin guía: el caso siguiente cumple ese papel.
+- **Importar un aula de la v1:**
+  1. Exporta sus datos a JSON, con el Node de tu equipo: `node packages/content/scripts/exportar-aula-v1.mjs ../cursos/aula-sql > tmp/aula-sql.json`.
+  2. Escribe el borrador: `docker compose run --rm tools pnpm --filter @syntaxerror/content importar sql /app/tmp/aula-sql.json /app/content/casos/<carpeta> <lección,lección,...>`.
+  3. Revisa el borrador: tildes que el diccionario no corrige solo (`mas`, `aun`, `que` en preguntas), dos pistas por lección que orienten sin dar la respuesta, y el título y el dataset de `caso.yaml`. Después corre `npm run content:validate`.
+- **El importador** (`packages/content/src/importar/`) tiene un formato común (`leccion.ts`) y un adaptador por aula (`aula-sql.ts`). Para Excel, Python o Power BI se agrega su adaptador.
+  - Corrige tildes con un diccionario y nombres propios de los datos (Concepción, Tomás), pero no toca los valores entre comillas simples ni los nombres de tablas y columnas, para que los ejercicios sigan calzando con sus soluciones.
+  - Descarta las pistas de la v1 que traían la consulta: el validador rechaza una pista con la solución completa.
+
 ## Caso 0: Herramientas del oficio
 
 - **Lo primero de la ruta:** es el primer caso de `data-analyst` y se hace completo desde la web de GitHub.

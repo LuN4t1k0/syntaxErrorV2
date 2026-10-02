@@ -18,7 +18,7 @@ test("con los casos 0 a 3 completos: escribe la ficha del dashboard y calcula un
   const email = await registrarse(page, "Matías Contreras");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "despachos-rapidos", "minimarkets-del-sur", "tienda-online-pewen"]) await completarCaso(page, admin, ip, email, caso);
+  for (const caso of ["herramientas-del-oficio", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "tienda-online-pewen"]) await completarCaso(page, admin, ip, email, caso);
 
   await page.goto(`/casos/${CASO}/01-la-pregunta-del-dashboard`);
   await page.getByLabel("Tu README").fill("# Dashboard de operaciones\n\n## Audiencia\n\nDirectorio.\n\n## Preguntas\n\n- ¿Cuánto esperan en urgencia?\n\n## Indicadores\n\n| Indicador | Fórmula |\n| --- | --- |\n| Espera | promedio de minutos |");

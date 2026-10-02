@@ -8,7 +8,7 @@ test("con los casos 0, 1 y 2 completos: filtra con pandas, entiende el error de 
   const email = await registrarse(page, "Florencia Huenchumilla");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "despachos-rapidos", "minimarkets-del-sur"]) await completarCaso(page, admin, ip, email, caso);
+  for (const caso of ["herramientas-del-oficio", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur"]) await completarCaso(page, admin, ip, email, caso);
 
   await aprobar(page, ip, CASO, [
     ["01-de-la-planilla-a-python", "totales-del-carrito"],

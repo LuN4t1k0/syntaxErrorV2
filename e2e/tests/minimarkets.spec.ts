@@ -3,13 +3,14 @@ import { aprobar, completarCaso, entrarComoAdmin, registrarse } from "./progreso
 
 const CASO = "minimarkets-del-sur";
 
-test("con los casos 0 y 1 completos: cruza tablas con un error explicado y el top 10 con desempate", async ({ page, ip, nuevaPagina }) => {
+test("con los casos 0 y 1 y las clases de SQL completos: cruza tablas con un error explicado y el top 10 con desempate", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(240_000);
   const email = await registrarse(page, "Benjamín Vera");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
   await completarCaso(page, admin, ip, email, "herramientas-del-oficio");
   await completarCaso(page, admin, ip, email, "despachos-rapidos");
+  await completarCaso(page, admin, ip, email, "clases-de-sql");
 
   await aprobar(page, ip, CASO, [
     ["01-conoce-las-tablas", "locales-y-ciudades"],

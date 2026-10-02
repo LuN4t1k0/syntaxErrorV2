@@ -14,6 +14,8 @@ const RUTAS = [
   "/casos/despachos-rapidos",
   "/casos/despachos-rapidos/04-buscar-en-otra-tabla",
   "/casos/despachos-rapidos/08-revisar-la-formula-de-la-ia",
+  "/casos/clases-de-sql",
+  "/casos/clases-de-sql/01-select-basico",
   "/casos/minimarkets-del-sur",
   "/casos/minimarkets-del-sur/06-cruzar-tablas",
   "/casos/tienda-online-pewen",

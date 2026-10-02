@@ -23,6 +23,26 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["08-revisar-la-formula-de-la-ia", "corregir-buscarv"],
     ["09-resumen-para-la-duena", "resumen-de-marzo"],
   ],
+  "clases-de-sql": [
+    ["01-select-basico", "select-basico"],
+    ["02-alias-expresiones", "alias-expresiones"],
+    ["03-where-filtros", "where-filtros"],
+    ["04-busqueda-orden-limite", "busqueda-orden-limite"],
+    ["05-join-inner", "join-inner"],
+    ["06-join-multiple-left", "join-multiple-left"],
+    ["07-null-coalesce", "null-coalesce"],
+    ["08-funciones-texto", "funciones-texto"],
+    ["09-funciones-numericas", "funciones-numericas"],
+    ["10-funciones-agregacion", "funciones-agregacion"],
+    ["11-group-by-having", "group-by-having"],
+    ["12-case-when", "case-when"],
+    ["13-subconsultas-where", "subconsultas-where"],
+    ["14-subconsultas-from", "subconsultas-from"],
+    ["15-cte-with", "cte-with"],
+    ["16-union", "union"],
+    ["17-exists", "exists"],
+    ["18-proyecto-final-sql", "proyecto-final-sql"],
+  ],
   "minimarkets-del-sur": [
     ["01-conoce-las-tablas", "locales-y-ciudades"],
     ["01-conoce-las-tablas", "categorias"],
@@ -94,9 +114,13 @@ export async function aprobar(page: Page, ip: string, caso: string, misiones: [s
   }
 }
 
-// Completa un caso entero: todas sus misiones y el entregable aprobado por administración.
+// Las clases no tienen entregable: se completan al aprobar todas sus lecciones.
+export const CLASES = new Set(["clases-de-sql"]);
+
+// Completa un caso entero: todas sus misiones y, si es un caso, el entregable aprobado por administración.
 export async function completarCaso(page: Page, admin: Page, ip: string, email: string, caso: string) {
   await aprobar(page, ip, caso, MISIONES[caso]);
+  if (CLASES.has(caso)) return;
   await page.goto(`/casos/${caso}`);
   await page.getByLabel("Enlace a tu repositorio de GitHub").fill(`https://github.com/e2e/${caso}`);
   await page.getByRole("button", { name: "Enviar a revisión" }).click();
