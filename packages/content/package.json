@@ -17,6 +17,7 @@
   "scripts": {
     "test": "vitest run",
     "generar": "tsx src/generar-cli.ts",
+    "importar": "tsx src/importar/importar-cli.ts",
     "validate": "tsx src/validar-cli.ts",
     "sync": "tsx src/sincronizar-cli.ts"
   },
