@@ -1,0 +1,30 @@
+---
+titulo: "Funciones de agregación"
+tiempo: 10
+---
+
+<Concepto>
+SUM no es la única función de agregación -- AVERAGE y COUNTROWS son igual de comunes en el día a día de un analista.
+
+En esta lección agregas dos medidas más a la tabla ventas.
+
+**AVERAGE y COUNTROWS.** AVERAGE(columna) calcula el promedio de una columna numérica. COUNTROWS(tabla) cuenta las filas de una tabla, sin necesitar ninguna columna en particular -- útil para saber cuántas transacciones hay.
+
+```text
+Venta Promedio = AVERAGE(ventas[monto])
+Cantidad de Ventas = COUNTROWS(ventas)
+```
+
+**Práctica.** Crea las medidas Venta Promedio y Cantidad de Ventas y confirma cuánto da esta última.
+
+1. En el panel Datos, crea una nueva medida en ventas: Venta Promedio = AVERAGE(ventas[monto])
+2. Crea una segunda medida: Cantidad de Ventas = COUNTROWS(ventas)
+3. Arrastra ambas medidas junto con Ventas Totales a tres tarjetas distintas en el lienzo.
+4. Compara los tres valores: el total, el promedio y la cantidad de filas.
+</Concepto>
+
+<LecturaTask
+  id="funciones-de-agregacion"
+  pregunta={"Con las 8 filas de ventas.csv, ¿cuánto da la medida Cantidad de Ventas = COUNTROWS(ventas)?"}
+  respuesta={"8."}
+/>

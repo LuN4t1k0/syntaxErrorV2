@@ -1,0 +1,25 @@
+---
+titulo: "Tarjetas y tablas"
+tiempo: 10
+---
+
+<Concepto>
+Las tarjetas muestran un solo número grande -- perfectas para KPIs. Las tablas y matrices muestran el detalle fila por fila.
+
+En esta lección combinas ambas en un mismo lienzo.
+
+**Tarjeta vs. Tabla vs. Matriz.** Tarjeta: un único valor, sin desglose -- ideal para 'Ventas Totales' arriba de todo el reporte. Tabla: filas y columnas planas, como una grilla de Excel. Matriz: como una tabla, pero permite agrupar filas y columnas con jerarquías (por ejemplo, region y dentro de cada region, producto), con totales automáticos.
+
+**Práctica.** Arma una matriz con region en filas y Ventas Totales como valor, y confirma que region tiene el total más alto.
+
+1. Agrega una tarjeta con la medida Ventas Totales en la parte superior del lienzo.
+2. Debajo, agrega una tabla con las columnas producto, region y monto.
+3. Reemplaza esa tabla por una matriz: en filas pon region, en columnas producto, y como valor Ventas Totales.
+4. Observa como la matriz agrega totales por fila y columna automáticamente.
+</Concepto>
+
+<LecturaTask
+  id="tarjetas-y-tablas"
+  pregunta={"En una matriz con region en filas y Ventas Totales como valor, ¿qué fila muestra el total más alto: norte o sur?"}
+  respuesta={"norte, con 679.000 contra 655.000 de sur."}
+/>

@@ -1,0 +1,25 @@
+---
+titulo: "Crear relaciones"
+tiempo: 10
+---
+
+<Concepto>
+Si Power BI no detecto la relación automáticamente (o si la borraste para practicar), se crea a mano arrastrando una columna sobre la otra.
+
+Una relación bien definida es lo que le permite a una medida de ventas 'saber' a que categoria de producto pertenece cada fila.
+
+**Crear una relación manualmente.** En la vista Modelo, se arrastra la columna producto de la tabla ventas hacia la columna producto de la tabla productos. Power BI abre un dialogo de confirmación con el tipo de relación detectado. También se puede crear desde la pestaña Modelado > 'Administrar relaciones' > 'Nueva'.
+
+**Práctica.** Crea la relación entre productos y ventas y después confirma cuál es la tabla del lado 'uno'.
+
+1. En la vista Modelo, si no existe una línea entre ventas y productos, arrastra la columna producto de ventas hasta la columna producto de productos.
+2. En el dialogo que aparece, confirma que la relación sea 'Uno a varios' desde productos hacia ventas, y haz clic en Aceptar.
+3. Verifica que ahora aparezca una línea conectando ambas tablas en el lienzo.
+4. Ve a la vista Informe y arrastra categoria (de productos) junto a monto (de ventas) a una tabla nueva -- si la relación funciona, vas a ver el monto total agrupado por categoria.
+</Concepto>
+
+<LecturaTask
+  id="crear-relaciones"
+  pregunta={"¿Cuál es la tabla 'del lado uno' de la relación entre productos y ventas (la que tiene un valor único por producto)?"}
+  respuesta={"productos -- cada producto aparece una sola vez ahí, mientras que en ventas puede repetirse en varias filas."}
+/>

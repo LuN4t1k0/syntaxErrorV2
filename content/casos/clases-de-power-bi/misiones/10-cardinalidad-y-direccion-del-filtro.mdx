@@ -1,0 +1,20 @@
+---
+titulo: "Cardinalidad y dirección del filtro"
+tiempo: 9
+---
+
+<Concepto>
+Cardinalidad y dirección del filtro son los dos conceptos que definen cómo 'viaja' un filtro de una tabla a otra a traves de una relación.
+
+Son conceptos, no pasos de clic -- pero son la base para entender por que una medida da el resultado que da.
+
+**Cardinalidad: uno a varios.** La relación entre productos y ventas es 'uno a varios': un producto en la tabla productos puede aparecer en muchas filas de ventas, pero cada fila de ventas apunta a un solo producto. Es la cardinalidad más común y la que Power BI detecta o sugiere por defecto en la mayoría de los modelos bien disenados.
+
+**Dirección del filtro.** Por defecto, el filtro viaja del lado 'uno' (productos) hacia el lado 'varios' (ventas): si filtras por categoria en productos, ese filtro se propaga y afecta el monto sumado en ventas. El filtro no viaja al reves a menos que se configure explícitamente como 'ambas direcciones' -- algo que se usa poco y con cuidado, porque puede generar ambigüedad en modelos con más de dos tablas.
+</Concepto>
+
+<LecturaTask
+  id="cardinalidad-y-direccion-del-filtro"
+  pregunta={"Si filtras la tabla ventas por región = 'norte', ¿ese filtro afecta lo que ves en la tabla productos? ¿Por qué sí o por qué no?"}
+  respuesta={"No, por defecto no afecta -- el filtro solo viaja del lado 'uno' (productos) hacia el lado 'varios' (ventas), nunca al reves, a menos que la relación se configure manualmente como bidireccional."}
+/>

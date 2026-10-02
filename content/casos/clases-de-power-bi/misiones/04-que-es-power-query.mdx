@@ -1,0 +1,24 @@
+---
+titulo: "Qué es Power Query"
+tiempo: 7
+---
+
+<Concepto>
+Power Query es el motor de Power BI para limpiar y transformar datos antes de que lleguen al modelo.
+
+Cada paso que aplicas (quitar una columna, cambiar un tipo de dato, filtrar filas) queda registrado como un paso reproducible.
+
+**El lenguaje M.** Detras de cada transformación que haces con clics, Power Query genera código en un lenguaje llamado M. No hace falta escribirlo a mano para este curso -- el editor visual genera el M por ti. Ejemplo de cómo se ve un paso de M (filtrar una columna), aunque en este curso lo vas a hacer siempre con clics:
+
+```text
+= Table.SelectRows(ventas, each [region] = "norte")
+```
+
+**Por que transformar antes de cargar.** Corregir tipos de dato, quitar columnas que no sirven o filtrar filas irrelevantes en Power Query es mucho más liviano que hacerlo después con fórmulas DAX -- y mantiene el modelo final limpio.
+</Concepto>
+
+<LecturaTask
+  id="que-es-power-query"
+  pregunta={"¿Qué preferirías: corregir un error de tipeo en los datos antes de cargarlos a Power BI, o después con una fórmula? ¿Por qué?"}
+  respuesta={"Siempre conviene corregirlo antes, en Power Query -- así el error no se arrastra a cada medida o visual que use esa columna, y el problema se resuelve una sola vez en el origen."}
+/>

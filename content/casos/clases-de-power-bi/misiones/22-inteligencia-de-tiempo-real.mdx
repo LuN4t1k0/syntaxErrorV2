@@ -1,0 +1,35 @@
+---
+titulo: "Inteligencia de tiempo real"
+tiempo: 12
+---
+
+<Concepto>
+Con la tabla Calendario ya relacionada a ventas_sucio, puedes usar las funciones de inteligencia de tiempo de DAX de verdad: acumulados del ano y comparaciones contra el periodo anterior.
+
+Una función que vas a encontrar en cualquier tutorial de Power BI, SAMEPERIODLASTYEAR, no se practica en esta lección a proposito: necesita datos de dos anos distintos para comparar, y este dataset cubre solo 2026.
+
+**TOTALYTD: acumulado del ano.** TOTALYTD(expresión, columna_fecha) acumula la expresión desde el primer día del ano hasta la fecha de cada fila del contexto -- usa la columna Date de la tabla Calendario, no la fecha de ventas_sucio.
+
+```text
+Ventas Acumuladas = TOTALYTD(SUM(ventas_sucio[monto]), Calendario[Date])
+```
+
+**DATEADD: comparar contra el periodo anterior.** DATEADD(columna_fecha, -1, MONTH) desplaza el contexto de fecha un mes hacia atras -- combinado con CALCULATE, sirve para comparar el mes actual contra el anterior.
+
+```text
+Ventas Mes Anterior = CALCULATE(SUM(ventas_sucio[monto]), DATEADD(Calendario[Date], -1, MONTH))
+```
+
+**Práctica.** Crea las medidas Ventas Acumuladas y Ventas Mes Anterior y confirma sus valores para abril y mayo.
+
+1. Crea una medida en ventas_sucio: Ventas Acumuladas = TOTALYTD(SUM(ventas_sucio[monto]), Calendario[Date])
+2. Crea una segunda medida: Ventas Mes Anterior = CALCULATE(SUM(ventas_sucio[monto]), DATEADD(Calendario[Date], -1, MONTH))
+3. Arrastra la columna Date de Calendario (o el mes extraido con MONTH) junto con Ventas Acumuladas a una tabla visual, y confirma el acumulado a fines de abril.
+4. Agrega Ventas Mes Anterior a la misma tabla y compara mayo contra el mes anterior (abril).
+</Concepto>
+
+<LecturaTask
+  id="inteligencia-de-tiempo-real"
+  pregunta={"¿Cuánto da Ventas Acumuladas al 30 de abril de 2026, y cuál es la diferencia entre mayo y el mes anterior según Ventas Mes Anterior?"}
+  respuesta={"Acumulado a fin de abril: 2.488.000 (enero + febrero + abril). Mayo (847.000) contra el mes anterior, abril (692.000): una diferencia de +155.000."}
+/>

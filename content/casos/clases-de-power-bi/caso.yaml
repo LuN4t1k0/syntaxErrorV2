@@ -1,0 +1,39 @@
+slug: clases-de-power-bi
+tipo: clases
+titulo: "Clases de Power BI: del primer CSV al dashboard"
+dataset: "ventas, productos y una versión con errores de ventas, para practicar en Power BI Desktop"
+misiones:
+  - 01-que-es-power-bi
+  - 02-instalar-y-conectar-datos
+  - 03-la-interfaz-de-power-bi
+  - 04-que-es-power-query
+  - 05-transformar-datos
+  - 06-combinar-consultas
+  - 07-limpiar-datos-reales
+  - 08-vista-de-modelo
+  - 09-crear-relaciones
+  - 10-cardinalidad-y-direccion-del-filtro
+  - 11-modelo-estrella
+  - 12-tabla-de-calendario
+  - 13-medidas-vs-columnas-calculadas
+  - 14-sintaxis-basica-de-dax
+  - 15-funciones-de-agregacion
+  - 16-formato-de-una-medida
+  - 17-calculate-y-contexto
+  - 18-variables-en-dax
+  - 19-contexto-de-fila-vs-contexto-de-filtro
+  - 20-funciones-iteradoras-sumx-averagex
+  - 21-funciones-de-tiempo-basicas
+  - 22-inteligencia-de-tiempo-real
+  - 23-tipos-de-grafico
+  - 24-tarjetas-y-tablas
+  - 25-formato-condicional
+  - 26-tooltips
+  - 27-slicers
+  - 28-cross-filtering
+  - 29-drill-down-y-drill-through
+  - 30-publicar-a-power-bi-service
+  - 31-compartir-y-exportar
+  - 32-buenas-practicas-de-diseno
+  - 33-power-bi-vs-excel-sql-python
+  - 34-proyecto-final-dashboard-ventas

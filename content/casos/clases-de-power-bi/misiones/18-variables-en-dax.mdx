@@ -1,0 +1,37 @@
+---
+titulo: "Variables en DAX (VAR y RETURN)"
+tiempo: 10
+---
+
+<Concepto>
+A medida que una medida DAX crece, repetir la misma subexpresión varias veces la hace más difícil de leer y más lenta de calcular. VAR guarda un resultado intermedio con un nombre, y RETURN indica que expresión final devolver.
+
+En esta lección reescribis una medida que compara ventas de una region contra el total, usando VAR en vez de repetir CALCULATE.
+
+**La sintaxis de VAR y RETURN.** Una medida con variables sigue el patrón: una o más líneas VAR nombre = expresión, seguidas de una línea RETURN con la expresión final, que puede usar esos nombres como si fueran medidas.
+
+```text
+% Ventas Norte =
+VAR VentasNorte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
+VAR VentasTotal = SUM(ventas[monto])
+RETURN DIVIDE(VentasNorte, VentasTotal)
+```
+
+**De paso, DIVIDE en vez de /.** DIVIDE(numerador, denominador) hace lo mismo que numerador/denominador, pero devuelve un resultado en blanco en vez de un error cuando el denominador es cero -- una medida que puede terminar dividiendo por cero (por ejemplo, filtrada a una region sin ventas) no debería romper el reporte.
+
+**Práctica.** Crea la medida % Ventas Norte con VAR y RETURN, y confirma que porcentaje muestra.
+
+1. En el panel Datos, crea una nueva medida en ventas.
+2. Escribe la fórmula completa en la barra de fórmulas: % Ventas Norte =
+VAR VentasNorte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
+VAR VentasTotal = SUM(ventas[monto])
+RETURN DIVIDE(VentasNorte, VentasTotal)
+3. Presiona Enter y arrastra la medida a una tarjeta -- aplica formato de porcentaje desde 'Herramientas de medida' si no aparece automáticamente.
+4. Compara el resultado contra Ventas Norte y Ventas Totales, dos medidas que ya tienes de modulos anteriores.
+</Concepto>
+
+<LecturaTask
+  id="variables-en-dax"
+  pregunta={"¿Cuánto muestra la medida % Ventas Norte sobre el dataset ventas.csv original?"}
+  respuesta={"Aproximadamente 50,9% -- 679.000 (Ventas Norte) dividido 1.334.000 (Ventas Totales)."}
+/>

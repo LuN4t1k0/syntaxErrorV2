@@ -1,0 +1,28 @@
+---
+titulo: "Funciones de tiempo básicas"
+tiempo: 9
+---
+
+<Concepto>
+Las funciones de inteligencia de tiempo de DAX (como TOTALYTD o SAMEPERIODLASTYEAR) necesitan una tabla de fechas marcada como tal -- pero antes de llegar ahí, hay funciones simples para extraer partes de una fecha.
+
+En esta lección usas MONTH y YEAR para agrupar ventas por mes.
+
+**Extraer partes de una fecha.** MONTH(fecha) devuelve el número de mes (1-12); YEAR(fecha) devuelve el ano. Se pueden usar dentro de una columna calculada para crear una etiqueta de agrupación.
+
+```text
+Mes de Venta = MONTH(ventas[fecha])
+```
+
+**Práctica.** Crea una columna calculada con MONTH y confirma que número de mes devuelve para las fechas de este dataset.
+
+1. En el panel Datos, con la tabla ventas seleccionada, crea una columna calculada nueva (clic derecho > 'Nueva columna', no medida): Mes de Venta = MONTH(ventas[fecha])
+2. Verifica en la vista Datos que la nueva columna muestre el número de mes de cada fila.
+3. En la vista Informe, arrastra Mes de Venta junto con la medida Ventas Totales a una tabla visual para ver el total agrupado por mes.
+</Concepto>
+
+<LecturaTask
+  id="funciones-de-tiempo-basicas"
+  pregunta={"Con las fechas del dataset ventas.csv (todas de marzo de 2026), ¿qué valor devuelve MONTH(fecha) para cualquier fila?"}
+  respuesta={"3 -- todas las fechas del dataset son de marzo."}
+/>

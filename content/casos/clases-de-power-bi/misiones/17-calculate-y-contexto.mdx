@@ -1,0 +1,28 @@
+---
+titulo: "CALCULATE y el contexto"
+tiempo: 12
+---
+
+<Concepto>
+CALCULATE es la función más importante de DAX: toma una medida y le cambia el contexto de filtro.
+
+En esta lección la usas para calcular las ventas de una sola region, sin tocar el visual.
+
+**Modificar el contexto con CALCULATE.** CALCULATE(expresión, filtro1, filtro2, ...) evalúa la expresión (normalmente otra medida) pero reemplazando o agregando los filtros indicados. Es la única forma en DAX de decir 'quiero este cálculo, pero ignorando o forzando tal condición'.
+
+```text
+Ventas Norte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
+```
+
+**Práctica.** Crea la medida Ventas Norte con CALCULATE y confirma cuánto da comparado con Ventas Totales.
+
+1. Crea una nueva medida en ventas: Ventas Norte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
+2. Arrastra la medida a una tarjeta nueva en el lienzo.
+3. Compara el valor contra la tarjeta de Ventas Totales -- Ventas Norte debería ser un subconjunto, nunca mayor.
+</Concepto>
+
+<LecturaTask
+  id="calculate-y-contexto"
+  pregunta={"¿Cuánto da Ventas Norte, sumando solo las filas de ventas.csv donde region es 'norte'?"}
+  respuesta={"679.000 -- las filas con region norte son 450000, 12000, 12000, 25000 y 180000."}
+/>

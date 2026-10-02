@@ -1,0 +1,25 @@
+---
+titulo: "Formato condicional"
+tiempo: 8
+---
+
+<Concepto>
+El formato condicional resalta valores según una regla -- por ejemplo, colorear de rojo las ventas por debajo de un umbral.
+
+Se configura sin escribir DAX, desde el panel de formato del visual.
+
+**Configurar reglas de color.** En una tabla o matriz, selecciona la columna de valores, ve al panel de formato > 'Formato condicional' > 'Escala de colores' (o 'Reglas') y define los umbrales.
+
+**Práctica.** Aplica una escala de colores sobre Ventas Totales por producto y confirma que producto queda con el color del extremo máximo.
+
+1. Selecciona la tabla o matriz que creaste en la lección anterior.
+2. En el panel de formato del visual, busca la sección 'Formato condicional' sobre la columna de Ventas Totales.
+3. Activa 'Escala de colores' y confirma los valores mínimo y máximo por defecto.
+4. Observa como las celdas con montos más altos se colorean distinto a las de montos más bajos.
+</Concepto>
+
+<LecturaTask
+  id="formato-condicional"
+  pregunta={"Con una escala de colores de mínimo a máximo aplicada sobre Ventas Totales por producto, ¿qué producto va a tener el color del extremo 'máximo'?"}
+  respuesta={"Notebook, porque es el producto con el monto total más alto (900.000)."}
+/>

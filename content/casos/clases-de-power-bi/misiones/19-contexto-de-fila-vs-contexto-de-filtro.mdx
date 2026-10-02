@@ -1,0 +1,20 @@
+---
+titulo: "Contexto de fila vs. contexto de filtro"
+tiempo: 12
+---
+
+<Concepto>
+Es, según el syllabus, la parte conceptualmente más difícil de DAX -- y la razón por la que CALCULATE se comporta como se comporta.
+
+No hay pasos de clic en esta lección: es pura teoría, para leer con calma.
+
+**Contexto de fila.** Existe cuando DAX evalúa una fórmula fila por fila -- típicamente dentro de una columna calculada, o dentro de funciones iterator como SUMX. En ese momento, cada columna de la fila actual tiene un valor concreto y accesible.
+
+**Contexto de filtro.** Es el conjunto de filtros activos en el momento de evaluar una medida -- vienen de los visuales (filas de una tabla, un slicer, un filtro de página) o de un CALCULATE que los modifica explícitamente. Una medida como SUM(ventas[monto]) siempre se evalúa dentro de un contexto de filtro: en una tarjeta sin filtros, suma todo; dentro de una tabla con la columna region, se recalcula fila por fila de la tabla, cada vez con region filtrada a un solo valor.
+</Concepto>
+
+<LecturaTask
+  id="contexto-de-fila-vs-contexto-de-filtro"
+  pregunta={"Si arrastras la medida Ventas Totales a una tabla visual junto con la columna region, ¿el resultado por fila es siempre el mismo número (el total general) o cambia según la region de esa fila?"}
+  respuesta={"Cambia según la region de esa fila -- cada fila de la tabla visual le agrega un filtro implicito por region al contexto de filtro, así que SUM(ventas[monto]) se recalcula solo con las filas de esa region."}
+/>

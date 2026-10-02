@@ -1,0 +1,22 @@
+---
+titulo: "Modelo estrella: hechos y dimensiones"
+tiempo: 8
+---
+
+<Concepto>
+Un modelo estrella organiza las tablas en dos roles claros: una tabla de hechos (los eventos que se miden, como cada venta) y una o más tablas de dimensión (el contexto que describe esos eventos, como el producto).
+
+Ya armaste esto sin darte cuenta: ventas es la tabla de hechos, y productos es una tabla de dimensión.
+
+**Tabla de hechos: lo que se mide.** ventas es la tabla de hechos: cada fila es un evento (una venta), con una columna numérica que se puede sumar o promediar (monto) y una columna que la conecta a la dimensión (producto).
+
+**Tabla de dimensión: el contexto.** productos es una tabla de dimensión: describe el producto (categoria, precio_unitario, stock) sin repetir esos datos en cada fila de ventas. Una dimensión tiene un valor único por fila -- por eso es el lado 'uno' de la relación.
+
+**Por que no conviene una sola tabla gigante.** Si categoria y precio_unitario estuvieran copiados en cada fila de ventas, cualquier cambio de precio obligaría a actualizar filas repetidas, y el archivo pesaría más de lo necesario. Separar hechos de dimensiones evita esa repetición.
+</Concepto>
+
+<LecturaTask
+  id="modelo-estrella"
+  pregunta={"Si agregaras una tabla vendedores con nombre y region de cada vendedor, ¿sería una tabla de hechos o de dimensión?"}
+  respuesta={"De dimensión -- describe el contexto (quién hizo la venta) sin una columna que tenga sentido sumar, y cada vendedor aparece una sola vez en esa tabla, igual que productos."}
+/>

@@ -1,0 +1,31 @@
+---
+titulo: "Limpiar datos reales"
+tiempo: 12
+---
+
+<Concepto>
+Hasta ahora trabajaste con datasets ya prolijos. En esta lección cargas un archivo real de ventas con tres problemas típicos: texto mal escrito, filas duplicadas y valores vacios.
+
+Estos problemas rara vez vienen solos -- y el orden en que los corregis importa.
+
+**Por que el orden importa.** Si primero buscas duplicados y después normalizas texto, puedes dejar pasar duplicados escondidos por una diferencia de mayúsculas (Norte vs norte). Por eso conviene: primero normalizar texto, después quitar duplicados exactos, y recien al final descartar las filas con datos faltantes que no se pueden corregir.
+
+**Normalizar texto.** En el Editor de Power Query, clic derecho en el encabezado de region > Transformar > 'poner en minúsculas', y clic derecho de nuevo > Transformar > 'Recortar' -- así Norte, NORTE y sur con espacios de más quedan todos como norte o sur.
+
+**Duplicados y valores vacios.** Para los duplicados exactos: seleccionar todas las columnas y usar Inicio > Quitar filas > Quitar duplicados. Para las filas sin monto: hacer clic en la flecha de filtro del encabezado de monto y desmarcar la opcion vacía.
+
+**Práctica.** Limpia ventas_sucio.csv aplicando los 3 pasos en orden y confirma cuántas filas quedan. Los datos están en [ventas_sucio.csv](/casos/clases-de-power-bi/datos/ventas_sucio.csv), también en «Datos del caso» de estas clases.
+
+1. Descarga el dataset ventas_sucio.csv de esta lección.
+2. En Power BI Desktop, ve a Inicio > Obtener datos > Texto/CSV, selecciona ventas_sucio.csv y haz clic en 'Transformar datos' para abrir el Editor de Power Query.
+3. Clic derecho en el encabezado de region > Transformar > 'poner en minúsculas', y clic derecho de nuevo > Transformar > 'Recortar'.
+4. Selecciona todas las columnas (clic en la primera columna y Shift+clic en la última) y ve a Inicio > Quitar filas > Quitar duplicados.
+5. En el encabezado de monto, haz clic en la flecha de filtro y desmarca la opcion vacía para quitar las filas sin monto.
+6. Haz clic en 'Cerrar y aplicar' y confirma en el panel Datos cuántas filas quedaron cargadas.
+</Concepto>
+
+<LecturaTask
+  id="limpiar-datos-reales"
+  pregunta={"¿Cuántas filas crudas tiene ventas_sucio.csv antes de limpiar, y cuántas quedan después de normalizar texto, quitar duplicados y quitar filas con monto vacío?"}
+  respuesta={"24 filas crudas, 20 después de limpiar -- se van 2 filas duplicadas exactas y 2 filas sin monto."}
+/>

@@ -1,0 +1,27 @@
+---
+titulo: "Transformar datos"
+tiempo: 12
+---
+
+<Concepto>
+En esta lección cargas una segunda tabla, productos, y le aplicas transformaciones básicas en el Editor de Power Query.
+
+Vas a practicar tres transformaciones muy comunes: cambiar tipos de dato, quitar una columna y filtrar filas.
+
+**El Editor de Power Query.** Se abre desde la pestaña Inicio con el botón 'Transformar datos'. Cada transformación que aplicas queda listada en el panel 'Pasos aplicados', a la derecha -- puedes deshacer cualquier paso haciendo clic en la cruz. Los tipos de dato se cambian haciendo clic en el icono a la izquierda del nombre de cada columna (ABC para texto, 1.2 para decimal, etc.).
+
+**Práctica.** Carga productos.csv en el Editor de Power Query y aplica los pasos indicados antes de confirmar cuántas filas quedan. Los datos están en [productos.csv](/casos/clases-de-power-bi/datos/productos.csv), también en «Datos del caso» de estas clases.
+
+1. Descarga el dataset productos.csv de esta lección.
+2. En Power BI Desktop, ve a Inicio > Obtener datos > Texto/CSV y carga productos.csv, pero en vez de 'Cargar' haz clic en 'Transformar datos' para abrir el Editor de Power Query.
+3. Verifica que la columna precio_unitario tenga el tipo 'Número entero' o 'Decimal' -- si aparece como texto (ABC), haz clic en el icono de tipo y cambiala a 'Número decimal'.
+4. Prueba quitar una columna haciendo clic derecho en su encabezado y eligiendo 'Quitar', y después deshace ese paso desde el panel 'Pasos aplicados' para no perder columnas necesarias.
+5. Usa la flecha del encabezado de categoria para filtrar y dejar solo la categoria 'Tecnologia'.
+6. Haz clic en 'Cerrar y aplicar' en la pestaña Inicio del editor para cargar la tabla transformada al modelo.
+</Concepto>
+
+<LecturaTask
+  id="transformar-datos"
+  pregunta={"Después de filtrar por categoria = Tecnologia, ¿cuántas filas quedan en productos?"}
+  respuesta={"4 filas -- las cuatro filas del CSV tienen categoria Tecnologia, así que el filtro no descarta ninguna."}
+/>

@@ -1,0 +1,27 @@
+---
+titulo: "Combinar consultas"
+tiempo: 12
+---
+
+<Concepto>
+Combinar consultas te deja unir dos tablas relacionadas en una sola, similar a un BUSCARV de Excel pero integrado en Power Query.
+
+Vas a combinar ventas y productos usando la columna en común: producto.
+
+**Combinar vs. Anexar.** 'Combinar consultas' (Merge) agrega columnas de una segunda tabla que coincidan por una clave -- es horizontal, como un BUSCARV. 'Anexar consultas' (Append) apila filas de dos tablas con las mismas columnas -- es vertical, como copiar y pegar filas debajo. En este curso vas a usar Combinar.
+
+**Práctica.** Combina ventas y productos por la columna producto y confirma cuántas filas tiene el resultado.
+
+1. En el Editor de Power Query, con la consulta ventas seleccionada, ve a la pestaña Inicio y haz clic en 'Combinar consultas' > 'Combinar consultas como nuevas'.
+2. Selecciona ventas como la primera tabla y productos como la segunda.
+3. Haz clic en la columna producto de ambas tablas para marcarlas como la clave de coincidencia.
+4. En 'Tipo de combinación' deja seleccionado 'Externa izquierda' (todas las filas de ventas, coincidencias de productos) y haz clic en Aceptar.
+5. En la nueva consulta, expande la columna resultante (el icono de flechas dobles) y selecciona categoria y precio_unitario para agregarlas a la tabla.
+6. Haz clic en 'Cerrar y aplicar'.
+</Concepto>
+
+<LecturaTask
+  id="combinar-consultas"
+  pregunta={"Con una combinación 'Externa izquierda' de ventas y productos por la columna producto, ¿cuántas filas tiene la tabla resultante?"}
+  respuesta={"8 filas -- una por cada fila de ventas, ya que todos los productos vendidos existen en la tabla productos."}
+/>
