@@ -104,3 +104,28 @@ test("con el Caso 2 completo: una lección de Python se resuelve en el editor y 
   await aprobada;
   await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
 });
+
+test("con el Caso 3 completo: una práctica de Power BI muestra sus pasos, su dataset y se autocorrige al marcarla", async ({ page, ip, nuevaPagina }) => {
+  test.setTimeout(300_000);
+  const email = await registrarse(page, "Catalina Nahuel");
+  const admin = await nuevaPagina();
+  await entrarComoAdmin(admin);
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen"]) {
+    await completarCaso(page, admin, ip, email, caso);
+  }
+  await aprobar(page, ip, "clases-de-power-bi", MISIONES["clases-de-power-bi"].slice(0, 1));
+
+  await page.goto("/casos/clases-de-power-bi/02-instalar-y-conectar-datos");
+  await expect(page.getByText("> lección 2/34", { exact: false })).toBeVisible();
+  await expect(page.getByText("En la pestaña Inicio, haz clic en 'Obtener datos' y elige 'Texto/CSV'.")).toBeVisible();
+  const enlace = page.getByRole("link", { name: "ventas.csv" });
+  await expect(enlace).toHaveAttribute("href", "/casos/clases-de-power-bi/datos/ventas.csv");
+  const csv = await page.request.get("/casos/clases-de-power-bi/datos/ventas.csv");
+  expect((await csv.text()).split("\n")[0]).toBe("fecha,producto,region,monto");
+
+  await expect(page.getByText("¿Cuántas columnas tiene la tabla ventas una vez cargada?")).toBeVisible();
+  const marcada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  await page.getByRole("button", { name: "Ver la respuesta y marcar como completada" }).click();
+  await marcada;
+  await expect(page.getByText("4 columnas: fecha, producto, region y monto.")).toBeVisible();
+});

@@ -157,16 +157,18 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
   - Se completan al aprobar todas sus lecciones y habilitan el caso siguiente de la ruta. Cuentan para el certificado de la ruta, pero no van al portafolio.
   - Cada lección es una misión con `<Concepto>`, `<Sintaxis>` (la forma general, que no se ejecuta), ejemplos, un ejercicio y un `<Debrief>` sin consejo de entrevista.
   - La última lección no tiene que ser sin guía: el caso siguiente cumple ese papel.
-  - En la ruta Data Analyst: clases de Excel antes del Caso 1, de SQL antes del Caso 2 y de Python antes del Caso 3.
+  - En la ruta Data Analyst: clases de Excel antes del Caso 1, de SQL antes del Caso 2, de Python antes del Caso 3 y de Power BI antes del Caso 4.
 - **Planillas propias:** una tarea de planilla (`SheetTask`) toma su hoja de un CSV de `datos/` (`hoja`) o la trae escrita en la lección (`grilla`, fila por fila desde A1), como las aulas de la v1.
 - **Lecturas:** `<LecturaTask pregunta respuesta />` es una lección sin validación automática, como las lecturas de la v1: se piensa la pregunta y, al marcarla como completada, aparece la respuesta del curso.
 - **Importar un aula de la v1:**
   1. Exporta sus datos a JSON, con el Node de tu equipo: `node packages/content/scripts/exportar-aula-v1.mjs ../cursos/aula-sql > tmp/aula-sql.json`.
-  2. Escribe el borrador: `docker compose run --rm tools pnpm --filter @syntaxerror/content importar <sql|excel|python> /app/tmp/aula-<aula>.json /app/content/casos/<carpeta> <lección,lección,...>`.
+  2. Escribe el borrador: `docker compose run --rm tools pnpm --filter @syntaxerror/content importar <sql|excel|python|powerbi> /app/tmp/aula-<aula>.json /app/content/casos/<carpeta> <lección,lección,...>`.
   3. Revisa el borrador: tildes que el diccionario no corrige solo (`mas`, `aun`, `que` en preguntas), dos pistas por lección que orienten sin dar la respuesta, y el título y el dataset de `caso.yaml`. Después corre `npm run content:validate`.
-- **El importador** (`packages/content/src/importar/`) tiene un formato común (`leccion.ts`: consultas, planillas y lecturas) y un adaptador por aula (`aula-sql.ts`, `aula-excel.ts`, `aula-python.ts`). Para Power BI se agrega su adaptador.
+- **El importador** (`packages/content/src/importar/`) tiene un formato común (`leccion.ts`: consultas, planillas y lecturas) y un adaptador por aula (`aula-sql.ts`, `aula-excel.ts`, `aula-python.ts`, `aula-powerbi.ts`).
   - En Excel, la v1 guardaba solo el valor esperado de cada celda: la fórmula de la solución se saca de la pista ("En D2 escribe =B2*C2"), se repite fila abajo cuando la pista dice "repite la misma lógica", y el validador comprueba que dé el valor esperado.
   - En Python, la v1 comparaba una variable (`resultado`) con un valor esperado: eso pasa a ser la prueba del `PythonTask`, con tolerancia para números y sin revelar el valor. La solución se saca de la explicación ("resultado = len(precios) = 5"); si no está, el importador la marca con `# REVISAR` y el validador no la deja pasar hasta que la revisión la escriba. Los ejemplos de código dependen de la preparación de la lección, así que se muestran como bloques de solo lectura.
+  - Power BI se practica en Power BI Desktop: los pasos de cada práctica van al concepto, su dataset (que el exportador trae desde `public/datasets` del aula) queda en «Datos del caso» y la autocorrección de la v1 es una `LecturaTask`. Ahí las comillas simples encierran nombres de menús, que también se corrigen (`respetarComillas: false`).
+  - El voseo de las aulas pasa a tú ("podés" → "puedes", "seguí" → "sigue", "por vos" → "por ti"); las formas ambiguas se revisan a mano.
   - Corrige tildes con un diccionario y nombres propios de los datos (Concepción, Tomás), pero no toca los valores entre comillas simples, los nombres de tablas y columnas de SQL ni las planillas, para que los ejercicios sigan calzando con sus soluciones.
   - Descarta las pistas de la v1 que traían la consulta o la fórmula: el validador rechaza una pista de SQL o Python con la solución completa.
 

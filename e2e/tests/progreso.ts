@@ -68,6 +68,42 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["17-exists", "exists"],
     ["18-proyecto-final-sql", "proyecto-final-sql"],
   ],
+  "clases-de-power-bi": [
+    ["01-que-es-power-bi", "que-es-power-bi"],
+    ["02-instalar-y-conectar-datos", "instalar-y-conectar-datos"],
+    ["03-la-interfaz-de-power-bi", "la-interfaz-de-power-bi"],
+    ["04-que-es-power-query", "que-es-power-query"],
+    ["05-transformar-datos", "transformar-datos"],
+    ["06-combinar-consultas", "combinar-consultas"],
+    ["07-limpiar-datos-reales", "limpiar-datos-reales"],
+    ["08-vista-de-modelo", "vista-de-modelo"],
+    ["09-crear-relaciones", "crear-relaciones"],
+    ["10-cardinalidad-y-direccion-del-filtro", "cardinalidad-y-direccion-del-filtro"],
+    ["11-modelo-estrella", "modelo-estrella"],
+    ["12-tabla-de-calendario", "tabla-de-calendario"],
+    ["13-medidas-vs-columnas-calculadas", "medidas-vs-columnas-calculadas"],
+    ["14-sintaxis-basica-de-dax", "sintaxis-basica-de-dax"],
+    ["15-funciones-de-agregacion", "funciones-de-agregacion"],
+    ["16-formato-de-una-medida", "formato-de-una-medida"],
+    ["17-calculate-y-contexto", "calculate-y-contexto"],
+    ["18-variables-en-dax", "variables-en-dax"],
+    ["19-contexto-de-fila-vs-contexto-de-filtro", "contexto-de-fila-vs-contexto-de-filtro"],
+    ["20-funciones-iteradoras-sumx-averagex", "funciones-iteradoras-sumx-averagex"],
+    ["21-funciones-de-tiempo-basicas", "funciones-de-tiempo-basicas"],
+    ["22-inteligencia-de-tiempo-real", "inteligencia-de-tiempo-real"],
+    ["23-tipos-de-grafico", "tipos-de-grafico"],
+    ["24-tarjetas-y-tablas", "tarjetas-y-tablas"],
+    ["25-formato-condicional", "formato-condicional"],
+    ["26-tooltips", "tooltips"],
+    ["27-slicers", "slicers"],
+    ["28-cross-filtering", "cross-filtering"],
+    ["29-drill-down-y-drill-through", "drill-down-y-drill-through"],
+    ["30-publicar-a-power-bi-service", "publicar-a-power-bi-service"],
+    ["31-compartir-y-exportar", "compartir-y-exportar"],
+    ["32-buenas-practicas-de-diseno", "buenas-practicas-de-diseno"],
+    ["33-power-bi-vs-excel-sql-python", "power-bi-vs-excel-sql-python"],
+    ["34-proyecto-final-dashboard-ventas", "proyecto-final-dashboard-ventas"],
+  ],
   "minimarkets-del-sur": [
     ["01-conoce-las-tablas", "locales-y-ciudades"],
     ["01-conoce-las-tablas", "categorias"],
@@ -176,7 +212,7 @@ export async function aprobar(page: Page, ip: string, caso: string, misiones: [s
 }
 
 // Las clases no tienen entregable: se completan al aprobar todas sus lecciones.
-export const CLASES = new Set(["clases-de-excel", "clases-de-sql", "clases-de-python"]);
+export const CLASES = new Set(["clases-de-excel", "clases-de-sql", "clases-de-python", "clases-de-power-bi"]);
 
 // Completa un caso entero: todas sus misiones y, si es un caso, el entregable aprobado por administración.
 export async function completarCaso(page: Page, admin: Page, ip: string, email: string, caso: string) {

@@ -13,12 +13,12 @@ test("los datos de un caso se descargan como CSV desde la página del caso", asy
   expect(await respuesta.text()).toContain("Sede Ñuñoa");
 });
 
-test("con los casos 0 a 3 completos: escribe la ficha del dashboard y calcula un indicador", async ({ page, ip, nuevaPagina }) => {
+test("con los casos 0 a 3 y sus clases completos: escribe la ficha del dashboard y calcula un indicador", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(300_000);
   const email = await registrarse(page, "Matías Contreras");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen"]) await completarCaso(page, admin, ip, email, caso);
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen", "clases-de-power-bi"]) await completarCaso(page, admin, ip, email, caso);
 
   await page.goto(`/casos/${CASO}/01-la-pregunta-del-dashboard`);
   await page.getByLabel("Tu README").fill("# Dashboard de operaciones\n\n## Audiencia\n\nDirectorio.\n\n## Preguntas\n\n- ¿Cuánto esperan en urgencia?\n\n## Indicadores\n\n| Indicador | Fórmula |\n| --- | --- |\n| Espera | promedio de minutos |");

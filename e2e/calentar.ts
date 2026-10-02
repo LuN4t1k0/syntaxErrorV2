@@ -25,6 +25,8 @@ const RUTAS = [
   "/casos/clases-de-python/02-operadores",
   "/casos/tienda-online-pewen",
   "/casos/tienda-online-pewen/03-filtrar-y-seleccionar",
+  "/casos/clases-de-power-bi",
+  "/casos/clases-de-power-bi/02-instalar-y-conectar-datos",
   "/casos/clinica-cordillera-central",
   "/casos/clinica-cordillera-central/03-calcular-indicadores",
   "/casos/proyecto-final",
