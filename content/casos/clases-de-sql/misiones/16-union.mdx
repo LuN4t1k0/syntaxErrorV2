@@ -1,0 +1,41 @@
+---
+titulo: "UNION y UNION ALL"
+tiempo: 16
+---
+
+<Concepto>
+UNION apila filas de dos SELECT compatibles.
+
+JOIN combina columnas lado a lado; UNION combina resultados uno debajo del otro.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columna FROM tabla_a\nUNION\nSELECT columna FROM tabla_b;"} />
+
+**Para qué sirve en la vida real.** UNION apila resultados de dos preguntas distintas. No une columnas, une listas.
+
+**Cómo pensarlo sin sufrir.** JOIN pega información lado a lado; UNION pone una consulta debajo de la otra.
+
+**UNION elimina duplicados.** El mismo valor aparece una sola vez en el resultado final.
+
+<SqlEjemplo consulta={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'\nUNION\nSELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"} />
+
+**UNION ALL conserva duplicados.** UNION ALL no revisa repetidos.
+
+<SqlEjemplo consulta={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'\nUNION ALL\nSELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"} />
+
+**Columnas compatibles.** Ambos SELECT deben devolver la misma cantidad de columnas.
+
+**Cuando usarlo.** Es claro cuando las dos fuentes tienen logicas distintas.
+</Concepto>
+
+<SqlTask
+  id="union"
+  enunciado={"Combina, sin duplicados, los estudiantes de Santiago con los que tienen nota igual o mayor a 6.5. Devuelve una sola columna: nombre."}
+  inicial={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago';"}
+  solucion={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago' UNION SELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"}
+  comparar="filas-sin-orden"
+  pistas={["Son dos consultas separadas que devuelven la misma columna: nombre.", "UNION entre las dos quita los repetidos. La segunda necesita un JOIN para llegar a la nota."]}
+/>
+
+<Debrief>
+UNION descarta los nombres que aparecen en ambas consultas, dejando cada estudiante una sola vez.
+</Debrief>

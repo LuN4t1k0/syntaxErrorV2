@@ -1,0 +1,23 @@
+slug: clases-de-sql
+tipo: clases
+titulo: "Clases de SQL: de SELECT a CTE"
+dataset: "estudiantes, cursos e inscripciones de una escuela de cursos en línea"
+misiones:
+  - 01-select-basico
+  - 02-alias-expresiones
+  - 03-where-filtros
+  - 04-busqueda-orden-limite
+  - 05-join-inner
+  - 06-join-multiple-left
+  - 07-null-coalesce
+  - 08-funciones-texto
+  - 09-funciones-numericas
+  - 10-funciones-agregacion
+  - 11-group-by-having
+  - 12-case-when
+  - 13-subconsultas-where
+  - 14-subconsultas-from
+  - 15-cte-with
+  - 16-union
+  - 17-exists
+  - 18-proyecto-final-sql

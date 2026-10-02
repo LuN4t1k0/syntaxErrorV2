@@ -1,0 +1,43 @@
+---
+titulo: "JOIN multiple y LEFT JOIN"
+tiempo: 20
+---
+
+<Concepto>
+INNER JOIN solo conserva filas con coincidencia en ambas tablas.
+
+LEFT JOIN conserva todas las filas de la tabla izquierda aunque no haya coincidencia.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla_izquierda AS a\nLEFT JOIN tabla_derecha AS b ON a.columna = b.columna;"} />
+
+**Para qué sirve en la vida real.** LEFT JOIN sirve cuando no quieres perder filas sin coincidencia. Es invitar a todos a la foto, incluso al que aún no se inscribió.
+
+**Cómo pensarlo sin sufrir.** La tabla izquierda manda. Si no hay curso, SQL rellena las columnas del curso con NULL.
+
+**El limite de INNER JOIN.** Un estudiante sin inscripción desaparece del resultado con INNER JOIN.
+
+<SqlEjemplo consulta={"SELECT e.nombre, c.titulo\nFROM estudiantes AS e\nJOIN inscripciones AS i ON i.estudiante_id = e.id\nJOIN cursos AS c ON c.id = i.curso_id;"} />
+
+**LEFT JOIN conserva filas.** Las columnas sin coincidencia quedan en NULL.
+
+<SqlEjemplo consulta={"SELECT e.nombre, c.titulo\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nLEFT JOIN cursos AS c ON c.id = i.curso_id;"} />
+
+**Varios LEFT JOIN.** Si encadenas relaciones opcionales, conserva LEFT JOIN en toda la cadena.
+
+**Ordenar el resultado.** ORDER BY funciona igual sobre resultados unidos.
+
+<SqlEjemplo consulta={"SELECT e.nombre, c.titulo\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nLEFT JOIN cursos AS c ON c.id = i.curso_id\nORDER BY e.nombre;"} />
+</Concepto>
+
+<SqlTask
+  id="join-multiple-left"
+  enunciado={"Lista todos los estudiantes con estas columnas: nombre y titulo del curso inscrito si existe. No pierdas a quienes aún no se inscriben y ordena por nombre."}
+  inicial={"SELECT e.nombre, c.titulo\nFROM estudiantes AS e\nJOIN inscripciones AS i ON i.estudiante_id = e.id\nJOIN cursos AS c ON c.id = i.curso_id;"}
+  solucion={"SELECT e.nombre, c.titulo\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nLEFT JOIN cursos AS c ON c.id = i.curso_id\nORDER BY e.nombre;"}
+  comparar="filas-en-orden"
+  pistas={["Un JOIN normal deja fuera a quien no tiene inscripciones. ¿Qué JOIN conserva todas las filas de la tabla de la izquierda?", "Si cambias solo el primer JOIN, el segundo vuelve a dejar fuera a esas personas."]}
+/>
+
+<Debrief>
+Tomás Muñoz no tiene inscripciones; con INNER JOIN desaparece del resultado, con LEFT JOIN aparece con curso en NULL.
+</Debrief>

@@ -1,0 +1,39 @@
+---
+titulo: "CASE WHEN: crea categorias desde la consulta"
+tiempo: 14
+---
+
+<Concepto>
+CASE WHEN evalúa condiciones en orden y devuelve un valor distinto según cual se cumpla primero.
+
+Es la forma de crear categorias o etiquetas directamente desde una consulta, sin tener que procesar los datos después.
+
+<Sintaxis lenguaje="sql" codigo={"CASE\n  WHEN condicion1 THEN valor1\n  WHEN condicion2 THEN valor2\n  ELSE valor_por_defecto\nEND AS alias"} />
+
+**Para qué sirve en la vida real.** CASE WHEN crea etiquetas útiles directamente en SQL: junior, intermedio, senior, riesgo, premium, lo que necesites.
+
+**Cómo pensarlo sin sufrir.** SQL revisa los WHEN en orden y se queda con el primero verdadero. ELSE cubre todo lo que queda.
+
+**CASE evalúa en orden.** Revisa cada WHEN de arriba hacia abajo y se queda con el primero que sea verdadero.
+
+<SqlEjemplo consulta={"CASE WHEN edad < 21 THEN 'junior' WHEN edad <= 23 THEN 'intermedio' ELSE 'senior' END"} />
+
+**ELSE cubre el resto.** Si ninguna condición se cumple, se usa el valor de ELSE. Sin ELSE, esas filas quedarían con NULL.
+
+**Se usa como una columna más.** El resultado de CASE se puede nombrar con AS y aparece como cualquier otra columna del SELECT.
+
+**Útil para segmentar.** Es la forma más común de crear categorias de negocio (alto, medio, bajo) directamente en SQL.
+</Concepto>
+
+<SqlTask
+  id="case-when"
+  enunciado={"Clasifica a cada estudiante por edad y muestra nombre, edad y grupo_edad: 'junior' si tiene menos de 21, 'intermedio' si tiene 21 a 23, y 'senior' si tiene más de 23. Ordena por edad."}
+  inicial={"SELECT nombre, edad FROM estudiantes ORDER BY edad;"}
+  solucion={"SELECT nombre, edad, CASE WHEN edad < 21 THEN 'junior' WHEN edad <= 23 THEN 'intermedio' ELSE 'senior' END AS grupo_edad FROM estudiantes ORDER BY edad;"}
+  comparar="filas-en-orden"
+  pistas={["CASE revisa las condiciones en orden y se queda con la primera que se cumple.", "Si la primera condición ya tomó a los menores de 21, la segunda solo necesita revisar el límite de arriba."]}
+/>
+
+<Debrief>
+CASE evalúa las condiciones en orden: menor a 21 es junior, de 21 a 23 (inclusive) es intermedio por la segunda condición edad &lt;= 23, y el resto cae en ELSE como senior.
+</Debrief>

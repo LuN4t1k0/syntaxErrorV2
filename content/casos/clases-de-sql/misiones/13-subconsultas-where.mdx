@@ -1,0 +1,39 @@
+---
+titulo: "Subconsultas en WHERE"
+tiempo: 18
+---
+
+<Concepto>
+Una subconsulta es un SELECT dentro de otro SELECT.
+
+En WHERE puede usarse como umbral calculado desde los datos actuales.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas FROM tabla\nWHERE columna > (SELECT AVG(columna) FROM tabla);"} />
+
+**Para qué sirve en la vida real.** Una subconsulta permite comparar contra un valor que sale de la misma base. El promedio ya no lo inventas: lo calcula SQL.
+
+**Cómo pensarlo sin sufrir.** Primero se calcula AVG(edad); después cada estudiante compite contra ese umbral.
+
+**Umbral dinámico.** La subconsulta calcula un valor y la consulta principal lo usa para filtrar.
+
+<SqlEjemplo consulta={"SELECT nombre, edad FROM estudiantes WHERE edad > (SELECT AVG(edad) FROM estudiantes);"} />
+
+**Se ejecuta primero.** El promedio se calcula antes de comparar cada fila.
+
+**Un solo valor.** Una subconsulta escalar debe devolver una fila y una columna.
+
+**Otros usos.** También puede aparecer en SELECT, aunque WHERE es el caso más común al inicio.
+</Concepto>
+
+<SqlTask
+  id="subconsultas-where"
+  enunciado={"Encuentra estudiantes con edad mayor al promedio general de edad. Muestra nombre y edad."}
+  inicial={"SELECT nombre, edad FROM estudiantes;"}
+  solucion={"SELECT nombre, edad FROM estudiantes WHERE edad > (SELECT AVG(edad) FROM estudiantes);"}
+  comparar="filas-sin-orden"
+  pistas={["Piensa primero cómo calcularías el promedio de edad con una consulta aparte.", "Esa consulta, entre paréntesis, puede ir al lado derecho de la comparación en WHERE."]}
+/>
+
+<Debrief>
+La subconsulta (SELECT AVG(edad) FROM estudiantes) calcula el promedio; la consulta externa lo usa como umbral.
+</Debrief>

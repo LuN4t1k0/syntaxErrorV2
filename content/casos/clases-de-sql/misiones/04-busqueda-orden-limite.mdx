@@ -1,0 +1,45 @@
+---
+titulo: "Búsqueda, orden y limites"
+tiempo: 14
+---
+
+<Concepto>
+IN, LIKE, ORDER BY y LIMIT permiten buscar, ordenar y recortar resultados sin escribir consultas largas.
+
+Primero se filtra, después se ordena y al final se limita la cantidad de filas.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla\nWHERE columna IN (valor1, valor2)\nORDER BY columna\nLIMIT cantidad;"} />
+
+**Para qué sirve en la vida real.** Buscar, ordenar y limitar es lo que haces cada vez que filtras una tienda online: ciudad, orden alfabético y primeros resultados.
+
+**Cómo pensarlo sin sufrir.** IN filtra por una lista, ORDER BY ordena y LIMIT corta la cantidad final de filas.
+
+**IN compara contra una lista.** IN reemplaza varios OR sobre la misma columna.
+
+<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes WHERE ciudad IN ('Santiago', 'Concepción');"} />
+
+**LIKE busca patrones.** El comodin % representa cualquier cantidad de caracteres.
+
+<SqlEjemplo consulta={"SELECT nombre FROM estudiantes WHERE nombre LIKE 'Ca%';"} />
+
+**ORDER BY ordena.** ASC es ascendente y DESC descendente.
+
+<SqlEjemplo consulta={"SELECT nombre, edad FROM estudiantes ORDER BY edad ASC;"} />
+
+**LIMIT recorta filas.** LIMIT muestra solo las primeras filas según el orden actual.
+
+<SqlEjemplo consulta={"SELECT nombre, edad FROM estudiantes ORDER BY edad ASC LIMIT 5;"} />
+</Concepto>
+
+<SqlTask
+  id="busqueda-orden-limite"
+  enunciado={"Lista, en orden alfabético, hasta 5 estudiantes que vivan en Santiago o Concepción. Muestra nombre y ciudad."}
+  inicial={"SELECT nombre, ciudad FROM estudiantes;"}
+  solucion={"SELECT nombre, ciudad FROM estudiantes WHERE ciudad IN ('Santiago', 'Concepción') ORDER BY nombre ASC LIMIT 5;"}
+  comparar="filas-en-orden"
+  pistas={["IN compara una columna contra una lista de valores entre paréntesis, separados por comas.", "El orden de las cláusulas es WHERE, después ORDER BY y al final LIMIT."]}
+/>
+
+<Debrief>
+IN reemplaza una cadena de OR; ORDER BY ordena por nombre y LIMIT deja solo 5 filas.
+</Debrief>

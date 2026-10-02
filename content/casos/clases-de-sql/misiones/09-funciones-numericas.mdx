@@ -1,0 +1,41 @@
+---
+titulo: "Funciones numéricas"
+tiempo: 12
+---
+
+<Concepto>
+ROUND redondea números al consultar.
+
+Es útil para promedios y calculos con muchos decimales.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT ROUND(columna, decimales) FROM tabla;"} />
+
+**Para qué sirve en la vida real.** ROUND evita reportes con decimales eternos. Nadie quiere leer una nota como si fuera coordenada espacial.
+
+**Cómo pensarlo sin sufrir.** La nota exacta queda igual; la columna redondeada aparece solo en el resultado.
+
+**ROUND con decimales.** El segundo argumento indica cuantos decimales conservar.
+
+<SqlEjemplo consulta={"SELECT nota, ROUND(nota, 1) AS nota_un_decimal FROM inscripciones;"} />
+
+**ROUND a entero.** Sin segundo argumento redondea al entero más cercano.
+
+<SqlEjemplo consulta={"SELECT e.nombre, i.nota, ROUND(i.nota) AS nota_entera FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"} />
+
+**No cambia datos.** La tabla conserva el valor original.
+
+**Usarlo con AVG.** ROUND suele combinarse con promedios.
+</Concepto>
+
+<SqlTask
+  id="funciones-numericas"
+  enunciado={"Muestra el nombre, la nota exacta y la nota redondeada a entero (como nota_entera) de cada inscripción."}
+  inicial={"SELECT e.nombre, i.nota FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
+  solucion={"SELECT e.nombre, i.nota, ROUND(i.nota) AS nota_entera FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
+  comparar="filas-sin-orden"
+  pistas={["La nota está en inscripciones y el nombre en estudiantes: necesitas un JOIN.", "ROUND sin segundo argumento redondea a número entero."]}
+/>
+
+<Debrief>
+ROUND(i.nota) sin segundo argumento redondea al entero más cercano.
+</Debrief>

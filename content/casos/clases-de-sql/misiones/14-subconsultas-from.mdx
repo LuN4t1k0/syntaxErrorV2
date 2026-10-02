@@ -1,0 +1,43 @@
+---
+titulo: "Subconsultas en FROM"
+tiempo: 18
+---
+
+<Concepto>
+Una subconsulta en FROM funciona como una tabla temporal.
+
+Es útil para filtrar un resultado ya agrupado.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM (SELECT ... FROM tabla GROUP BY columna) AS alias\nWHERE condicion;"} />
+
+**Para qué sirve en la vida real.** Una subconsulta en FROM crea una mini tabla temporal. Es como preparar ingredientes antes de cocinar el plato final.
+
+**Cómo pensarlo sin sufrir.** El resumen calcula promedios por curso; la consulta externa filtra ese resumen.
+
+**Resumen primero.** Calcula un promedio por curso como resultado intermedio.
+
+<SqlEjemplo consulta={"SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id;"} />
+
+**Alias obligatorio.** El resultado entre parentesis necesita un alias.
+
+<SqlEjemplo consulta={"SELECT resumen.curso_id, resumen.promedio\nFROM (SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id) AS resumen;"} />
+
+**Filtrar después.** WHERE puede filtrar columnas calculadas por la subconsulta.
+
+<SqlEjemplo consulta={"SELECT resumen.curso_id, resumen.promedio\nFROM (SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id) AS resumen\nWHERE resumen.promedio >= 5.5;"} />
+
+**Claridad.** Separar el resumen del filtro ayuda cuando la consulta crece.
+</Concepto>
+
+<SqlTask
+  id="subconsultas-from"
+  enunciado={"Usa una subconsulta en FROM para calcular el promedio por curso. Muestra curso_id y promedio solo para cursos con promedio 5.5 o más."}
+  inicial={"SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id;"}
+  solucion={"SELECT resumen.curso_id, resumen.promedio FROM (SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id) AS resumen WHERE resumen.promedio >= 5.5;"}
+  comparar="filas-sin-orden"
+  pistas={["La subconsulta agrupa inscripciones por curso_id y calcula el promedio; dale un alias como si fuera una tabla.", "El filtro por promedio va en el WHERE de la consulta de afuera."]}
+/>
+
+<Debrief>
+La tabla derivada 'resumen' ya trae el promedio calculado; la consulta externa solo filtra sobre ese resultado.
+</Debrief>

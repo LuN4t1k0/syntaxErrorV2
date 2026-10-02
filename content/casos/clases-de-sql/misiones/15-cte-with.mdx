@@ -1,0 +1,37 @@
+---
+titulo: "CTE con WITH: ordena tu consulta antes de que explote"
+tiempo: 16
+---
+
+<Concepto>
+WITH define una tabla temporal con nombre, llamada CTE (common table expression), que solo existe durante esa consulta.
+
+Es la misma idea que una subconsulta en FROM, pero más fácil de leer cuando la consulta tiene varios pasos.
+
+<Sintaxis lenguaje="sql" codigo={"WITH nombre_cte AS (\n  SELECT columnas FROM tabla\n)\nSELECT * FROM nombre_cte;"} />
+
+**Para qué sirve en la vida real.** WITH ordena consultas largas para que no parezcan spaghetti SQL. Le pones nombre a un paso intermedio.
+
+**Cómo pensarlo sin sufrir.** Primero declaras resumen; luego haces SELECT desde resumen como si fuera una tabla.
+
+**WITH declara la tabla temporal.** Todo lo que va entre parentesis después de AS es una consulta normal; su resultado se puede usar como si fuera una tabla en el SELECT de abajo.
+
+<SqlEjemplo consulta={"WITH resumen AS (\n  SELECT curso_id, AVG(nota) AS promedio\n  FROM inscripciones\n  GROUP BY curso_id\n)\nSELECT * FROM resumen;"} />
+
+**Se puede filtrar el resultado del CTE.** El SELECT final trata a resumen como cualquier tabla: puede filtrar con WHERE, ordenar, o unir con JOIN.
+
+**Por que no es solo una subconsulta en FROM.** La diferencia es legibilidad: el nombre queda arriba, separado de la consulta final, en vez de anidado dentro del FROM.
+</Concepto>
+
+<SqlTask
+  id="cte-with"
+  enunciado={"Reescribe el promedio por curso usando WITH. Muestra curso_id y promedio solo para cursos con promedio 5.5 o más, ordenados de mayor a menor."}
+  inicial={"SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id;"}
+  solucion={"WITH resumen AS (SELECT curso_id, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY curso_id) SELECT curso_id, promedio FROM resumen WHERE promedio >= 5.5 ORDER BY promedio DESC;"}
+  comparar="filas-en-orden"
+  pistas={["WITH le pone nombre a la consulta del promedio por curso, antes del SELECT principal.", "Redondea el promedio a 2 decimales dentro del WITH; filtra y ordena en el SELECT de afuera."]}
+/>
+
+<Debrief>
+El CTE resumen calcula el promedio por curso una sola vez; la consulta final solo filtra y ordena sobre ese resultado, igual que la subconsulta en FROM de la lección anterior pero más legible.
+</Debrief>

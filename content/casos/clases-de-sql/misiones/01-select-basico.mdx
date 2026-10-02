@@ -1,0 +1,43 @@
+---
+titulo: "Fundamentos de SELECT"
+tiempo: 12
+---
+
+<Concepto>
+Una base de datos es un lugar organizado para guardar información. Los datos viven en tablas, cada tabla tiene columnas y cada fila representa un registro.
+
+SELECT es la sentencia que usamos para hacer preguntas sobre esos datos. Casi todo lo demas que aprendas en SQL termina apoyandose en un SELECT.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla;"} />
+
+**Para qué sirve en la vida real.** SELECT es preguntar sin romper nada. Es como abrir una base de datos con modo espectador: miras la información, pero no la modificas.
+
+**Cómo pensarlo sin sufrir.** Piensa en SELECT como pedir columnas de una planilla gigante. FROM dice de que tabla sale la información.
+
+**Tu primera consulta.** Antes de escribir una consulta conviene mirar la estructura de la tabla. En esta lección trabajas con estudiantes.
+
+**Seleccionar todas las columnas.** El asterisco trae todas las columnas. Es útil para explorar, pero en reportes reales conviene pedir solo lo necesario.
+
+<SqlEjemplo consulta={"SELECT * FROM estudiantes;"} />
+
+**Seleccionar columnas específicas.** Escribe los nombres de columna separados por comas después de SELECT para controlar exactamente que devuelve la consulta.
+
+<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes;"} />
+
+**El orden del resultado.** El orden en que escribes las columnas es el orden en que aparecen en el resultado. No cambia la tabla original.
+
+<SqlEjemplo consulta={"SELECT ciudad, nombre FROM estudiantes;"} />
+</Concepto>
+
+<SqlTask
+  id="select-basico"
+  enunciado={"Muestra todos los estudiantes con estas columnas: nombre y ciudad."}
+  inicial={"SELECT * FROM estudiantes;"}
+  solucion={"SELECT nombre, ciudad FROM estudiantes;"}
+  comparar="filas-sin-orden"
+  pistas={["SELECT dice qué columnas quieres y FROM, de qué tabla salen.", "Separa las columnas con comas, en el orden en que deben aparecer en el resultado."]}
+/>
+
+<Debrief>
+La consulta debe traer solo las columnas necesarias para responder la pregunta.
+</Debrief>

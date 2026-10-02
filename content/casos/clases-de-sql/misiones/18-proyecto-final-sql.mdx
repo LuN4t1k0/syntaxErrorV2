@@ -1,0 +1,31 @@
+---
+titulo: "Proyecto final: segmentar estudiantes por rendimiento"
+tiempo: 25
+---
+
+<Concepto>
+Este es el proyecto final del curso: combinar WITH, JOIN y CASE WHEN en una sola consulta para responder una pregunta real de negocio.
+
+No hay conceptos nuevos -- es integrar en una consulta lo que ya practicaste lección por lección.
+
+**Para qué sirve en la vida real.** El proyecto final une lo importante: resumir, unir y clasificar. Ya no es sintaxis suelta, es una pregunta de negocio completa.
+
+**Cómo pensarlo sin sufrir.** CTE calcula el resumen; JOIN trae nombres; CASE WHEN convierte promedios en segmentos.
+
+**El plan de la consulta.** Primero un CTE resumen calcula cantidad de inscripciones y promedio de nota por estudiante. Después la consulta externa hace JOIN con estudiantes y clasifica cada uno con CASE WHEN.
+
+**Por que un CTE primero.** Calcular el promedio antes, en su propio bloque con nombre, hace que la consulta final sea mucho más fácil de leer que anidar todo en un solo SELECT.
+</Concepto>
+
+<SqlTask
+  id="proyecto-final-sql"
+  enunciado={"Calcula, por estudiante, nombre, cantidad, promedio y segmento usando un CTE. Clasifica como 'alto rendimiento' si promedio >= 6.5, 'regular' si promedio >= 5.5 y 'en riesgo' en el resto. Ordena de mayor a menor promedio."}
+  inicial={"SELECT e.nombre, i.nota FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
+  solucion={"WITH resumen AS (SELECT estudiante_id, COUNT(*) AS cantidad, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY estudiante_id) SELECT e.nombre, r.cantidad, r.promedio, CASE WHEN r.promedio >= 6.5 THEN 'alto rendimiento' WHEN r.promedio >= 5.5 THEN 'regular' ELSE 'en riesgo' END AS segmento FROM resumen AS r JOIN estudiantes AS e ON e.id = r.estudiante_id ORDER BY r.promedio DESC;"}
+  comparar="filas-en-orden"
+  pistas={["Empieza por el resumen: agrupa inscripciones por estudiante_id, con la cantidad y el promedio redondeado a 2 decimales.", "Después une ese resumen con estudiantes para el nombre, y clasifica el promedio con CASE en el orden que pide el enunciado."]}
+/>
+
+<Debrief>
+El CTE resumen agrupa por estudiante_id antes de unir con estudiantes; CASE WHEN clasifica el promedio ya calculado en 3 segmentos, evaluando las condiciones en orden.
+</Debrief>

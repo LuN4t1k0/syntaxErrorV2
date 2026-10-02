@@ -1,0 +1,41 @@
+---
+titulo: "Alias y expresiones calculadas"
+tiempo: 12
+---
+
+<Concepto>
+AS permite darle a una columna o expresión un nombre más claro para el resultado de una consulta.
+
+También puedes crear valores calculados al vuelo, sin guardarlos en la tabla.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columna AS alias, columna + 1 AS calculo\nFROM tabla;"} />
+
+**Para qué sirve en la vida real.** Los alias hacen que un resultado sea entendible para humanos. Sin alias, una columna calculada puede quedar con nombre de hechizo raro.
+
+**Cómo pensarlo sin sufrir.** AS es una etiqueta temporal: no cambia la tabla, solo el nombre que se ve en el resultado.
+
+**Renombrar una columna.** El alias aparece solo en el resultado y no cambia el nombre real de la columna.
+
+<SqlEjemplo consulta={"SELECT nombre, edad AS edad_actual FROM estudiantes;"} />
+
+**Crear una expresión.** Los operadores aritméticos calculan un valor nuevo por cada fila.
+
+<SqlEjemplo consulta={"SELECT nombre, edad + 1 AS edad_proximo_anio FROM estudiantes;"} />
+
+**Por que usar AS.** Sin alias, una expresión puede quedar con un titulo difícil de leer.
+
+**AS como estilo.** Algunos motores dejan omitir AS, pero escribirlo mejora la lectura.
+</Concepto>
+
+<SqlTask
+  id="alias-expresiones"
+  enunciado={"Muestra el nombre, la edad actual (como edad_actual) y la edad que tendrán el próximo año (como edad_proximo_anio)."}
+  inicial={"SELECT nombre, edad FROM estudiantes;"}
+  solucion={"SELECT nombre, edad AS edad_actual, edad + 1 AS edad_proximo_anio FROM estudiantes;"}
+  comparar="filas-sin-orden"
+  pistas={["El alias va después de la columna o del cálculo, con AS y el nombre nuevo.", "La edad del próximo año es una expresión: la edad más 1."]}
+/>
+
+<Debrief>
+edad_actual es un alias directo; edad_proximo_anio es una expresión calculada sumando 1.
+</Debrief>

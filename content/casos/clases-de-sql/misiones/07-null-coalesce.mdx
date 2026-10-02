@@ -1,0 +1,41 @@
+---
+titulo: "Valores NULL y COALESCE"
+tiempo: 14
+---
+
+<Concepto>
+NULL representa ausencia de dato, no texto vacío ni cero.
+
+COALESCE reemplaza NULL por un valor de presentación sin modificar la tabla.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT COALESCE(columna, 'valor_por_defecto') FROM tabla;"} />
+
+**Para qué sirve en la vida real.** NULL significa dato ausente. No es cero, no es texto vacío, es literalmente 'no tengo ese dato'.
+
+**Cómo pensarlo sin sufrir.** COALESCE es el texto de reemplazo para que un resultado no se vea como un hueco misterioso.
+
+**Detectar NULL.** Para buscar valores ausentes se usa IS NULL.
+
+<SqlEjemplo consulta={"SELECT e.nombre\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nWHERE i.id IS NULL;"} />
+
+**Usar COALESCE.** COALESCE devuelve el primer valor no nulo.
+
+<SqlEjemplo consulta={"SELECT e.nombre, COALESCE(c.titulo, 'Sin inscripcion') AS curso\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nLEFT JOIN cursos AS c ON c.id = i.curso_id;"} />
+
+**No cambia datos.** El reemplazo ocurre solo en el resultado.
+
+**Filtrar y presentar.** IS NULL filtra casos; COALESCE hace el resultado más legible.
+</Concepto>
+
+<SqlTask
+  id="null-coalesce"
+  enunciado={"Muestra nombre y curso de cada estudiante. En la columna curso, reemplaza los valores NULL por el texto 'Sin inscripcion'."}
+  inicial={"SELECT e.nombre, c.titulo\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nLEFT JOIN cursos AS c ON c.id = i.curso_id;"}
+  solucion={"SELECT e.nombre, COALESCE(c.titulo, 'Sin inscripcion') AS curso\nFROM estudiantes AS e\nLEFT JOIN inscripciones AS i ON i.estudiante_id = e.id\nLEFT JOIN cursos AS c ON c.id = i.curso_id\nORDER BY e.nombre;"}
+  comparar="filas-en-orden"
+  pistas={["COALESCE devuelve el primer valor de su lista que no es NULL.", "Pon primero el título del curso y después el texto de reemplazo, tal como lo pide el enunciado, y nombra la columna curso."]}
+/>
+
+<Debrief>
+COALESCE(c.titulo, 'Sin inscripcion') muestra el titulo del curso o el texto por defecto cuando es NULL.
+</Debrief>

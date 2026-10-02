@@ -1,0 +1,45 @@
+---
+titulo: "Filtros con WHERE"
+tiempo: 14
+---
+
+<Concepto>
+WHERE decide que filas pasan al resultado y cuales quedan fuera.
+
+Cuando una pregunta tiene varias condiciones, AND exige que todas se cumplan al mismo tiempo.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla\nWHERE condicion;"} />
+
+**Para qué sirve en la vida real.** WHERE sirve para no traer toda la base cuando solo necesitas algunos casos. Es el guardia de la puerta.
+
+**Cómo pensarlo sin sufrir.** Primero eliges la tabla, luego WHERE deja pasar solo las filas que cumplen la regla.
+
+**Filtrar por texto.** Los textos se comparan entre comillas simples.
+
+<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes WHERE ciudad = 'Santiago';"} />
+
+**Filtrar por número.** Con números puedes usar =, &lt;>, >, &lt;, >= y &lt;=.
+
+<SqlEjemplo consulta={"SELECT nombre, edad FROM estudiantes WHERE edad >= 21;"} />
+
+**Combinar con AND.** AND deja pasar solo filas que cumplen todas las condiciones.
+
+<SqlEjemplo consulta={"SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = 'Santiago' AND edad >= 21;"} />
+
+**Usar OR.** OR deja pasar filas si se cumple al menos una condición.
+
+<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes WHERE ciudad = 'Santiago' OR ciudad = 'Concepción';"} />
+</Concepto>
+
+<SqlTask
+  id="where-filtros"
+  enunciado={"Encuentra estudiantes de Santiago que tengan 21 años o más. Muestra nombre, edad y ciudad."}
+  inicial={"SELECT nombre, edad, ciudad FROM estudiantes;"}
+  solucion={"SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = 'Santiago' AND edad >= 21;"}
+  comparar="filas-sin-orden"
+  pistas={["El filtro va en WHERE, después de FROM.", "Las dos condiciones tienen que cumplirse a la vez: ¿qué operador exige eso? Ojo, que 21 también cuenta."]}
+/>
+
+<Debrief>
+El filtro combina una condición de texto (ciudad) con una numérica (edad) usando AND.
+</Debrief>

@@ -1,0 +1,43 @@
+---
+titulo: "Funciones de texto"
+tiempo: 14
+---
+
+<Concepto>
+SQL puede transformar texto al consultar.
+
+UPPER y LOWER son útiles para presentar y comparar valores de forma consistente.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT UPPER(columna), LOWER(columna) FROM tabla;"} />
+
+**Para qué sirve en la vida real.** Las funciones de texto limpian presentaciones sin tocar el dato original. Es maquillaje para reportes, no cirugía a la tabla.
+
+**Cómo pensarlo sin sufrir.** UPPER y LOWER transforman cada fila al vuelo dentro del SELECT.
+
+**UPPER.** Convierte texto a mayúsculas solo en el resultado.
+
+<SqlEjemplo consulta={"SELECT UPPER(nombre) AS nombre_mayus FROM estudiantes;"} />
+
+**LOWER.** Convierte texto a minúsculas.
+
+<SqlEjemplo consulta={"SELECT LOWER(ciudad) AS ciudad_minus FROM estudiantes;"} />
+
+**Varias funciones.** Puedes transformar varias columnas en el mismo SELECT.
+
+<SqlEjemplo consulta={"SELECT UPPER(nombre) AS nombre_mayus, LOWER(ciudad) AS ciudad_minus FROM estudiantes;"} />
+
+**No filtra filas.** Para filtrar siguen haciendo falta WHERE, LIKE o IN.
+</Concepto>
+
+<SqlTask
+  id="funciones-texto"
+  enunciado={"Muestra el nombre en mayúsculas (como nombre_mayus) y la ciudad en minúsculas (como ciudad_minus)."}
+  inicial={"SELECT nombre, ciudad FROM estudiantes;"}
+  solucion={"SELECT UPPER(nombre) AS nombre_mayus, LOWER(ciudad) AS ciudad_minus FROM estudiantes;"}
+  comparar="filas-sin-orden"
+  pistas={["Hay una función para pasar a mayúsculas y otra para minúsculas; reciben la columna entre paréntesis.", "Cada resultado necesita su propio alias con AS."]}
+/>
+
+<Debrief>
+UPPER(nombre) y LOWER(ciudad) transforman el texto columna por columna.
+</Debrief>

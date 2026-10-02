@@ -17,9 +17,9 @@ describe("release", () => {
     const lineas: string[] = [];
     await release(base, (linea) => lineas.push(linea));
     await release(base, (linea) => lineas.push(linea));
-    expect(lineas).toEqual(["[release] migraciones aplicadas", "[release] contenido: 2 rutas, 7 casos", "[release] migraciones aplicadas", "[release] contenido: 2 rutas, 7 casos"]);
+    expect(lineas).toEqual(["[release] migraciones aplicadas", "[release] contenido: 2 rutas, 8 casos", "[release] migraciones aplicadas", "[release] contenido: 2 rutas, 8 casos"]);
     expect(await db.select().from(rutas)).toHaveLength(2);
-    expect(await db.select().from(casos)).toHaveLength(7);
+    expect(await db.select().from(casos)).toHaveLength(8);
     expect(await db.select().from(users)).toEqual([]);
   });
 

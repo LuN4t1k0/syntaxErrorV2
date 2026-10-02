@@ -1,0 +1,41 @@
+---
+titulo: "EXISTS y NOT EXISTS"
+tiempo: 18
+---
+
+<Concepto>
+EXISTS pregunta si una subconsulta devuelve al menos una fila.
+
+Sirve para responder preguntas de existencia sin contar ni traer datos.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas FROM tabla_a AS a\nWHERE EXISTS (SELECT 1 FROM tabla_b AS b WHERE b.columna = a.columna);"} />
+
+**Para qué sirve en la vida real.** EXISTS responde si algo existe, sin traerlo todo. Es como preguntar: hay algun incendio en este curso?
+
+**Cómo pensarlo sin sufrir.** Para cada curso, la subconsulta busca al menos una inscripción en riesgo.
+
+**Subconsulta correlacionada.** La subconsulta usa una columna de la consulta externa.
+
+<SqlEjemplo consulta={"SELECT c.titulo\nFROM cursos AS c\nWHERE EXISTS (SELECT 1 FROM inscripciones AS i WHERE i.curso_id = c.id AND i.estado = 'riesgo');"} />
+
+**No cuenta filas.** EXISTS solo necesita encontrar una coincidencia.
+
+**NOT EXISTS.** Invierte la pregunta: filas donde no existe coincidencia.
+
+<SqlEjemplo consulta={"SELECT c.titulo\nFROM cursos AS c\nWHERE NOT EXISTS (SELECT 1 FROM inscripciones AS i WHERE i.curso_id = c.id AND i.estado = 'riesgo');"} />
+
+**Frente a IN.** EXISTS suele ser más claro con condiciones correlacionadas.
+</Concepto>
+
+<SqlTask
+  id="exists"
+  enunciado={"Lista los cursos que tienen al menos un estudiante en estado 'riesgo'. Devuelve una sola columna: titulo."}
+  inicial={"SELECT titulo FROM cursos;"}
+  solucion={"SELECT c.titulo FROM cursos AS c WHERE EXISTS (SELECT 1 FROM inscripciones AS i WHERE i.curso_id = c.id AND i.estado = 'riesgo');"}
+  comparar="filas-sin-orden"
+  pistas={["EXISTS pregunta si una subconsulta devuelve al menos una fila.", "La subconsulta busca en inscripciones del mismo curso (compara con c.id) y con estado 'riesgo'."]}
+/>
+
+<Debrief>
+La subconsulta busca inscripciones en riesgo para cada curso; EXISTS solo necesita que encuentre una.
+</Debrief>

@@ -1,0 +1,41 @@
+---
+titulo: "Relaciones y JOIN"
+tiempo: 22
+---
+
+<Concepto>
+En una base relacional los datos se separan en tablas para evitar repetición.
+
+JOIN reconecta esas tablas al consultar, usando una condición ON.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla_a AS a\nJOIN tabla_b AS b ON a.columna = b.columna;"} />
+
+**Para qué sirve en la vida real.** JOIN conecta tablas que guardan piezas distintas de la historia. Estudiantes, cursos e inscripciones son como personajes, misiones y resultados.
+
+**Cómo pensarlo sin sufrir.** Inscripciones es la mesa puente: tiene estudiante_id para llegar a estudiantes y curso_id para llegar a cursos.
+
+**Datos separados.** Inscripciones conecta estudiantes con cursos sin repetir todos los datos en una sola tabla.
+
+**ON conecta claves.** La condición ON indica que columnas deben coincidir.
+
+<SqlEjemplo consulta={"SELECT e.nombre, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id;"} />
+
+**Encadenar JOIN.** Puedes unir una tercera tabla agregando otro JOIN.
+
+<SqlEjemplo consulta={"SELECT e.nombre, c.titulo, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nJOIN cursos AS c ON c.id = i.curso_id;"} />
+
+**Alias de tabla.** AS e, AS c y AS i hacen la consulta más corta y legible.
+</Concepto>
+
+<SqlTask
+  id="join-inner"
+  enunciado={"Lista cada inscripción con estas columnas: nombre del estudiante, titulo del curso y nota."}
+  inicial={"SELECT e.nombre, c.titulo, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nJOIN cursos AS c ON c.id = i.curso_id;"}
+  solucion={"SELECT e.nombre, c.titulo, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nJOIN cursos AS c ON c.id = i.curso_id;"}
+  comparar="filas-sin-orden"
+  pistas={["Parte desde la tabla que conecta a las otras dos: inscripciones.", "Cada JOIN necesita su ON: la columna de inscripciones que apunta al id de la otra tabla."]}
+/>
+
+<Debrief>
+Inscripciones conecta estudiantes y cursos mediante estudiante_id y curso_id.
+</Debrief>

@@ -1,0 +1,45 @@
+---
+titulo: "GROUP BY y HAVING"
+tiempo: 18
+---
+
+<Concepto>
+GROUP BY calcula un resumen por cada grupo.
+
+HAVING filtra grupos después de calcularlos.
+
+<Sintaxis lenguaje="sql" codigo={"SELECT columna, COUNT(*)\nFROM tabla\nGROUP BY columna\nHAVING condicion;"} />
+
+**Para qué sirve en la vida real.** GROUP BY arma resúmenes por grupo. Es pasar de lista de notas a ranking por curso.
+
+**Cómo pensarlo sin sufrir.** WHERE filtra filas antes de agrupar; HAVING filtra grupos después de calcular COUNT o AVG.
+
+**Un resumen por curso.** GROUP BY separa las filas por valor de una columna.
+
+<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo;"} />
+
+**Más agregaciones.** Cada función se calcula por grupo.
+
+<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo;"} />
+
+**HAVING.** HAVING puede usar COUNT(*) porque se evalúa después de agrupar.
+
+<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo\nHAVING COUNT(*) > 1;"} />
+
+**ORDER BY.** También puedes ordenar grupos por un alias calculado.
+
+<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo\nHAVING COUNT(*) > 1\nORDER BY promedio DESC;"} />
+</Concepto>
+
+<SqlTask
+  id="group-by-having"
+  enunciado={"Calcula titulo, inscritos y promedio por curso. Muestra solo cursos con más de una inscripción y ordena por promedio descendente."}
+  inicial={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo;"}
+  solucion={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo HAVING COUNT(*) > 1 ORDER BY promedio DESC;"}
+  comparar="filas-en-orden"
+  pistas={["Primero agrupa por curso; el JOIN con cursos trae el título.", "Para filtrar grupos según cuántas filas tienen no sirve WHERE: se usa la cláusula que va justo después de GROUP BY."]}
+/>
+
+<Debrief>
+HAVING COUNT(*) > 1 descarta los cursos con una sola inscripción después de agrupar.
+</Debrief>

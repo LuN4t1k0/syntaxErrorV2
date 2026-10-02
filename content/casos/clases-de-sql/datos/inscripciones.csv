@@ -1,0 +1,11 @@
+id,estudiante_id,curso_id,nota,estado
+1001,1,101,6.2,aprobado
+1002,2,103,5.4,observacion
+1003,3,101,6.8,aprobado
+1004,4,102,4.9,riesgo
+1005,5,104,5.9,aprobado
+1006,6,101,6.5,aprobado
+1007,7,105,5.1,observacion
+1008,8,102,6,aprobado
+1009,1,103,5.7,aprobado
+1010,4,105,4.6,riesgo
