@@ -5,9 +5,10 @@
 // Lo que sale de aquí es un borrador: después viene la revisión editorial (tildes que el diccionario no cubre, tono
 // de tú, pistas que orientan sin dar la respuesta). El validador de contenido revisa que cada solución pase.
 
-// Una sección del concepto: párrafos y, si la tiene, una consulta que se puede probar (ejemplo) o una fórmula de
-// planilla que solo se muestra (formula).
-export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null };
+// Una sección del concepto: párrafos y, si la tiene, una consulta que se puede probar (ejemplo), una fórmula de
+// planilla que solo se muestra (formula) o código de Python que solo se muestra (codigo), porque usa los datos de la
+// preparación de la tarea.
+export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null; codigo?: string | null };
 
 export type TareaSql = {
   tipo: "SqlTask";
@@ -32,10 +33,22 @@ export type TareaHoja = {
   pistas: string[];
 };
 
+export type TareaPython = {
+  tipo: "PythonTask";
+  id: string;
+  enunciado: string;
+  preparacion: string;
+  inicial: string;
+  solucion: string;
+  pruebas: string;
+  paquetes: "pandas"[];
+  pistas: string[];
+};
+
 // Una lección de lectura: una pregunta para pensar y la respuesta del curso.
 export type TareaLectura = { tipo: "LecturaTask"; id: string; pregunta: string; respuesta: string };
 
-export type Tarea = TareaSql | TareaHoja | TareaLectura;
+export type Tarea = TareaSql | TareaHoja | TareaPython | TareaLectura;
 
 export type Leccion = {
   slug: string;
@@ -61,6 +74,8 @@ function seccionMdx(seccion: Seccion): string {
   const partes = [`**${escaparTexto(seccion.titulo)}.** ${seccion.parrafos.map(escaparTexto).join(" ")}`];
   if (seccion.ejemplo) partes.push(`<SqlEjemplo consulta=${atributo(seccion.ejemplo)} />`);
   if (seccion.formula) partes.push(`<Sintaxis lenguaje="planilla" codigo=${atributo(seccion.formula)} />`);
+  // Un bloque de código de MDX se muestra tal cual: no necesita escaparse.
+  if (seccion.codigo) partes.push(["```python", seccion.codigo, "```"].join("\n"));
   return partes.join("\n\n");
 }
 
@@ -85,6 +100,19 @@ function tareaMdx(tarea: Tarea): string[] {
         `  grilla={${JSON.stringify(tarea.grilla)}}`,
         `  celdas={${JSON.stringify(tarea.celdas)}}`,
         `  solucion={${JSON.stringify(tarea.solucion)}}`,
+        `  pistas={${JSON.stringify(tarea.pistas)}}`,
+        "/>",
+      ];
+    case "PythonTask":
+      return [
+        "<PythonTask",
+        `  id="${tarea.id}"`,
+        `  enunciado=${atributo(tarea.enunciado)}`,
+        `  preparacion=${atributo(tarea.preparacion)}`,
+        `  inicial=${atributo(tarea.inicial)}`,
+        `  solucion=${atributo(tarea.solucion)}`,
+        `  pruebas=${atributo(tarea.pruebas)}`,
+        `  paquetes={${JSON.stringify(tarea.paquetes)}}`,
         `  pistas={${JSON.stringify(tarea.pistas)}}`,
         "/>",
       ];
@@ -129,30 +157,43 @@ const TILDES: Record<string, string> = {
   anio: "año",
   anios: "años",
   antiguedad: "antigüedad",
+  aparicion: "aparición",
+  aplicala: "aplícala",
   aqui: "aquí",
   area: "área",
+  aritmetica: "aritmética",
   aritmeticos: "aritméticos",
   asi: "así",
+  automaticamente: "automáticamente",
   automaticos: "automáticos",
+  basica: "básica",
   basico: "básico",
+  basicos: "básicos",
   botin: "botín",
   busqueda: "búsqueda",
   calculo: "cálculo",
   calculos: "cálculos",
   categoria: "categoría",
   categorias: "categorías",
+  categoricas: "categóricas",
   cirugia: "cirugía",
   codigo: "código",
   codigos: "códigos",
+  coleccion: "colección",
   como: "cómo",
   comodo: "cómodo",
+  comparacion: "comparación",
   comun: "común",
   condicion: "condición",
   configuracion: "configuración",
+  contraccion: "contracción",
+  conversion: "conversión",
+  corrigelo: "corrígelo",
   critico: "crítico",
   criticos: "críticos",
   cupon: "cupón",
   deberia: "debería",
+  deberian: "deberían",
   decision: "decisión",
   desafio: "desafío",
   descripcion: "descripción",
@@ -160,25 +201,37 @@ const TILDES: Record<string, string> = {
   dia: "día",
   diagnostico: "diagnóstico",
   dias: "días",
+  diciendote: "diciéndote",
   dificil: "difícil",
   dinamica: "dinámica",
   dinamicas: "dinámicas",
   dinamico: "dinámico",
   direccion: "dirección",
+  distribucion: "distribución",
+  division: "división",
   dolar: "dólar",
   dolio: "dolió",
   donde: "dónde",
   edicion: "edición",
+  ejecutalo: "ejecútalo",
+  eleccion: "elección",
   especifica: "específica",
   especificas: "específicas",
   evalua: "evalúa",
+  evolucion: "evolución",
+  existia: "existía",
   exploracion: "exploración",
   expresion: "expresión",
   facil: "fácil",
   formula: "fórmula",
   formulas: "fórmulas",
   funcion: "función",
+  grafico: "gráfico",
   graficos: "gráficos",
+  harias: "harías",
+  identica: "idéntica",
+  incluyendote: "incluyéndote",
+  indice: "índice",
   informacion: "información",
   inscribio: "inscribió",
   inscripcion: "inscripción",
@@ -186,28 +239,38 @@ const TILDES: Record<string, string> = {
   intentaria: "intentaría",
   interseccion: "intersección",
   leccion: "lección",
+  libreria: "librería",
   linea: "línea",
+  lineas: "líneas",
   logica: "lógica",
+  logicos: "lógicos",
   manipulacion: "manipulación",
   margenes: "márgenes",
+  mascara: "máscara",
   matematicas: "matemáticas",
   maximo: "máximo",
+  mayoria: "mayoría",
   mayusculas: "mayúsculas",
   mecanicos: "mecánicos",
   minimo: "mínimo",
   minusculas: "minúsculas",
   mision: "misión",
+  muestrame: "muéstrame",
+  multiples: "múltiples",
   numerica: "numérica",
   numericas: "numéricas",
   numero: "número",
   numeros: "números",
+  ocurrio: "ocurrió",
   operacion: "operación",
   pagina: "página",
   parentesis: "paréntesis",
+  patron: "patrón",
   pelicula: "película",
   piensalo: "piénsalo",
   posicion: "posición",
   presentacion: "presentación",
+  proxima: "próxima",
   proximo: "próximo",
   quedarian: "quedarían",
   quedate: "quédate",
@@ -216,6 +279,7 @@ const TILDES: Record<string, string> = {
   region: "región",
   relacion: "relación",
   repeticion: "repetición",
+  sangria: "sangría",
   segun: "según",
   semaforo: "semáforo",
   sesion: "sesión",
@@ -226,16 +290,21 @@ const TILDES: Record<string, string> = {
   tenias: "tenías",
   tipico: "típico",
   todavia: "todavía",
+  transformacion: "transformación",
   trio: "trío",
   ultima: "última",
   ultimo: "último",
   unica: "única",
+  unicas: "únicas",
+  unico: "único",
   util: "útil",
   utiles: "útiles",
   vacia: "vacía",
   vacio: "vacío",
   valido: "válido",
   vendio: "vendió",
+  version: "versión",
+  visualizacion: "visualización",
 };
 
 // «como» y «donde» solo llevan tilde en preguntas o títulos: se corrigen al inicio del texto o después de «¿»

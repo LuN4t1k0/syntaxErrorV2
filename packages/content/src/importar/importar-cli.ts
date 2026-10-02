@@ -3,21 +3,22 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { aCsv } from "../generadores/despachos-rapidos";
 import { convertirLeccionExcel, type LeccionExcelV1 } from "./aula-excel";
+import { convertirLeccionPython, identificadoresPython, type LeccionPythonV1 } from "./aula-python";
 import { convertirLeccionSql, datosSql, identificadores, type AulaV1 } from "./aula-sql";
 import { leccionAMdx, type Leccion } from "./leccion";
 
 // Escribe el borrador de unas clases a partir de un aula de la v1 exportada a JSON (scripts/exportar-aula-v1.mjs).
-// Uso: pnpm --filter @syntaxerror/content importar <sql|excel> <aula.json> <carpeta de destino> <lecciones separadas por coma>
+// Uso: pnpm --filter @syntaxerror/content importar <sql|excel|python> <aula.json> <carpeta de destino> <lecciones separadas por coma>
 // Escribe misiones/NN-<lección>.mdx, un caso.yaml para completar y, en SQL, datos/<tabla>.csv con las tablas que usan
-// (en Excel cada lección trae su planilla). No pisa contenido: la carpeta de destino no debe existir. Después del
+// (en Excel cada lección trae su planilla y en Python, su preparación). No pisa contenido: la carpeta de destino no debe existir. Después del
 // borrador viene la revisión editorial.
 
-const AULAS = { sql: "Clases de SQL", excel: "Clases de Excel" } as const;
+const AULAS = { sql: "Clases de SQL", excel: "Clases de Excel", python: "Clases de Python" } as const;
 type Aula = keyof typeof AULAS;
 
 const [aula, entrada, destino, seleccion] = process.argv.slice(2);
 if (!(aula in AULAS) || !entrada || !destino || !seleccion) {
-  console.error("Uso: importar <sql|excel> <aula.json> <carpeta de destino> <lección,lección,...>");
+  console.error("Uso: importar <sql|excel|python> <aula.json> <carpeta de destino> <lección,lección,...>");
   process.exit(1);
 }
 
@@ -37,8 +38,12 @@ if ((aula as Aula) === "sql") {
   const excepto = identificadores({ lessons: sql, datasets: datos.datasets });
   lecciones = sql.map((v1, indice) => convertirLeccionSql(v1, indice + 1, excepto));
   tablas = [...new Set(sql.flatMap((v1) => v1.datasetTables ?? []))].sort();
-} else {
+} else if ((aula as Aula) === "excel") {
   lecciones = (elegidas as LeccionExcelV1[]).map((v1, indice) => convertirLeccionExcel(v1, indice + 1));
+} else {
+  const python = elegidas as LeccionPythonV1[];
+  const excepto = identificadoresPython(python);
+  lecciones = python.map((v1, indice) => convertirLeccionPython(v1, indice + 1, excepto));
 }
 
 if (existsSync(destino)) throw new Error(`${destino} ya existe: el importador no pisa contenido`);
