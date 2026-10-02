@@ -8,7 +8,10 @@
 // Una sección del concepto: párrafos y, si la tiene, una consulta que se puede probar (ejemplo), una fórmula de
 // planilla que solo se muestra (formula) o código de Python que solo se muestra (codigo), porque usa los datos de la
 // preparación de la tarea.
-export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null; codigo?: string | null };
+export type Seccion = { titulo: string; parrafos: string[]; ejemplo: string | null; formula?: string | null; codigo?: string | null; lenguaje?: string };
+
+// Una práctica fuera de la plataforma (por ejemplo, en Power BI Desktop): qué se hace, los pasos y el archivo de datos.
+export type Practica = { enunciado: string; pasos: string[]; datos: { nombre: string; enlace: string } | null };
 
 export type TareaSql = {
   tipo: "SqlTask";
@@ -57,6 +60,7 @@ export type Leccion = {
   intro: string[];
   sintaxis: { lenguaje: "sql" | "python" | "planilla"; codigo: string } | null;
   secciones: Seccion[];
+  practica?: Practica | null;
   tarea: Tarea;
   // Se muestra al aprobar la lección: explica por qué la solución funciona.
   cierre: string | null;
@@ -75,8 +79,13 @@ function seccionMdx(seccion: Seccion): string {
   if (seccion.ejemplo) partes.push(`<SqlEjemplo consulta=${atributo(seccion.ejemplo)} />`);
   if (seccion.formula) partes.push(`<Sintaxis lenguaje="planilla" codigo=${atributo(seccion.formula)} />`);
   // Un bloque de código de MDX se muestra tal cual: no necesita escaparse.
-  if (seccion.codigo) partes.push(["```python", seccion.codigo, "```"].join("\n"));
+  if (seccion.codigo) partes.push([`\`\`\`${seccion.lenguaje ?? "python"}`, seccion.codigo, "```"].join("\n"));
   return partes.join("\n\n");
+}
+
+function practicaMdx(practica: Practica): string {
+  const datos = practica.datos ? ` Los datos están en [${practica.datos.nombre}](${practica.datos.enlace}), también en «Datos del caso» de estas clases.` : "";
+  return [`**Práctica.** ${escaparTexto(practica.enunciado)}${datos}`, practica.pasos.map((paso, indice) => `${indice + 1}. ${escaparTexto(paso)}`).join("\n")].join("\n\n");
 }
 
 function tareaMdx(tarea: Tarea): string[] {
@@ -126,6 +135,7 @@ export function leccionAMdx(leccion: Leccion): string {
     ...leccion.intro.map(escaparTexto),
     ...(leccion.sintaxis ? [`<Sintaxis lenguaje="${leccion.sintaxis.lenguaje}" codigo=${atributo(leccion.sintaxis.codigo)} />`] : []),
     ...leccion.secciones.map(seccionMdx),
+    ...(leccion.practica ? [practicaMdx(leccion.practica)] : []),
   ];
   const lineas = [
     "---",
@@ -150,6 +160,7 @@ const TILDES: Record<string, string> = {
   accion: "acción",
   ademas: "además",
   agregacion: "agregación",
+  agrupacion: "agrupación",
   ahi: "ahí",
   alfabetico: "alfabético",
   analisis: "análisis",
@@ -158,6 +169,7 @@ const TILDES: Record<string, string> = {
   anios: "años",
   antiguedad: "antigüedad",
   aparicion: "aparición",
+  aplicacion: "aplicación",
   aplicala: "aplícala",
   aqui: "aquí",
   area: "área",
@@ -165,11 +177,14 @@ const TILDES: Record<string, string> = {
   aritmeticos: "aritméticos",
   asi: "así",
   automaticamente: "automáticamente",
+  automaticas: "automáticas",
   automaticos: "automáticos",
   basica: "básica",
+  basicas: "básicas",
   basico: "básico",
   basicos: "básicos",
   botin: "botín",
+  boton: "botón",
   busqueda: "búsqueda",
   calculo: "cálculo",
   calculos: "cálculos",
@@ -180,12 +195,15 @@ const TILDES: Record<string, string> = {
   codigo: "código",
   codigos: "códigos",
   coleccion: "colección",
+  combinacion: "combinación",
   como: "cómo",
   comodo: "cómodo",
   comparacion: "comparación",
   comun: "común",
   condicion: "condición",
+  conexion: "conexión",
   configuracion: "configuración",
+  confirmacion: "confirmación",
   contraccion: "contracción",
   conversion: "conversión",
   corrigelo: "corrígelo",
@@ -203,6 +221,7 @@ const TILDES: Record<string, string> = {
   dias: "días",
   diciendote: "diciéndote",
   dificil: "difícil",
+  dimension: "dimensión",
   dinamica: "dinámica",
   dinamicas: "dinámicas",
   dinamico: "dinámico",
@@ -217,9 +236,13 @@ const TILDES: Record<string, string> = {
   eleccion: "elección",
   especifica: "específica",
   especificas: "específicas",
+  estadistica: "estadística",
+  estatica: "estática",
+  estatico: "estático",
   evalua: "evalúa",
   evolucion: "evolución",
   existia: "existía",
+  explicitamente: "explícitamente",
   exploracion: "exploración",
   expresion: "expresión",
   facil: "fácil",
@@ -235,9 +258,14 @@ const TILDES: Record<string, string> = {
   informacion: "información",
   inscribio: "inscribió",
   inscripcion: "inscripción",
+  instalacion: "instalación",
   instruccion: "instrucción",
   intentaria: "intentaría",
+  interaccion: "interacción",
   interseccion: "intersección",
+  jerarquia: "jerarquía",
+  jerarquias: "jerarquías",
+  jerarquicos: "jerárquicos",
   leccion: "lección",
   libreria: "librería",
   linea: "línea",
@@ -252,43 +280,63 @@ const TILDES: Record<string, string> = {
   mayoria: "mayoría",
   mayusculas: "mayúsculas",
   mecanicos: "mecánicos",
+  metrica: "métrica",
   minimo: "mínimo",
   minusculas: "minúsculas",
   mision: "misión",
+  moderacion: "moderación",
   muestrame: "muéstrame",
   multiples: "múltiples",
   numerica: "numérica",
   numericas: "numéricas",
   numero: "número",
   numeros: "números",
+  obligaria: "obligaría",
   ocurrio: "ocurrió",
   operacion: "operación",
+  origenes: "orígenes",
   pagina: "página",
   parentesis: "paréntesis",
   patron: "patrón",
   pelicula: "película",
+  pesaria: "pesaría",
+  pestana: "pestaña",
+  pestanas: "pestañas",
   piensalo: "piénsalo",
+  podria: "podría",
+  porcion: "porción",
   posicion: "posición",
+  precision: "precisión",
   presentacion: "presentación",
+  proporcion: "proporción",
   proxima: "próxima",
   proximo: "próximo",
   quedarian: "quedarían",
   quedate: "quédate",
   rapida: "rápida",
   rapido: "rápido",
+  razon: "razón",
   region: "región",
   relacion: "relación",
   repeticion: "repetición",
   sangria: "sangría",
+  seccion: "sección",
+  segmentacion: "segmentación",
   segun: "según",
+  seleccion: "selección",
   semaforo: "semáforo",
   sesion: "sesión",
   simultanea: "simultánea",
   solucion: "solución",
+  subexpresion: "subexpresión",
   tambien: "también",
+  tecnicamente: "técnicamente",
   tendran: "tendrán",
   tenias: "tenías",
+  teoria: "teoría",
+  tipicamente: "típicamente",
   tipico: "típico",
+  tipicos: "típicos",
   todavia: "todavía",
   transformacion: "transformación",
   trio: "trío",
@@ -297,12 +345,14 @@ const TILDES: Record<string, string> = {
   unica: "única",
   unicas: "únicas",
   unico: "único",
+  usarias: "usarías",
   util: "útil",
   utiles: "útiles",
   vacia: "vacía",
   vacio: "vacío",
   valido: "válido",
   vendio: "vendió",
+  verificacion: "verificación",
   version: "versión",
   visualizacion: "visualización",
 };
@@ -311,12 +361,38 @@ const TILDES: Record<string, string> = {
 // (por ejemplo «Como pensarlo» → «Cómo pensarlo»). El resto de las palabras se corrige siempre.
 const SOLO_AL_INICIO = new Set(["como", "donde"]);
 
-// Frases fijas de las aulas de la v1 que el diccionario no puede corregir solo («que» lleva tilde solo en preguntas).
-const FRASES: [RegExp, string][] = [[/\bPara que sirve\b/g, "Para qué sirve"]];
+// Frases fijas de las aulas de la v1 que el diccionario no puede corregir solo («que» lleva tilde solo en preguntas), y
+// el voseo de algunas aulas: el texto trata de tú (las formas en -ar sin tilde, como «carga», ya son de tú).
+const FRASES: [RegExp, string][] = [
+  [/\bPara que sirve\b/g, "Para qué sirve"],
+  [/\b(por|para) vos\b/g, "$1 ti"],
+  [/\bcon vos\b/g, "contigo"],
+  [/\b([Hh])ace clic\b/g, "$1az clic"],
+  [/\bAnda a\b/g, "Ve a"],
+];
+
+// Formas del voseo que no se confunden con otra palabra, y su forma con tú.
+const VOSEO: Record<string, string> = {
+  abri: "abre",
+  acordate: "acuérdate",
+  asegurate: "asegúrate",
+  descargalo: "descárgalo",
+  elegi: "elige",
+  escribi: "escribe",
+  fijate: "fíjate",
+  podes: "puedes",
+  queres: "quieres",
+  seleccioná: "selecciona",
+  segui: "sigue",
+  tenes: "tienes",
+  volve: "vuelve",
+};
 
 // El texto entre comillas simples es un valor de los datos ('Sin inscripcion', 'Santiago'): tiene que quedar igual
-// que en la solución, así que no se corrige.
-export function corregirTildes(texto: string, excepto: ReadonlySet<string> = new Set()): string {
+// que en la solución, así que no se corrige. En Power BI, en cambio, las comillas encierran nombres de menús
+// ('Segmentación de datos'), que sí se corrigen: ahí se pasa { respetarComillas: false }.
+export function corregirTildes(texto: string, excepto: ReadonlySet<string> = new Set(), { respetarComillas = true } = {}): string {
+  if (!respetarComillas) return corregirTramo(texto, excepto);
   return texto
     .split(/('[^']*')/)
     .map((parte) => (parte.startsWith("'") ? parte : corregirTramo(parte, excepto)))
@@ -327,7 +403,7 @@ function corregirTramo(texto: string, excepto: ReadonlySet<string>): string {
   const conFrases = FRASES.reduce((actual, [patron, correcta]) => actual.replace(patron, correcta), texto);
   return conFrases.replace(/(^|[^\p{L}\p{N}_])([\p{L}]+)(?=$|[^\p{L}\p{N}_])/gu, (coincidencia, antes: string, palabra: string, desde: number) => {
     const minuscula = palabra.toLowerCase();
-    const correcta = TILDES[minuscula];
+    const correcta = TILDES[minuscula] ?? VOSEO[minuscula];
     if (!correcta || excepto.has(minuscula)) return coincidencia;
     if (SOLO_AL_INICIO.has(minuscula) && !(desde === 0 || /¿\s*$/.test(conFrases.slice(0, desde + antes.length)))) return coincidencia;
     const conMayuscula = palabra[0] !== palabra[0].toLowerCase();

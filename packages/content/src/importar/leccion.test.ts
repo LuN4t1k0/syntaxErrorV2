@@ -35,6 +35,11 @@ describe("corregirTildes", () => {
     expect(corregirTildes("La columna codigo y el codigo", new Set(["codigo"]))).toBe("La columna codigo y el codigo");
   });
 
+  it("pasa el voseo a tú y, si se pide, corrige también el texto entre comillas", () => {
+    expect(corregirTildes("Segui los pasos: podes elegir, y si queres, hace clic. Lo genera por vos.")).toBe("Sigue los pasos: puedes elegir, y si quieres, haz clic. Lo genera por ti.");
+    expect(corregirTildes("Anda a la tienda y seleccioná 'Segmentacion de datos'.", new Set(), { respetarComillas: false })).toBe("Ve a la tienda y selecciona 'Segmentación de datos'.");
+  });
+
   it("«como» y «Para que sirve» solo se corrigen en títulos o preguntas", () => {
     expect(corregirTildes("Como pensarlo sin sufrir")).toBe("Cómo pensarlo sin sufrir");
     expect(corregirTildes("Es como una planilla")).toBe("Es como una planilla");
