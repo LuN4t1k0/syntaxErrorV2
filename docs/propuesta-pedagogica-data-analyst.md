@@ -76,11 +76,14 @@ Cada caso termina con un encargo nuevo, **sin concepto, sin ejemplo y sin pistas
 
 | Ayuda | Cuándo aparece | Qué entrega |
 |---|---|---|
-| **Error explicado** | Siempre, en cada intento | Qué falló, en español, y la línea donde ocurrió |
-| **Primera pista** | Después de 2 intentos fallidos | Una orientación general |
-| **Siguientes pistas** | Una por cada intento fallido adicional | Orientaciones más concretas; la última nunca entrega la respuesta |
-| **Tutor IA** | Después de 3 intentos fallidos | Guía con preguntas y pistas, nunca la solución |
+| **Error explicado** | Siempre, al instante | Qué falló, en español, y la línea donde ocurrió |
+| **Primera pista** | Después de 2 intentos fallidos | Una orientación general sobre la lógica o la función |
+| **Segunda pista** | Después de 3 intentos fallidos | Una orientación concreta sobre la sintaxis o la estructura |
+| **Siguientes pistas** | Una por cada intento fallido adicional | Más concretas; la última nunca entrega la respuesta |
+| **Tutor IA** | Después de 5 intentos fallidos en la misión | Diagnóstico guiado con preguntas que llevan a la solución, nunca la solución |
 | **Docente** | Siempre | Una respuesta humana, por email y en la plataforma |
+
+Un **intento fallido** es un resultado incorrecto: la consulta corre pero trae otras filas, la celda muestra otro valor o una prueba no pasa. Un error de código (de sintaxis, un nombre mal escrito o una fórmula con error) no cuenta como intento: la consola lo explica al instante, en español. Así las pistas y el tutor llegan cuando la persona se equivoca en el razonamiento, no cuando se le escapa una coma.
 
 Las pistas y el tutor no penalizan: usarlos no resta puntos. Lo que se busca es que la persona intente primero.
 
@@ -164,7 +167,7 @@ Cada caso usa una empresa distinta, para que el portafolio muestre variedad de i
   8. Misión sin guía: recomendaciones para el negocio.
 - **Entregable:** un script o notebook en GitHub con sus conclusiones.
 
-### Caso 4: Visualización, "Clínica Los Andes"
+### Caso 4: Visualización, "Clínica Cordillera Central"
 
 - **Cargo:** analista junior en el área de gestión de una clínica.
 - **Herramientas:** en la plataforma, SQL y planilla para preparar los datos. Fuera de ella, Power BI Desktop, o Looker Studio como alternativa.
@@ -186,7 +189,7 @@ Cada caso usa una empresa distinta, para que el portafolio muestre variedad de i
 
 ### Caso 5: Proyecto final, "Tu propio análisis"
 
-- **Datos:** un conjunto de datos abiertos chilenos (INE, datos.gob.cl, SII, Mineduc, etc.) elegido de una lista curada.
+- **Datos:** un conjunto de datos abiertos chilenos elegido de una lista curada de seis fuentes: datos.gob.cl, INE, SINIM (SUBDERE), DEIS (MINSAL), Centro de Estudios Mineduc y SINCA (calidad del aire).
 - **Misiones:** elegir la pregunta, explorar y limpiar, analizar, visualizar, escribir conclusiones y limitaciones, y publicar.
 - **Entregable:** un proyecto completo en GitHub. Es la pieza principal del portafolio.
 
@@ -201,7 +204,7 @@ La IA no es un curso aparte. En los casos 1, 3 y 5 hay una misión de "IA para a
 - **Completar un caso:** aprobar todas sus misiones, incluida la misión sin guía, y tener el entregable verificado.
 - **Cómo se verifica el entregable:**
   1. **Verificación automática:** la plataforma revisa en GitHub que el repositorio exista, sea público, tenga un README y contenga los archivos que pide el caso (por ejemplo, un `.sql` o un `.py`). Un enlace vacío no pasa.
-  2. **Revisión con rúbrica:** una rúbrica simple (¿responde la pregunta?, ¿se entiende el README?, ¿las conclusiones se apoyan en los datos?). Al lanzar la revisará un docente o el equipo. Cuando haya suficientes estudiantes activos, pasará a revisión entre pares: hacerla antes dejaría revisiones esperando semanas.
+  2. **Revisión con rúbrica:** la diseña el equipo interno de syntaxError, con tres dimensiones estándar (claridad del README y la explicación, ejecución técnica del análisis y coherencia de las conclusiones), cada una con puntaje de 1 a 3. Revisa la docente de la clase si la persona cursa con un tutor asignado; si cursa de forma autónoma, el equipo de administración, en un plazo de 5 días hábiles. Cuando una cohorte supere los 50 estudiantes activos en un caso, la plataforma podrá pasar a revisión entre pares con la misma rúbrica: hacerla antes dejaría revisiones esperando semanas.
 - **Certificado:** verificable en línea, y solo se emite con el caso completo y el entregable aprobado.
 - **Puntos y niveles:** 10 por misión, 50 por caso y 5 por acertar una decisión. Motivan, pero no son un requisito.
 
@@ -258,10 +261,12 @@ Antes de escribir el contenido, la plataforma necesita una fase corta de ajustes
 
 La misión sin guía, el repaso intercalado y el caso de GitHub no requieren cambios en la plataforma: son decisiones de cómo se escribe el contenido.
 
-## 15. Preguntas que quedan para el equipo
+## 15. Decisiones del equipo
 
-1. **Nombres y empresas:** ¿aprueban las empresas propuestas (Despachos Rápidos, Minimarkets del Sur, Tienda Online Pewen, Clínica Los Andes) o prefieren otras?
-2. **Número de intentos:** ¿2 intentos para la primera pista y 3 para el tutor les parece razonable, o prefieren otros números?
-3. **Rúbrica:** ¿quién la diseña y quién revisará los entregables al lanzar (docentes voluntarios, equipo interno)? ¿En qué plazo máximo se compromete una revisión?
-4. **Datasets de la v1:** ¿qué conjuntos de datos y ejercicios con buenos resultados en la v1 quieren rescatar como material de base?
-5. **Lista de datos abiertos del proyecto final:** ¿qué fuentes chilenas quieren incluir en la lista curada?
+Las preguntas abiertas de esta propuesta quedaron resueltas entre el 2026-10-01 y el 2026-10-02:
+
+1. **Empresas de los casos:** Despachos Rápidos, Minimarkets del Sur, Tienda Online Pewen y Clínica Cordillera Central (reemplaza a Clínica Los Andes, que coincide con clínicas reales).
+2. **Intentos:** 2 para la primera pista, 3 para la segunda y 5 para el tutor IA. Los errores de código no cuentan como intento (sección 6).
+3. **Rúbrica:** tres dimensiones estándar con puntaje de 1 a 3, diseñadas por el equipo interno. Revisa la docente de la clase o el equipo de administración en 5 días hábiles, y desde 50 estudiantes activos en un caso puede pasar a revisión entre pares (sección 9).
+4. **Datasets de la v1:** se reutilizan los que funcionaron bien, pasándolos por el generador reproducible para agregarles defectos reales (vacíos, espacios de más y fechas mezcladas) y sin superar 2 a 3 MB, para que carguen rápido con conexiones lentas.
+5. **Datos abiertos del proyecto final:** datos.gob.cl, INE, SINIM, DEIS, Centro de Estudios Mineduc y SINCA (sección 8, Caso 5).
