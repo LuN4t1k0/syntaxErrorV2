@@ -36,7 +36,7 @@ describe("validarContenido", () => {
     const filtrar = mision("01-filtrar");
     filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
     expect(await validar()).toContain(
-      "casos/ventas/misiones/01-filtrar.mdx: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask, GithubTask o LecturaTask)"
+      "casos/ventas/misiones/01-filtrar.mdx: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask, GithubTask, LecturaTask o QuizTask)"
     );
   });
 
@@ -70,6 +70,13 @@ describe("validarContenido", () => {
     expect(await validar()).toEqual([]);
     filtrar.bloques.push({ ...tarea({ D2: "=B2+C2" }), props: { ...tarea({ D2: "=B2+C2" }).props, id: "otra" } });
     expect(await validar()).toContain('casos/ventas/misiones/01-filtrar.mdx: la solución de la tarea "otra" no pasa su propio validador: La celda D2 muestra "450003" y se espera "1350000".');
+  });
+
+  it("un quiz cuenta como tarea práctica", async () => {
+    const filtrar = mision("01-filtrar");
+    filtrar.bloques = filtrar.bloques.filter((candidato) => candidato.tipo !== "SqlTask");
+    filtrar.bloques.push({ tipo: "QuizTask", props: { id: "quiz", preguntas: [{ pregunta: "¿Qué manda?", opciones: ["La fuente", "El modelo"], correcta: 0, explicacion: "La fuente." }], pistas: [] }, texto: null });
+    expect(await validar()).toEqual([]);
   });
 
   it("una lectura cuenta como tarea práctica y no tiene solución que validar", async () => {

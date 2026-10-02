@@ -150,6 +150,19 @@ export const bloqueSchemas = {
       .min(2, "necesita al menos dos opciones")
       .refine((opciones) => opciones.some((opcion) => opcion.correcta), "al menos una opción debe ser correcta"),
   }),
+  // Un quiz de opción única, como los de las aulas de la v1: se aprueba con todas las respuestas correctas.
+  QuizTask: z.object({
+    id: idTarea,
+    enunciado: z.string().optional(),
+    preguntas: z
+      .array(
+        z
+          .object({ pregunta: texto, opciones: z.array(texto).min(2, "necesita al menos dos opciones"), correcta: z.number().int().min(0), explicacion: texto })
+          .refine((pregunta) => pregunta.correcta < pregunta.opciones.length, { message: "correcta debe ser el índice de una de las opciones", path: ["correcta"] })
+      )
+      .min(1, "el quiz necesita al menos una pregunta"),
+    pistas,
+  }),
   // Una lección de lectura de las aulas de la v1: una pregunta para pensar y la respuesta del curso, que se ve al
   // marcarla como completada. No tiene validación automática.
   LecturaTask: z.object({ id: idTarea, pregunta: texto, respuesta: texto, pistas }),
@@ -161,7 +174,7 @@ export const bloqueSchemas = {
 
 export type TipoBloque = keyof typeof bloqueSchemas;
 export const TIPOS_BLOQUE = Object.keys(bloqueSchemas) as TipoBloque[];
-export const TIPOS_TAREA = ["SqlTask", "PythonTask", "SheetTask", "MarkdownTask", "GithubTask", "LecturaTask"] as const;
+export const TIPOS_TAREA = ["SqlTask", "PythonTask", "SheetTask", "MarkdownTask", "GithubTask", "LecturaTask", "QuizTask"] as const;
 
 export type PropsBloque<T extends TipoBloque> = z.output<(typeof bloqueSchemas)[T]>;
 export type Bloque = { [T in TipoBloque]: { tipo: T; props: PropsBloque<T>; texto: string | null } }[TipoBloque];

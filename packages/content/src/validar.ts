@@ -1,4 +1,5 @@
 import { revisarMarkdown } from "@syntaxerror/engines/markdown";
+import { revisarQuiz } from "@syntaxerror/engines/quiz";
 import { aplicarSolucion, revisarHoja } from "@syntaxerror/engines/sheet";
 import { revisarSql } from "@syntaxerror/engines/sql";
 import type { ResultadoTarea } from "@syntaxerror/engines/tipos";
@@ -49,6 +50,9 @@ async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: Re
     case "LecturaTask":
       // Una lectura se completa al marcarla: no hay solución que validar.
       return { aprobada: true, diagnostico: null };
+    case "QuizTask":
+      // Responder la opción correcta de cada pregunta tiene que aprobar el quiz.
+      return revisarQuiz(tarea.props.preguntas, tarea.props.preguntas.map((pregunta) => pregunta.correcta));
   }
 }
 
@@ -58,7 +62,7 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
     for (const mision of caso.misiones) {
       const donde = `casos/${caso.slug}/misiones/${mision.slug}.mdx`;
       const tareas = tareasDeMision(mision);
-      if (tareas.length === 0) problemas.push(`${donde}: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask, GithubTask o LecturaTask)`);
+      if (tareas.length === 0) problemas.push(`${donde}: la misión no tiene ninguna tarea práctica (SqlTask, PythonTask, SheetTask, MarkdownTask, GithubTask, LecturaTask o QuizTask)`);
       for (const bloque of mision.bloques) {
         if (bloque.tipo !== "Brief") continue;
         const palabras = contarPalabras(bloque.texto ?? "");

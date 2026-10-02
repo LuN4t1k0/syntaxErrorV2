@@ -14,6 +14,7 @@ import { LecturaTask } from "./lectura-task";
 import { MarkdownTask } from "./markdown-task";
 import { PythonEjemplo } from "./python-ejemplo";
 import { PythonTask } from "./python-task";
+import { QuizTask } from "./quiz-task";
 import { SheetTask } from "./sheet-task";
 import { SqlEjemplo } from "./sql-ejemplo";
 import { SqlTask } from "./sql-task";
@@ -53,6 +54,7 @@ export function componentesMision(caso: Caso): MDXComponents {
       return <MarkdownTask {...tarea} />;
     },
     GithubTask: (props: PropsMdx) => <GithubTask {...bloqueSchemas.GithubTask.parse(props)} />,
+    QuizTask: (props: PropsMdx) => <QuizTask {...bloqueSchemas.QuizTask.parse(props)} />,
     LecturaTask: (props: PropsMdx) => {
       const { pistas: _pistas, ...tarea } = bloqueSchemas.LecturaTask.parse(props);
       return <LecturaTask {...tarea} />;

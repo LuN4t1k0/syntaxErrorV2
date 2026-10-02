@@ -14,7 +14,8 @@
     "./python-errores": "./src/python-errores.ts",
     "./sheet-ayuda": "./src/sheet-ayuda.ts",
     "./markdown": "./src/markdown.ts",
-    "./markdown-requisitos": "./src/markdown-requisitos.ts"
+    "./markdown-requisitos": "./src/markdown-requisitos.ts",
+    "./quiz": "./src/quiz.ts"
   },
   "scripts": {
     "test": "vitest run"

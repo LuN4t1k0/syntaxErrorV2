@@ -86,3 +86,14 @@ describe("lecturas", () => {
     expect(bloqueSchemas.LecturaTask.safeParse({ id: "x", pregunta: "¿Excel o una base?" }).success).toBe(false);
   });
 });
+
+describe("quiz", () => {
+  it("cada pregunta tiene al menos dos opciones y la correcta es una de ellas", async () => {
+    const { bloqueSchemas } = await import("./esquemas");
+    const pregunta = { pregunta: "¿Qué manda?", opciones: ["La fuente", "El modelo"], correcta: 1, explicacion: "La fuente." };
+    expect(bloqueSchemas.QuizTask.parse({ id: "x", preguntas: [pregunta] })).toEqual({ id: "x", preguntas: [pregunta], pistas: [] });
+    expect(bloqueSchemas.QuizTask.safeParse({ id: "x", preguntas: [{ ...pregunta, correcta: 2 }] }).success).toBe(false);
+    expect(bloqueSchemas.QuizTask.safeParse({ id: "x", preguntas: [{ ...pregunta, opciones: ["Una"] }] }).success).toBe(false);
+    expect(bloqueSchemas.QuizTask.safeParse({ id: "x", preguntas: [] }).success).toBe(false);
+  });
+});
