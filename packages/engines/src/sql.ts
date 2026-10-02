@@ -111,7 +111,7 @@ function plural(cantidad: number, palabra: string): string {
   return `${cantidad} ${palabra}${cantidad === 1 ? "" : "s"}`;
 }
 
-function describirDiferencia(esperadas: Fila[], actuales: Fila[], sinOrden: boolean): string {
+function describirDiferencia(esperadas: Fila[], actuales: Fila[], sinOrden: boolean, consulta: string): string {
   if (actuales.length !== esperadas.length) {
     return `Tu consulta trae ${plural(actuales.length, "fila")}, se esperan ${esperadas.length}.`;
   }
@@ -132,6 +132,10 @@ function describirDiferencia(esperadas: Fila[], actuales: Fila[], sinOrden: bool
       esperadas.every((fila, indice) => JSON.stringify(comparables[indice][columna]) === JSON.stringify(fila[columna]));
     for (const columna of columnas) {
       if (!coincide(columna) && columnas.filter((otra) => otra !== columna).every(coincide)) {
+        // Con ORDER BY, que solo cambie una columna suele ser un empate: la base ordena como quiere las filas que empatan.
+        if (/\border\s+by\b/i.test(consulta)) {
+          return `La columna '${columna}' no coincide en algunas filas. Si hay valores empatados en tu ORDER BY, agrega otra columna para desempatar; si no, revisa el cálculo o el filtro.`;
+        }
         return `La columna '${columna}' no coincide en algunas filas. Revisa el cálculo o el filtro.`;
       }
     }
@@ -171,7 +175,7 @@ export function compararSql(tablas: Tablas, tarea: SqlComparacion, consulta: str
   if (serializar(comparables, sinOrden) === serializar(tarea.esperadas, sinOrden)) {
     return { aprobada: true, diagnostico: null };
   }
-  const diferencia = describirDiferencia(tarea.esperadas, actuales, sinOrden);
+  const diferencia = describirDiferencia(tarea.esperadas, actuales, sinOrden, consulta);
   const [aviso] = avisosSql(consulta, tablas);
   return { aprobada: false, diagnostico: aviso ? `${diferencia} ${aviso.mensaje}` : diferencia };
 }

@@ -92,6 +92,22 @@ describe("revisarSql", () => {
     );
   });
 
+  it("si solo cambia una columna y hay ORDER BY, sugiere revisar los empates", () => {
+    const empates: Tablas = {
+      productos: [
+        { nombre: "Té", unidades: 73 },
+        { nombre: "Pan", unidades: 53 },
+        { nombre: "Bebida", unidades: 53 },
+        { nombre: "Arroz", unidades: 40 },
+      ],
+    };
+    const tarea: SqlTarea = { solucion: "SELECT nombre, unidades FROM productos ORDER BY unidades DESC, nombre LIMIT 2", comparar: "filas-en-orden" };
+    expect(revisarSql(empates, tarea, "SELECT nombre, unidades FROM productos ORDER BY unidades DESC LIMIT 2").diagnostico).toBe(
+      "La columna 'nombre' no coincide en algunas filas. Si hay valores empatados en tu ORDER BY, agrega otra columna para desempatar; si no, revisa el cálculo o el filtro."
+    );
+    expect(revisarSql(empates, tarea, "SELECT nombre, unidades FROM productos ORDER BY unidades DESC, nombre LIMIT 2").aprobada).toBe(true);
+  });
+
   it("compara el estado de la tabla después de un UPDATE", () => {
     const tarea: SqlTarea = {
       solucion: "UPDATE clientes SET ciudad = 'Viña del Mar' WHERE id = 3",
