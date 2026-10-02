@@ -35,7 +35,10 @@ const casos: Array<[TrabajoEmail, string]> = [
   [{ tipo: "clase-decision", para: "ana@correo.cl", nombre: "Ana", clase: "3°A", aceptada: false, enlace }, "Ya no estás en la clase"],
   [{ tipo: "mensaje-nuevo", para: "ana@correo.cl", nombre: "Ana", asunto: "Gracias por tu reporte", enlace }, "Tienes un mensaje nuevo"],
   [{ tipo: "entregable-por-revisar", para: "rosa@correo.cl", nombre: "Rosa", alumno: "Ana (ana@correo.cl)", caso: "Ventas", enlace }, "Hay un entregable por revisar"],
-  [{ tipo: "entregable-observado", para: "ana@correo.cl", nombre: "Ana", caso: "Ventas", comentario: "Falta explicar las conclusiones.", enlace }, "Tu entregable necesita cambios"],
+  [
+    { tipo: "entregable-observado", para: "ana@correo.cl", nombre: "Ana", caso: "Ventas", observaciones: ["Coherencia de las conclusiones (Insuficiente): falta explicar las conclusiones.", "Comentario general: buen README."], enlace },
+    "Tu entregable necesita cambios",
+  ],
 ];
 
 describe("construirEmail", () => {
@@ -52,6 +55,11 @@ describe("construirEmail", () => {
       expect(email.html).toContain(enlace);
       expect(email.texto).toContain(enlace);
     }
+  });
+
+  it("el entregable observado trae cada observación en su párrafo", () => {
+    const email = construirEmail(casos.find(([trabajo]) => trabajo.tipo === "entregable-observado")![0]);
+    expect(email.texto).toContain("\n\nCoherencia de las conclusiones (Insuficiente): falta explicar las conclusiones.\n\nComentario general: buen README.\n");
   });
 
   it("el aviso de cambio nombra el email nuevo", () => {

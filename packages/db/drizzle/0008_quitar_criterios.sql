@@ -1,0 +1,1 @@
+ALTER TABLE "entregables" DROP COLUMN IF EXISTS "criterios";

@@ -183,7 +183,9 @@ export const entregables = pgTable(
     estado: text("estado").notNull().default("pendiente"),
     verificadoEn: timestamp("verificado_en"),
     comentario: text("comentario"),
-    criterios: jsonb("criterios").notNull().$type<boolean[]>().default([]),
+    // Puntaje de 1 a 3 en cada dimensión de la rúbrica estándar, y el comentario de cada dimensión que lo tenga.
+    puntajes: jsonb("puntajes").notNull().$type<Partial<Record<string, number>>>().default({}),
+    observaciones: jsonb("observaciones").notNull().$type<Partial<Record<string, string>>>().default({}),
     revisadoPor: uuid("revisado_por").references(() => users.id, { onDelete: "set null" }),
     revisadoEn: timestamp("revisado_en"),
     creadoEn: timestamp("creado_en").notNull().defaultNow(),

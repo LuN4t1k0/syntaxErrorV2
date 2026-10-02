@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { RUBRICA_BASE } from "@syntaxerror/content/esquemas";
+import { RUBRICA_BASE } from "@syntaxerror/content/rubrica";
 import { getDb } from "@syntaxerror/db/client";
 import { FormularioRevision } from "@/components/comunidad/formulario-revision";
 import { casosParaPublicar } from "@/lib/contenido";
@@ -25,7 +25,7 @@ export default async function EntregablesPage() {
       <p className="font-mono text-sm font-bold text-primary">{"> git review"}</p>
       <h1 className="text-3xl font-black">Entregables por revisar</h1>
       <p className="leading-7 text-muted-foreground">
-        La plataforma ya verificó que cada repositorio es público, tiene README y los archivos del caso. Abre el repositorio y revísalo con la rúbrica: para aprobar, deben cumplirse todos los criterios.
+        La plataforma ya verificó que cada repositorio es público, tiene README y los archivos del caso. Abre el repositorio y ponle un puntaje de 1 a 3 en cada dimensión de la rúbrica: con 2 o más en las tres se aprueba; con un 1 se piden cambios, y esa dimensión necesita un comentario sobre qué corregir.
       </p>
       {lista.length === 0 ? (
         <p className="text-muted-foreground">No hay entregables por revisar.</p>

@@ -50,6 +50,20 @@
       "when": 1790815438157,
       "tag": "0006_clumsy_selene",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790954449404,
+      "tag": "0007_rubrica_con_puntaje",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790954463780,
+      "tag": "0008_quitar_criterios",
+      "breakpoints": true
     }
   ]
 }

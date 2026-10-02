@@ -23,7 +23,8 @@ export type TrabajoEmail =
   | (Destinatario & { tipo: "clase-solicitud"; alumno: string; clase: string; enlace: string })
   | (Destinatario & { tipo: "clase-decision"; clase: string; aceptada: boolean; enlace: string })
   | (Destinatario & { tipo: "entregable-por-revisar"; alumno: string; caso: string; enlace: string })
-  | (Destinatario & { tipo: "entregable-observado"; caso: string; comentario: string; enlace: string })
+  // Una observación por dimensión con puntaje insuficiente, más el comentario general si lo hay.
+  | (Destinatario & { tipo: "entregable-observado"; caso: string; observaciones: string[]; enlace: string })
   | (Destinatario & { tipo: "mensaje-nuevo"; asunto: string; enlace: string });
 
 export type ColaEmails = {

@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { casos, rutaCasos, rutas } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import type { Bloque } from "./esquemas";
+import { RUBRICA_BASE } from "./rubrica";
 import { sincronizarContenido } from "./sincronizar";
 import type { Contenido } from "./tipos";
 
@@ -37,7 +38,7 @@ function contenido(): Contenido {
         dataset: "Ventas",
         entregable: "Repositorio",
         archivos: [],
-        rubrica: [],
+        rubrica: RUBRICA_BASE,
         datos: [],
         misiones: [
           { slug: "m1", titulo: "M1", tiempo: 5, sinGuia: false, fuente: "", bloques: [tarea("t1"), tarea("t2")] },

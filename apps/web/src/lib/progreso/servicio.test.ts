@@ -159,9 +159,15 @@ describe("enviarEntregable", () => {
     await aprobarM1(userId);
     await registrarIntento(db, userId, intento("m2", "t3"));
     await enviar(userId);
-    await db.update(entregables).set({ estado: "observado", comentario: "Falta el README" });
+    await db.update(entregables).set({ estado: "observado", puntajes: { claridad: 1, ejecucion: 2, coherencia: 2 }, observaciones: { claridad: "Falta el README" }, comentario: "Vas bien" });
+    expect((await obtenerProgresoCaso(db, userId, "ventas"))?.revision).toEqual({
+      estado: "observado",
+      puntajes: { claridad: 1, ejecucion: 2, coherencia: 2 },
+      observaciones: { claridad: "Falta el README" },
+      comentario: "Vas bien",
+    });
     expect(await enviar(userId, "https://github.com/alumna/ventas-v2")).toEqual({ estado: "en_revision" });
-    expect((await obtenerProgresoCaso(db, userId, "ventas"))?.revision).toEqual({ estado: "pendiente", comentario: null });
+    expect((await obtenerProgresoCaso(db, userId, "ventas"))?.revision).toEqual({ estado: "pendiente", puntajes: {}, observaciones: {}, comentario: null });
     await db.update(entregables).set({ estado: "aprobado" });
     await expect(enviar(userId, "https://github.com/alumna/otra")).rejects.toMatchObject({ codigo: "entregable_aprobado" });
     const [fila] = await db.select().from(entregables);

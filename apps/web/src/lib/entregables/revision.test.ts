@@ -10,8 +10,8 @@ import { avisarRevision, listarEntregablesPorRevisar, revisarEntregable } from "
 const { db, close } = createTestDb();
 const enviados: TrabajoEmail[] = [];
 const encolar: Encolar = async (trabajo) => void enviados.push(trabajo);
-const RUBRICA = ["Responde la pregunta.", "README claro."];
-const deps = { encolar, meta: SIN_META, rubricaDe: async () => RUBRICA };
+const deps = { encolar, meta: SIN_META };
+const SUFICIENTE = { claridad: 2, ejecucion: 3, coherencia: 2 };
 
 async function persona(email: string, rol: Rol, nombre: string | null = null) {
   const [fila] = await db.insert(users).values({ email, role: rol, name: nombre }).returning({ id: users.id });
@@ -68,32 +68,41 @@ describe("revisión de entregables", () => {
     expect(enviados.map((email) => email.para)).toEqual(["rosa@correo.cl"]);
   });
 
-  it("aprobar exige la rúbrica completa, completa el caso y emite el certificado una sola vez", async () => {
+  it("con 2 o más en las tres dimensiones aprueba, completa el caso y emite el certificado una sola vez", async () => {
     const { admin, entregableId } = await escenario();
-    const revisar = (criterios: boolean[]) => revisarEntregable(db, { entregableId, revisor: admin, decision: "aprobado", criterios, comentario: null }, deps);
-    expect(await revisar([true, false])).toEqual({ ok: false, motivo: "rubrica_incompleta" });
-    expect(await revisar([true])).toEqual({ ok: false, motivo: "rubrica_incompleta" });
-    expect(await revisar([true, true])).toEqual({ ok: true, certificados: [{ codigo: expect.any(String), tipo: "caso", titulo: "Ventas" }] });
-    expect(await revisar([true, true])).toEqual({ ok: false, motivo: "no_existe" });
+    const revisar = (puntajes: Record<string, number>) => revisarEntregable(db, { entregableId, revisor: admin, puntajes, observaciones: {}, comentario: null }, deps);
+    expect(await revisar({ claridad: 2, ejecucion: 3 })).toEqual({ ok: false, motivo: "puntajes_incompletos" });
+    expect(await revisar(SUFICIENTE)).toEqual({ ok: true, decision: "aprobado", certificados: [{ codigo: expect.any(String), tipo: "caso", titulo: "Ventas" }] });
+    expect(await revisar(SUFICIENTE)).toEqual({ ok: false, motivo: "no_existe" });
+    const [fila] = await db.select().from(entregables);
+    expect(fila).toMatchObject({ estado: "aprobado", puntajes: SUFICIENTE, observaciones: {} });
     expect(await db.select().from(certificados)).toHaveLength(1);
     expect(enviados.map((email) => email.tipo)).toEqual(["certificado-emitido"]);
     expect((await db.select({ action: auditLog.action }).from(auditLog)).map((fila) => fila.action)).toEqual(["deliverable_reviewed"]);
   });
 
-  it("pedir cambios exige un comentario y avisa por email", async () => {
+  it("con un 1 pide cambios, exige el comentario de esa dimensión y avisa por email", async () => {
     const { admin, entregableId } = await escenario();
-    const observar = (comentario: string | null) => revisarEntregable(db, { entregableId, revisor: admin, decision: "observado", criterios: [false, true], comentario }, deps);
-    expect(await observar("corto")).toEqual({ ok: false, motivo: "falta_comentario" });
-    expect(await observar("Falta explicar las conclusiones en el README.")).toEqual({ ok: true, certificados: [] });
+    const puntajes = { claridad: 3, ejecucion: 2, coherencia: 1 };
+    const observar = (observaciones: Record<string, string>) => revisarEntregable(db, { entregableId, revisor: admin, puntajes, observaciones, comentario: " Buen README. " }, deps);
+    expect(await observar({ coherencia: "corto" })).toEqual({ ok: false, motivo: "falta_observacion" });
+    expect(await observar({ coherencia: "Falta explicar las conclusiones en el README." })).toEqual({ ok: true, decision: "observado", certificados: [] });
     expect(enviados).toEqual([
-      { tipo: "entregable-observado", para: "ana@correo.cl", nombre: "Ana", caso: "Ventas", comentario: "Falta explicar las conclusiones en el README.", enlace: expect.stringContaining("/casos/ventas") },
+      {
+        tipo: "entregable-observado",
+        para: "ana@correo.cl",
+        nombre: "Ana",
+        caso: "Ventas",
+        observaciones: ["Coherencia de las conclusiones (Insuficiente): Falta explicar las conclusiones en el README.", "Comentario general: Buen README."],
+        enlace: expect.stringContaining("/casos/ventas"),
+      },
     ]);
     const [fila] = await db.select().from(entregables);
-    expect(fila).toMatchObject({ estado: "observado", criterios: [false, true], revisadoPor: admin.id });
+    expect(fila).toMatchObject({ estado: "observado", puntajes, observaciones: { coherencia: "Falta explicar las conclusiones en el README." }, comentario: "Buen README.", revisadoPor: admin.id });
   });
 
   it("una docente que no es de la clase no puede revisar", async () => {
     const { otra, entregableId } = await escenario();
-    expect(await revisarEntregable(db, { entregableId, revisor: otra, decision: "aprobado", criterios: [true, true], comentario: null }, deps)).toEqual({ ok: false, motivo: "prohibido" });
+    expect(await revisarEntregable(db, { entregableId, revisor: otra, puntajes: SUFICIENTE, observaciones: {}, comentario: null }, deps)).toEqual({ ok: false, motivo: "prohibido" });
   });
 });

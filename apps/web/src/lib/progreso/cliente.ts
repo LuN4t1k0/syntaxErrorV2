@@ -1,6 +1,6 @@
 import type { IntentoTarea } from "./esquemas";
 import type { CasoCorto } from "./requisitos";
-import type { EstadoMision } from "./servicio";
+import type { EstadoMision, RevisionEntregable } from "./servicio";
 
 export type Almacen = Pick<Storage, "getItem" | "setItem" | "removeItem">;
 export type Dependencias = { fetch: typeof fetch; almacen: Almacen | null };
@@ -9,7 +9,7 @@ export type ProgresoVisible = {
   sesion: boolean;
   misiones: Record<string, EstadoMision>;
   entregable: string | null;
-  revision: { estado: "pendiente" | "aprobado" | "observado"; comentario: string | null } | null;
+  revision: RevisionEntregable | null;
   completo: boolean;
   certificados: CertificadoVisible[];
   bloqueadoPor: CasoCorto | null;

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PATRON_REQUISITO_MARKDOWN } from "@syntaxerror/engines/markdown-requisitos";
+import { RUBRICA_BASE } from "./rubrica";
 
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "debe ser un slug en minúsculas con guiones");
 const texto = z.string().trim().min(1, "no puede estar vacío");
@@ -23,12 +24,8 @@ export const rutaSchema = z.object({
   casos: z.array(slug).min(1, "la ruta necesita al menos un caso"),
 });
 
-// Rúbrica común para revisar entregables (propuesta pedagógica, sección 9). Un caso puede reemplazarla.
-export const RUBRICA_BASE = [
-  "Responde la pregunta del encargo del caso.",
-  "El README explica qué se hizo, con qué datos y cómo revisarlo.",
-  "Las conclusiones se apoyan en los datos y en el análisis.",
-];
+// Qué se espera en cada dimensión de la rúbrica estándar, descrito para el entregable del caso.
+const rubricaSchema = z.object({ claridad: texto, ejecucion: texto, coherencia: texto }, { invalid_type_error: "la rúbrica describe claridad, ejecucion y coherencia" }).strict();
 
 export const casoSchema = z.object({
   slug,
@@ -38,7 +35,7 @@ export const casoSchema = z.object({
   dataset: texto,
   entregable: z.string({ required_error: "el caso debe declarar su entregable" }).trim().min(1, "el caso debe declarar su entregable"),
   archivos: z.array(z.string().regex(/^\.[a-z0-9]+$/, "cada archivo requerido es una extensión, por ejemplo .sql")).default([]),
-  rubrica: z.array(texto).min(1, "la rúbrica necesita al menos un criterio").default(RUBRICA_BASE),
+  rubrica: rubricaSchema.default(RUBRICA_BASE),
   misiones: z.array(slug).min(1, "el caso necesita al menos una misión"),
 });
 

@@ -2,6 +2,7 @@ import { and, desc, eq, inArray, isNotNull, ne, sql } from "drizzle-orm";
 import type { AppDb, DbClient } from "@syntaxerror/db/client";
 import { casoInscripciones, casos, entregables, misionProgreso, rutaCasos, rutaInscripciones } from "@syntaxerror/db/schema";
 import { parsearRepositorio, urlRepositorio, type Verificador } from "@/lib/entregables/github";
+import type { Observaciones, Puntajes } from "@/lib/entregables/rubrica";
 import { CLAVE_CASO, otorgarPuntos, PUNTOS } from "@/lib/puntos/servicio";
 import type { IntentoTarea } from "./esquemas";
 import { casoPendiente, type CasoCorto, type OpcionesRequisitos } from "./requisitos";
@@ -29,7 +30,8 @@ export class ErrorProgreso extends Error {
 }
 
 export type EstadoMision = { estado: "en_curso" | "aprobada"; tareasAprobadas: string[]; fallidos: number };
-export type RevisionEntregable = { estado: "pendiente" | "aprobado" | "observado"; comentario: string | null };
+// Lo que la persona ve de la revisión: el estado, el puntaje de cada dimensión, sus comentarios y el comentario general.
+export type RevisionEntregable = { estado: "pendiente" | "aprobado" | "observado"; puntajes: Puntajes; observaciones: Observaciones; comentario: string | null };
 export type ProgresoCaso = { misiones: Record<string, EstadoMision>; entregable: string | null; revision: RevisionEntregable | null; completo: boolean; bloqueadoPor: CasoCorto | null };
 export type ResultadoEntrega = { estado: "en_revision" } | { estado: "no_verificado"; problemas: string[]; reintentable: boolean };
 export type CasoDelUsuario = { slug: string; titulo: string; misionesAprobadas: number; totalMisiones: number; completo: boolean };
@@ -146,7 +148,8 @@ export async function enviarEntregable(
   if (!verificacion.ok) return { estado: "no_verificado", problemas: verificacion.problemas, reintentable: verificacion.reintentable };
 
   const ahora = new Date();
-  const datos = { url: urlRepositorio(repositorio), estado: "pendiente", verificadoEn: ahora, comentario: null, criterios: [], revisadoPor: null, revisadoEn: null, actualizadoEn: ahora };
+  // Al reenviar, la revisión anterior se borra: el entregable vuelve a revisarse completo, sin penalización.
+  const datos = { url: urlRepositorio(repositorio), estado: "pendiente", verificadoEn: ahora, puntajes: {}, observaciones: {}, comentario: null, revisadoPor: null, revisadoEn: null, actualizadoEn: ahora };
   await db.transaction(async (tx) => {
     await inscribir(tx, userId, caso.id);
     await tx
@@ -171,14 +174,18 @@ export async function obtenerProgresoCaso(db: AppDb, userId: string, slug: strin
   if (!caso) return null;
   const [filas, [entregable], [inscripcion], bloqueadoPor] = await Promise.all([
     db.select({ mision: misionProgreso.mision, estado: misionProgreso.estado, tareasAprobadas: misionProgreso.tareasAprobadas, fallidos: misionProgreso.fallidos }).from(misionProgreso).where(and(eq(misionProgreso.userId, userId), eq(misionProgreso.casoId, caso.id))),
-    db.select({ url: entregables.url, estado: entregables.estado, comentario: entregables.comentario }).from(entregables).where(and(eq(entregables.userId, userId), eq(entregables.casoId, caso.id))),
+    db
+      .select({ url: entregables.url, estado: entregables.estado, puntajes: entregables.puntajes, observaciones: entregables.observaciones, comentario: entregables.comentario })
+      .from(entregables).where(and(eq(entregables.userId, userId), eq(entregables.casoId, caso.id))),
     db.select({ completadoEn: casoInscripciones.completadoEn }).from(casoInscripciones).where(and(eq(casoInscripciones.userId, userId), eq(casoInscripciones.casoId, caso.id))),
     casoPendiente(db, userId, caso.id, opciones),
   ]);
   return {
     misiones: Object.fromEntries(filas.map((fila) => [fila.mision, { estado: fila.estado === "aprobada" ? "aprobada" : "en_curso", tareasAprobadas: fila.tareasAprobadas, fallidos: fila.fallidos }])),
     entregable: entregable?.url ?? null,
-    revision: entregable ? { estado: entregable.estado as RevisionEntregable["estado"], comentario: entregable.comentario } : null,
+    revision: entregable
+      ? { estado: entregable.estado as RevisionEntregable["estado"], puntajes: entregable.puntajes, observaciones: entregable.observaciones, comentario: entregable.comentario }
+      : null,
     completo: Boolean(inscripcion?.completadoEn),
     bloqueadoPor,
   };

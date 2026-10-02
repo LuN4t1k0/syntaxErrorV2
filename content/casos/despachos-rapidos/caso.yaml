@@ -6,10 +6,11 @@ dataset: Despachos de marzo de 2025 y tarifas por comuna (datos generados con un
 entregable: Un repositorio en GitHub con tu planilla del análisis (.xlsx), con una hoja de conclusiones, y un README que explique qué encontraste y qué le recomiendas a la dueña.
 archivos:
   - .xlsx
+# Rúbrica estándar: qué se espera en cada dimensión. Cada una se puntúa de 1 (Insuficiente) a 3 (Destacado), y se aprueba con 2 o más en las tres.
 rubrica:
-  - "Responde las preguntas de Carla con números que salen de la planilla."
-  - "La planilla se entiende: columnas con título, fórmulas en vez de números escritos a mano y los datos limpios separados de los originales."
-  - "El README explica qué se encontró y qué se recomienda, con los datos que lo respaldan."
+  claridad: "La planilla se entiende: columnas con título y una hoja de conclusiones. El README explica qué se encontró y qué se recomienda."
+  ejecucion: "Los cálculos usan fórmulas en vez de números escritos a mano, y los datos limpios están separados de los originales."
+  coherencia: "Las respuestas a Carla y la recomendación se apoyan en números que salen de la planilla."
 misiones:
   - 01-conoce-la-planilla
   - 02-totales-del-mes

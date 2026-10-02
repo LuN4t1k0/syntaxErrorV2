@@ -6,11 +6,11 @@ dataset: Atenciones de enero a junio de 2025 en cuatro sedes, sin datos de pacie
 entregable: Un repositorio en GitHub con tu dashboard (el archivo .pbix de Power BI o el enlace público de Looker Studio), capturas de cada página en la carpeta capturas y un README que funcione como guion de una presentación de cinco minutos.
 archivos:
   - .png
+# Rúbrica estándar: qué se espera en cada dimensión. Cada una se puntúa de 1 (Insuficiente) a 3 (Destacado), y se aprueba con 2 o más en las tres.
 rubrica:
-  - "El dashboard responde las preguntas de la gerencia, para la audiencia que se definió."
-  - "Cada indicador está bien definido (qué se cuenta y sobre qué total) y se muestra con un gráfico adecuado."
-  - "El diseño se lee fácil: lo importante arriba, títulos que dicen la conclusión, filtros útiles y colores accesibles."
-  - "El README presenta los hallazgos y una recomendación en cinco minutos, con capturas que los respaldan."
+  claridad: "El dashboard se lee fácil (lo importante arriba, títulos que dicen la conclusión, colores accesibles) y el README presenta los hallazgos y una recomendación en cinco minutos."
+  ejecucion: "Cada indicador está bien definido (qué se cuenta y sobre qué total), se muestra con un gráfico adecuado y los filtros sirven."
+  coherencia: "El dashboard responde las preguntas de la gerencia para la audiencia definida, y las capturas respaldan cada hallazgo."
 misiones:
   - 01-la-pregunta-del-dashboard
   - 02-preparar-los-datos

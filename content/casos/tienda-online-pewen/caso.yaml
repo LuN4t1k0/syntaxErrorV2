@@ -6,10 +6,11 @@ dataset: Pedidos, productos y clientes de julio a diciembre de 2025 (datos gener
 entregable: Un repositorio en GitHub con tu notebook de análisis (.ipynb, por ejemplo hecho en Google Colab), que cargue y limpie los datos, responda las preguntas de Antonia y cierre con recomendaciones, más un README que resuma lo que encontraste.
 archivos:
   - .ipynb
+# Rúbrica estándar: qué se espera en cada dimensión. Cada una se puntúa de 1 (Insuficiente) a 3 (Destacado), y se aprueba con 2 o más en las tres.
 rubrica:
-  - "El notebook se puede ejecutar de principio a fin y cada paso tiene una explicación breve en texto."
-  - "La limpieza está documentada: qué problemas había, cuántas filas afectaba cada uno y qué se hizo."
-  - "Las recomendaciones se apoyan en resultados del notebook, como las devoluciones de Vestuario o el peso de noviembre."
+  claridad: "Cada paso del notebook tiene una explicación breve en texto, y el README resume lo que se encontró."
+  ejecucion: "El notebook se ejecuta de principio a fin, y la limpieza está documentada: qué problemas había, cuántas filas afectaba cada uno y qué se hizo."
+  coherencia: "Las recomendaciones se apoyan en resultados del notebook, como las devoluciones de Vestuario o el peso de noviembre."
 misiones:
   - 01-de-la-planilla-a-python
   - 02-cargar-y-explorar

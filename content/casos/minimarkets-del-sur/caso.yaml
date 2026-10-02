@@ -6,10 +6,11 @@ dataset: Ventas de enero a marzo de 2025 de ocho locales entre Talca y Puerto Mo
 entregable: Un repositorio en GitHub con tus consultas en archivos .sql, cada una con un comentario que diga qué pregunta responde, y un README con lo que encontraste y qué le recomiendas a gerencia.
 archivos:
   - .sql
+# Rúbrica estándar: qué se espera en cada dimensión. Cada una se puntúa de 1 (Insuficiente) a 3 (Destacado), y se aprueba con 2 o más en las tres.
 rubrica:
-  - "Cada consulta responde una pregunta concreta, y el comentario dice cuál."
-  - "Las consultas se pueden leer: alias claros, una cláusula por línea y orden explícito cuando importa."
-  - "El README explica qué se encontró, por ejemplo qué pasó con Osorno en marzo, y lo respalda con resultados de las consultas."
+  claridad: "Cada consulta tiene un comentario que dice qué pregunta responde, y el README explica qué se encontró."
+  ejecucion: "Las consultas son correctas y se pueden leer: alias claros, una cláusula por línea y orden explícito cuando importa."
+  coherencia: "Lo que afirma el README, por ejemplo qué pasó con Osorno en marzo, se respalda con resultados de las consultas."
 misiones:
   - 01-conoce-las-tablas
   - 02-filtrar

@@ -6,10 +6,11 @@ dataset: Tus archivos, tus proyectos y tu presentación personal
 entregable: Un repositorio público de presentación personal en GitHub, con un README que cuente quién eres, qué estás aprendiendo, qué proyectos tienes y cómo contactarte.
 # Solo se pide el README: lo revisa la verificación automática y después una persona con la rúbrica.
 archivos: []
+# Rúbrica estándar: qué se espera en cada dimensión. Cada una se puntúa de 1 (Insuficiente) a 3 (Destacado), y se aprueba con 2 o más en las tres.
 rubrica:
-  - "El README presenta a la persona: quién es, qué está aprendiendo y qué busca."
-  - "El README está ordenado: título, secciones, listas, una imagen y enlaces que funcionan."
-  - "El historial de commits cuenta qué se hizo, con mensajes claros."
+  claridad: "El README presenta a la persona: quién es, qué está aprendiendo, qué busca y cómo contactarla."
+  ejecucion: "El README usa bien Markdown (título, secciones, listas, una imagen y enlaces que funcionan) y el historial de commits cuenta qué se hizo, con mensajes claros."
+  coherencia: "Lo que el README dice de la persona calza con su perfil: los proyectos que menciona existen y están enlazados."
 misiones:
   - 01-tu-primer-repositorio
   - 02-escribe-un-readme

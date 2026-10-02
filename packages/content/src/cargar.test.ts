@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { cargarContenido, ErrorDeContenido } from "./cargar";
+import { RUBRICA_BASE } from "./rubrica";
 
 const FIXTURE = fileURLToPath(new URL("../test/fixtures/valido", import.meta.url));
 
@@ -50,7 +51,7 @@ describe("cargarContenido", () => {
     expect(caso.misiones[0]).toMatchObject({ titulo: "Filtrar clientes", tiempo: 10 });
     expect(caso.misiones.map((mision) => mision.sinGuia)).toEqual([false, false, true]);
     expect(caso.archivos).toEqual([]);
-    expect(caso.rubrica).toHaveLength(3);
+    expect(caso.rubrica).toEqual(RUBRICA_BASE);
     expect(caso.datos[0].nombre).toBe("clientes");
     expect(caso.datos[0].filas[0]).toEqual({ id: 1, nombre: "Ferretería El Roble", ciudad: "Santiago", monto: 185000 });
     const tarea = caso.misiones[0].bloques.find((bloque) => bloque.tipo === "SqlTask");
@@ -90,6 +91,13 @@ describe("cargarContenido", () => {
       reemplazar(enCaso(dir, "caso.yaml"), "entregable: Un repositorio con las consultas del caso\n", "")
     );
     expect(problemas).toContain("casos/ventas/caso.yaml: entregable: el caso debe declarar su entregable");
+  });
+
+  it("la rúbrica describe las tres dimensiones estándar, no una lista de criterios", async () => {
+    const lista = await problemasCon((dir) => appendFile(enCaso(dir, "caso.yaml"), 'rubrica:\n  - "Responde la pregunta."\n'));
+    expect(lista).toContain("casos/ventas/caso.yaml: rubrica: la rúbrica describe claridad, ejecucion y coherencia");
+    const incompleta = await problemasCon((dir) => appendFile(enCaso(dir, "caso.yaml"), 'rubrica:\n  claridad: "README claro."\n  ejecucion: "Consultas correctas."\n'));
+    expect(incompleta.some((problema) => problema.startsWith("casos/ventas/caso.yaml: rubrica.coherencia"))).toBe(true);
   });
 
   it("valida las props de cada bloque", async () => {

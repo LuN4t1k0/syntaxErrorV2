@@ -176,7 +176,11 @@ export function construirEmail(trabajo: TrabajoEmail): EmailListo {
         asunto: "Tu entregable necesita cambios",
         estado: { etiqueta: "WARNING", mensaje: "Entregable con observaciones" },
         saludo: saludo(trabajo.nombre),
-        parrafos: [`Revisaron tu entregable del caso ${trabajo.caso} y te piden algunos cambios:`, `«${trabajo.comentario}»`, "Haz los ajustes en tu repositorio y vuelve a enviarlo desde la página del caso."],
+        parrafos: [
+          `Revisaron tu entregable del caso ${trabajo.caso} con la rúbrica y te piden algunos cambios:`,
+          ...trabajo.observaciones,
+          "Haz los ajustes en tu repositorio y vuelve a enviarlo desde la página del caso, sin penalización.",
+        ],
         enlace: { texto: "Ir al caso", url: trabajo.enlace },
         comandoCierre: "git commit --amend",
       });

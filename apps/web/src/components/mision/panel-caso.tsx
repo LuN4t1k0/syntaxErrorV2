@@ -8,6 +8,7 @@ import { Label } from "@syntaxerror/ui/components/label";
 import { PLAZO_REVISION_DIAS_HABILES } from "@/lib/entregables/plazo";
 import { cargarProgreso, dependenciasNavegador, type ProgresoVisible } from "@/lib/progreso/cliente";
 import type { CasoCorto } from "@/lib/progreso/requisitos";
+import { ResultadoRevision } from "./resultado-revision";
 
 type MisionDelCaso = { slug: string; titulo: string; tiempo: number; tareas: string[]; sinGuia: boolean };
 
@@ -52,7 +53,7 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
       const respuesta = await fetch("/api/entregables", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ caso, url }) });
       const datos = (await respuesta.json().catch(() => ({}))) as { error?: string; problemas?: string[] };
       if (respuesta.ok) {
-        setProgreso((actual) => (actual ? { ...actual, entregable: url, revision: { estado: "pendiente", comentario: null } } : actual));
+        setProgreso((actual) => (actual ? { ...actual, entregable: url, revision: { estado: "pendiente", puntajes: {}, observaciones: {}, comentario: null } } : actual));
         setMensaje("Recibimos tu entregable. Te avisaremos por email cuando lo revisen.");
       } else if (respuesta.status === 422) setProblemas(datos.problemas ?? []);
       else if (respuesta.status === 400) setMensaje("El enlace debe ser un repositorio de GitHub: https://github.com/tu-usuario/tu-repositorio");
@@ -122,9 +123,12 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
         {!progreso ? null : !progreso.sesion ? (
           <p className="text-sm">Para enviar tu entregable necesitas una cuenta. <Link className="font-bold text-primary hover:underline" href={volverAqui}>Entrar</Link></p>
         ) : revision?.estado === "aprobado" ? (
-          <p className="text-sm">
-            Entregable aprobado: <a className="font-bold text-primary hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
-          </p>
+          <div className="grid gap-3 text-sm leading-6">
+            <p>
+              Entregable aprobado: <a className="font-bold text-primary hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
+            </p>
+            <ResultadoRevision revision={revision} />
+          </div>
         ) : revision?.estado === "pendiente" ? (
           <p role="status" className="text-sm leading-6">
             {`Tu entregable está en revisión. Te responderemos en un plazo de ${PLAZO_REVISION_DIAS_HABILES} días hábiles y te avisaremos por email. Enviaste: `}
@@ -137,8 +141,8 @@ export function PanelCaso({ caso, misiones, entregable, requisitos }: { caso: st
             {revision?.estado === "observado" ? (
               <div role="status" className="grid gap-1 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm leading-6">
                 <p className="font-bold">Tu docente pidió cambios:</p>
-                <p className="whitespace-pre-wrap">{revision.comentario}</p>
-                <p>Haz los ajustes en tu repositorio y vuelve a enviarlo.</p>
+                <ResultadoRevision revision={revision} />
+                <p>Haz los ajustes en tu repositorio y vuelve a enviarlo, sin penalización.</p>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Revisaremos que tu repositorio sea público, tenga un README y los archivos del caso. Luego, una persona lo revisa con la rúbrica del caso.</p>

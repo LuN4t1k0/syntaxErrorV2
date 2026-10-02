@@ -7,11 +7,11 @@ entregable: Un repositorio en GitHub con tus datos y su fuente, el notebook de a
 archivos:
   - .ipynb
   - .png
-# Las tres dimensiones estándar de la rúbrica del equipo (propuesta pedagógica, sección 9).
+# Rúbrica estándar: qué se espera en cada dimensión. Cada una se puntúa de 1 (Insuficiente) a 3 (Destacado), y se aprueba con 2 o más en las tres.
 rubrica:
-  - "Claridad: el README explica la pregunta, los datos con su fuente, cómo se prepararon y lo que se encontró, de modo que lo entiende alguien que no conoce el proyecto."
-  - "Ejecución técnica: el notebook lee y limpia los datos de forma correcta y repetible, cada decisión de limpieza está documentada y los cálculos responden las preguntas."
-  - "Coherencia: las conclusiones se apoyan en los resultados y los gráficos, y las limitaciones dicen lo que los datos no permiten afirmar."
+  claridad: "El README explica la pregunta, los datos con su fuente, cómo se prepararon y lo que se encontró, de modo que lo entiende alguien que no conoce el proyecto."
+  ejecucion: "El notebook lee y limpia los datos de forma correcta y repetible, cada decisión de limpieza está documentada y los cálculos responden las preguntas."
+  coherencia: "Las conclusiones se apoyan en los resultados y los gráficos, y las limitaciones dicen lo que los datos no permiten afirmar."
 misiones:
   - 01-elegir-tus-datos
   - 02-leer-un-archivo-publico

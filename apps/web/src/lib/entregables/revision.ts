@@ -10,10 +10,13 @@ import { resolverDocente } from "@/lib/preguntas-profesor";
 import { recalcularCaso } from "@/lib/progreso/servicio";
 import { listarAdmins, type Persona, type Rol } from "@/lib/roles";
 import { absoluteUrl } from "@/lib/seo";
+import { evaluarRubrica, observacionesParaLaPersona, type Observaciones, type Puntajes } from "./rubrica";
 
 export type Revisor = { id: string; email: string; rol: Rol };
 export type FilaEntregable = { id: string; estudiante: { nombre: string | null; email: string }; caso: { slug: string; titulo: string }; url: string; enviadoEn: Date };
-export type ResultadoRevision = { ok: true; certificados: CertificadoEmitido[] } | { ok: false; motivo: "no_existe" | "prohibido" | "rubrica_incompleta" | "falta_comentario" };
+export type ResultadoRevision =
+  | { ok: true; decision: "aprobado" | "observado"; certificados: CertificadoEmitido[] }
+  | { ok: false; motivo: "no_existe" | "prohibido" | "puntajes_incompletos" | "falta_observacion" };
 
 const describir = (persona: { nombre: string | null; email: string }) => (persona.nombre ? `${persona.nombre} (${persona.email})` : persona.email);
 
@@ -67,8 +70,8 @@ export async function avisarRevision(db: AppDb, { alumnoId, casoSlug }: { alumno
 
 export async function revisarEntregable(
   db: AppDb,
-  { entregableId, revisor, decision, criterios, comentario }: { entregableId: string; revisor: Revisor; decision: "aprobado" | "observado"; criterios: boolean[]; comentario: string | null },
-  { rubricaDe, encolar, meta }: { rubricaDe: (casoSlug: string) => Promise<string[] | null>; encolar: Encolar; meta: MetaRequest }
+  { entregableId, revisor, puntajes, observaciones, comentario }: { entregableId: string; revisor: Revisor; puntajes: Puntajes; observaciones: Observaciones; comentario: string | null },
+  { encolar, meta }: { encolar: Encolar; meta: MetaRequest }
 ): Promise<ResultadoRevision> {
   const [fila] = await db
     .select({
@@ -87,16 +90,15 @@ export async function revisarEntregable(
   if (!fila || fila.estado !== "pendiente") return { ok: false, motivo: "no_existe" };
   if (!(await puedeRevisar(db, revisor, { alumnoId: fila.alumnoId, casoId: fila.casoId }))) return { ok: false, motivo: "prohibido" };
 
-  const rubrica = (await rubricaDe(fila.casoSlug)) ?? [];
-  if (decision === "aprobado" && (rubrica.length === 0 || criterios.length !== rubrica.length || !criterios.every(Boolean))) {
-    return { ok: false, motivo: "rubrica_incompleta" };
-  }
+  // La decisión sale de la rúbrica: quien revisa pone los puntajes y la regla del equipo decide.
+  const evaluacion = evaluarRubrica(puntajes, observaciones);
+  if (!evaluacion.ok) return { ok: false, motivo: evaluacion.motivo };
+  const { decision } = evaluacion;
   const texto = comentario?.trim() || null;
-  if (decision === "observado" && (!texto || texto.length < 10)) return { ok: false, motivo: "falta_comentario" };
 
   const revisadas = await db
     .update(entregables)
-    .set({ estado: decision, criterios, comentario: texto, revisadoPor: revisor.id, revisadoEn: new Date() })
+    .set({ estado: decision, puntajes: evaluacion.puntajes, observaciones: evaluacion.observaciones, comentario: texto, revisadoPor: revisor.id, revisadoEn: new Date() })
     .where(and(eq(entregables.id, entregableId), eq(entregables.estado, "pendiente")))
     .returning({ id: entregables.id });
   if (revisadas.length === 0) return { ok: false, motivo: "no_existe" };
@@ -107,15 +109,22 @@ export async function revisarEntregable(
     action: "deliverable_reviewed",
     targetType: "deliverable",
     targetId: entregableId,
-    metadata: { decision, caso: fila.casoSlug },
+    metadata: { decision, caso: fila.casoSlug, puntajes: evaluacion.puntajes },
     ipAddress: meta.ip,
     userAgent: meta.userAgent,
   });
 
   if (decision === "aprobado") {
     const { casoCompleto } = await recalcularCaso(db, fila.alumnoId, fila.casoSlug);
-    return { ok: true, certificados: casoCompleto ? await otorgarCertificados(db, fila.alumnoId, fila.casoSlug, encolar) : [] };
+    return { ok: true, decision, certificados: casoCompleto ? await otorgarCertificados(db, fila.alumnoId, fila.casoSlug, encolar) : [] };
   }
-  await encolar({ tipo: "entregable-observado", para: fila.email, nombre: fila.nombre, caso: fila.casoTitulo, comentario: texto!, enlace: absoluteUrl(`/casos/${fila.casoSlug}`) });
-  return { ok: true, certificados: [] };
+  await encolar({
+    tipo: "entregable-observado",
+    para: fila.email,
+    nombre: fila.nombre,
+    caso: fila.casoTitulo,
+    observaciones: observacionesParaLaPersona(evaluacion.puntajes, evaluacion.observaciones, texto),
+    enlace: absoluteUrl(`/casos/${fila.casoSlug}`),
+  });
+  return { ok: true, decision, certificados: [] };
 }
