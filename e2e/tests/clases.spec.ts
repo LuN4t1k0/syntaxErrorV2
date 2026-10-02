@@ -129,3 +129,35 @@ test("con el Caso 3 completo: una práctica de Power BI muestra sus pasos, su da
   await marcada;
   await expect(page.getByText("4 columnas: fecha, producto, region y monto.")).toBeVisible();
 });
+
+test("con el Caso 4 completo: el quiz de IA para datos marca qué revisar sin dar la respuesta y se aprueba con todo correcto", async ({ page, ip, nuevaPagina }) => {
+  test.setTimeout(300_000);
+  const email = await registrarse(page, "Antonia Quilapán");
+  const admin = await nuevaPagina();
+  await entrarComoAdmin(admin);
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen", "clases-de-power-bi", "clinica-cordillera-central"]) {
+    await completarCaso(page, admin, ip, email, caso);
+  }
+  await aprobar(page, ip, "clases-de-ia-para-datos", MISIONES["clases-de-ia-para-datos"].slice(0, 2));
+
+  await page.goto("/casos/clases-de-ia-para-datos/03-calidad-de-datos");
+  await expect(page.getByText("> lección 3/14", { exact: false })).toBeVisible();
+  const responder = async (segunda: string) => {
+    await page.getByLabel("Duplicados, faltantes o formatos inconsistentes.").check();
+    await page.getByLabel(segunda).check();
+    await page.getByLabel("Comprobar contra fuente y reglas.").check();
+    const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+    await page.getByRole("button", { name: "Validar" }).click();
+    await reportado;
+  };
+  await expect(async () => {
+    await responder("Más precisión automáticamente.");
+    await expect(page.getByText("Tienes 2 de 3 respuestas correctas. Revisa la pregunta 2.")).toBeVisible({ timeout: 3_000 });
+  }).toPass({ timeout: 30_000 });
+  await expect(page.getByText("Revisa esta pregunta.")).toHaveCount(1);
+  await expect(page.getByText("La misma categoría escrita distinto se cuenta por separado.")).toHaveCount(0);
+
+  await responder("Conteos y filtros incorrectos.");
+  await expect(page.getByText("Aprobada", { exact: true })).toBeVisible();
+  await expect(page.getByText("La misma categoría escrita distinto se cuenta por separado.")).toBeVisible();
+});

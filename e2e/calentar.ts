@@ -29,6 +29,8 @@ const RUTAS = [
   "/casos/clases-de-power-bi/02-instalar-y-conectar-datos",
   "/casos/clinica-cordillera-central",
   "/casos/clinica-cordillera-central/03-calcular-indicadores",
+  "/casos/clases-de-ia-para-datos",
+  "/casos/clases-de-ia-para-datos/03-calidad-de-datos",
   "/casos/proyecto-final",
   "/casos/proyecto-final/01-elegir-tus-datos",
   "/casos/proyecto-final/02-leer-un-archivo-publico",

@@ -104,6 +104,22 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["33-power-bi-vs-excel-sql-python", "power-bi-vs-excel-sql-python"],
     ["34-proyecto-final-dashboard-ventas", "proyecto-final-dashboard-ventas"],
   ],
+  "clases-de-ia-para-datos": [
+    ["01-bienvenida-ia-para-datos", "bienvenida-ia-para-datos"],
+    ["02-entender-tablas-y-columnas", "entender-tablas-y-columnas"],
+    ["03-calidad-de-datos", "calidad-de-datos"],
+    ["04-limpieza-asistida", "limpieza-asistida"],
+    ["05-clasificacion-y-etiquetas", "clasificacion-y-etiquetas"],
+    ["06-formulas-y-hojas-calculo", "formulas-y-hojas-calculo"],
+    ["07-sql-asistido", "sql-asistido"],
+    ["08-analisis-exploratorio", "analisis-exploratorio"],
+    ["09-graficos-y-visualizaciones", "graficos-y-visualizaciones"],
+    ["10-explicar-hallazgos", "explicar-hallazgos"],
+    ["11-reportes-asistidos", "reportes-asistidos"],
+    ["12-sesgos-y-errores", "sesgos-y-errores"],
+    ["13-privacidad-en-datos", "privacidad-en-datos"],
+    ["14-proyecto-final-analisis-datos", "proyecto-final-analisis-datos"],
+  ],
   "minimarkets-del-sur": [
     ["01-conoce-las-tablas", "locales-y-ciudades"],
     ["01-conoce-las-tablas", "categorias"],
@@ -212,7 +228,7 @@ export async function aprobar(page: Page, ip: string, caso: string, misiones: [s
 }
 
 // Las clases no tienen entregable: se completan al aprobar todas sus lecciones.
-export const CLASES = new Set(["clases-de-excel", "clases-de-sql", "clases-de-python", "clases-de-power-bi"]);
+export const CLASES = new Set(["clases-de-excel", "clases-de-sql", "clases-de-python", "clases-de-power-bi", "clases-de-ia-para-datos"]);
 
 // Completa un caso entero: todas sus misiones y, si es un caso, el entregable aprobado por administración.
 export async function completarCaso(page: Page, admin: Page, ip: string, email: string, caso: string) {

@@ -11,12 +11,12 @@ test("la muestra del proyecto final se descarga tal como la publicaría un porta
   expect(await respuesta.text()).toContain("2020;Maule;Talca;Municipal;14.918");
 });
 
-test("con los casos 0 a 4 completos: escribe la propuesta y lee un archivo público con sus trampas", async ({ page, ip, nuevaPagina }) => {
+test("con los casos 0 a 4 y sus clases completos: escribe la propuesta y lee un archivo público con sus trampas", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(420_000);
   const email = await registrarse(page, "Javiera Muñoz");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen", "clases-de-power-bi", "clinica-cordillera-central"]) {
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen", "clases-de-power-bi", "clinica-cordillera-central", "clases-de-ia-para-datos"]) {
     await completarCaso(page, admin, ip, email, caso);
   }
 
