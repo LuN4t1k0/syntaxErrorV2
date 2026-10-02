@@ -1,5 +1,5 @@
 import { expect, type Page } from "./fixtures";
-import { aprobarEntregable, entrarComoAdmin } from "./revision";
+import { entrarComoAdmin } from "./revision";
 
 // Misiones y tareas de cada caso de la ruta, en orden: sirven para llegar a un caso con sus requisitos cumplidos.
 export const MISIONES: Record<string, [string, string][]> = {
@@ -22,6 +22,28 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["07-indicadores-de-entrega", "indicadores"],
     ["08-revisar-la-formula-de-la-ia", "corregir-buscarv"],
     ["09-resumen-para-la-duena", "resumen-de-marzo"],
+  ],
+  "minimarkets-del-sur": [
+    ["01-conoce-las-tablas", "locales-y-ciudades"],
+    ["01-conoce-las-tablas", "categorias"],
+    ["02-filtrar", "lacteos-caros"],
+    ["02-filtrar", "productos-de-queso"],
+    ["02-filtrar", "locales-del-sur"],
+    ["03-ordenar-y-limitar", "productos-mas-caros"],
+    ["03-ordenar-y-limitar", "ventas-mas-grandes"],
+    ["04-resumir-con-group-by", "ventas-por-local"],
+    ["04-resumir-con-group-by", "ventas-por-medio-de-pago"],
+    ["05-filtrar-grupos", "productos-populares"],
+    ["05-filtrar-grupos", "locales-con-ticket-alto"],
+    ["06-cruzar-tablas", "ventas-por-ciudad"],
+    ["06-cruzar-tablas", "top-10-productos"],
+    ["07-ventas-por-mes", "ventas-por-mes"],
+    ["07-ventas-por-mes", "ranking-de-marzo"],
+    ["08-preguntas-de-gerencia", "local-con-menos-ventas-en-marzo"],
+    ["08-preguntas-de-gerencia", "ese-local-mes-a-mes"],
+    ["08-preguntas-de-gerencia", "categoria-mas-vendida"],
+    ["08-preguntas-de-gerencia", "ticket-por-ciudad"],
+    ["08-preguntas-de-gerencia", "productos-de-50-unidades"],
   ],
 };
 
@@ -54,7 +76,19 @@ export async function completarCaso(page: Page, admin: Page, ip: string, email: 
   await page.getByLabel("Enlace a tu repositorio de GitHub").fill(`https://github.com/e2e/${caso}`);
   await page.getByRole("button", { name: "Enviar a revisión" }).click();
   await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
-  await aprobarEntregable(admin, email);
+  // Se aprueba por la API de revisión: es más rápido y no depende de que la página hidrate. La aprobación con
+  // clics en la rúbrica ya la prueban misiones.spec y cuenta.spec (aprobarEntregable).
+  await admin.goto("/profesor/entregables");
+  const tarjeta = admin.locator("li", { hasText: email });
+  await expect(tarjeta).toHaveCount(1);
+  const entregableId = await tarjeta.locator("[data-entregable-id]").getAttribute("data-entregable-id");
+  const criterios = await tarjeta.getByRole("checkbox").count();
+  expect(entregableId, `${caso}: entregable sin id`).not.toBeNull();
+  const respuesta = await admin.request.post(`/api/revision/entregables/${entregableId}`, {
+    headers: { Origin: "http://localhost:3000", "x-forwarded-for": ip },
+    data: { decision: "aprobado", criterios: Array.from({ length: criterios }, () => true), comentario: null },
+  });
+  expect(respuesta.ok(), `${caso}: aprobación de entregable`).toBe(true);
 }
 
 export { entrarComoAdmin };

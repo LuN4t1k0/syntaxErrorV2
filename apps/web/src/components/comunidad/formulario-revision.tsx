@@ -33,7 +33,7 @@ export function FormularioRevision({ entregableId, rubrica }: { entregableId: st
   }
 
   return (
-    <div className="grid gap-3">
+    <div className="grid gap-3" data-entregable-id={entregableId}>
       <fieldset className="grid gap-2">
         <legend className="mb-1 text-sm font-bold">Rúbrica</legend>
         {rubrica.map((criterio, indice) => (

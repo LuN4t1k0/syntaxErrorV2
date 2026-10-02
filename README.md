@@ -181,3 +181,14 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
   - La historia que esconden: en marzo Osorno Centro vende un tercio de lo normal (remodelación) y la Kombucha artesanal nunca se vendió. Una prueba falla si un cambio en el generador borra esa historia.
 - **Tareas SQL:** no llevan valores escritos a mano; el resultado esperado se calcula desde la solución. Toda tarea con `ORDER BY` + `LIMIT` que tenga empates en el corte pide el desempate en su enunciado.
 - **e2e:** `e2e/tests/progreso.ts` completa los casos anteriores (misiones y entregable aprobado). Cada caso nuevo agrega ahí sus misiones.
+
+## Caso 3: Tienda Online Pewen
+
+- **Datos generados:** `packages/content/src/generadores/tienda-online-pewen.ts`, con semilla fija.
+  - 90 clientes, 24 productos y 424 pedidos de julio a diciembre de 2025.
+  - Defectos para limpiar con pandas: 4 pedidos duplicados, 5 sin cantidad y 6 clientes sin región.
+  - Patrones para descubrir: Vestuario se devuelve en un 23 % de sus pedidos y noviembre (Black Friday) vende más del doble que un mes normal.
+- **Tareas de Python:** sus `pruebas` comparan valores calculados con los datos generados, con mensajes que orientan sin dar la solución. El validador ejecuta cada solución con pandas en Pyodide.
+  - Desde la misión 5, la `preparacion` incluye la limpieza de la misión 4.
+  - La misión 9, sin guía, parte de los archivos sin limpiar.
+- **Entregable:** un notebook (`.ipynb`, por ejemplo hecho en Google Colab) con el análisis y las recomendaciones.
