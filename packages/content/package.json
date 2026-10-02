@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./esquemas": "./src/esquemas.ts",
+    "./rubrica": "./src/rubrica.ts",
     "./tipos": "./src/tipos.ts",
     "./bloques": "./src/bloques.ts",
     "./cargar": "./src/cargar.ts",
