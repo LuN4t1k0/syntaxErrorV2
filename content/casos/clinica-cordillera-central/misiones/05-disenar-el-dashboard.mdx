@@ -1,0 +1,43 @@
+---
+titulo: Diseñar el dashboard
+tiempo: 25
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+Antes de abrir la herramienta, quiero ver un boceto: qué va arriba, qué va abajo, qué filtros tiene y en qué orden se lee. Escríbelo como un documento corto. Si el directorio no entiende el dashboard en un minuto, no sirve.
+</Brief>
+
+<Concepto>
+Un buen dashboard se lee como una página: de arriba hacia abajo y de izquierda a derecha.
+
+1. **Arriba, los números clave** (tarjetas o KPI): espera promedio en urgencia, tasa de inasistencia y atenciones del mes.
+2. **Al medio, la tendencia:** la línea de urgencias y espera por mes.
+3. **Abajo, el detalle:** el ranking de especialidades y la comparación entre sedes.
+
+Otras decisiones de diseño:
+- **Filtros** solo los que la audiencia usa: sede y mes. Cada filtro extra es una pregunta más.
+- **Títulos que dicen la conclusión:** «La espera en urgencia se duplicó en junio» dice más que «Espera por mes».
+- **Colores con propósito:** un color neutro para todo y uno de alerta solo para lo que requiere atención. Evita depender de rojo contra verde: cerca de uno de cada doce hombres no los distingue bien.
+</Concepto>
+
+<MarkdownTask
+  id="boceto-del-dashboard"
+  enunciado="Escribe el boceto del dashboard: un título, al menos tres secciones (por ejemplo Arriba, Al medio y Abajo), una lista numerada con el orden de lectura y una tabla con cada elemento, su tipo de gráfico y la pregunta que responde."
+  inicial="Boceto del dashboard"
+  requisitos={["titulo", "subtitulos:3", "lista-numerada", "tabla"]}
+  solucion={"# Boceto del dashboard de operaciones\n\n## Arriba\n\nTres tarjetas: espera en urgencia, tasa de inasistencia y atenciones del mes.\n\n## Al medio\n\nLínea de urgencias y espera por mes.\n\n## Abajo\n\nRanking de inasistencia por especialidad y espera por sede.\n\n## Orden de lectura\n\n1. Tarjetas con el estado actual.\n2. Tendencia de urgencias.\n3. Detalle por especialidad y sede.\n\n| Elemento | Gráfico | Pregunta |\n| --- | --- | --- |\n| Espera en urgencia | tarjeta | ¿Cuánto esperan hoy? |\n| Urgencias por mes | línea | ¿Cómo cambia en el año? |\n| Inasistencia | barras ordenadas | ¿Qué especialidad pierde más horas? |"}
+  pistas={["Cada sección empieza con ## y un espacio.", "Una lista numerada se escribe 1., 2. y 3., cada número en su línea.", "La tabla puede tener tres columnas: Elemento, Gráfico y Pregunta."]}
+/>
+
+<Decision
+  pregunta="¿Qué colores usas para las tarjetas de la espera en urgencia de cada sede?"
+  opciones={[
+    { texto: "Un gris neutro para todas y un naranjo solo para la sede que supera la meta, con el valor escrito.", correcta: true, porque: "El color de alerta llama la atención justo donde se necesita, y el número escrito no depende de distinguir colores." },
+    { texto: "Verde para las que están bien y rojo para las que están mal, sin números.", porque: "Muchas personas no distinguen bien el rojo del verde, y sin el valor escrito no se sabe cuánto falta." },
+    { texto: "Un color distinto para cada sede, para que se vea alegre.", porque: "El color deja de significar algo: el ojo busca un patrón que no existe." },
+  ]}
+/>
+
+<Debrief entrevista="Si te piden comentar un dashboard en una entrevista, recórrelo en voz alta en el orden en que se lee y di qué decisión permite tomar cada parte. Eso demuestra que diseñas para la audiencia y no para la herramienta.">
+El boceto ordena el dashboard antes de construirlo: lo importante arriba, la tendencia al medio y el detalle abajo, con pocos filtros, títulos que concluyen y colores con propósito.
+</Debrief>

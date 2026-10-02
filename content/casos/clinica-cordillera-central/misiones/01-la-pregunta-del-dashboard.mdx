@@ -1,0 +1,46 @@
+---
+titulo: La pregunta del dashboard
+tiempo: 25
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+Bienvenida o bienvenido a la clínica. Tenemos cuatro sedes con consultas y urgencias, y cada mes llego a la reunión de directorio con planillas que nadie alcanza a leer. Quiero un dashboard. Pero antes de dibujar nada, escribe la ficha del dashboard: para quién es, qué preguntas responde y con qué indicadores, cada uno bien definido.
+</Brief>
+
+<Concepto>
+Un **dashboard** no es una colección de gráficos: es la respuesta a unas pocas preguntas de una audiencia concreta. Antes de construirlo se escribe una **ficha**:
+
+1. **Audiencia:** quién lo mira y qué decisiones toma. El directorio decide inversiones; la jefatura de urgencia decide turnos.
+2. **Preguntas:** tres o cuatro, como mucho. Por ejemplo: «¿cuánto esperan los pacientes en urgencia?».
+3. **Indicadores:** cada pregunta se responde con un indicador definido sin ambigüedad.
+
+| Indicador | Fórmula | Frecuencia |
+| --- | --- | --- |
+| Espera promedio en urgencia | promedio de minutos de espera de las urgencias | mensual |
+| Tasa de inasistencia | consultas a las que el paciente no llegó ÷ todas las consultas | mensual |
+
+Definir bien el **denominador** evita discusiones después: ¿la inasistencia es sobre las consultas agendadas o sobre todas las atenciones, incluidas las urgencias? Son números muy distintos.
+
+La ficha se escribe en Markdown, como el README del Caso 0.
+</Concepto>
+
+<MarkdownTask
+  id="ficha-del-dashboard"
+  enunciado="Escribe la ficha del dashboard de la clínica: un título, al menos tres secciones (por ejemplo Audiencia, Preguntas e Indicadores), una lista y una tabla con los indicadores y sus fórmulas."
+  inicial="Ficha del dashboard de operaciones"
+  requisitos={["titulo", "subtitulos:3", "lista", "tabla"]}
+  solucion={"# Dashboard de operaciones\n\n## Audiencia\n\nDirectorio de la clínica, una vez al mes.\n\n## Preguntas\n\n- ¿Cuánto esperan los pacientes en urgencia en cada sede?\n- ¿Qué especialidades pierden más horas por inasistencia?\n- ¿Cómo cambia la demanda mes a mes?\n\n## Indicadores\n\n| Indicador | Fórmula | Frecuencia |\n| --- | --- | --- |\n| Espera en urgencia | promedio de minutos de espera de las urgencias | mensual |\n| Tasa de inasistencia | inasistencias ÷ consultas | mensual |"}
+  pistas={["Cada sección empieza con ## y un espacio.", "La tabla necesita la fila de encabezados, la línea | --- | --- | --- | y al menos una fila con un indicador.", "Las preguntas quedan bien como lista: una por línea, empezando con «- »."]}
+/>
+
+<Decision
+  pregunta="El jefe de urgencia te pide agregar al dashboard del directorio el detalle de espera por hora y por box. ¿Qué haces?"
+  opciones={[
+    { texto: "Le propongo una página o un dashboard aparte para su equipo: el directorio necesita la tendencia, no el detalle por box.", correcta: true, porque: "Cada audiencia decide cosas distintas. Mezclar niveles de detalle hace que nadie encuentre lo suyo." },
+    { texto: "Lo agrego: mientras más información, mejor.", porque: "Un dashboard con todo no responde nada: el directorio tendría que buscar entre gráficos que no le sirven." },
+  ]}
+/>
+
+<Debrief entrevista="Una pregunta habitual para analistas: '¿cómo empiezas un dashboard?'. La mejor respuesta no menciona ninguna herramienta: 'pregunto para quién es, qué decisiones toma y cómo se define cada indicador'.">
+La ficha es el contrato del dashboard: audiencia, preguntas e indicadores bien definidos. Con ella puedes decir que no a lo que no corresponde y revisar después si el dashboard cumple.
+</Debrief>

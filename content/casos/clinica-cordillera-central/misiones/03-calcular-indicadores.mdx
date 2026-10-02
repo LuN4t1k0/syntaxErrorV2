@@ -1,0 +1,50 @@
+---
+titulo: Calcular indicadores
+tiempo: 30
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+Ahora los números de la ficha. Para cada especialidad, la tasa de inasistencia de sus consultas, con dos decimales. Y para cada sede, la espera promedio en urgencia, en minutos enteros. Ojo con las definiciones: la inasistencia se mide sobre las consultas, no sobre las urgencias.
+</Brief>
+
+<Concepto>
+Una **tasa** se calcula como casos ÷ total. En SQL, `CASE WHEN` convierte cada fila en 1 o 0 según si cumple la condición, y `SUM` cuenta los casos:
+
+<SqlEjemplo consulta="SELECT SUM(CASE WHEN estado = 'cancelada' THEN 1 ELSE 0 END) AS canceladas, COUNT(*) AS consultas FROM atenciones WHERE tipo = 'consulta'" />
+
+Para la tasa se divide, y se multiplica por `1.0` para que la división tenga decimales:
+
+`ROUND(SUM(CASE WHEN estado = 'cancelada' THEN 1 ELSE 0 END) * 1.0 / COUNT(*), 2)`
+
+Dos cuidados que cambian el resultado:
+- **El denominador lo define el `WHERE`.** Con `WHERE tipo = 'consulta'` la tasa es sobre las consultas; sin él, sobre todas las atenciones.
+- **`AVG` ignora los vacíos.** Las consultas no tienen minutos de espera (están vacíos), así que el promedio de espera solo considera las urgencias. Igual conviene filtrarlas: deja clara la definición.
+</Concepto>
+
+<SqlTask
+  id="tasa-de-inasistencia"
+  enunciado="Trae el nombre de cada especialidad y su tasa de inasistencia en consultas (inasistencias ÷ consultas), redondeada a 2 decimales."
+  solucion="SELECT e.nombre, ROUND(SUM(CASE WHEN a.estado = 'inasistencia' THEN 1 ELSE 0 END) * 1.0 / COUNT(*), 2) AS tasa FROM atenciones a JOIN especialidades e ON a.especialidad_id = e.id WHERE a.tipo = 'consulta' GROUP BY e.nombre"
+  comparar="filas-sin-orden"
+  pistas={["Filtra las consultas con WHERE a.tipo = 'consulta' y agrupa por el nombre de la especialidad.", "Cuenta las inasistencias con SUM(CASE WHEN a.estado = 'inasistencia' THEN 1 ELSE 0 END).", "Divide por COUNT(*), multiplica por 1.0 para tener decimales y redondea con ROUND(…, 2)."]}
+/>
+
+<SqlTask
+  id="espera-por-sede"
+  enunciado="Trae el nombre de cada sede y la espera promedio de sus urgencias, redondeada a minutos enteros."
+  solucion="SELECT s.nombre, ROUND(AVG(a.espera_minutos), 0) AS espera FROM atenciones a JOIN sedes s ON a.sede_id = s.id WHERE a.tipo = 'urgencia' GROUP BY s.nombre"
+  comparar="filas-sin-orden"
+  pistas={["Filtra las urgencias y agrupa por el nombre de la sede.", "El promedio de los minutos es AVG(a.espera_minutos), redondeado con ROUND(…, 0)."]}
+/>
+
+<Decision
+  pregunta="Alguien calculó la inasistencia de Dermatología sobre todas las atenciones de la clínica, incluidas las urgencias, y le dio 1 %. Tú obtienes 21 %. ¿Cuál va al dashboard?"
+  opciones={[
+    { texto: "El 21 %: es la proporción de consultas de Dermatología a las que el paciente no llegó, que es lo que la ficha define.", correcta: true, porque: "El denominador tiene que ser el grupo que podía faltar: las consultas de esa especialidad. Otro denominador diluye el problema." },
+    { texto: "El 1 %, porque usa más datos.", porque: "Usar más filas no hace mejor un indicador: lo hace responder otra pregunta, y aquí esconde un problema real." },
+  ]}
+/>
+
+<Debrief entrevista="Cuando presentes un indicador en una entrevista, di su fórmula en voz alta: 'inasistencias sobre consultas agendadas, por especialidad'. Mostrar el denominador es lo que separa a un analista cuidadoso.">
+Un indicador es una fórmula con un denominador explícito. `CASE WHEN` con `SUM` cuenta casos, `AVG` promedia sin los vacíos y el `WHERE` define sobre qué total se calcula.
+</Debrief>

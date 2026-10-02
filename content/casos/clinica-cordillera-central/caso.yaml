@@ -1,0 +1,21 @@
+slug: clinica-cordillera-central
+titulo: "Clínica Cordillera Central: un dashboard para decidir"
+cargo: Analista de datos junior en el área de gestión
+empresa: Clínica Cordillera Central
+dataset: Atenciones de enero a junio de 2025 en cuatro sedes, sin datos de pacientes (datos generados con un script reproducible)
+entregable: Un repositorio en GitHub con tu dashboard (el archivo .pbix de Power BI o el enlace público de Looker Studio), capturas de cada página en la carpeta capturas y un README que funcione como guion de una presentación de cinco minutos.
+archivos:
+  - .png
+rubrica:
+  - "El dashboard responde las preguntas de la gerencia, para la audiencia que se definió."
+  - "Cada indicador está bien definido (qué se cuenta y sobre qué total) y se muestra con un gráfico adecuado."
+  - "El diseño se lee fácil: lo importante arriba, títulos que dicen la conclusión, filtros útiles y colores accesibles."
+  - "El README presenta los hallazgos y una recomendación en cinco minutos, con capturas que los respaldan."
+misiones:
+  - 01-la-pregunta-del-dashboard
+  - 02-preparar-los-datos
+  - 03-calcular-indicadores
+  - 04-elegir-el-grafico
+  - 05-disenar-el-dashboard
+  - 06-construir-el-dashboard
+  - 07-presentar-en-cinco-minutos

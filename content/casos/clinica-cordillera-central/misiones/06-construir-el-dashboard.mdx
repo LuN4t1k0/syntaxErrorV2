@@ -1,0 +1,49 @@
+---
+titulo: Construir el dashboard
+tiempo: 60
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+Con la ficha y el boceto aprobados, ahora sí: construye el dashboard. Si tienes Windows, usa Power BI Desktop, que es lo que más piden las empresas; si no, Looker Studio, que funciona en el navegador. Súbelo a un repositorio llamado dashboard-clinica, con capturas en una carpeta capturas y un README con una imagen y el enlace al dashboard o al archivo.
+</Brief>
+
+<Concepto>
+Los datos del caso se descargan desde la página del caso, en «Datos del caso».
+
+**Con Power BI Desktop (gratis, solo en Windows):**
+1. Instálalo desde la Microsoft Store y ábrelo; no necesitas cuenta para trabajar en tu computador.
+2. **Obtener datos** → **Texto/CSV** y carga `atenciones.csv`, `sedes.csv` y `especialidades.csv`.
+3. En la vista **Modelo**, revisa que `atenciones[sede_id]` esté relacionada con `sedes[id]` y `atenciones[especialidad_id]` con `especialidades[id]`.
+4. Crea las medidas de la ficha, por ejemplo `Espera promedio = AVERAGE(atenciones[espera_minutos])`.
+5. Arma las páginas según tu boceto, con **Tarjeta**, **Gráfico de líneas** y **Gráfico de barras agrupadas**, y agrega segmentaciones por sede y mes.
+6. Guarda el archivo `.pbix` y toma una captura de cada página.
+
+**Con Looker Studio (gratis, en el navegador):**
+1. Entra a lookerstudio.google.com con una cuenta de Google y crea un **Informe en blanco**.
+2. Sube los tres CSV con **Agregar datos** → **Subir archivo**. Luego únelos en **Recurso** → **Administrar combinaciones**: atenciones con sedes por `sede_id` = `id`, y con especialidades por `especialidad_id` = `id`. Es el mismo cruce de la misión 2.
+3. Crea los **campos calculados** de la ficha, por ejemplo la tasa de inasistencia.
+4. Arma la página según tu boceto con **Cuadro de resultados**, **Gráfico de series temporales** y **Gráfico de barras**, y agrega **Controles** de sede y fecha.
+5. **Compartir** → «Cualquier persona con el enlace puede ver», y copia ese enlace.
+
+**En el repositorio:** crea `dashboard-clinica`, sube las capturas a la carpeta `capturas/` (en formato `.png`) y escribe un README con un título, al menos una captura como imagen y el enlace al dashboard de Looker Studio o al archivo `.pbix` del repositorio.
+</Concepto>
+
+<GithubTask
+  id="dashboard-publicado"
+  enunciado="Sube tu dashboard al repositorio dashboard-clinica, con sus capturas, y revisamos."
+  repositorio="{usuario}/dashboard-clinica"
+  requisitos={["publico", "carpeta:capturas", "extension:.png", "readme:titulo", "readme:imagen", "readme:enlace"]}
+  pistas={["Las capturas van dentro de la carpeta capturas: al subirlas, nombra el archivo como capturas/resumen.png.", "Una imagen del repositorio se muestra en el README con ![Resumen del dashboard](capturas/resumen.png).", "El enlace puede ir al dashboard de Looker Studio o al archivo .pbix: [Abrir el dashboard](…)."]}
+/>
+
+<Decision
+  pregunta="Terminaste el dashboard. Antes de mandarlo, ¿qué revisas?"
+  opciones={[
+    { texto: "Que los números de las tarjetas coincidan con los que calculé con SQL en la misión de indicadores.", correcta: true, porque: "Una medida mal escrita en la herramienta da un número creíble y equivocado. Comparar con un cálculo independiente lo detecta." },
+    { texto: "Que todos los gráficos tengan colores distintos.", porque: "El color no hace correcto un número. Lo primero es que los indicadores coincidan con su definición." },
+  ]}
+/>
+
+<Debrief entrevista="Si te preguntan si sabes Power BI o Looker Studio, muestra tu dashboard y cuenta cómo validaste los números: 'comparé cada tarjeta con una consulta SQL'. Eso pesa más que listar funciones de la herramienta.">
+Power BI y Looker Studio cambian de botones, pero el trabajo es el mismo: cargar datos preparados, definir indicadores, seguir el boceto y validar los números. Tu repositorio deja el dashboard a la vista de quien te quiera contratar.
+</Debrief>

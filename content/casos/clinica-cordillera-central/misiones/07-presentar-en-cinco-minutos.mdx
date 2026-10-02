@@ -1,0 +1,27 @@
+---
+titulo: Presentar en cinco minutos
+tiempo: 45
+sinGuia: true
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+El directorio te da cinco minutos el lunes. Prepara la presentación del dashboard como un README en tu repositorio: un título, el contexto, tus hallazgos con las capturas que los respaldan y lo que recomiendas, en el orden en que lo vas a contar. Que el historial muestre cómo lo fuiste armando. Cuando esté, pega el enlace.
+</Brief>
+
+<GithubTask
+  id="presentacion-al-directorio"
+  enunciado="Pega el enlace del repositorio con tu presentación."
+  requisitos={["publico", "carpeta:capturas", "commits:3", "readme:titulo", "readme:subtitulos:3", "readme:lista-numerada", "readme:imagen"]}
+/>
+
+<Decision
+  pregunta="¿Con qué abres los cinco minutos frente al directorio?"
+  opciones={[
+    { texto: "Con la conclusión principal y su número, por ejemplo cuánto subió la espera en urgencia de Maipú en junio, y después muestro cómo llegué a ella.", correcta: true, porque: "Si la reunión se corta en el minuto dos, el directorio ya escuchó lo más importante." },
+    { texto: "Explicando cómo preparé los datos y qué herramienta usé.", porque: "Al directorio le importa qué decidir; el método se cuenta solo si lo preguntan." },
+  ]}
+/>
+
+<Debrief entrevista="Muchos procesos de selección para analista terminan con una presentación de un caso. Practica la estructura: conclusión, dos o tres hallazgos con su gráfico y una recomendación concreta, en cinco minutos y con reloj.">
+Este repositorio es tu entregable del caso: el dashboard, sus capturas y una presentación que se puede contar en cinco minutos. Envíalo desde la página del caso para que lo revisen con la rúbrica.
+</Debrief>

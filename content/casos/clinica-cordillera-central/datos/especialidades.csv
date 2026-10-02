@@ -1,0 +1,9 @@
+id,nombre,area
+1,Medicina general,ambulatoria
+2,Pediatría,ambulatoria
+3,Traumatología,ambulatoria
+4,Dermatología,ambulatoria
+5,Ginecología,ambulatoria
+6,Cardiología,ambulatoria
+7,Oftalmología,ambulatoria
+8,Urgencia,urgencia

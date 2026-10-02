@@ -1,0 +1,52 @@
+---
+titulo: Elegir el gráfico
+tiempo: 25
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+En la última reunión alguien mostró un gráfico de torta con doce colores y nadie entendió nada. Quiero que cada gráfico del dashboard tenga una razón. Prepara los datos para dos: cómo evolucionan las urgencias y su espera mes a mes, y el ranking de especialidades por inasistencia, de mayor a menor.
+</Brief>
+
+<Concepto>
+El gráfico se elige según la pregunta, no según lo que se vea más bonito:
+
+| Pregunta | Gráfico | Por qué |
+| --- | --- | --- |
+| ¿Cómo cambia en el tiempo? | Línea | el ojo sigue la tendencia de izquierda a derecha |
+| ¿Quién está más arriba? | Barras horizontales, ordenadas | se comparan largos y caben los nombres |
+| ¿Cuánto es ahora? | Número grande (tarjeta o KPI) | se lee en un segundo |
+| ¿Qué parte del total? | Barras apiladas al 100 %, o torta con dos o tres partes | con más partes la torta no se lee |
+
+Cada gráfico necesita los datos **en la forma correcta**: para una línea, una fila por mes y en orden; para un ranking, ya ordenado de mayor a menor. Si el ranking no viene ordenado, quien lo mire tiene que ordenar con los ojos.
+
+Dos reglas que evitan engañar sin querer: las barras parten en cero, y un eje no cambia de escala entre gráficos que se comparan.
+</Concepto>
+
+<SqlTask
+  id="serie-mensual-de-urgencias"
+  enunciado="Para el gráfico de línea: trae el número de cada mes, cuántas urgencias hubo y su espera promedio en minutos enteros, ordenado por mes."
+  solucion="SELECT MONTH(fecha) AS mes, COUNT(*) AS urgencias, ROUND(AVG(espera_minutos), 0) AS espera FROM atenciones WHERE tipo = 'urgencia' GROUP BY MONTH(fecha) ORDER BY mes"
+  comparar="filas-en-orden"
+  pistas={["Filtra las urgencias y agrupa por MONTH(fecha), como en las ventas por mes del Caso 2.", "Una línea necesita los meses en orden: ORDER BY mes."]}
+/>
+
+<SqlTask
+  id="ranking-de-inasistencia"
+  enunciado="Para el gráfico de barras: trae el nombre de cada especialidad y su tasa de inasistencia en consultas, con 2 decimales, de la más alta a la más baja."
+  solucion="SELECT e.nombre, ROUND(SUM(CASE WHEN a.estado = 'inasistencia' THEN 1 ELSE 0 END) * 1.0 / COUNT(*), 2) AS tasa FROM atenciones a JOIN especialidades e ON a.especialidad_id = e.id WHERE a.tipo = 'consulta' GROUP BY e.nombre ORDER BY tasa DESC"
+  comparar="filas-en-orden"
+  pistas={["Es la tasa de la misión de indicadores.", "Agrégale el orden: ORDER BY tasa DESC."]}
+/>
+
+<Decision
+  pregunta="Para mostrar la tasa de inasistencia de las siete especialidades, ¿qué gráfico usas?"
+  opciones={[
+    { texto: "Barras horizontales ordenadas de mayor a menor, con la tasa escrita al final de cada barra.", correcta: true, porque: "Se lee de un vistazo quién está peor, y los nombres de las especialidades caben completos." },
+    { texto: "Una torta con siete colores.", porque: "Las tasas no son partes de un total: no suman 100 %. Además, con siete porciones nadie compara ángulos." },
+    { texto: "Una línea que una las siete especialidades.", porque: "La línea sugiere una secuencia en el tiempo, y entre especialidades no la hay." },
+  ]}
+/>
+
+<Debrief entrevista="Es común que en una entrevista muestren un gráfico malo y pregunten qué cambiarías. Responde con la pregunta que el gráfico debería responder y elige desde ahí: línea para el tiempo, barras ordenadas para comparar.">
+El gráfico se elige por la pregunta: línea para el tiempo, barras ordenadas para comparar, número grande para el estado actual. Y los datos se preparan en la forma que cada gráfico necesita.
+</Debrief>

@@ -1,0 +1,49 @@
+---
+titulo: Preparar los datos
+tiempo: 25
+---
+
+<Brief de="Carolina Pizarro, gerenta de operaciones de Clínica Cordillera Central">
+Te dejé tres tablas: las atenciones, las sedes y las especialidades. El sistema guarda solo códigos en las atenciones, y en el dashboard necesitamos nombres. Prepara una tabla con cada atención y los nombres de su sede y su especialidad, y antes de seguir, comprueba cuántas atenciones hay de cada tipo.
+</Brief>
+
+<Concepto>
+Los datos para un dashboard suelen organizarse en un **modelo estrella**:
+
+- Una **tabla de hechos**, con lo que pasó y se puede contar o sumar: `atenciones` (una fila por atención, con fecha, estado y minutos de espera).
+- **Tablas de dimensiones**, que describen los hechos y sirven para filtrar y agrupar: `sedes` y `especialidades`.
+
+En **Power BI** se cargan las tres tablas y se relacionan por sus códigos (`sede_id` con `id`). En **Looker Studio** conviene una sola tabla con los nombres ya incluidos. En los dos casos, el cruce es el mismo `JOIN` del Caso 2:
+
+<SqlEjemplo consulta="SELECT a.id, s.nombre AS sede, a.tipo FROM atenciones a JOIN sedes s ON a.sede_id = s.id LIMIT 5" />
+
+Después de preparar los datos, un **control**: contar las filas por algún criterio conocido y compararlo con el origen. Si el cruce perdió o duplicó filas, el dashboard mostrará números equivocados sin avisar.
+</Concepto>
+
+<SqlTask
+  id="atenciones-con-nombres"
+  enunciado="Trae de cada atención su fecha, el nombre de la sede (como sede), el nombre de la especialidad (como especialidad), el tipo, el estado y los minutos de espera, en ese orden."
+  solucion="SELECT a.fecha, s.nombre AS sede, e.nombre AS especialidad, a.tipo, a.estado, a.espera_minutos FROM atenciones a JOIN sedes s ON a.sede_id = s.id JOIN especialidades e ON a.especialidad_id = e.id"
+  comparar="filas-sin-orden"
+  pistas={["Son dos JOIN: uno con sedes y otro con especialidades.", "La sede se une por sede_id y la especialidad por especialidad_id.", "Con alias, cada columna lleva su tabla: a.fecha, s.nombre AS sede."]}
+/>
+
+<SqlTask
+  id="control-por-tipo"
+  enunciado="Control: trae cada tipo de atención y cuántas atenciones tiene."
+  solucion="SELECT tipo, COUNT(*) AS atenciones FROM atenciones GROUP BY tipo"
+  comparar="filas-sin-orden"
+  pistas={["Agrupa la tabla atenciones por tipo.", "COUNT(*) cuenta las filas de cada grupo."]}
+/>
+
+<Decision
+  pregunta="Tu tabla preparada tiene 1.180 filas y la tabla de atenciones tiene 1.200. ¿Qué pasó?"
+  opciones={[
+    { texto: "Algunas atenciones tienen un código que no existe en sedes o especialidades, y el JOIN las dejó fuera. Hay que encontrarlas antes de seguir.", correcta: true, porque: "Un JOIN deja fuera lo que no tiene pareja. Contar antes y después es la forma de notarlo." },
+    { texto: "No importa: son 20 de 1.200, menos del 2 %.", porque: "Esas 20 pueden ser justo las de una sede o un mes, y cambiar las conclusiones. Primero se entiende la diferencia." },
+  ]}
+/>
+
+<Debrief entrevista="En entrevistas para analista de BI suelen preguntar por el modelo estrella. Explica la diferencia entre hechos (lo que se cuenta) y dimensiones (cómo se filtra y agrupa), con un ejemplo de tu propio proyecto.">
+Preparar los datos es dejar una tabla de hechos con sus dimensiones, o una sola tabla con los nombres incluidos, y controlar que no se pierdan filas en el camino. Un dashboard nunca es mejor que los datos que lo alimentan.
+</Debrief>
