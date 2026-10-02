@@ -1,0 +1,26 @@
+---
+titulo: "Entender tablas y columnas"
+tiempo: 10
+---
+
+<Concepto>
+**Objetivo:** Describir una tabla para que la IA pueda razonar con menos supuestos.
+
+Una tabla no se entiende solo por sus valores. Necesita nombres de columnas, significado, tipos de datos, unidad de medida y reglas de negocio.
+
+Cuando pidas ayuda a la IA, entrega una muestra pequeña, explica columnas y define que pregunta quieres responder.
+
+**Conceptos clave.**
+
+- Diccionario de datos: descripción de columnas y significado.
+- Tipo de dato: texto, número, fecha, categoría o booleano.
+- Unidad: escala o medida usada por una columna.
+
+**Un caso.** La columna 'monto' puede significar venta neta, venta bruta, deuda, costo o reclamo. Sin definición, cualquier análisis queda debil.
+</Concepto>
+
+<QuizTask
+  id="entender-tablas-y-columnas"
+  preguntas={[{"pregunta": "Un diccionario de datos describe...", "opciones": ["Columnas, significado, tipo y reglas relevantes.", "Solo colores de una tabla.", "Contrasenas del sistema.", "Una respuesta final."], "correcta": 0, "explicacion": "El diccionario da contexto a la tabla."}, {"pregunta": "¿Por qué importa explicar las unidades?", "opciones": ["Porque un número puede representar pesos, dolares, horas, unidades u otra escala.", "Porque cambia la tipografía.", "Porque elimina errores siempre.", "Porque no afecta al análisis."], "correcta": 0, "explicacion": "La unidad cambia interpretación."}, {"pregunta": "Para pedir ayuda con una tabla conviene entregar...", "opciones": ["Muestra, columnas, significado y pregunta de análisis.", "Solo una captura borrosa.", "Datos sin encabezados.", "Una instrucción vaga."], "correcta": 0, "explicacion": "La IA necesita estructura y objetivo."}]}
+  pistas={["Tabla clara: columnas, tipos, unidades, reglas y pregunta."]}
+/>

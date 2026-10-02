@@ -1,0 +1,19 @@
+slug: clases-de-ia-para-datos
+tipo: clases
+titulo: "Clases de IA para datos: usar la IA sin perder el criterio"
+dataset: "casos breves de tablas, reclamos y reportes, uno por lección"
+misiones:
+  - 01-bienvenida-ia-para-datos
+  - 02-entender-tablas-y-columnas
+  - 03-calidad-de-datos
+  - 04-limpieza-asistida
+  - 05-clasificacion-y-etiquetas
+  - 06-formulas-y-hojas-calculo
+  - 07-sql-asistido
+  - 08-analisis-exploratorio
+  - 09-graficos-y-visualizaciones
+  - 10-explicar-hallazgos
+  - 11-reportes-asistidos
+  - 12-sesgos-y-errores
+  - 13-privacidad-en-datos
+  - 14-proyecto-final-analisis-datos

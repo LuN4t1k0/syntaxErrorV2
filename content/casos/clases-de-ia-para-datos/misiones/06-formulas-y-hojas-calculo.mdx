@@ -1,0 +1,26 @@
+---
+titulo: "Fórmulas y hojas de cálculo"
+tiempo: 10
+---
+
+<Concepto>
+**Objetivo:** Pedir fórmulas y pasos de planilla con contexto suficiente.
+
+La IA puede ayudarte a escribir fórmulas, explicar errores y proponer validaciones en Excel o Google Sheets.
+
+Para que la respuesta sirva, debes indicar nombres de columnas, separador regional si aplica, ejemplos y resultado esperado.
+
+**Conceptos clave.**
+
+- Fórmula: expresión que calcula un resultado.
+- Caso de prueba: fila conocida para validar la fórmula.
+- Separador regional: coma o punto y coma según configuración.
+
+**Un caso.** Prompt: 'En Excel en español, necesito sumar Monto si Estado es Pagado y Area es Ventas. Columnas: A Fecha, B Area, C Estado, D Monto'.
+</Concepto>
+
+<QuizTask
+  id="formulas-y-hojas-calculo"
+  preguntas={[{"pregunta": "Para pedir una fórmula conviene entregar...", "opciones": ["Columnas, objetivo, ejemplos y configuración relevante.", "Solo 'haz formula'.", "Datos sin encabezado.", "Una captura incompleta."], "correcta": 0, "explicacion": "La fórmula depende de estructura y contexto."}, {"pregunta": "Un caso de prueba sirve para...", "opciones": ["Comprobar si la fórmula entrega el resultado esperado.", "Decorar la hoja.", "Eliminar revisión.", "Inventar datos."], "correcta": 0, "explicacion": "Prueba contra filas conocidas."}, {"pregunta": "El separador regional importa porque...", "opciones": ["Algunas configuraciones usan coma y otras punto y coma.", "Cambia el contenido de datos.", "Elimina errores siempre.", "No existe en planillas."], "correcta": 0, "explicacion": "Puede hacer que una fórmula no funcione."}]}
+  pistas={["Fórmula útil: columnas + objetivo + ejemplo + configuración."]}
+/>

@@ -1,0 +1,26 @@
+---
+titulo: "SQL asistido por IA"
+tiempo: 10
+---
+
+<Concepto>
+**Objetivo:** Usar IA para crear y revisar consultas SQL sin saltarse la validación.
+
+La IA puede ayudar a escribir SELECT, filtros, JOIN, agregaciones y consultas de diagnóstico.
+
+Debes entregar esquema de tablas, nombres de columnas, relaciones y motor de base de datos. Luego valida con muestras y resultados esperados.
+
+**Conceptos clave.**
+
+- Esquema: estructura de tablas y columnas.
+- JOIN: combinación de tablas relacionadas.
+- Agregación: cálculo como suma, conteo o promedio.
+
+**Un caso.** Prompt: 'PostgreSQL. Tablas: tickets(id, area_id, estado, created_at), areas(id, nombre). Cuenta tickets cerrados por area durante junio'.
+</Concepto>
+
+<QuizTask
+  id="sql-asistido"
+  preguntas={[{"pregunta": "Para pedir SQL conviene entregar...", "opciones": ["Esquema, relaciones, motor y pregunta.", "Solo el nombre de la base.", "Datos sensibles innecesarios.", "Una conclusión esperada inventada."], "correcta": 0, "explicacion": "SQL depende de estructura exacta."}, {"pregunta": "Un JOIN sirve para...", "opciones": ["Combinar tablas relacionadas.", "Cambiar colores.", "Crear contraseñas.", "Borrar contexto."], "correcta": 0, "explicacion": "JOIN conecta datos entre tablas."}, {"pregunta": "Una consulta generada debe...", "opciones": ["Probarse con datos y resultados esperados.", "Ejecutarse en producción sin revisar.", "Ignorar permisos.", "Eliminar respaldos."], "correcta": 0, "explicacion": "La validación evita errores operativos."}]}
+  pistas={["SQL asistido: esquema primero, ejecución controlada después."]}
+/>

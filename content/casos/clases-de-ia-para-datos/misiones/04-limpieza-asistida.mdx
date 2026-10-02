@@ -1,0 +1,26 @@
+---
+titulo: "Limpieza asistida con IA"
+tiempo: 10
+---
+
+<Concepto>
+**Objetivo:** Pedir reglas de limpieza claras y reproducibles.
+
+La IA puede proponer pasos de limpieza: normalizar texto, separar columnas, corregir formatos, detectar outliers y clasificar valores.
+
+Una regla de limpieza debe ser explícita y reproducible. Evita que el modelo invente datos faltantes como si fueran reales.
+
+**Conceptos clave.**
+
+- Normalización: convertir valores a un formato consistente.
+- Regla reproducible: instrucción que otra persona puede aplicar igual.
+- Outlier: valor inusual que requiere revisión.
+
+**Un caso.** Prompt: 'Propone reglas para normalizar la columna Area. No inventes datos faltantes. Marca casos ambiguos para revision manual'.
+</Concepto>
+
+<QuizTask
+  id="limpieza-asistida"
+  preguntas={[{"pregunta": "Una buena regla de limpieza debe ser...", "opciones": ["Clara y reproducible.", "Secreta.", "Ambigua.", "Imposible de auditar."], "correcta": 0, "explicacion": "Debe poder repetirse y revisarse."}, {"pregunta": "¿Qué no debe hacer la IA con valores faltantes?", "opciones": ["Inventarlos como si fueran reales.", "Marcarlos para revisión.", "Sugerir criterios.", "Explicar impactos."], "correcta": 0, "explicacion": "Inventar datos rompe el análisis."}, {"pregunta": "Un outlier es...", "opciones": ["Un valor inusual que debe revisarse.", "Un encabezado.", "Una categoría normal siempre.", "Una fórmula."], "correcta": 0, "explicacion": "Puede ser error o caso real extremo."}]}
+  pistas={["Limpieza responsable: regla clara, nada inventado y casos ambiguos marcados."]}
+/>

@@ -1,0 +1,26 @@
+---
+titulo: "Calidad de datos"
+tiempo: 10
+---
+
+<Concepto>
+**Objetivo:** Reconocer problemas frecuentes antes de analizar.
+
+La calidad de datos determina la calidad del resultado. Problemas comunes: duplicados, valores faltantes, formatos inconsistentes, categorías mezcladas y errores de captura.
+
+La IA puede ayudarte a detectar patrones de error, pero debes comprobarlos en la fuente.
+
+**Conceptos clave.**
+
+- Duplicado: registro repetido o equivalente.
+- Valor faltante: dato esperado que no está informado.
+- Formato inconsistente: misma información escrita de varias formas.
+
+**Un caso.** La categoría 'Ventas' aparece como Ventas, venta, VENTAS y Vtas. Antes de contar casos, hay que normalizar.
+</Concepto>
+
+<QuizTask
+  id="calidad-de-datos"
+  preguntas={[{"pregunta": "Un problema común de calidad es...", "opciones": ["Duplicados, faltantes o formatos inconsistentes.", "Tener encabezados claros.", "Documentar columnas.", "Validar fuentes."], "correcta": 0, "explicacion": "Estos problemas distorsionan resultados."}, {"pregunta": "Categorías mezcladas pueden causar...", "opciones": ["Conteos y filtros incorrectos.", "Más precisión automáticamente.", "Menos necesidad de limpieza.", "Mejores gráficos siempre."], "correcta": 0, "explicacion": "La misma categoría escrita distinto se cuenta por separado."}, {"pregunta": "La IA puede sugerir limpieza, pero debes...", "opciones": ["Comprobar contra fuente y reglas.", "Aplicar todo sin revisar.", "Inventar valores.", "Eliminar evidencia."], "correcta": 0, "explicacion": "La limpieza también requiere criterio."}]}
+  pistas={["Antes de analizar: revisa duplicados, faltantes, formatos y categorías."]}
+/>
