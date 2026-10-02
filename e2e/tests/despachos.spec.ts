@@ -1,47 +1,8 @@
 import { expect, test, type Page } from "./fixtures";
-import { aprobarEntregable, entrarComoAdmin } from "./revision";
+import { aprobar, completarCaso, entrarComoAdmin, MISIONES, registrarse } from "./progreso";
 
 const CASO = "/casos/despachos-rapidos";
-const CASO_0: [string, string][] = [
-  ["01-tu-primer-repositorio", "primer-repositorio"],
-  ["02-escribe-un-readme", "readme-de-proyecto"],
-  ["03-archivos-y-commits", "commits-propios"],
-  ["04-ordena-tu-proyecto", "proyecto-ordenado"],
-  ["05-el-readme-de-tu-proyecto", "readme-del-proyecto"],
-  ["06-tu-perfil-de-github", "perfil"],
-  ["07-tu-presentacion", "presentacion"],
-];
-const CASO_1: [string, string][] = [
-  ["01-conoce-la-planilla", "costo-con-iva"],
-  ["02-totales-del-mes", "totales"],
-  ["03-condiciones", "condiciones"],
-  ["04-buscar-en-otra-tabla", "buscar-tarifas"],
-  ["05-limpiar-los-datos", "marcar-problemas"],
-  ["06-resumir-por-comuna", "resumen-por-comuna"],
-  ["07-indicadores-de-entrega", "indicadores"],
-];
-
-async function registrarse(page: Page): Promise<string> {
-  const email = `despachos-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`;
-  await page.goto("/registro?callbackUrl=%2Fdashboard");
-  await page.locator('input[name="name"]').fill("Ignacia Soto");
-  await page.locator('input[name="email"]').fill(email);
-  await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
-  await expect(page).toHaveURL(/\/dashboard/);
-  return email;
-}
-
-// Aprueba misiones por la API, en orden, como si se hubieran resuelto en la página.
-async function aprobar(page: Page, ip: string, caso: string, misiones: [string, string][]) {
-  for (const [mision, tarea] of misiones) {
-    const respuesta = await page.request.post("/api/progreso", {
-      headers: { Origin: "http://localhost:3000", "x-forwarded-for": ip },
-      data: { caso, mision, tarea, aprobada: true },
-    });
-    expect(respuesta.ok(), `${caso}/${mision}`).toBe(true);
-  }
-}
+const CASO_1 = MISIONES["despachos-rapidos"];
 
 async function escribir(page: Page, celda: string, formula: string) {
   await page.getByRole("button", { name: `Celda ${celda}`, exact: true }).click();
@@ -57,17 +18,12 @@ async function validarYEsperar(page: Page) {
 
 test("con el Caso 0 completo: busca en otra hoja, rellena hacia abajo y corrige la fórmula de la IA", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(240_000);
-  const email = await registrarse(page);
+  const email = await registrarse(page, "Ignacia Soto");
 
   // El Caso 1 se habilita al completar el Caso 0, con su entregable aprobado.
-  await aprobar(page, ip, "herramientas-del-oficio", CASO_0);
-  await page.goto("/casos/herramientas-del-oficio");
-  await page.getByLabel("Enlace a tu repositorio de GitHub").fill("https://github.com/ignacia/presentacion");
-  await page.getByRole("button", { name: "Enviar a revisión" }).click();
-  await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  await aprobarEntregable(admin, email);
+  await completarCaso(page, admin, ip, email, "herramientas-del-oficio");
 
   await aprobar(page, ip, "despachos-rapidos", CASO_1.slice(0, 3));
   await page.goto(`${CASO}/04-buscar-en-otra-tabla`);

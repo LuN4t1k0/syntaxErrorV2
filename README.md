@@ -172,3 +172,12 @@ Se basan en la sección 10 de la propuesta pedagógica: que escribir código aco
 - **Planilla:**
   - Una `SheetTask` puede consultar otras hojas (`otras`), traer celdas escritas de antemano (`inicial`) y resolver columnas completas con rangos en la solución (`"I2:I63": "=G2*(1+$K$2)"`).
   - En la misión se ven pestañas, el botón "Rellenar hasta la fila..." y las fechas como DD/MM/AAAA.
+
+## Caso 2: Minimarkets del Sur
+
+- **Datos generados:** `packages/content/src/generadores/minimarkets-del-sur.ts`, con semilla fija.
+  - 8 locales, 36 productos y 650 ventas de enero a marzo de 2025.
+  - Están limpios a propósito: el caso trata de preguntar bien.
+  - La historia que esconden: en marzo Osorno Centro vende un tercio de lo normal (remodelación) y la Kombucha artesanal nunca se vendió. Una prueba falla si un cambio en el generador borra esa historia.
+- **Tareas SQL:** no llevan valores escritos a mano; el resultado esperado se calcula desde la solución. Toda tarea con `ORDER BY` + `LIMIT` que tenga empates en el corte pide el desempate en su enunciado.
+- **e2e:** `e2e/tests/progreso.ts` completa los casos anteriores (misiones y entregable aprobado). Cada caso nuevo agrega ahí sus misiones.
