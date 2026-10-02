@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { aCsv, generarDespachosRapidos } from "./generadores/despachos-rapidos";
+import { generarClinicaCordilleraCentral } from "./generadores/clinica-cordillera-central";
 import { generarMinimarketsDelSur } from "./generadores/minimarkets-del-sur";
 import { generarTiendaOnlinePewen } from "./generadores/tienda-online-pewen";
 
@@ -12,6 +13,7 @@ const generadores: Record<string, () => Record<string, Record<string, string | n
   "despachos-rapidos": generarDespachosRapidos,
   "minimarkets-del-sur": generarMinimarketsDelSur,
   "tienda-online-pewen": generarTiendaOnlinePewen,
+  "clinica-cordillera-central": generarClinicaCordilleraCentral,
 };
 
 for (const [caso, generar] of Object.entries(generadores)) {
