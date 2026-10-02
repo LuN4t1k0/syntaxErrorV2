@@ -90,6 +90,42 @@ export const MISIONES: Record<string, [string, string][]> = {
     ["08-preguntas-de-gerencia", "ticket-por-ciudad"],
     ["08-preguntas-de-gerencia", "productos-de-50-unidades"],
   ],
+  "clases-de-python": [
+    ["01-variables-y-tipos", "variables-y-tipos"],
+    ["02-operadores", "operadores"],
+    ["03-print-fstrings", "print-fstrings"],
+    ["04-errores-comunes", "errores-comunes"],
+    ["05-listas", "listas"],
+    ["06-diccionarios", "diccionarios"],
+    ["07-tuplas", "tuplas"],
+    ["08-listas-anidadas", "listas-anidadas"],
+    ["09-if-else", "if-else"],
+    ["10-for", "for"],
+    ["11-while", "while"],
+    ["12-funciones", "funciones"],
+    ["13-series", "series"],
+    ["14-dataframe", "dataframe"],
+    ["15-explorar-dataframe", "explorar-dataframe"],
+    ["16-cargar-csv-excel", "cargar-csv-excel"],
+    ["17-seleccionar-columnas", "seleccionar-columnas"],
+    ["18-loc-iloc", "loc-iloc"],
+    ["19-filtros-booleanos", "filtros-booleanos"],
+    ["20-crear-columnas", "crear-columnas"],
+    ["21-apply", "apply"],
+    ["22-limpieza-texto", "limpieza-texto"],
+    ["23-fechas", "fechas"],
+    ["24-ordenar", "ordenar"],
+    ["25-groupby", "groupby"],
+    ["26-agg", "agg"],
+    ["27-value-counts", "value-counts"],
+    ["28-merge", "merge"],
+    ["29-valores-nulos", "valores-nulos"],
+    ["30-duplicados", "duplicados"],
+    ["31-exportar-resultados", "exportar-resultados"],
+    ["32-visualizacion-datos", "visualizacion-datos"],
+    ["33-python-vs-excel-sql", "python-vs-excel-sql"],
+    ["34-proyecto-final-pandas", "proyecto-final-pandas"],
+  ],
   "tienda-online-pewen": [
     ["01-de-la-planilla-a-python", "totales-del-carrito"],
     ["01-de-la-planilla-a-python", "primera-tabla"],
@@ -140,7 +176,7 @@ export async function aprobar(page: Page, ip: string, caso: string, misiones: [s
 }
 
 // Las clases no tienen entregable: se completan al aprobar todas sus lecciones.
-export const CLASES = new Set(["clases-de-excel", "clases-de-sql"]);
+export const CLASES = new Set(["clases-de-excel", "clases-de-sql", "clases-de-python"]);
 
 // Completa un caso entero: todas sus misiones y, si es un caso, el entregable aprobado por administración.
 export async function completarCaso(page: Page, admin: Page, ip: string, email: string, caso: string) {

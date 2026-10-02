@@ -21,6 +21,8 @@ const RUTAS = [
   "/casos/clases-de-sql/01-select-basico",
   "/casos/minimarkets-del-sur",
   "/casos/minimarkets-del-sur/06-cruzar-tablas",
+  "/casos/clases-de-python",
+  "/casos/clases-de-python/02-operadores",
   "/casos/tienda-online-pewen",
   "/casos/tienda-online-pewen/03-filtrar-y-seleccionar",
   "/casos/clinica-cordillera-central",

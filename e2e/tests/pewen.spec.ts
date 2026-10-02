@@ -3,12 +3,12 @@ import { aprobar, completarCaso, entrarComoAdmin, registrarse } from "./progreso
 
 const CASO = "tienda-online-pewen";
 
-test("con los casos 0, 1 y 2 completos: filtra con pandas, entiende el error de paréntesis y ve las tablas", async ({ page, ip, nuevaPagina }) => {
+test("con los casos 0, 1 y 2 y sus clases completos: filtra con pandas, entiende el error de paréntesis y ve las tablas", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(300_000);
   const email = await registrarse(page, "Florencia Huenchumilla");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur"]) await completarCaso(page, admin, ip, email, caso);
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python"]) await completarCaso(page, admin, ip, email, caso);
 
   await aprobar(page, ip, CASO, [
     ["01-de-la-planilla-a-python", "totales-del-carrito"],

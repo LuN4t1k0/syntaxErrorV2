@@ -16,7 +16,7 @@ test("con los casos 0 a 4 completos: escribe la propuesta y lee un archivo públ
   const email = await registrarse(page, "Javiera Muñoz");
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "tienda-online-pewen", "clinica-cordillera-central"]) {
+  for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen", "clinica-cordillera-central"]) {
     await completarCaso(page, admin, ip, email, caso);
   }
 
