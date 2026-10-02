@@ -252,8 +252,8 @@ Todas las funciones de la v1 se portan y se adaptan a casos y misiones:
 
 ## 13. Deploy
 
-- **Railway**, en el mismo proyecto `syntaxError`. Los servicios `web` y `worker` de la v2 reemplazan a `cursos` y `worker` de la v1. Se mantienen Postgres y Redis.
-- La v2 usa una **base nueva (`syntaxerror_v2`) en la misma instancia Postgres**. La base v1 queda intacta como respaldo.
+- **Railway, en un proyecto nuevo** (decisión del 2026-10-02, que reemplaza la idea original de compartir el proyecto `syntaxError` de la v1). El proyecto tiene su propio Postgres (pgvector) y Redis, más los servicios `web` y `worker` de la v2.
+- La base de la v1 queda intacta como respaldo. `migrar-v1.ts` la lee por su conexión pública o desde un volcado.
 - **Imágenes Docker multi-stage:** Next.js con `output: "standalone"`, worker compilado a JS (sin `tsx` en runtime) y límites de memoria en Node y en Railway.
 - Las páginas de misiones se generan estáticas en el build. Pyodide, los datasets y los assets con hash se sirven con `Cache-Control: public, max-age=31536000, immutable`. Ningún asset pasa por `auth()` ni por la base.
 - La v1 queda apagada hasta el lanzamiento de la v2.
