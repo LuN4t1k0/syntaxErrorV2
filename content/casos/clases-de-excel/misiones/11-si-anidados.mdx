@@ -1,0 +1,31 @@
+---
+titulo: "SI anidados"
+tiempo: 12
+---
+
+<Concepto>
+Un SI anidado sirve cuando tienes más de dos respuestas posibles. No es solo si/no: ahora hay niveles.
+
+Piénsalo como clasificar loot: legendario, raro o común, pero con montos de venta.
+
+<Sintaxis lenguaje="planilla" codigo={"=SI(condicion1,resultado1,SI(condicion2,resultado2,resultado3))"} />
+
+**Concepto principal.** Un SI puede vivir dentro de otro SI. Primero preguntas por la condición más fuerte; si no se cumple, preguntas la siguiente. Aquí la regla es: mayor a 300000 es Alto; si no, mayor a 50000 es Medio; si no, Bajo.
+
+**Cómo pensarlo.** Ordena las preguntas de mayor a menor. Si Notebook ya es Alto, no necesitas seguir preguntando. Mouse no pasa 300000 ni 50000, cae en Bajo. Monitor no pasa 300000, pero si pasa 50000, entonces es Medio.
+
+**Uso en reportes.** Sirve para segmentar clientes, productos, riesgos, prioridades o tickets de soporte. Cuando un dashboard necesita colores tipo Alto/Medio/Bajo, casi siempre hay una lógica como esta debajo.
+</Concepto>
+
+<SheetTask
+  id="si-anidados"
+  enunciado={"Clasifica: >300000 Alto, >50000 Medio, si no Bajo."}
+  grilla={[["producto","monto","categoria"],["Notebook",450000,null],["Mouse",12000,null],["Monitor",180000,null]]}
+  celdas={[{"celda":"C2","valor":"Alto"},{"celda":"C3","valor":"Bajo"},{"celda":"C4","valor":"Medio"}]}
+  solucion={{"C2":"=SI(B2>300000;\"Alto\";SI(B2>50000;\"Medio\";\"Bajo\"))","C3":"=SI(B3>300000;\"Alto\";SI(B3>50000;\"Medio\";\"Bajo\"))","C4":"=SI(B4>300000;\"Alto\";SI(B4>50000;\"Medio\";\"Bajo\"))"}}
+  pistas={["Pregunta primero por el nivel más alto; en el caso «si no», pon otro SI.", "El último SI ya no necesita preguntar nada más: lo que queda es Bajo."]}
+/>
+
+<Debrief>
+Notebook es Alto, Mouse Bajo y Monitor Medio.
+</Debrief>

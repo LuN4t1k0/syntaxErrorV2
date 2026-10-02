@@ -1,0 +1,31 @@
+---
+titulo: "Orden de las operaciones"
+tiempo: 12
+---
+
+<Concepto>
+Excel sigue reglas matemáticas. Si mezclas multiplicaciones, restas y paréntesis, el orden importa.
+
+Esta clase sirve para descuentos: primero calculas qué porcentaje queda por pagar y después lo multiplicas por el precio.
+
+<Sintaxis lenguaje="planilla" codigo={"=precio*(1-descuento)"} />
+
+**Concepto principal.** Los paréntesis son como decirle a Excel: resuelve esta parte primero. Sin paréntesis, una fórmula puede hacer algo distinto a lo que tenías en la cabeza. Para un descuento de 10%, no multiplicas por 0.1; multiplicas por 1-0.1, porque quieres quedarte con el 90% del precio.
+
+**Cómo pensarlo.** Notebook cuesta 450000 y tiene descuento 0.1. Primero haces 1-0.1 = 0.9. Luego 450000*0.9 = 405000. Es como aplicar un cupón gamer: no guardas el descuento, guardas el precio final que pagara la persona.
+
+**Uso en reportes.** Se usa para precios finales, impuestos, comisiones, márgenes y cualquier cálculo donde una parte modifica a otra. Los paréntesis evitan errores silenciosos, que son los peores: la planilla no grita, solo te da un número malo con cara seria.
+</Concepto>
+
+<SheetTask
+  id="orden-de-operaciones"
+  enunciado={"Completa D2 aplicando el descuento como precio * (1 - descuento)."}
+  grilla={[["producto","precio","descuento","precio_final"],["Notebook",450000,0.1,null],["Mouse",12000,0.05,null]]}
+  celdas={[{"celda":"D2","valor":405000}]}
+  solucion={{"D2":"=B2*(1-C2)"}}
+  pistas={["Primero calcula qué parte del precio queda por pagar: 1 menos el descuento.", "Ese cálculo tiene que ir entre paréntesis para que Excel lo resuelva antes de multiplicar por el precio."]}
+/>
+
+<Debrief>
+D2 = B2*(1-C2) = 405000.
+</Debrief>

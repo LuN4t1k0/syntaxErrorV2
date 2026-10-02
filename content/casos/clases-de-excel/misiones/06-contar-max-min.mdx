@@ -1,0 +1,31 @@
+---
+titulo: "CONTAR, MAX y MIN"
+tiempo: 12
+---
+
+<Concepto>
+CONTAR, MAX y MIN son el trío de exploración rápida: cuántos datos tengo, cuál es el más grande y cuál es el más chico.
+
+Antes de analizar una tabla enorme, estas funciones son como mirar el minimapa de un videojuego.
+
+<Sintaxis lenguaje="planilla" codigo={"=CONTAR(rango)"} />
+
+**Concepto principal.** CONTAR cuenta celdas con números. MAX encuentra el número mayor. MIN encuentra el número menor. Con una sola columna de ventas puedes saber cantidad de productos, mejor venta y venta más baja.
+
+**Cómo pensarlo.** D2 pregunta cuántos valores hay en B2:B5. D3 pregunta quién ganó la carrera. D4 pregunta quién quedó último. No estás cambiando los datos, estás creando un mini resumen al lado de la tabla.
+
+**Uso en reportes.** Sirven para detectar extremos: producto estrella, venta más baja, cantidad de registros cargados. Son funciones simples, pero ayudan mucho a revisar si una tabla tiene sentido antes de sacar conclusiones.
+</Concepto>
+
+<SheetTask
+  id="contar-max-min"
+  enunciado={"Completa D2 con CONTAR, D3 con MAX y D4 con MIN sobre B2:B5."}
+  grilla={[["producto","total_vendido","resumen","valor"],["Notebook",1350000,"Cantidad de productos",null],["Mouse",120000,"Venta maxima",null],["Teclado",125000,"Venta minima",null],["Monitor",360000,null,null]]}
+  celdas={[{"celda":"D2","valor":4},{"celda":"D3","valor":1350000},{"celda":"D4","valor":120000}]}
+  solucion={{"D2":"=CONTAR(B2:B5)","D3":"=MAX(B2:B5)","D4":"=MIN(B2:B5)"}}
+  pistas={["Las tres funciones usan el mismo rango: la columna de ventas.", "Cada celda lleva su función: la cantidad, el mayor y el menor."]}
+/>
+
+<Debrief>
+D2 = 4, D3 = 1350000 y D4 = 120000.
+</Debrief>

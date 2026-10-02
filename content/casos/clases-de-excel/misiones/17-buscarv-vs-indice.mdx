@@ -1,0 +1,31 @@
+---
+titulo: "BUSCARV frente a INDICE+COINCIDIR"
+tiempo: 16
+---
+
+<Concepto>
+BUSCARV busca hacia la derecha. Si el dato que quieres está a la izquierda, se complica.
+
+INDICE + COINCIDIR no se asusta: puede buscar por producto y traer el ID aunque el ID este antes en la tabla.
+
+<Sintaxis lenguaje="planilla" codigo={"=INDICE(rango_a_la_izquierda,COINCIDIR(valor,rango_busqueda,0))"} />
+
+**Concepto principal.** En esta tabla, producto está en C y el ID está en B. BUSCARV no es cómodo porque quiere buscar desde la primera columna del rango hacia la derecha. Con INDICE eliges directamente el rango resultado B2:B4 y con COINCIDIR buscas Teclado en C2:C4.
+
+**Cómo pensarlo.** COINCIDIR busca Teclado en la columna producto y devuelve su posición. INDICE usa esa posición para leer el ID. Es como decir: encuentra al personaje por nombre y luego dame su número de jugador.
+
+**Uso en reportes.** Sirve cuando no controlas el orden de las columnas o cuando las tablas cambian con frecuencia. También ayuda a construir planillas menos fragiles, porque no dependes tanto de contar columnas a mano.
+</Concepto>
+
+<SheetTask
+  id="buscarv-vs-indice"
+  enunciado={"Completa D5 para encontrar el id de Teclado usando INDICE y COINCIDIR."}
+  grilla={[["precio","id","producto","",""],[450000,101,"Notebook","",""],[12000,102,"Mouse","",""],[25000,103,"Teclado","",""],["Buscar producto:","Teclado","id:",null,""]]}
+  celdas={[{"celda":"D5","valor":103}]}
+  solucion={{"D5":"=INDICE(B2:B4;COINCIDIR(B5;C2:C4;0))"}}
+  pistas={["Aquí lo que se busca está a la derecha del dato que quieres traer: BUSCARV no sirve.", "COINCIDIR busca el producto en su columna, e INDICE trae el id desde la otra."]}
+/>
+
+<Debrief>
+D5 = INDICE(B2:B4,COINCIDIR(B5,C2:C4,0)) = 103.
+</Debrief>

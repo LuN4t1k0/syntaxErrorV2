@@ -1,0 +1,28 @@
+---
+titulo: "Errores comunes y tablas dinámicas"
+tiempo: 14
+---
+
+<Concepto>
+Los errores de Excel no son fracasos personales; son mensajes de diagnóstico. La planilla te está diciendo dónde le dolió.
+
+También veremos tablas dinámicas: una forma rápida de resumir muchos datos sin escribir fórmulas para todo.
+
+**#DIV/0!: dividir por cero.** Aparece cuando una fórmula intenta dividir por cero o por una celda vacía que Excel interpreta como cero. Ejemplo típico: calcular promedio por ventas cuando todavía no hay ventas. La solución es revisar el denominador antes de culpar al universo.
+
+<Sintaxis lenguaje="planilla" codigo={"=10/0"} />
+
+**#¿NOMBRE?: función mal escrita.** Aparece cuando Excel no reconoce algo en la fórmula: una función mal escrita, una función en otro idioma o un nombre que no existe. Si escribes SUM en una hoja configurada en español, puede fallar porque espera SUMA. Excel es literal, como robot de película vieja.
+
+<Sintaxis lenguaje="planilla" codigo={"=SUM(1,2)"} />
+
+**#REF!: referencia rota.** #REF! suele aparecer cuando una fórmula apuntaba a una celda o columna que fue eliminada. Es como tener un link a una carpeta que alguien borró. La fórmula sigue preguntando, pero la dirección ya no existe.
+
+**Qué es una tabla dinámica.** Una tabla dinámica resume datos arrastrando campos: categoría por filas, suma de monto por valores, región como filtro. No reemplaza las fórmulas, pero ayuda a explorar una tabla rápido, como cambiar la camara del mapa para ver patrones.
+</Concepto>
+
+<LecturaTask
+  id="errores-comunes"
+  pregunta={"Si una fórmula muestra #¿NOMBRE?, ¿qué dos cosas conviene revisar primero?"}
+  respuesta={"Revisar que el nombre de la función esté bien escrito y que esté en el idioma correcto."}
+/>

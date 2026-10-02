@@ -1,0 +1,31 @@
+---
+titulo: "Funciones de texto"
+tiempo: 12
+---
+
+<Concepto>
+Excel no solo calcula números: también limpia, corta y arma textos. Eso sirve mucho cuando llegan datos escritos de mil formas distintas.
+
+En esta clase vas a crear códigos cortos con nombre y apellido, como tags de usuario estilo gamer.
+
+<Sintaxis lenguaje="planilla" codigo={"=IZQUIERDA(texto,cantidad)"} />
+
+**Concepto principal.** IZQUIERDA(texto;3) toma las primeras 3 letras. MAYUSC convierte texto a mayúsculas. & une pedazos de texto. Juntas esas piezas para crear códigos como CAMROJ desde Camila Rojas.
+
+**Cómo pensarlo.** Para Camila Rojas, tomas CAM de Camila y ROJ de Rojas. Luego los unes y los dejas en mayúsculas. No estás inventando el código a mano; estás creando una regla que funciona para cualquier fila.
+
+**Uso en reportes.** Sirve para crear códigos, limpiar nombres, extraer partes de un RUT, armar etiquetas o estandarizar textos. Muchas bases de datos reales llegan desordenadas; las funciones de texto son la escoba y el trapero.
+</Concepto>
+
+<SheetTask
+  id="funciones-de-texto"
+  enunciado={"Completa C2 y C3 con las primeras 3 letras del nombre y apellido en mayúsculas."}
+  grilla={[["nombre","apellido","codigo"],["Camila","Rojas",null],["Diego","Soto",null]]}
+  celdas={[{"celda":"C2","valor":"CAMROJ"},{"celda":"C3","valor":"DIESOT"}]}
+  solucion={{"C2":"=MAYUSC(IZQUIERDA(A2;3)&IZQUIERDA(B2;3))","C3":"=MAYUSC(IZQUIERDA(A3;3)&IZQUIERDA(B3;3))"}}
+  pistas={["IZQUIERDA trae los primeros caracteres de un texto.", "El & une dos textos, y MAYUSC pasa el resultado a mayúsculas."]}
+/>
+
+<Debrief>
+C2 = CAMROJ y C3 = DIESOT.
+</Debrief>

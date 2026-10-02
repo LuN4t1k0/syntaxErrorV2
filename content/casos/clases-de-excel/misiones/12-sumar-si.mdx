@@ -1,0 +1,31 @@
+---
+titulo: "SUMAR.SI"
+tiempo: 12
+---
+
+<Concepto>
+SUMAR.SI suma solo las filas que cumplen una condición. Es como decir: suma el carrito, pero solo los productos de tecnologia.
+
+Cuando una tabla mezcla categorías, esta función evita sumar peras con teclados mecánicos.
+
+<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI(rango_condicion,criterio,rango_a_sumar)"} />
+
+**Concepto principal.** SUMAR.SI necesita tres piezas: dónde mirar la condición, qué criterio buscar y qué montos sumar. En esta tabla miras categorías en B2:B5, buscas tecnologia y sumas los montos de C2:C5.
+
+**Cómo pensarlo.** Excel revisa fila por fila: Notebook es tecnologia, suma 450000. Mouse es tecnologia, suma 12000. Escritorio y Silla no entran. El resultado es 462000 porque solo entran las filas que tienen la etiqueta correcta.
+
+**Uso en reportes.** Se usa para ventas por categoría, gastos por área, horas por proyecto o ingresos por canal. Es una de las funciones más útiles para responder: ¿cuánto corresponde solo a este grupo?
+</Concepto>
+
+<SheetTask
+  id="sumar-si"
+  enunciado={"Completa E2 sumando los montos de categoría tecnologia."}
+  grilla={[["producto","categoria","monto","",""],["Notebook","tecnologia",450000,"total_tecnologia",null],["Mouse","tecnologia",12000,"",""],["Escritorio","muebles",180000,"",""],["Silla","muebles",95000,"",""]]}
+  celdas={[{"celda":"E2","valor":462000}]}
+  solucion={{"E2":"=SUMAR.SI(B2:B5;\"tecnologia\";C2:C5)"}}
+  pistas={["SUMAR.SI recibe tres partes: dónde mirar la condición, qué buscar y qué sumar.", "El criterio es un texto: va entre comillas, escrito igual que en la tabla."]}
+/>
+
+<Debrief>
+E2 = SUMAR.SI(B2:B5,"tecnologia",C2:C5) = 462000.
+</Debrief>

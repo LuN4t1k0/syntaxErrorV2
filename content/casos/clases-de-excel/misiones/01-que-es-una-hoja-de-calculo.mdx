@@ -1,0 +1,31 @@
+---
+titulo: "Qué es una hoja de cálculo"
+tiempo: 10
+---
+
+<Concepto>
+Una hoja de cálculo es como un tablero de inventario para datos: cada cuadrito guarda una pieza de información.
+
+Si sabes leer filas, columnas y celdas, Excel deja de parecer una nave alienigena y empieza a parecer una libreta ordenada con superpoderes.
+
+**Filas, columnas y celdas.** Las columnas van con letras: A, B, C. Las filas van con números: 1, 2, 3. Cuando juntas ambos, aparece una dirección como B3. En esta tabla, Diego está en la fila 3 y el monto está en la columna B. Por eso el dato que falta vive en B3.
+
+**Seleccionar una celda.** Seleccionar una celda es decirle a Excel: trabaja exactamente aquí. Es como poner el cursor en el chat correcto antes de mandar el mensaje. Si escribes 310000 en B3, completas el monto de Diego. Si lo escribes en B2, le cambias la venta a Camila y armas caos de oficina.
+
+**Texto y números.** Los nombres como Camila o Diego son texto. Los montos como 250000 son números. Excel puede mostrar ambos, pero solo con los números puede calcular. Piensa en texto como etiquetas y números como piezas que Excel puede sumar, comparar o multiplicar.
+
+**Editar una celda.** Para corregir una celda, la seleccionas, escribes el nuevo valor y presionas Enter. Es el equivalente spreadsheet de editar un mensaje antes de enviarlo. En el desafío no necesitas fórmula todavía: solo ubicar la coordenada correcta y escribir el monto correcto.
+</Concepto>
+
+<SheetTask
+  id="que-es-una-hoja-de-calculo"
+  enunciado={"Completa B3 con el monto de venta de Diego: 310000."}
+  grilla={[["vendedor","monto"],["Camila",250000],["Diego",null],["Antonia",180000]]}
+  celdas={[{"celda":"B3","valor":310000}]}
+  solucion={{"B3":310000}}
+  pistas={["La columna monto es la B; busca en qué fila está Diego.", "La dirección de una celda es su letra de columna seguida de su número de fila."]}
+/>
+
+<Debrief>
+B3 es la fila de Diego y la columna monto; el valor esperado es 310000.
+</Debrief>

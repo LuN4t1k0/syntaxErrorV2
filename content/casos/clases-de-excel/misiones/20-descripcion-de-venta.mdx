@@ -1,0 +1,31 @@
+---
+titulo: "Armar una descripción de venta"
+tiempo: 12
+---
+
+<Concepto>
+A veces un reporte necesita frases legibles, no solo números. Excel puede armar textos mezclando columnas y cálculos.
+
+Aquí vamos a construir una descripción tipo boleta: producto, cantidad y total en una sola celda.
+
+<Sintaxis lenguaje="planilla" codigo={"=texto1&valor&texto2"} />
+
+**Concepto principal.** El simbolo & une textos y valores. Si quieres espacios o simbolos como x o $, los escribes entre comillas. También puedes meter cálculos dentro del texto, como B2*C2 para mostrar el total vendido.
+
+**Cómo pensarlo.** La celda debe decir Notebook x3 - $1350000. Eso sale de A2, luego texto fijo " x", luego C2, luego texto fijo " - $", luego B2*C2. Es como armar una frase con bloques LEGO: algunos vienen de celdas y otros los escribes tu.
+
+**Uso en reportes.** Sirve para etiquetas, glosas contables, descripciones de pedidos, códigos legibles o mensajes para copiar a otro sistema. Cuando una tabla debe hablar en humano, las fórmulas de texto hacen de traductor.
+</Concepto>
+
+<SheetTask
+  id="descripcion-de-venta"
+  enunciado={"Completa D2 con producto & \" x\" & cantidad & \" - $\" & (precio*cantidad)."}
+  grilla={[["producto","precio","cantidad","descripcion"],["Notebook",450000,3,null]]}
+  celdas={[{"celda":"D2","valor":"Notebook x3 - $1350000"}]}
+  solucion={{"D2":"=A2&\" x\"&C2&\" - $\"&(B2*C2)"}}
+  pistas={["El & une textos y celdas; los textos fijos van entre comillas, con sus espacios.", "El total es precio por cantidad, entre paréntesis para calcularlo antes de unirlo."]}
+/>
+
+<Debrief>
+D2 = A2&" x"&C2&" - $"&(B2*C2).
+</Debrief>

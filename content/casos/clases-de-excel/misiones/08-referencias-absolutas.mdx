@@ -1,0 +1,31 @@
+---
+titulo: "Referencias absolutas con $"
+tiempo: 12
+---
+
+<Concepto>
+A veces una fórmula debe moverse por varias filas, pero una celda debe quedarse quieta. Para eso sirve el signo $.
+
+Piensa en la tasa de IVA como un jefe final: todos los productos la miran, pero ella no se mueve.
+
+<Sintaxis lenguaje="planilla" codigo={"=B2*(1+$B$5)"} />
+
+**Concepto principal.** $B$5 significa: quédate pegado a la celda B5 aunque copie la fórmula a otra fila. Sin los $, al bajar la fórmula Excel intentaría mirar B6, B7 y así. Pero la tasa de IVA esta fija en B5.
+
+**Cómo pensarlo.** El precio cambia por producto: B2 para Notebook, B3 para Mouse. La tasa no cambia: siempre B5. La fórmula combina una parte movil y una parte anclada: precio de la fila * (1 + tasa fija).
+
+**Uso en reportes.** Se usa para IVA, dólar observado, comisiones, descuentos generales o metas que aplican a muchas filas. Cuando algo es una configuración global de la planilla, probablemente merece una referencia absoluta.
+</Concepto>
+
+<SheetTask
+  id="referencias-absolutas"
+  enunciado={"Completa C2 y C3 usando la tasa fija en B5 como referencia absoluta."}
+  grilla={[["producto","precio","precio_con_iva"],["Notebook",450000,null],["Mouse",12000,null],["","",""],["tasa_iva",0.19,""]]}
+  celdas={[{"celda":"C2","valor":535500},{"celda":"C3","valor":14280}]}
+  solucion={{"C2":"=B2*(1+$B$5)","C3":"=B3*(1+$B$5)"}}
+  pistas={["El precio cambia en cada fila, pero la tasa está siempre en la misma celda.", "Para que una referencia no se mueva al copiar la fórmula, pon $ antes de la letra y antes del número."]}
+/>
+
+<Debrief>
+C2 = B2*(1+$B$5) y C3 = B3*(1+$B$5).
+</Debrief>

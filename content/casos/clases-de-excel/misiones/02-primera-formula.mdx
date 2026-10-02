@@ -1,0 +1,31 @@
+---
+titulo: "Escribir tu primera fórmula"
+tiempo: 12
+---
+
+<Concepto>
+Una fórmula es una instrucción para que Excel calcule por ti. Si una calculadora normal es una linterna, una fórmula es poner sensores automáticos en la planilla.
+
+En esta clase vas a calcular el total de una venta: precio por cantidad. Es lo mismo que preguntarte cuánto cuesta comprar 3 notebooks.
+
+<Sintaxis lenguaje="planilla" codigo={"=celda1*celda2"} />
+
+**Concepto principal.** Toda fórmula empieza con =. Ese signo le avisa a Excel que no estás escribiendo texto, estás dando una orden. Para multiplicar se usa *. Entonces precio por cantidad se escribe como B2*C2 si el precio está en B2 y la cantidad en C2.
+
+**Cómo pensarlo.** Lee la fila como una boleta: Notebook cuesta 450000 y se vendieron 3. Total = precio * cantidad. No escribas 1350000 a mano si puedes evitarlo. La gracia es que si cambia el precio o la cantidad, la fórmula recalcula sin drama.
+
+**Uso en reportes.** Esto aparece en ventas, inventario, presupuestos y cualquier tabla donde una fila tenga partes que juntas forman un resultado. Es la fórmula base para decir: cuánto vendimos realmente por esta línea?
+</Concepto>
+
+<SheetTask
+  id="primera-formula"
+  enunciado={"Completa D2 con una fórmula que calcule precio por cantidad para el Notebook."}
+  grilla={[["producto","precio","cantidad","total"],["Notebook",450000,3,null],["Mouse",12000,10,null]]}
+  celdas={[{"celda":"D2","valor":1350000}]}
+  solucion={{"D2":"=B2*C2"}}
+  pistas={["Toda fórmula empieza con =.", "En vez de escribir los números, usa las celdas donde están el precio y la cantidad, unidas por *."]}
+/>
+
+<Debrief>
+D2 debe ser =B2*C2, que da 1350000.
+</Debrief>

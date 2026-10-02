@@ -1,0 +1,33 @@
+---
+titulo: "Y, O y condiciones combinadas"
+tiempo: 12
+---
+
+<Concepto>
+A veces no basta con preguntar una sola cosa. En una planilla real necesitas decidir solo cuando se cumplen dos reglas al mismo tiempo.
+
+Piénsalo como comprar un notebook: no sirve que esté barato si no hay stock, y no sirve que haya stock si se sale del presupuesto. Con SI + Y puedes pedirle a Excel que revise ambas cosas antes de responder.
+
+<Sintaxis lenguaje="planilla" codigo={"=SI(Y(condicion1;condicion2);valor_si_verdadero;valor_si_falso)"} />
+
+**Concepto principal.** Y significa: todas las condiciones deben ser verdaderas. Si una falla, el resultado completo falla. La estructura es SI(Y(condicion1; condicion2); que_muestro_si_ambas_se_cumplen; que_muestro_si_no). Es como un filtro con dos candados: solo pasa si abre los dos.
+
+<Sintaxis lenguaje="planilla" codigo={"=SI(Y(stock>0;precio<450000);\"Comprar\";\"Esperar\")"} />
+
+**Cómo pensarlo.** Lee cada fila como una mini historia. Notebook tiene stock 3 y precio 450000: hay pocas unidades y además es caro, así que conviene revisar antes de prometerlo. Mouse tiene mucho stock, pero no es caro. Teclado tiene poco stock, pero tampoco es caro. Como el desafío pide poco stock Y precio alto, solo Notebook prende la alerta.
+
+**Uso en reportes.** Esto se usa para marcar casos que necesitan acción: productos críticos, pedidos atrasados, clientes VIP con deuda, o compras que solo apruebas si cumplen presupuesto y disponibilidad. La columna alerta no esta calculando ventas; esta ayudando a decidir donde mirar primero.
+</Concepto>
+
+<SheetTask
+  id="y-o-condiciones"
+  enunciado={"Marca Revisar solo si stock < 5 Y precio > 100000."}
+  grilla={[["producto","stock","precio","alerta"],["Notebook",3,450000,null],["Mouse",20,12000,null],["Teclado",2,25000,null]]}
+  celdas={[{"celda":"D2","valor":"Revisar"},{"celda":"D3","valor":"OK"},{"celda":"D4","valor":"OK"}]}
+  solucion={{"D2":"=SI(Y(B2<5;C2>100000);\"Revisar\";\"OK\")","D3":"=SI(Y(B3<5;C3>100000);\"Revisar\";\"OK\")","D4":"=SI(Y(B4<5;C4>100000);\"Revisar\";\"OK\")"}}
+  pistas={["Y devuelve verdadero solo si todas sus condiciones se cumplen.", "Pon el Y como condición dentro de un SI, y los textos entre comillas."]}
+/>
+
+<Debrief>
+Solo Notebook cumple ambas condiciones: stock 3 es menor a 5 y precio 450000 es mayor a 100000. Mouse tiene stock suficiente, y Teclado tiene poco stock pero no supera el precio crítico.
+</Debrief>

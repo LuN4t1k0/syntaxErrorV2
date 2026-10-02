@@ -1,0 +1,31 @@
+---
+titulo: "CONTAR.SI"
+tiempo: 12
+---
+
+<Concepto>
+CONTAR.SI cuenta cuántas filas cumplen una condición. No suma dinero: cuenta casos.
+
+Es perfecto cuando quieres saber cuántos productos, clientes o tickets pertenecen a un grupo.
+
+<Sintaxis lenguaje="planilla" codigo={"=CONTAR.SI(rango,criterio)"} />
+
+**Concepto principal.** La estructura es CONTAR.SI(rango; criterio). El rango es donde Excel mira, y el criterio es lo que debe encontrar. Aquí quieres contar cuántas veces aparece muebles en la columna categoría.
+
+**Cómo pensarlo.** Notebook y Mouse son tecnologia, no cuentan. Escritorio y Silla son muebles, sí cuentan. El resultado no depende del monto; solo importa la categoría.
+
+**Uso en reportes.** Sirve para contar productos por categoría, alumnos aprobados, reclamos abiertos o pedidos atrasados. Si SUMAR.SI responde cuánto, CONTAR.SI responde cuántos.
+</Concepto>
+
+<SheetTask
+  id="contar-si"
+  enunciado={"Completa E2 contando productos de categoría muebles."}
+  grilla={[["producto","categoria","monto","",""],["Notebook","tecnologia",450000,"cantidad_muebles",null],["Mouse","tecnologia",12000,"",""],["Escritorio","muebles",180000,"",""],["Silla","muebles",95000,"",""]]}
+  celdas={[{"celda":"E2","valor":2}]}
+  solucion={{"E2":"=CONTAR.SI(B2:B5;\"muebles\")"}}
+  pistas={["CONTAR.SI recibe dos partes: dónde mirar y qué contar.", "El criterio es un texto: va entre comillas, escrito igual que en la tabla."]}
+/>
+
+<Debrief>
+E2 = CONTAR.SI(B2:B5,"muebles") = 2.
+</Debrief>

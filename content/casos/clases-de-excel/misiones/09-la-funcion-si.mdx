@@ -1,0 +1,31 @@
+---
+titulo: "La función SI"
+tiempo: 12
+---
+
+<Concepto>
+SI sirve para que Excel tome una decisión simple: si pasa algo, muestra una cosa; si no pasa, muestra otra.
+
+Es el semáforo de las planillas. Verde si todo bien, rojo si hay que mirar con lupa.
+
+<Sintaxis lenguaje="planilla" codigo={"=SI(condicion,valor_si_verdadero,valor_si_falso)"} />
+
+**Concepto principal.** La estructura es SI(condición; valor_si_verdadero; valor_si_falso). Primero haces una pregunta, después defines las dos respuestas posibles. Ejemplo humano: si queda stock menor a 5, alerta; si no, todo tranquilo.
+
+**Cómo pensarlo.** Notebook tiene stock 8, así que no es urgente. Mouse tiene stock 2, así que necesita alerta. Teclado tiene stock 15, todo ok. Cada fila responde la misma pregunta: el stock de este producto es menor a 5?
+
+**Uso en reportes.** SI se usa para estados, alertas, aprobaciones, clasificaciones y mensajes automáticos. Es mejor que una persona lea Stock bajo a que tenga que interpretar números a las 6 de la tarde con tres cafes encima.
+</Concepto>
+
+<SheetTask
+  id="la-funcion-si"
+  enunciado={"Completa C2:C4: si el stock es menor a 5, Stock bajo; si no, Stock ok."}
+  grilla={[["producto","stock","estado"],["Notebook",8,null],["Mouse",2,null],["Teclado",15,null]]}
+  celdas={[{"celda":"C2","valor":"Stock ok"},{"celda":"C3","valor":"Stock bajo"},{"celda":"C4","valor":"Stock ok"}]}
+  solucion={{"C2":"=SI(B2<5;\"Stock bajo\";\"Stock ok\")","C3":"=SI(B3<5;\"Stock bajo\";\"Stock ok\")","C4":"=SI(B4<5;\"Stock bajo\";\"Stock ok\")"}}
+  pistas={["SI recibe tres partes: la condición, lo que muestra si se cumple y lo que muestra si no.", "Los textos van entre comillas, escritos igual que en el enunciado."]}
+/>
+
+<Debrief>
+Solo Mouse tiene stock menor a 5.
+</Debrief>

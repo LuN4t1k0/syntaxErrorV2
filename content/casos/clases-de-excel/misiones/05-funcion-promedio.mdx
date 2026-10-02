@@ -1,0 +1,31 @@
+---
+titulo: "La función PROMEDIO"
+tiempo: 12
+---
+
+<Concepto>
+PROMEDIO responde una pregunta distinta a SUMA: no cuánto vendimos en total, sino cuál fue el valor típico.
+
+Sirve para no dejar que un número gigante o muy chico te haga perder la vista general.
+
+<Sintaxis lenguaje="planilla" codigo={"=PROMEDIO(rango)"} />
+
+**Concepto principal.** PROMEDIO toma varios números, los suma y divide por la cantidad de datos. Excel hace esa parte aburrida por ti. PROMEDIO(B2:B5) calcula el promedio de las ventas de los cuatro productos.
+
+**Cómo pensarlo.** Si cada producto fuera un jugador del equipo, PROMEDIO te dice el rendimiento medio del equipo, no el golazo individual. Notebook vende mucho más que Mouse, pero el promedio te da una referencia para comparar productos.
+
+**Uso en reportes.** Se usa para ticket promedio, ventas promedio por producto, tiempos promedio de respuesta o notas promedio. Es una buena pregunta cuando quieres saber si algo está sobre o bajo lo normal.
+</Concepto>
+
+<SheetTask
+  id="funcion-promedio"
+  enunciado={"Completa B6 con el promedio de ventas usando PROMEDIO."}
+  grilla={[["producto","total_vendido"],["Notebook",1350000],["Mouse",120000],["Teclado",125000],["Monitor",360000],["Promedio",null]]}
+  celdas={[{"celda":"B6","valor":488750}]}
+  solucion={{"B6":"=PROMEDIO(B2:B5)"}}
+  pistas={["PROMEDIO se escribe igual que SUMA: el nombre de la función y el rango entre paréntesis.", "Usa el mismo rango de ventas de la lección anterior."]}
+/>
+
+<Debrief>
+B6 = PROMEDIO(B2:B5) = 488750.
+</Debrief>

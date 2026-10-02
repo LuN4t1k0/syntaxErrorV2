@@ -1,0 +1,28 @@
+slug: clases-de-excel
+tipo: clases
+titulo: "Clases de Excel: de la primera fórmula a BUSCARV"
+dataset: "planillas pequeñas de ventas, productos e inventario, una por lección"
+misiones:
+  - 01-que-es-una-hoja-de-calculo
+  - 02-primera-formula
+  - 03-orden-de-operaciones
+  - 04-funcion-suma
+  - 05-funcion-promedio
+  - 06-contar-max-min
+  - 07-referencias-relativas
+  - 08-referencias-absolutas
+  - 09-la-funcion-si
+  - 10-y-o-condiciones
+  - 11-si-anidados
+  - 12-sumar-si
+  - 13-contar-si
+  - 14-funciones-conjunto
+  - 15-buscarv
+  - 16-indice-coincidir
+  - 17-buscarv-vs-indice
+  - 18-funciones-de-texto
+  - 19-fechas
+  - 20-descripcion-de-venta
+  - 21-errores-comunes
+  - 22-excel-vs-base-de-datos
+  - 23-proyecto-final-reporte-ventas

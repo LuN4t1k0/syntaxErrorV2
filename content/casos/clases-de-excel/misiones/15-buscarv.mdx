@@ -1,0 +1,31 @@
+---
+titulo: "BUSCARV"
+tiempo: 16
+---
+
+<Concepto>
+BUSCARV sirve para buscar un dato por una llave, como cuando escribes un ID y esperas que aparezca el producto correcto.
+
+Es el equivalente planilla de preguntarle al inventario: oye, quien tiene el código 102?
+
+<Sintaxis lenguaje="planilla" codigo={"=BUSCARV(valor_buscado,rango,columna,0)"} />
+
+**Concepto principal.** BUSCARV busca el valor en la primera columna del rango y devuelve un dato desde otra columna de esa misma fila. El último 0 significa coincidencia exacta. Para códigos e IDs casi siempre quieres exactitud, no aproximaciones creativas.
+
+**Cómo pensarlo.** B5 contiene el id 102. Excel lo busca en A2:A4, encuentra la fila del Mouse y devuelve la columna 2 del rango A2:C4. Si el rango es A2:C4, la columna 1 es id, la columna 2 es producto y la columna 3 es precio.
+
+**Uso en reportes.** Se usa para traer nombres, precios, categorías o datos maestros desde una tabla de referencia. Es útil cuando quieres que una persona escriba solo el ID y la planilla complete el resto, como autocompletar pero con celdas.
+</Concepto>
+
+<SheetTask
+  id="buscarv"
+  enunciado={"Completa D5 buscando el id de B5 en A2:C4 y devolviendo la columna producto."}
+  grilla={[["id","producto","precio","",""],[101,"Notebook",450000,"",""],[102,"Mouse",12000,"",""],[103,"Teclado",25000,"",""],["Buscar id:",102,"Producto:",null,""]]}
+  celdas={[{"celda":"D5","valor":"Mouse"}]}
+  solucion={{"D5":"=BUSCARV(B5;A2:C4;2;0)"}}
+  pistas={["BUSCARV recibe cuatro partes: qué buscar, dónde, qué columna devolver y si la coincidencia es exacta.", "La columna se cuenta desde la primera columna del rango, no desde la A."]}
+/>
+
+<Debrief>
+D5 = BUSCARV(B5,A2:C4,2,0) = Mouse.
+</Debrief>

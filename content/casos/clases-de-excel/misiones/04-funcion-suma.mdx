@@ -1,0 +1,31 @@
+---
+titulo: "La función SUMA"
+tiempo: 12
+---
+
+<Concepto>
+SUMA junta varios números sin obligarte a escribirlos uno por uno. Es el modo turbo para responder cuánto hay en total.
+
+La vas a usar para sumar ventas de varios productos y obtener el total general.
+
+<Sintaxis lenguaje="planilla" codigo={"=SUMA(rango)"} />
+
+**Concepto principal.** Un rango es un grupo de celdas. B2:B5 significa desde B2 hasta B5, todo seguido en la misma columna. SUMA(B2:B5) le dice a Excel: toma todas esas ventas y juntalas en un solo número.
+
+**Cómo pensarlo.** Imagina que cada producto dejó monedas sobre la mesa. SUMA es barrer todas esas monedas y contar el botín final. En vez de escribir B2+B3+B4+B5, usas el rango y dejas la fórmula limpia.
+
+**Uso en reportes.** Toda tabla de ventas, gastos, horas o inventario termina preguntando por un total. SUMA suele ser la primera función que convierte una lista de datos en una respuesta de negocio.
+</Concepto>
+
+<SheetTask
+  id="funcion-suma"
+  enunciado={"Completa B6 con la suma total de ventas usando SUMA."}
+  grilla={[["producto","total_vendido"],["Notebook",1350000],["Mouse",120000],["Teclado",125000],["Monitor",360000],["Total",null]]}
+  celdas={[{"celda":"B6","valor":1955000}]}
+  solucion={{"B6":"=SUMA(B2:B5)"}}
+  pistas={["SUMA recibe un rango: la primera y la última celda, separadas por dos puntos.", "El rango va desde la primera venta hasta la última, sin incluir la celda donde escribes."]}
+/>
+
+<Debrief>
+B6 = SUMA(B2:B5) = 1955000.
+</Debrief>

@@ -1,0 +1,31 @@
+---
+titulo: "SUMAR.SI.CONJUNTO y CONTAR.SI.CONJUNTO"
+tiempo: 16
+---
+
+<Concepto>
+Las funciones CONJUNTO sirven cuando una sola condición ya no alcanza. Puedes pedir categoría y región al mismo tiempo.
+
+Es como buscar una misión específica: no cualquier tecnologia, sino tecnologia del norte; no cualquier mueble, sino muebles del norte.
+
+<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI.CONJUNTO(rango_suma,rango_cond1,criterio1,rango_cond2,criterio2)"} />
+
+**Concepto principal.** SUMAR.SI.CONJUNTO suma montos que cumplen varias reglas. CONTAR.SI.CONJUNTO cuenta filas que cumplen varias reglas. Cada condición viene como pareja: rango donde mirar y criterio que debe aparecer.
+
+**Cómo pensarlo.** Para tecnologia norte, solo entra Notebook: categoría tecnologia y región norte. Mouse falla porque es sur. Para muebles norte, entran Escritorio y Silla. Por eso el conteo da 2.
+
+**Uso en reportes.** Se usa para reportes por categoría + región, vendedor + mes, producto + canal, o cualquier filtro doble. Es el puente entre una tabla simple y un análisis más cercano a un dashboard.
+</Concepto>
+
+<SheetTask
+  id="funciones-conjunto"
+  enunciado={"Completa E2 con SUMAR.SI.CONJUNTO y F2 con CONTAR.SI.CONJUNTO."}
+  grilla={[["producto","categoria","region","monto","total_norte_tecnologia","cantidad_muebles_norte"],["Notebook","tecnologia","norte",450000,null,null],["Mouse","tecnologia","sur",12000,"",""],["Escritorio","muebles","norte",180000,"",""],["Silla","muebles","norte",95000,"",""]]}
+  celdas={[{"celda":"E2","valor":450000},{"celda":"F2","valor":2}]}
+  solucion={{"E2":"=SUMAR.SI.CONJUNTO(D2:D5;B2:B5;\"tecnologia\";C2:C5;\"norte\")","F2":"=CONTAR.SI.CONJUNTO(B2:B5;\"muebles\";C2:C5;\"norte\")"}}
+  pistas={["En SUMAR.SI.CONJUNTO el rango que se suma va primero, y después cada pareja de rango y criterio.", "CONTAR.SI.CONJUNTO no tiene rango para sumar: solo parejas de rango y criterio."]}
+/>
+
+<Debrief>
+E2 = 450000 y F2 = 2.
+</Debrief>

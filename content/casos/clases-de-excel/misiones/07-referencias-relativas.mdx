@@ -1,0 +1,31 @@
+---
+titulo: "Referencias relativas"
+tiempo: 12
+---
+
+<Concepto>
+Una referencia relativa cambia cuando copias la fórmula a otra fila. Excel entiende que quieres repetir la misma lógica, no mirar siempre las mismas celdas.
+
+Es como una receta: en cada fila toma el precio y la cantidad de esa misma fila.
+
+<Sintaxis lenguaje="planilla" codigo={"=B2*C2"} />
+
+**Concepto principal.** Si en D2 escribes =B2*C2, Excel mira el precio y la cantidad del Notebook. Cuando haces la misma idea en D3, la referencia baja a B3*C3. No es magia negra, es Excel siguiendo la posición.
+
+**Cómo pensarlo.** Cada fila es independiente: Notebook tiene su precio y cantidad; Mouse también. La fórmula debe comportarse como un clon educado: misma estructura, celdas de la fila correspondiente.
+
+**Uso en reportes.** Las referencias relativas son clave cuando tienes 10, 100 o 10000 filas y no quieres escribir una fórmula distinta para cada una. Son la base de casi cualquier tabla con totales por fila.
+</Concepto>
+
+<SheetTask
+  id="referencias-relativas"
+  enunciado={"Completa D2 y D3 con el total de cada fila."}
+  grilla={[["producto","precio","cantidad","total"],["Notebook",450000,3,null],["Mouse",12000,10,null]]}
+  celdas={[{"celda":"D2","valor":1350000},{"celda":"D3","valor":120000}]}
+  solucion={{"D2":"=B2*C2","D3":"=B3*C3"}}
+  pistas={["La fórmula de la fila 3 es la misma de la fila 2, con el número de fila cambiado.", "Si escribes la de D2 y la rellenas hacia abajo, Excel ajusta las filas solo."]}
+/>
+
+<Debrief>
+D2 = B2*C2 y D3 = B3*C3.
+</Debrief>

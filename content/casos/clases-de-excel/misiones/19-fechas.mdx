@@ -1,0 +1,31 @@
+---
+titulo: "Fechas en formato DD/MM/AAAA"
+tiempo: 12
+---
+
+<Concepto>
+Las fechas en Excel son calculables. Puedes restarlas para saber días entre eventos o extraer el año para agrupar reportes.
+
+Esto sirve para cosas reales: cuánto demoró un pago, en qué año se vendió algo, o si un plazo ya se pasó.
+
+<Sintaxis lenguaje="planilla" codigo={"=fecha2-fecha1"} />
+
+**Concepto principal.** Si restas fecha_pago - fecha_venta, Excel devuelve la cantidad de días entre ambas. AÑO(fecha) extrae solo el año, útil cuando quieres agrupar ventas sin mirar día y mes.
+
+**Cómo pensarlo.** Notebook se vendió el 15/01/2026 y se pagó el 30/01/2026. Entre esas fechas pasaron 15 días. El año de venta es 2026, que puede servir para filtros, gráficos o comparaciones anuales.
+
+**Uso en reportes.** Se usa para plazos de pago, antigüedad de clientes, vencimientos, seguimiento de tickets y reportes por año. Las fechas son donde muchas planillas se vuelven peligrosas; tratarlas como datos calculables baja el riesgo.
+</Concepto>
+
+<SheetTask
+  id="fechas"
+  enunciado={"Completa D2 con los días entre fechas y E2 con el año de venta."}
+  grilla={[["producto","fecha_venta","fecha_pago","dias_para_pagar","anio_venta"],["Notebook","15/01/2026","30/01/2026",null,null]]}
+  celdas={[{"celda":"D2","valor":15},{"celda":"E2","valor":2026}]}
+  solucion={{"D2":"=C2-B2","E2":"=AÑO(B2)"}}
+  pistas={["Restar dos fechas da los días que hay entre ellas.", "Para el año hay una función con ñ en su nombre."]}
+/>
+
+<Debrief>
+D2 = C2-B2 = 15 y E2 = AÑO(B2) = 2026.
+</Debrief>

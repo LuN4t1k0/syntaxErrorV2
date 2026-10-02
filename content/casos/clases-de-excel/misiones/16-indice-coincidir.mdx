@@ -1,0 +1,31 @@
+---
+titulo: "INDICE y COINCIDIR"
+tiempo: 18
+---
+
+<Concepto>
+INDICE + COINCIDIR es una forma más flexible de buscar datos. Parece más larga, pero te da más control.
+
+COINCIDIR encuentra la posición; INDICE trae el dato que está en esa posición. Uno es el GPS, el otro abre la caja.
+
+<Sintaxis lenguaje="planilla" codigo={"=INDICE(rango_resultado,COINCIDIR(valor_buscado,rango_busqueda,0))"} />
+
+**Concepto principal.** COINCIDIR("Teclado";B2:B4;0) responde en qué posición está Teclado dentro de la lista de productos. INDICE(C2:C4;posición) usa esa posición para traer el precio desde la columna de precios.
+
+**Cómo pensarlo.** Primero preguntas: ¿dónde está Teclado? La respuesta es posición 3. Después preguntas: ¿qué hay en la posición 3 de los precios? 25000. Separar buscar posición y traer resultado hace que la fórmula sea más fácil de depurar.
+
+**Uso en reportes.** Se usa cuando BUSCARV queda corto, especialmente si necesitas buscar por una columna y traer datos de otra sin depender tanto del orden. Es una herramienta de búsqueda más pro, como cambiar de bicicleta con rueditas a nave con coordenadas.
+</Concepto>
+
+<SheetTask
+  id="indice-coincidir"
+  enunciado={"Completa D5 con INDICE y COINCIDIR para traer el precio de Teclado."}
+  grilla={[["id","producto","precio","",""],[101,"Notebook",450000,"",""],[102,"Mouse",12000,"",""],[103,"Teclado",25000,"",""],["Buscar producto:","Teclado","Precio:",null,""]]}
+  celdas={[{"celda":"D5","valor":25000}]}
+  solucion={{"D5":"=INDICE(C2:C4;COINCIDIR(B5;B2:B4;0))"}}
+  pistas={["COINCIDIR te dice en qué posición de una lista está un valor.", "INDICE usa esa posición para traer el dato de otra columna."]}
+/>
+
+<Debrief>
+D5 = INDICE(C2:C4,COINCIDIR(B5,B2:B4,0)) = 25000.
+</Debrief>
