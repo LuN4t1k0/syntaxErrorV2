@@ -1,4 +1,4 @@
-import { GraduationCap, LayoutDashboard, Mail, Search, Shield, UserRound } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Mail, Search, Shield, SquareTerminal, UserRound } from "lucide-react";
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
@@ -57,6 +57,11 @@ export async function SiteHeader() {
           </nav>
         ) : null}
 
+        {/* El mensaje del creador de la plataforma, con el mismo enlace que tenía la v1. */}
+        <Link className="nav-link" href="/lun4t1k0" aria-label="El origen">
+          <SquareTerminal size={16} />
+          <span className="hidden font-mono lg:inline">{"> sudo ./run_bio"}</span>
+        </Link>
         <Link className="nav-link" href="/buscar" aria-label="Buscar">
           <Search size={16} />
           <span className="hidden sm:inline">Buscar</span>

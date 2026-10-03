@@ -8,6 +8,8 @@ const RUTAS = [
   "/rutas",
   "/buscar",
   "/reportar",
+  "/lun4t1k0",
+  "/nosotros",
   "/casos/herramientas-del-oficio",
   "/casos/herramientas-del-oficio/01-tu-primer-repositorio",
   "/casos/herramientas-del-oficio/02-escribe-un-readme",
