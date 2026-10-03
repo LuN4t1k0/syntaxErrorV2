@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { auth } from "@/lib/auth";
 
 const STEPS = [
   {
@@ -18,7 +19,10 @@ const STEPS = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await auth();
+  const estaAutenticado = Boolean(session?.user);
+
   return (
     <main>
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
@@ -31,12 +35,20 @@ export default function HomePage() {
           herramientas reales desde tu navegador y armas un portafolio que puedes mostrar.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link href="/registro" className="btn btn-primary">
-            Crear cuenta gratis
-          </Link>
-          <Link href="/login" className="btn btn-secondary">
-            Ya tengo cuenta
-          </Link>
+          {estaAutenticado ? (
+            <Link href="/dashboard" className="btn btn-primary">
+              Ir al dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/registro" className="btn btn-primary">
+                Crear cuenta gratis
+              </Link>
+              <Link href="/login" className="btn btn-secondary">
+                Ya tengo cuenta
+              </Link>
+            </>
+          )}
           <Link href="/rutas" className="btn btn-secondary">
             Ver rutas
           </Link>
