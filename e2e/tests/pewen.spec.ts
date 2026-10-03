@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 import { aprobar, completarCaso, entrarComoAdmin, registrarse } from "./progreso";
 
 const CASO = "tienda-online-pewen";
@@ -30,7 +30,7 @@ test("con los casos 0, 1 y 2 y sus clases completos: filtra con pandas, entiende
   await expect(page.locator("caption", { hasText: "grandes" })).toContainText("71 filas");
 
   await codigo.first().fill('devueltos = pedidos[pedidos["estado"] == "devuelto"]');
-  const primera = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const primera = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).first().click();
   await primera;
   await page.getByRole("button", { name: "Validar" }).nth(1).click();

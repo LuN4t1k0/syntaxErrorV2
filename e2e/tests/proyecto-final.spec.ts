@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 import { aprobar, completarCaso, entrarComoAdmin, registrarse } from "./progreso";
 
 const CASO = "proyecto-final";
@@ -24,7 +24,7 @@ test("con los casos 0 a 4 y sus clases completos: escribe la propuesta y lee un 
   await page.getByLabel("Tu README").fill(
     "# Calidad del aire en Temuco\n\n## Pregunta\n\n¿En qué meses se supera más la norma de MP2,5?\n\n1. ¿Cuántos días se supera?\n2. ¿En qué meses?\n3. ¿Cambió desde 2019?\n\n## Datos\n\nMediciones de [SINCA](https://datos.gob.cl).\n\n## Por qué importa\n\nAyuda a planificar alertas."
   );
-  const propuesta = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const propuesta = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await propuesta;
   await expect(page.getByText("¡Tarea aprobada!")).toBeVisible();
@@ -39,7 +39,7 @@ test("con los casos 0 a 4 y sus clases completos: escribe la propuesta y lee un 
   await page.getByRole("button", { name: "Validar" }).first().click();
   await expect(page.getByText("Los miles no se leyeron bien", { exact: false })).toBeVisible();
   await page.getByLabel("Código Python").first().fill('matricula = pd.read_csv("datos/matricula_comunal.csv", sep=";", thousands=".", na_values="s/i")');
-  const leida = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const leida = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).first().click();
   await leida;
   await expect(page.getByText("¡Tarea aprobada!").first()).toBeVisible();

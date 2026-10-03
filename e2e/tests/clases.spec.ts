@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 import { aprobar, completarCaso, entrarComoAdmin, MISIONES, registrarse } from "./progreso";
 
 const CLASES = "clases-de-sql";
@@ -32,7 +32,7 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
   await page.getByRole("button", { name: "Validar" }).click();
   await expect(page.getByText("Tu consulta debe devolver 2 columnas", { exact: false })).toBeVisible();
   await consulta.fill("SELECT nombre, ciudad FROM estudiantes");
-  const aprobada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
   await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
@@ -64,7 +64,7 @@ test("con el Caso 0 completo: las clases de Excel traen su propia planilla y una
     await page.getByLabel("Fórmula").press("Enter");
     await expect(page.getByRole("button", { name: "Celda D2", exact: true })).toHaveText("1350000", { timeout: 2_000 });
   }).toPass({ timeout: 20_000 });
-  const aprobada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
   await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
@@ -72,7 +72,7 @@ test("con el Caso 0 completo: las clases de Excel traen su propia planilla y una
   await aprobar(page, ip, "clases-de-excel", excel.slice(2, 21));
   await page.goto("/casos/clases-de-excel/22-excel-vs-base-de-datos");
   await expect(page.getByText("¿usarías Excel o una base de datos?", { exact: false })).toBeVisible();
-  const marcada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const marcada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Ver la respuesta y marcar como completada" }).click();
   await marcada;
   await expect(page.getByText("Una base de datos: el volumen y la edición simultánea", { exact: false })).toBeVisible();
@@ -93,13 +93,13 @@ test("con el Caso 2 completo: una lección de Python se resuelve en el editor y 
   await expect(page.locator('.cm-content[aria-label="Código Python"]')).toBeVisible({ timeout: 30_000 });
   const codigo = page.getByLabel("Código Python");
   await codigo.fill("resultado = precio * descuento");
-  const fallida = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const fallida = reporteDeTarea(page, false);
   await page.getByRole("button", { name: "Validar" }).click();
   await fallida;
   await expect(page.getByText("resultado no tiene el valor esperado: revisa el cálculo.")).toBeVisible();
   await expect(page.getByText("405000")).toHaveCount(0);
   await codigo.fill("resultado = precio * (1 - descuento)");
-  const aprobada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
   await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
@@ -124,7 +124,7 @@ test("con el Caso 3 completo: una práctica de Power BI muestra sus pasos, su da
   expect((await csv.text()).split("\n")[0]).toBe("fecha,producto,region,monto");
 
   await expect(page.getByText("¿Cuántas columnas tiene la tabla ventas una vez cargada?")).toBeVisible();
-  const marcada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const marcada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Ver la respuesta y marcar como completada" }).click();
   await marcada;
   await expect(page.getByText("4 columnas: fecha, producto, region y monto.")).toBeVisible();
@@ -146,7 +146,7 @@ test("con el Caso 4 completo: el quiz de IA para datos marca qué revisar sin da
     await page.getByLabel("Duplicados, faltantes o formatos inconsistentes.").check();
     await page.getByLabel(segunda).check();
     await page.getByLabel("Comprobar contra fuente y reglas.").check();
-    const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+    const reportado = reporteDeTarea(page);
     await page.getByRole("button", { name: "Validar" }).click();
     await reportado;
   };

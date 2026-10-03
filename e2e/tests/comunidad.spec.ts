@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "./fixtures";
+import { expect, reporteDeTarea, test, type Page } from "./fixtures";
 
 const MISION_SQL = "/casos/demo-motor/01-clientes-de-regiones";
 const CONSULTA_CORRECTA = "SELECT nombre, ciudad FROM clientes WHERE ciudad <> 'Santiago';";
@@ -28,7 +28,7 @@ test("una decisión acertada y una misión aprobada suman puntos en el panel", a
   await expect(page.getByText("+5 puntos")).toBeVisible();
 
   await page.getByLabel("Consulta SQL").fill(CONSULTA_CORRECTA);
-  const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const reportado = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await reportado;
 

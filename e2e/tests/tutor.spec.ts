@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 
 const MISION_SQL = "/casos/demo-motor/01-clientes-de-regiones";
 
@@ -21,7 +21,7 @@ test("el tutor responde con el contexto de la misión y reutiliza la respuesta",
   await expect(page.getByText("Primero intenta resolver la tarea.", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "Cerrar" }).click();
   for (let intento = 0; intento < 5; intento += 1) {
-    const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+    const reportado = reporteDeTarea(page, false);
     await page.getByLabel("Consulta SQL").fill("SELECT nombre FROM clientes");
     await page.getByRole("button", { name: "Validar" }).click();
     await reportado;

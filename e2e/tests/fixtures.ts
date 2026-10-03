@@ -32,3 +32,12 @@ export const test = base.extend<{ ip: string; nuevaPagina: () => Promise<Page> }
 });
 
 export { expect, type Page } from "@playwright/test";
+
+// La respuesta del servidor al reporte de una tarea. Con `aprobada`, solo la de ese resultado: el mensaje de un
+// intento fallido aparece antes de que su reporte termine, así que esperar "el siguiente reporte" después del clic
+// que aprueba puede tomar el del intento anterior, y la prueba sigue sin que la aprobación haya llegado.
+export function reporteDeTarea(page: Page, aprobada?: boolean) {
+  return page.waitForResponse(
+    (respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST" && (aprobada === undefined || respuesta.request().postDataJSON()?.aprobada === aprobada)
+  );
+}

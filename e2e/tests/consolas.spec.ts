@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "./fixtures";
+import { expect, reporteDeTarea, test, type Page } from "./fixtures";
 
 const CASO = "/casos/demo-motor";
 const MISION_SQL = `${CASO}/01-clientes-de-regiones`;
@@ -17,7 +17,7 @@ async function registrarse(page: Page) {
 }
 
 async function validarYEsperar(page: Page) {
-  const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const reportado = reporteDeTarea(page);
   await page.getByRole("button", { name: "Validar" }).click();
   await reportado;
 }

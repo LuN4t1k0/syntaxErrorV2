@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "./fixtures";
+import { expect, reporteDeTarea, test, type Page } from "./fixtures";
 import { aprobarEntregable, entrarComoAdmin } from "./revision";
 
 const CASO = "/casos/demo-motor";
@@ -18,7 +18,7 @@ async function registrarse(page: Page, callbackUrl: string): Promise<string> {
 }
 
 async function validarYEsperar(page: Page) {
-  const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const reportado = reporteDeTarea(page);
   await page.getByRole("button", { name: "Validar" }).click();
   await reportado;
 }

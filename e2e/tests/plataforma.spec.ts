@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 
 test("el buscador encuentra una misión sin importar tildes ni mayúsculas", async ({ page }) => {
   await page.goto("/buscar?q=zzzqqq");
@@ -19,7 +19,7 @@ test("el panel lleva a la siguiente misión pendiente", async ({ page }) => {
 
   await page.goto("/casos/demo-motor/01-clientes-de-regiones");
   await page.getByLabel("Consulta SQL").fill("SELECT nombre, ciudad FROM clientes WHERE ciudad <> 'Santiago';");
-  const reportado = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const reportado = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await reportado;
 

@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 import { aprobar, completarCaso, entrarComoAdmin, registrarse } from "./progreso";
 
 const CASO = "minimarkets-del-sur";
@@ -35,7 +35,7 @@ test("con los casos 0 y 1 y sus clases completos: cruza tablas con un error expl
   await expect(page.getByText("«venta» no es una tabla ni un alias de esta consulta.")).toBeVisible();
 
   await consultas.first().fill("SELECT l.ciudad, SUM(v.monto) AS ventas FROM ventas v JOIN locales l ON v.local_id = l.id GROUP BY l.ciudad");
-  const primera = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const primera = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).first().click();
   await primera;
 

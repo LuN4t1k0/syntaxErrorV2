@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { expect, reporteDeTarea, test } from "./fixtures";
 import { aprobar, completarCaso, entrarComoAdmin, registrarse } from "./progreso";
 
 const CASO = "clinica-cordillera-central";
@@ -24,7 +24,7 @@ test("con los casos 0 a 3 y sus clases completos: escribe la ficha del dashboard
   await page.getByLabel("Tu README").fill("# Dashboard de operaciones\n\n## Audiencia\n\nDirectorio.\n\n## Preguntas\n\n- ¿Cuánto esperan en urgencia?\n\n## Indicadores\n\n| Indicador | Fórmula |\n| --- | --- |\n| Espera | promedio de minutos |");
   await expect(page.getByRole("region", { name: "Vista previa" }).getByRole("table")).toBeVisible();
   // Se espera a que la aprobación llegue al servidor: la misión 2 la exige.
-  const aprobada = page.waitForResponse((respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST");
+  const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
   await expect(page.getByText("¡Tarea aprobada!")).toBeVisible();
