@@ -1,6 +1,8 @@
+import { Download } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDb } from "@syntaxerror/db/client";
+import { buttonVariants } from "@syntaxerror/ui/components/button";
 import { BotonImprimir } from "@/components/certificados/boton-imprimir";
 import { descripcionCertificado, fechaCertificado } from "@/lib/certificados/formato";
 import { buscarCertificado } from "@/lib/certificados/servicio";
@@ -22,7 +24,13 @@ export default async function CertificadoPage({ params }: Parametros) {
           <Link className="font-bold text-primary hover:underline" href={`/verificar/${certificado.codigo}`}>
             Verificar autenticidad
           </Link>
-          <BotonImprimir />
+          <div className="flex flex-wrap items-center gap-2">
+            <a className={buttonVariants({ variant: "primary" })} href={`/certificados/${certificado.codigo}/pdf`} download>
+              <Download className="size-4" aria-hidden="true" />
+              Descargar PDF
+            </a>
+            <BotonImprimir />
+          </div>
         </div>
         <section className="grid min-h-[720px] place-items-center border border-border bg-surface p-8 text-center print:min-h-screen print:border-0 print:bg-white">
           <div className="grid max-w-3xl gap-8">

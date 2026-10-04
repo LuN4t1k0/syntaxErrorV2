@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "./fixtures";
 import { esperarEmail, rutaDelEnlace } from "./mailpit";
 import { aprobarEntregable, entrarComoAdmin } from "./revision";
@@ -70,6 +71,13 @@ test("completar el caso emite el certificado, se verifica en público y aparece 
   await page.getByRole("link", { name: /Ver certificado de caso/ }).click();
   await expect(page.getByText("Josefa Morales")).toBeVisible();
   const codigo = new URL(page.url()).pathname.split("/").pop();
+  expect(codigo).toMatch(/^[A-HJ-NP-Za-km-z2-9]{12}$/);
+
+  const [pdf] = await Promise.all([page.waitForEvent("download"), page.getByRole("link", { name: "Descargar PDF" }).click()]);
+  expect(pdf.suggestedFilename()).toBe(`certificado-${codigo}.pdf`);
+  const rutaPdf = await pdf.path();
+  expect(rutaPdf).toBeTruthy();
+  expect(readFileSync(rutaPdf!).subarray(0, 5).toString()).toBe("%PDF-");
 
   await page.goto(`/verificar/${codigo}`);
   await expect(page.getByRole("heading", { name: "Certificado válido" })).toBeVisible();

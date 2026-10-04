@@ -54,7 +54,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 
 - Los emails los manda el worker desde la cola `emails` (BullMQ). En local salen por SMTP a Mailpit: ábrelos en http://localhost:8025. En producción, con `RESEND_API_KEY`, salen por la API de Resend.
 - Al registrarse llega un email para confirmar la cuenta. En `/perfil` se cambia el nombre, el email (con confirmación desde el correo nuevo) y la contraseña, se descargan los datos y se elimina la cuenta.
-- Al completar un caso (todas sus misiones y el entregable) se emite su certificado; al completar todos los casos de una ruta, el de la ruta. Se ven en `/certificados/<código>`, se imprimen o guardan en PDF desde el navegador y cualquiera los verifica en `/verificar/<código>`, que también busca los certificados migrados de la v1.
+- Al completar un caso (todas sus misiones y el entregable) se emite su certificado; al completar todos los casos de una ruta, el de la ruta. Se ven en `/certificados/<código>`, se descargan en PDF desde `/certificados/<código>/pdf` (con `@react-pdf/renderer`, el mismo diseño de la página y la dirección para verificarlo; 30 descargas cada 10 minutos por IP) o se imprimen desde el navegador, y cualquiera los verifica en `/verificar/<código>`, que también busca los certificados migrados de la v1.
 - El portafolio público (`/p/<usuario>`) parte apagado. Cada alumna lo publica desde su perfil.
 
 ## Tutor IA

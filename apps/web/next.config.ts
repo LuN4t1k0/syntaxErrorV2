@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   transpilePackages: ["@syntaxerror/db", "@syntaxerror/ui", "@syntaxerror/engines", "@syntaxerror/content", "@syntaxerror/queue", "@syntaxerror/ia"],
   // BullMQ lee sus scripts Lua desde disco con rutas relativas: no se puede empaquetar con webpack.
   serverExternalPackages: ["bullmq"],
+  // pdfkit (bajo @react-pdf/renderer) carga sus fuentes con un require dinámico que el trazado del standalone no
+  // ve: sin esto, el PDF del certificado falla solo en producción (Cannot find module .../Helvetica.cjs).
+  outputFileTracingIncludes: {
+    "/certificados/[codigo]/pdf": ["../../node_modules/.pnpm/pdfkit@*/node_modules/pdfkit/js/standard-fonts/**"],
+  },
   webpack(config) {
     config.resolve.alias = {
       ...config.resolve.alias,
