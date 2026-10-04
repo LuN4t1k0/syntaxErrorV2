@@ -21,6 +21,7 @@
     "@codemirror/state": "6.7.6",
     "@codemirror/view": "6.43.13",
     "@lezer/highlight": "1.2.5",
+    "@react-pdf/renderer": "^4.9.0",
     "@sentry/nextjs": "^10.75.3",
     "@syntaxerror/content": "workspace:*",
     "@syntaxerror/db": "workspace:*",

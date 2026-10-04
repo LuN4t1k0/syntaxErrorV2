@@ -2,7 +2,8 @@ import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  esbuild: { jsx: "automatic" },
+  // Vitest 4 transforma con oxc, que toma "jsx: preserve" del tsconfig de Next: aquí se compila el JSX de verdad.
+  oxc: { jsx: { runtime: "automatic" } },
   test: {
     environment: "node",
     globalSetup: ["../../packages/db/src/global-setup.ts"],
