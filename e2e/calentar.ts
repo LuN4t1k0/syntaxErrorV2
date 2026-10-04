@@ -7,6 +7,7 @@ const RUTAS = [
   "/registro",
   "/rutas",
   "/buscar",
+  "/buscar/indice.json",
   "/reportar",
   "/lun4t1k0",
   "/nosotros",

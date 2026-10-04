@@ -1,10 +1,11 @@
-import { GraduationCap, LayoutDashboard, Mail, Search, Shield, SquareTerminal, UserRound } from "lucide-react";
+import { GraduationCap, LayoutDashboard, Mail, Shield, SquareTerminal, UserRound } from "lucide-react";
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
 import { contarNoLeidos } from "@/lib/mensajes";
 import { esDocente } from "@/lib/roles";
 import { obtenerUsuarioActual } from "@/lib/sesion";
+import { BusquedaRapida } from "./busqueda-rapida";
 import { SignOutButton } from "./sign-out-button";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -62,10 +63,7 @@ export async function SiteHeader() {
           <SquareTerminal size={16} />
           <span className="hidden font-mono lg:inline">{"> sudo ./run_bio"}</span>
         </Link>
-        <Link className="nav-link" href="/buscar" aria-label="Buscar">
-          <Search size={16} />
-          <span className="hidden sm:inline">Buscar</span>
-        </Link>
+        <BusquedaRapida />
         <ThemeToggle />
 
         {user ? (

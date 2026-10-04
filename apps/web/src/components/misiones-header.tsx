@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BusquedaRapida } from "./busqueda-rapida";
 import { ThemeToggle } from "./theme-toggle";
 
 export function MisionesHeader() {
@@ -10,9 +11,13 @@ export function MisionesHeader() {
           <span className="hidden sm:inline">syntaxError.cl</span>
         </Link>
         <nav className="flex items-center gap-1" aria-label="Principal">
-          <Link className="nav-link" href="/buscar">Buscar</Link>
-          <Link className="nav-link" href="/rutas">Rutas</Link>
-          <Link className="nav-link" href="/dashboard">Tu panel</Link>
+          <BusquedaRapida />
+          <Link className="nav-link" href="/rutas">
+            Rutas
+          </Link>
+          <Link className="nav-link" href="/dashboard">
+            Tu panel
+          </Link>
         </nav>
         <ThemeToggle />
       </div>

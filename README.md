@@ -97,7 +97,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 
 ## Plataforma
 
-- **Buscador:** `/buscar` busca rutas, casos y misiones publicadas en el encargo, los conceptos y los enunciados, sin distinguir mayúsculas ni tildes. El índice se arma en el build desde `content/` y nunca incluye soluciones, pruebas ni el cierre de las misiones.
+- **Buscador:** `/buscar` busca rutas, casos, misiones y lecciones publicadas en el encargo, los conceptos, los enunciados y las preguntas de lecturas y quizzes, sin distinguir mayúsculas ni tildes. El índice se arma en el build desde `content/` y nunca incluye soluciones, pruebas, pistas, el cierre ni las respuestas, opciones o explicaciones. Desde cualquier página, **Ctrl+K** (⌘K en Mac) o el botón Buscar abre una ventana de búsqueda, como en la v1: descarga el índice (`/buscar/indice.json`) la primera vez que se abre, se recorre con las flechas y Enter abre el resultado.
 - **Continuar donde quedé:** el panel lleva a la misión en curso más reciente o a la siguiente pendiente. Si el caso solo necesita el entregable, lleva a la página del caso.
 - **Limpieza diaria (worker, cola `mantenimiento`):** borra la bitácora y las preguntas al tutor con más de `RETENCION_BITACORA_DIAS` días (365 por defecto, mínimo 30). Los registros de derechos ARCO no se borran.
 - **SEO:** `robots.txt` deja fuera las páginas privadas y `sitemap.xml` lista el contenido publicado.
