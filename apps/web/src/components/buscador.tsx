@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { buscar, type EntradaBusqueda } from "@/lib/buscador/buscar";
 
-const ETIQUETAS: Record<EntradaBusqueda["tipo"], string> = { ruta: "Ruta", caso: "Caso", mision: "Misión" };
+export const ETIQUETAS: Record<EntradaBusqueda["tipo"], string> = { ruta: "Ruta", caso: "Caso", mision: "Misión", leccion: "Lección" };
 
 export function Buscador({ indice }: { indice: EntradaBusqueda[] }) {
   const router = useRouter();

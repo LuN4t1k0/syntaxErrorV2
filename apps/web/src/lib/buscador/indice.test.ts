@@ -47,6 +47,38 @@ const CASO = {
   ],
 } as unknown as Caso;
 
+const CLASES = {
+  slug: "clases-de-sql",
+  tipo: "clases",
+  titulo: "Clases de SQL",
+  cargo: "Analista de datos junior",
+  empresa: "syntaxError.cl",
+  dataset: "Tablas de práctica",
+  entregable: "",
+  datos: [],
+  misiones: [
+    {
+      slug: "01-que-es-sql",
+      titulo: "Qué es SQL",
+      tiempo: 10,
+      fuente: "",
+      bloques: [
+        { tipo: "LecturaTask", props: { id: "l1", pregunta: "¿Para qué sirve una base relacional?", respuesta: "respuestasecreta", pistas: [] }, texto: null },
+        {
+          tipo: "QuizTask",
+          props: {
+            id: "q1",
+            enunciado: "Responde sobre las llaves.",
+            preguntas: [{ pregunta: "¿Qué identifica una fila?", opciones: ["opcionsecreta", "otra"], correcta: 0, explicacion: "explicacionsecreta" }],
+            pistas: [],
+          },
+          texto: null,
+        },
+      ],
+    },
+  ],
+} as unknown as Caso;
+
 describe("construirIndice", () => {
   it("indexa rutas, casos y misiones con sus enlaces", () => {
     const indice = construirIndice([RUTA], [CASO]);
@@ -63,6 +95,17 @@ describe("construirIndice", () => {
     expect(buscar(indice, "where filtra").map((resultado) => resultado.titulo)).toEqual(["Clientes de regiones"]);
     expect(buscar(indice, "nombre y ciudad").map((resultado) => resultado.titulo)).toEqual(["Clientes de regiones"]);
     for (const secreto of ["zzsolucionsecreta", "pistasecreta", "cierrerevelador", "preguntaentrevista"]) {
+      expect(buscar(indice, secreto)).toEqual([]);
+    }
+  });
+
+  it("marca las lecciones de unas clases como lecciones y busca en las preguntas de lecturas y quizzes, sin sus respuestas", () => {
+    const indice = construirIndice([RUTA], [CLASES]);
+    expect(indice.at(-1)).toMatchObject({ tipo: "leccion", titulo: "Qué es SQL", contexto: "Clases de SQL", href: "/casos/clases-de-sql/01-que-es-sql" });
+    expect(buscar(indice, "base relacional").map((resultado) => resultado.titulo)).toEqual(["Qué es SQL"]);
+    expect(buscar(indice, "identifica una fila").map((resultado) => resultado.titulo)).toEqual(["Qué es SQL"]);
+    expect(buscar(indice, "llaves").map((resultado) => resultado.titulo)).toEqual(["Qué es SQL"]);
+    for (const secreto of ["respuestasecreta", "opcionsecreta", "explicacionsecreta"]) {
       expect(buscar(indice, secreto)).toEqual([]);
     }
   });

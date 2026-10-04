@@ -1,13 +1,13 @@
 // Sin imports: este módulo corre en el navegador.
 export type EntradaBusqueda = {
-  tipo: "ruta" | "caso" | "mision";
+  tipo: "ruta" | "caso" | "mision" | "leccion";
   titulo: string;
   contexto: string;
   href: string;
   texto: string;
 };
 
-const PRIORIDAD: Record<EntradaBusqueda["tipo"], number> = { ruta: 3, caso: 2, mision: 1 };
+const PRIORIDAD: Record<EntradaBusqueda["tipo"], number> = { ruta: 3, caso: 2, mision: 1, leccion: 1 };
 
 export function normalizar(texto: string): string {
   return texto
