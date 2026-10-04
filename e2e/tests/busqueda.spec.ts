@@ -40,3 +40,12 @@ test("el botón Buscar abre la ventana, marca las lecciones y lleva a todos los 
   await expect(page).toHaveURL(/\/buscar\?q=inner%20join$/);
   await expect(page.getByRole("list", { name: "Resultados" }).getByText("Lección · Clases de SQL").first()).toBeVisible();
 });
+
+test("Escape cierra la ventana de búsqueda", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("banner").getByRole("link", { name: "Buscar" }).click();
+  const ventana = page.getByRole("dialog", { name: "Buscar en syntaxError.cl" });
+  await expect(ventana).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(ventana).toBeHidden();
+});
