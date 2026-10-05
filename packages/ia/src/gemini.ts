@@ -3,7 +3,7 @@ import {
   DIMENSIONES_EMBEDDING,
   RESPUESTA_FUERA_DE_TEMA,
   esFueraDeTema,
-  instruccionesDelTutor,
+  instrucciones,
   type ProveedorIA,
 } from "./tutor";
 
@@ -34,11 +34,11 @@ export function crearProveedorGemini({
       if (!valores) throw new Error("Gemini no devolvió el embedding");
       return valores;
     },
-    async responder({ contexto, pregunta }) {
+    async responder({ rol = "tutor", contexto, pregunta }) {
       const resultado = await cliente.models.generateContent({
         model: modelo,
         contents: pregunta,
-        config: { systemInstruction: instruccionesDelTutor(contexto), maxOutputTokens: 800 },
+        config: { systemInstruction: instrucciones(rol, contexto), maxOutputTokens: 800 },
       });
       const texto = (resultado.text ?? "").trim();
       if (!texto) throw new Error("Gemini respondió vacío");

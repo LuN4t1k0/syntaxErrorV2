@@ -55,4 +55,12 @@ describe("crearProveedorGemini", () => {
       "Gemini respondió vacío"
     );
   });
+
+  it("como asistente usa las instrucciones del asistente", async () => {
+    generateContent.mockResolvedValue({ text: "Un JOIN combina filas de dos tablas." });
+    await proveedor().responder({ rol: "asistente", contexto: "Caso: Ventas.", pregunta: "¿Qué es un JOIN?" });
+    const [{ config }] = generateContent.mock.calls[0];
+    expect(config.systemInstruction).toContain("asistente del curso");
+    expect(config.systemInstruction).toContain("Caso: Ventas.");
+  });
 });

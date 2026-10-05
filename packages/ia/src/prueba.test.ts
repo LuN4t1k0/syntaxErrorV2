@@ -27,4 +27,11 @@ describe("proveedor de prueba", () => {
       texto: 'Respuesta de prueba del tutor para la misión "Clientes de regiones": ¿Cómo filtro?',
     });
   });
+
+  it("como asistente responde con el título del caso tomado del contexto", async () => {
+    const responder = (contexto: string) => crearProveedorPrueba().responder({ rol: "asistente", contexto, pregunta: "¿Qué es un JOIN?" });
+    const esperada = { aceptada: true, texto: 'Respuesta de prueba del asistente para el caso "Ventas de marzo": ¿Qué es un JOIN?' };
+    expect(await responder("Caso: Ventas de marzo (Distribuidora). El alumno trabaja como analista de datos junior.\nMisiones: Filtrar.")).toEqual(esperada);
+    expect(await responder("Caso: Ventas de marzo. Son clases: una lección por tema.")).toEqual(esperada);
+  });
 });

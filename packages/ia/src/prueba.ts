@@ -26,7 +26,12 @@ export function crearProveedorPrueba(): ProveedorIA {
     async vectorizar(texto) {
       return vectorDePrueba(texto);
     },
-    async responder({ contexto, pregunta }) {
+    async responder({ rol = "tutor", contexto, pregunta }) {
+      if (rol === "asistente") {
+        // El título va hasta la empresa entre paréntesis o hasta el primer punto (en unas clases no hay empresa).
+        const caso = contexto.match(/^Caso: (.+?)(?: \(|\.(?: |$))/m)?.[1] ?? "sin caso";
+        return { aceptada: true, texto: `Respuesta de prueba del asistente para el caso "${caso}": ${pregunta.trim()}` };
+      }
       const mision = contexto.match(/^Misión: (.+)\.$/m)?.[1] ?? "sin misión";
       return { aceptada: true, texto: `Respuesta de prueba del tutor para la misión "${mision}": ${pregunta.trim()}` };
     },

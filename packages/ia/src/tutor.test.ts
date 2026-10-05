@@ -1,11 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { esFueraDeTema, instruccionesDelTutor, MARCA_FUERA_DE_TEMA, similitudCoseno } from "./tutor";
+import { esFueraDeTema, instruccionesDelAsistente, instruccionesDelTutor, MARCA_FUERA_DE_TEMA, similitudCoseno } from "./tutor";
 
 describe("similitudCoseno", () => {
   it("vale 1 para vectores iguales, 0 para ortogonales y 0 si uno es cero", () => {
     expect(similitudCoseno([1, 2, 3], [1, 2, 3])).toBeCloseTo(1);
     expect(similitudCoseno([1, 0], [0, 1])).toBe(0);
     expect(similitudCoseno([0, 0], [1, 1])).toBe(0);
+  });
+});
+
+describe("instruccionesDelAsistente", () => {
+  it("explica conceptos con ejemplos propios, no resuelve tareas y comparte la marca de fuera de tema", () => {
+    const instrucciones = instruccionesDelAsistente("Caso: Ventas de marzo.");
+    expect(instrucciones).toContain("Caso: Ventas de marzo.");
+    expect(instrucciones).toContain("asistente del curso");
+    expect(instrucciones).toContain("No resuelvas las tareas");
+    expect(instrucciones).toContain("las pistas y el tutor");
+    expect(instrucciones).toContain(MARCA_FUERA_DE_TEMA);
+    expect(instrucciones).toContain("lenguaje neutro");
+    expect(instrucciones).not.toContain("Contexto de la misión");
   });
 });
 
