@@ -37,6 +37,13 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
   await aprobada;
   await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
 
+  // En el panel, las clases se cuentan en lecciones y se continúan como lecciones.
+  await page.goto("/dashboard");
+  await expect(page.getByRole("heading", { name: "Tus casos y clases" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Clases de SQL/ }).filter({ hasText: "1/18 lecciones" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Continuar" })).toContainText("Sigue con Alias y expresiones calculadas, de Clases de SQL");
+  await expect(page.getByRole("link", { name: "Continuar lección" })).toHaveAttribute("href", `/casos/${CLASES}/02-alias-expresiones`);
+
   await page.goto("/casos/minimarkets-del-sur");
   await expect(page.getByText("sus tareas se habilitan al completar", { exact: false })).toContainText("Clases de SQL");
   await aprobar(page, ip, CLASES, MISIONES[CLASES].slice(1));
