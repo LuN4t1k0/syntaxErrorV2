@@ -1,7 +1,19 @@
-import { expect, test } from "./fixtures";
+import { expect, test, type Page } from "./fixtures";
 import { entrarComoAdmin, registrarse } from "./progreso";
 
 const MISION = "/casos/minimarkets-del-sur/02-filtrar";
+
+async function dejarOrdenNormal(page: Page) {
+  await entrarComoAdmin(page);
+  await page.goto("/admin");
+  const volver = page.getByRole("button", { name: "Volver al orden normal" });
+  if (await volver.isVisible().catch(() => false)) {
+    await volver.click();
+    const dialogo = page.getByRole("dialog", { name: "Volver al orden normal" });
+    await dialogo.getByRole("button", { name: "Volver al orden normal" }).click();
+  }
+  await expect(page.getByRole("button", { name: "Liberar el orden para todos" })).toBeVisible();
+}
 
 test("un admin marca a una persona como probadora y ella hace la ruta en el orden que quiera", async ({ page, ip, nuevaPagina }) => {
   const email = await registrarse(page, "Josefina Lagos");
@@ -11,13 +23,14 @@ test("un admin marca a una persona como probadora y ella hace la ruta en el orde
       data: { caso: "minimarkets-del-sur", mision: "02-filtrar", tarea: "lacteos-caros", aprobada: true },
     });
 
+  const admin = await nuevaPagina();
+  await dejarOrdenNormal(admin);
+
   // Sin ser probadora: el Caso 2 está bloqueado (falta el Caso 1) y su segunda misión también (falta la primera).
   await page.goto(MISION);
   await expect(page.getByRole("status").filter({ hasText: "se habilita al completar" }).first()).toBeVisible();
   expect((await aprobarFiltro()).status()).toBe(409);
 
-  const admin = await nuevaPagina();
-  await entrarComoAdmin(admin);
   await admin.goto(`/admin/usuarios?q=${encodeURIComponent(email)}`);
   await admin.getByRole("link", { name: email }).click();
   await admin.getByLabel("Probador", { exact: false }).check();
@@ -39,8 +52,7 @@ test("un admin marca a una persona como probadora y ella hace la ruta en el orde
 });
 
 test("la administración muestra el interruptor del orden de las rutas", async ({ page }) => {
-  await entrarComoAdmin(page);
-  await page.goto("/admin");
+  await dejarOrdenNormal(page);
   await expect(page.getByRole("heading", { name: "Orden de las rutas" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Liberar el orden para todos" })).toBeVisible();
 });
