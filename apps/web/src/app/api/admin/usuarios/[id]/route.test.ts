@@ -48,4 +48,16 @@ describe("/api/admin/usuarios/[id]", () => {
     expect((await pedir("DELETE", ana.id, { confirmacion: "ana@correo.cl" })).status).toBe(200);
     expect((await pedir("DELETE", ana.id, { confirmacion: "ana@correo.cl" })).status).toBe(404);
   });
+
+  it("administración marca y desmarca probadores, incluida su propia cuenta", async () => {
+    const admin = await persona("admin@correo.cl", "admin");
+    const ana = await persona("ana@correo.cl", "student");
+    vi.mocked(obtenerUsuarioActual).mockResolvedValue(admin);
+    expect((await pedir("PATCH", ana.id, { probador: "si" })).status).toBe(400);
+    expect((await pedir("PATCH", ana.id, { probador: true })).status).toBe(200);
+    expect((await pedir("PATCH", admin.id, { probador: true })).status).toBe(200);
+    const filas = await db.select({ email: users.email, probador: users.probador }).from(users);
+    expect(Object.fromEntries(filas.map((fila) => [fila.email, fila.probador]))).toEqual({ "admin@correo.cl": true, "ana@correo.cl": true });
+    expect((await pedir("PATCH", crypto.randomUUID(), { probador: true })).status).toBe(404);
+  });
 });

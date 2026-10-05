@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
+import { InterruptorOrdenLibre } from "@/components/admin/interruptor-orden-libre";
 import { adminDePagina } from "@/lib/admin/acceso";
 import { resumenAdmin } from "@/lib/admin/resumen";
+import { ordenLibreParaTodos } from "@/lib/ajustes";
 
 export const metadata = { title: "Administración" };
 
@@ -11,11 +13,12 @@ function Tarjeta({ href, valor, texto, alerta = false }: { href: string; valor: 
 
 export default async function AdminPage() {
   await adminDePagina("/admin");
-  const resumen = await resumenAdmin(getDb());
+  const [resumen, ordenLibre] = await Promise.all([resumenAdmin(getDb()), ordenLibreParaTodos(getDb())]);
   return (
     <main className="grid gap-8">
       <h1 className="text-3xl font-black">Administración</h1>
       <section className="grid gap-3"><h2 className="text-xl font-black">Por revisar</h2><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Tarjeta href="/admin/comunidad" valor={resumen.solicitudesPendientes} texto="Solicitudes de acceso docente" alerta /><Tarjeta href="/admin/comunidad" valor={resumen.comentariosPendientes} texto="Comentarios de reseñas" alerta /><Tarjeta href="/admin/reportes" valor={resumen.reportesPendientes} texto="Reportes pendientes" alerta /><Tarjeta href="/profesor/entregables" valor={resumen.entregablesPorRevisar} texto="Entregables por revisar" alerta /><Tarjeta href="/profesor/preguntas" valor={resumen.preguntasSinDocente} texto="Preguntas sin docente" alerta /></div></section>
+      <section className="card grid gap-3 p-5"><h2 className="text-xl font-black">Orden de las rutas</h2><InterruptorOrdenLibre activo={ordenLibre} /><p className="text-sm text-muted-foreground">Para liberar el orden solo a algunas personas, márcalas como probadoras desde <Link className="font-bold text-primary hover:underline" href="/admin/usuarios">Usuarios</Link>.</p></section>
       <section className="grid gap-3"><h2 className="text-xl font-black">Actividad</h2><div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><Tarjeta href="/admin/usuarios" valor={resumen.usuarios} texto="Cuentas" /><Tarjeta href="/admin/usuarios" valor={resumen.nuevosSemana} texto="Cuentas nuevas esta semana" /><Tarjeta href="/admin/usuarios" valor={resumen.docentes} texto="Docentes" /><Tarjeta href="/admin/preguntas?vista=tutor" valor={resumen.preguntasTutorSemana} texto="Preguntas al tutor esta semana" /></div></section>
     </main>
   );

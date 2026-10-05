@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDb } from "@syntaxerror/db/client";
 import { EliminarUsuario } from "@/components/admin/eliminar-usuario";
+import { FormularioProbador } from "@/components/admin/formulario-probador";
 import { FormularioRol } from "@/components/admin/formulario-rol";
 import { adminDePagina } from "@/lib/admin/acceso";
 import { ETIQUETAS_ROL } from "@/lib/admin/etiquetas";
@@ -22,7 +23,7 @@ export default async function UsuarioAdminPage({ params }: { params: Promise<{ i
       <nav className="text-sm" aria-label="Volver"><Link className="font-bold text-primary hover:underline" href="/admin/usuarios">← Usuarios</Link></nav>
       <header className="grid gap-1">
         <h1 className="text-3xl font-black">{usuario.nombre ?? usuario.email}</h1>
-        <p className="text-muted-foreground">{`${usuario.email} · ${ETIQUETAS_ROL[usuario.rol]} · ${usuario.verificado ? "email confirmado" : "email sin confirmar"}`}</p>
+        <p className="text-muted-foreground">{`${usuario.email} · ${ETIQUETAS_ROL[usuario.rol]}${usuario.probador ? " · probador" : ""} · ${usuario.verificado ? "email confirmado" : "email sin confirmar"}`}</p>
         <p className="text-sm text-muted-foreground">{`Nivel ${usuario.nivel.nivel} (${usuario.nivel.puntos} puntos) · ${usuario.certificados} ${usuario.certificados === 1 ? "certificado" : "certificados"}`}</p>
       </header>
       <section className="card grid gap-3 p-5">
@@ -34,6 +35,10 @@ export default async function UsuarioAdminPage({ params }: { params: Promise<{ i
       <section className="card grid gap-3 p-5">
         <h2 className="text-xl font-black">Rol</h2>
         {esPropia ? <p className="text-sm text-muted-foreground">Es tu cuenta: tu rol no se cambia desde aquí.</p> : <FormularioRol userId={usuario.id} rolActual={usuario.rol} />}
+      </section>
+      <section className="card grid gap-3 p-5">
+        <h2 className="text-xl font-black">Probador</h2>
+        <FormularioProbador userId={usuario.id} probadorActual={usuario.probador} />
       </section>
       {esPropia ? null : (
         <section className="card grid gap-3 border-destructive/40 p-5">

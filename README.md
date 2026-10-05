@@ -90,6 +90,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 
 - **Panel:** vive en `/admin` y solo entra el rol `admin` (a otros roles les responde 404). En local, `admin@local.test` con clave `admin123456`.
 - **Usuarios:** permite buscar, cambiar rol y eliminar una cuenta por solicitud ARCO, confirmando con su email. Nadie cambia su propio rol ni elimina su propia cuenta desde el panel.
+- **Probadores y orden de las rutas:** en la ficha de un usuario se le marca como **probador**: hace las rutas en el orden que quiera, sin esperar la misión ni el caso anterior, para probarlas antes que el resto (un admin también puede marcarse a sí mismo). En la portada de la administración, **Orden de las rutas** libera el orden para todos los estudiantes, con confirmación. El servidor aplica el orden en `registrarIntento` y `enviarEntregable` según `opcionesDeProgreso` (`lib/progreso/orden.ts`), y avisa `ordenLibre` al navegador para no mostrar bloqueos. Los certificados se ganan igual: piden los entregables aprobados. Los dos cambios quedan en la bitácora.
 - **Sesiones:** cada `auth()` revisa la cuenta en la base. Si administración elimina la cuenta, la sesión se cierra en todos sus dispositivos, y un cambio de rol rige al instante.
 - **Contenido:** muestra casos, rutas, inscripciones y métricas por misión: personas que iniciaron/aprobaron, intentos promedio, abandono tras 14 días sin avance y primera tarea pendiente.
 - **Comunidad:** aprueba solicitudes docentes, modera comentarios de reseñas y resuelve reportes. Un error real de un caso suma 25 puntos a quien lo reportó.
@@ -114,6 +115,7 @@ Se basa en la propuesta pedagógica aprobada (`docs/propuesta-pedagogica-data-an
   - La tarea de una misión se habilita al aprobar la anterior, y un caso al completar el caso anterior de su ruta.
   - Todo se puede leer; lo que se bloquea es resolver.
   - El servidor rechaza con 409 los intentos fuera de orden.
+  - Excepción: los probadores, o todos si un admin libera el orden (ver Administración).
 - **Primero intentar:**
   - La primera pista aparece tras 2 intentos fallidos de la tarea y luego una por intento.
   - El tutor IA se habilita tras 5 intentos fallidos en la misión.
