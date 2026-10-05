@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@syntaxerror/db/client";
+import { exigirAccesoBeta } from "@/lib/beta";
 import { obtenerCaso } from "@/lib/contenido";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { obtenerUsuarioId } from "@/lib/sesion";
@@ -30,6 +31,8 @@ export async function POST(request: Request) {
   const caso = await obtenerCaso(parsed.data.caso);
   const mision = caso?.misiones.find((candidata) => candidata.slug === parsed.data.mision);
   if (!caso || !mision) return NextResponse.json({ error: "mision_no_existe" }, { status: 404 });
+  const bloqueo = await exigirAccesoBeta(getDb(), userId, caso.slug);
+  if (bloqueo) return bloqueo;
 
   // Primero intentar: el tutor se habilita tras los intentos fallidos de la misión (propuesta, sección 6).
   const acceso = await estadoTutor(getDb(), userId, caso.slug, mision.slug);

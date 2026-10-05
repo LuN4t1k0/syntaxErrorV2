@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDb } from "@syntaxerror/db/client";
+import { exigirAccesoBeta } from "@/lib/beta";
 import { obtenerCaso } from "@/lib/contenido";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { obtenerUsuarioId } from "@/lib/sesion";
@@ -29,6 +30,8 @@ export async function POST(request: Request) {
 
   const caso = await obtenerCaso(parsed.data.caso);
   if (!caso) return NextResponse.json({ error: "caso_no_existe" }, { status: 404 });
+  const bloqueo = await exigirAccesoBeta(getDb(), userId, caso.slug);
+  if (bloqueo) return bloqueo;
 
   const resultado = await preguntarAlAsistente(
     getDb(),

@@ -12,7 +12,7 @@ export async function casosRequeridos(db: DbClient, casoId: string, { incluirBor
     .select({ rutaId: rutaCasos.rutaId, orden: rutaCasos.orden })
     .from(rutaCasos)
     .innerJoin(rutas, eq(rutas.id, rutaCasos.rutaId))
-    .where(and(eq(rutaCasos.casoId, casoId), incluirBorradores ? undefined : eq(rutas.estado, "publicada")));
+    .where(and(eq(rutaCasos.casoId, casoId), incluirBorradores ? undefined : inArray(rutas.estado, ["publicada", "beta"])));
   const requeridos = new Map<string, CasoCorto & { id: string }>();
   for (const { rutaId, orden } of posiciones) {
     const [anterior] = await db

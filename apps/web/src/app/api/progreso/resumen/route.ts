@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@syntaxerror/db/client";
+import { accesoBeta } from "@/lib/beta";
+import { casosSoloParaProbadores } from "@/lib/contenido";
 import { tieneOrdenLibre } from "@/lib/progreso/orden";
 import { listarCasosDelUsuario } from "@/lib/progreso/servicio";
 import type { AvanceCaso } from "@/lib/rutas/mapa";
@@ -14,5 +16,7 @@ export async function GET() {
   if (!userId) return NextResponse.json({ error: "no_autenticado" }, { status: 401 });
   const casos: Record<string, AvanceCaso> = {};
   for (const caso of await listarCasosDelUsuario(getDb(), userId)) casos[caso.slug] = { aprobadas: caso.misionesAprobadas, completo: caso.completo };
-  return NextResponse.json({ casos, ordenLibre: await tieneOrdenLibre(getDb(), userId) }, { headers: { "Cache-Control": "no-store" } });
+  // accesoBeta: si puede hacer las rutas en beta (probador o admin; todos con los borradores a la vista).
+  const conBeta = (await casosSoloParaProbadores()).size === 0 || (await accesoBeta(getDb(), userId));
+  return NextResponse.json({ casos, ordenLibre: await tieneOrdenLibre(getDb(), userId), accesoBeta: conBeta }, { headers: { "Cache-Control": "no-store" } });
 }

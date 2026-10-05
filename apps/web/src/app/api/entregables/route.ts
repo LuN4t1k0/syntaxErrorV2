@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@syntaxerror/db/client";
+import { exigirAccesoBeta } from "@/lib/beta";
 import { obtenerCaso } from "@/lib/contenido";
 import { encolarSinFallar } from "@/lib/emails";
 import { avisarRevision } from "@/lib/entregables/revision";
@@ -17,6 +18,8 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "url_invalida" }, { status: 400 });
   const caso = await obtenerCaso(parsed.data.caso);
   if (!caso) return NextResponse.json({ error: "caso_no_existe" }, { status: 404 });
+  const bloqueo = await exigirAccesoBeta(getDb(), userId, caso.slug);
+  if (bloqueo) return bloqueo;
   const limite = await checkRateLimit("entregables", userId);
   if (!limite.allowed) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429, headers: { "Retry-After": String(limite.retryAfterSeconds) } });
