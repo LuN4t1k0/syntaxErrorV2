@@ -11,6 +11,8 @@ export type TrabajoTutor = {
   pregunta: string;
   contexto: string;
   embedding: number[];
+  // Sin rol responde el tutor de la misión. El asistente del curso usa la misma cola, con mision "@asistente".
+  rol?: "tutor" | "asistente";
 };
 
 export type ColaTutor = {

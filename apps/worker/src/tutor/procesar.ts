@@ -20,7 +20,7 @@ export function crearProcesadorTutor({
 }) {
   return async (job: Job<TrabajoTutor>): Promise<void> => {
     const trabajo = job.data;
-    const { aceptada, texto } = await proveedor.responder({ contexto: trabajo.contexto, pregunta: trabajo.pregunta });
+    const { aceptada, texto } = await proveedor.responder({ rol: trabajo.rol ?? "tutor", contexto: trabajo.contexto, pregunta: trabajo.pregunta });
     if (aceptada) {
       await guardarRespuestaEnCache(db, {
         casoId: trabajo.casoId,

@@ -67,6 +67,15 @@ describe("crearProcesadorTutor", () => {
     expect(emitidos[0][1].estado).toBe("fuera_de_tema");
   });
 
+  it("una pregunta del asistente se responde con el rol del asistente", async () => {
+    const trabajo = { ...(await preparar()), rol: "asistente" as const, mision: "@asistente", contexto: "Caso: Ventas (Distribuidora)." };
+    await crearProcesadorTutor({ db, proveedor: crearProveedorPrueba(), emitir })(job(trabajo));
+    const [pregunta] = await db.select().from(tutorPreguntas).where(eq(tutorPreguntas.id, trabajo.preguntaId));
+    expect(pregunta.respuesta).toBe('Respuesta de prueba del asistente para el caso "Ventas": ¿Cómo filtro?');
+    const [enCache] = await db.select().from(tutorCache);
+    expect(enCache.mision).toBe("@asistente");
+  });
+
   it("si la IA falla, el error sube para que BullMQ reintente y la pregunta sigue pendiente", async () => {
     const trabajo = await preparar();
     const caida: ProveedorIA = {
