@@ -731,6 +731,18 @@
   }
 }
 
+/* La entrada de cada lámina del carrusel de la portada. */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes leak-scan {
   0%,
   68%,
