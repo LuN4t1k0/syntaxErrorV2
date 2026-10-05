@@ -61,6 +61,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 
 - En cada misión, `Preguntar al tutor` responde con el contexto de esa misión: encargo, conceptos, tareas y tablas, nunca las soluciones. Explica y da pistas, no resuelve.
 - Con `GEMINI_API_KEY` en `.env` responde Gemini (`gemini-flash-lite-latest`, se cambia con `GEMINI_MODEL`). Sin clave, en local responde un proveedor de prueba (`TUTOR_PRUEBA=true`, ya puesto en `docker-compose.yml`). En producción va la clave y no `TUTOR_PRUEBA`.
+- **Asistente del curso** (el chat flotante de la v1): en las páginas de cada caso y misión, siempre disponible y sin esperar intentos fallidos, para dudas de conceptos. Ve de qué trata el caso (título, temas de sus misiones o lecciones y tablas), pero no los encargos ni las tareas, y sus instrucciones le piden explicar con ejemplos propios y mandar al tutor si le piden resolver una misión. Pide cuenta y permite 20 preguntas por hora. Comparte la cola, la caché, el socket y el registro del tutor: sus preguntas se guardan con la misión `@asistente`, así su caché es por caso y no se mezcla con la del tutor.
 - Las preguntas pasan por la cola `tutor` del worker, que responde por socket.io (`CHAT_SOCKET_SECRET` debe ser el mismo en web y worker). Si el socket no conecta, el navegador consulta la respuesta cada 4 segundos.
 - Las respuestas se guardan en caché por misión (pgvector): la misma pregunta con otras palabras no gasta otra llamada. Límite: 10 preguntas por minuto por alumna.
 
@@ -92,7 +93,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - **Sesiones:** cada `auth()` revisa la cuenta en la base. Si administración elimina la cuenta, la sesión se cierra en todos sus dispositivos, y un cambio de rol rige al instante.
 - **Contenido:** muestra casos, rutas, inscripciones y métricas por misión: personas que iniciaron/aprobaron, intentos promedio, abandono tras 14 días sin avance y primera tarea pendiente.
 - **Comunidad:** aprueba solicitudes docentes, modera comentarios de reseñas y resuelve reportes. Un error real de un caso suma 25 puntos a quien lo reportó.
-- **Preguntas y tutor:** supervisa preguntas a docentes y al tutor, y permite borrar respuestas malas de la caché del tutor.
+- **Preguntas y tutor:** supervisa preguntas a docentes, al tutor y al asistente del curso, y permite borrar respuestas malas de la caché del tutor.
 - **Bitácora:** registra acciones de administración con quién actuó, IP, destino y detalle; se filtra por acción y email.
 
 ## Plataforma

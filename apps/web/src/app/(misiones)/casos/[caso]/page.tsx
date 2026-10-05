@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
 import { ResenasCaso } from "@/components/comunidad/resenas-caso";
+import { AsistenteFlotante } from "@/components/ia/asistente-flotante";
 import { DatosDelCaso } from "@/components/mision/datos-del-caso";
 import { PanelCaso } from "@/components/mision/panel-caso";
 import { RubricaDelCaso } from "@/components/mision/rubrica-del-caso";
@@ -46,6 +47,7 @@ export default async function CasoPage({ params }: Parametros) {
       {esClases ? null : <RubricaDelCaso rubrica={caso.rubrica} />}
       <DatosDelCaso caso={caso.slug} datos={caso.datos} />
       <ResenasCaso caso={caso.slug} />
+      <AsistenteFlotante caso={caso.slug} />
     </main>
   );
 }

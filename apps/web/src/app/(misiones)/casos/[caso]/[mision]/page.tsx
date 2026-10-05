@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { compilarMision } from "@syntaxerror/content/bloques";
 import { archivosPython, paquetesPython } from "@syntaxerror/content/datos";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
+import { AsistenteFlotante } from "@/components/ia/asistente-flotante";
 import { componentesMision } from "@/components/mision/componentes";
 import { MisionProvider } from "@/components/mision/mision-provider";
 import { PreguntaDocente } from "@/components/mision/pregunta-docente";
@@ -72,6 +73,7 @@ export default async function MisionPage({ params }: Parametros) {
         {anterior ? <Link className="text-primary hover:underline" href={`/casos/${caso.slug}/${anterior.slug}`}>{`← ${anterior.titulo}`}</Link> : <span />}
         {siguiente ? <Link className="text-primary hover:underline" href={`/casos/${caso.slug}/${siguiente.slug}`}>{`${siguiente.titulo} →`}</Link> : null}
       </nav>
+      <AsistenteFlotante caso={caso.slug} />
     </main>
   );
 }
