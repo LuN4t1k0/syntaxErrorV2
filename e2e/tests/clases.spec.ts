@@ -7,8 +7,8 @@ test("la ruta muestra las clases antes del caso de SQL, sin entregable ni rúbri
   await page.goto("/rutas/data-analyst");
   const clases = page.getByRole("link", { name: /Clases de SQL/ });
   await expect(clases).toContainText("18 lecciones");
-  // Las clases no cuentan en la numeración: Minimarkets sigue siendo el tercer caso de la ruta.
-  await expect(page.getByRole("link", { name: /Minimarkets del Sur/ })).toContainText("Caso 3 · Minimarkets del Sur");
+  // Las clases no cuentan en la numeración, que parte del Caso 0 como en la propuesta: Minimarkets es el Caso 2.
+  await expect(page.getByRole("link", { name: /Minimarkets del Sur/ })).toContainText("Caso 2 · Minimarkets del Sur");
   await page.goto(`/casos/${CLASES}`);
   await expect(page.getByText("> clases")).toBeVisible();
   await expect(page.getByText("Lección 1 · 12 min")).toBeVisible();
