@@ -475,6 +475,8 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ### Task 2: Las clases en el panel
 
+> **Nota del 2026-10-06:** el cambio del panel ya entró con la Fase 8c, porque su `dashboard/page.tsx` completo lo incluye. **No copies el `dashboard/page.tsx` de esta tarea:** borraría la sección "Rutas en beta". Haz solo el Step 1 (la prueba en `clases.spec.ts`), corre el Step 4 y haz el commit con `e2e/tests/clases.spec.ts`.
+
 **Files:**
 - Modify: `apps/web/src/app/(dashboard)/dashboard/page.tsx`
 - Test: `e2e/tests/clases.spec.ts`
