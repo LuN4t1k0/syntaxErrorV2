@@ -18,7 +18,7 @@ La idea es que armes algo que se parece más a trabajo real: no una fórmula ais
 
 **Condicional: total por categoría.** Finalmente, SUMAR.SI suma solo la categoría tecnologia usando los totales ya calculados. Es el cierre del mini reporte: pasas de filas sueltas a una pregunta de negocio.
 
-<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI(B2:B4,\"tecnologia\",E2:E4)"} />
+<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI(B2:B4;\"tecnologia\";E2:E4)"} />
 </Concepto>
 
 <SheetTask
@@ -31,5 +31,5 @@ La idea es que armes algo que se parece más a trabajo real: no una fórmula ais
 />
 
 <Debrief>
-E2=900000, E3=60000, E4=180000 (precio*cantidad de cada fila); F2="NOTEBOOK (tecnologia)"; G2=SUMAR.SI(B2:B4,"tecnologia",E2:E4)=900000+60000=960000, porque Notebook y Mouse son categoría tecnologia.
+E2=900000, E3=60000, E4=180000 (precio*cantidad de cada fila); F2="NOTEBOOK (tecnologia)"; G2=SUMAR.SI(B2:B4;"tecnologia";E2:E4)=900000+60000=960000, porque Notebook y Mouse son categoría tecnologia.
 </Debrief>

@@ -8,13 +8,13 @@ SI sirve para que Excel tome una decisión simple: si pasa algo, muestra una cos
 
 Es el semáforo de las planillas. Verde si todo bien, rojo si hay que mirar con lupa.
 
-<Sintaxis lenguaje="planilla" codigo={"=SI(condicion,valor_si_verdadero,valor_si_falso)"} />
+<Sintaxis lenguaje="planilla" codigo={"=SI(condicion;valor_si_verdadero;valor_si_falso)"} />
 
 **Concepto principal.** La estructura es SI(condición; valor_si_verdadero; valor_si_falso). Primero haces una pregunta, después defines las dos respuestas posibles. Ejemplo humano: si queda stock menor a 5, alerta; si no, todo tranquilo.
 
 **Cómo pensarlo.** Notebook tiene stock 8, así que no es urgente. Mouse tiene stock 2, así que necesita alerta. Teclado tiene stock 15, todo ok. Cada fila responde la misma pregunta: el stock de este producto es menor a 5?
 
-**Uso en reportes.** SI se usa para estados, alertas, aprobaciones, clasificaciones y mensajes automáticos. Es mejor que una persona lea Stock bajo a que tenga que interpretar números a las 6 de la tarde con tres cafes encima.
+**Uso en reportes.** SI se usa para estados, alertas, aprobaciones, clasificaciones y mensajes automáticos. Es mejor que una persona lea Stock bajo a que tenga que interpretar números a las 6 de la tarde con tres cafés encima.
 </Concepto>
 
 <SheetTask

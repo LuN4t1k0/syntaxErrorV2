@@ -8,7 +8,7 @@ BUSCARV busca hacia la derecha. Si el dato que quieres está a la izquierda, se 
 
 INDICE + COINCIDIR no se asusta: puede buscar por producto y traer el ID aunque el ID este antes en la tabla.
 
-<Sintaxis lenguaje="planilla" codigo={"=INDICE(rango_a_la_izquierda,COINCIDIR(valor,rango_busqueda,0))"} />
+<Sintaxis lenguaje="planilla" codigo={"=INDICE(rango_a_la_izquierda;COINCIDIR(valor;rango_busqueda;0))"} />
 
 **Concepto principal.** En esta tabla, producto está en C y el ID está en B. BUSCARV no es cómodo porque quiere buscar desde la primera columna del rango hacia la derecha. Con INDICE eliges directamente el rango resultado B2:B4 y con COINCIDIR buscas Teclado en C2:C4.
 

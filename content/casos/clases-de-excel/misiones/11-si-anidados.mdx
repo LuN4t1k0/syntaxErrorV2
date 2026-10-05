@@ -8,7 +8,7 @@ Un SI anidado sirve cuando tienes más de dos respuestas posibles. No es solo si
 
 Piénsalo como clasificar loot: legendario, raro o común, pero con montos de venta.
 
-<Sintaxis lenguaje="planilla" codigo={"=SI(condicion1,resultado1,SI(condicion2,resultado2,resultado3))"} />
+<Sintaxis lenguaje="planilla" codigo={"=SI(condicion1;resultado1;SI(condicion2;resultado2;resultado3))"} />
 
 **Concepto principal.** Un SI puede vivir dentro de otro SI. Primero preguntas por la condición más fuerte; si no se cumple, preguntas la siguiente. Aquí la regla es: mayor a 300000 es Alto; si no, mayor a 50000 es Medio; si no, Bajo.
 
