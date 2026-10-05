@@ -149,6 +149,9 @@ describe("validarContenido", () => {
   it("la última misión de un caso publicado debe ser sin guía; en borrador no se exige", async () => {
     mision("03-python").sinGuia = false;
     expect(await validar()).toContain("casos/ventas: la última misión (03-python) debe ser sin guía: agrega sinGuia: true a su frontmatter");
+    // Una ruta en beta se va a publicar: también se exige.
+    contenido.rutas[0].estado = "beta";
+    expect(await validar()).toContain("casos/ventas: la última misión (03-python) debe ser sin guía: agrega sinGuia: true a su frontmatter");
     contenido.rutas[0].estado = "borrador";
     expect(await validar()).toEqual([]);
   });

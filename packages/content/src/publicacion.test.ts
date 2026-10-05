@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
 import { cargarContenido } from "./cargar";
 import { archivosPython, grillaDeHoja, paquetesPython, tablasSql } from "./datos";
-import { casosVisibles, rutasVisibles, tareasDeMision } from "./publicacion";
+import { casosSoloBeta, casosVisibles, rutasVisibles, tareasDeMision } from "./publicacion";
 import type { Contenido } from "./tipos";
 
 const FIXTURE = fileURLToPath(new URL("../test/fixtures/valido", import.meta.url));
@@ -25,6 +25,20 @@ describe("visibilidad", () => {
     };
     expect(casosVisibles(conBorrador, false)).toEqual([]);
     expect(casosVisibles(conBorrador, true).map((caso) => caso.slug)).toEqual(["ventas"]);
+  });
+
+  it("una ruta en beta se construye pero no se lista, y sus casos son solo para probadores", () => {
+    const enBeta: Contenido = { ...contenido, rutas: contenido.rutas.map((ruta) => ({ ...ruta, estado: "beta" as const })) };
+    expect(rutasVisibles(enBeta, false)).toEqual([]);
+    expect(rutasVisibles(enBeta, false, { beta: true }).map((ruta) => ruta.slug)).toEqual(["analista"]);
+    expect(casosVisibles(enBeta, false, { beta: true }).map((caso) => caso.slug)).toEqual(["ventas"]);
+    expect([...casosSoloBeta(enBeta, false)]).toEqual(["ventas"]);
+    // Con los borradores a la vista (desarrollo y e2e) se ve todo y nada queda solo para probadores.
+    expect(rutasVisibles(enBeta, true).map((ruta) => ruta.slug)).toEqual(["analista"]);
+    expect([...casosSoloBeta(enBeta, true)]).toEqual([]);
+    // Un caso que también está en una ruta publicada no es solo beta.
+    const tambienPublicado: Contenido = { ...enBeta, rutas: [...enBeta.rutas, { ...contenido.rutas[0], slug: "otra", estado: "publicada" }] };
+    expect([...casosSoloBeta(tambienPublicado, false)]).toEqual([]);
   });
 
   it("tareasDeMision devuelve solo los bloques de tarea", () => {

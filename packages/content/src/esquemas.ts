@@ -20,7 +20,8 @@ export const rutaSchema = z.object({
   titulo: texto,
   cargo: texto,
   descripcion: texto,
-  estado: z.enum(["publicada", "borrador"]),
+  // beta: se publica en producción, pero oculta; solo la hacen probadores y admins (fase 8c).
+  estado: z.enum(["publicada", "beta", "borrador"]),
   casos: z.array(slug).min(1, "la ruta necesita al menos un caso"),
 });
 
