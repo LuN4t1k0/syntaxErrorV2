@@ -5,7 +5,7 @@ import { AsistenteFlotante } from "@/components/ia/asistente-flotante";
 import { DatosDelCaso } from "@/components/mision/datos-del-caso";
 import { PanelCaso } from "@/components/mision/panel-caso";
 import { RubricaDelCaso } from "@/components/mision/rubrica-del-caso";
-import { casosParaPublicar, obtenerCaso, rutasParaPublicar } from "@/lib/contenido";
+import { casosParaConstruir, casosSoloParaProbadores, obtenerCaso, rutasParaConstruir } from "@/lib/contenido";
 import { requisitosDelCaso } from "@/lib/progreso/requisitos-contenido";
 
 export const dynamic = "error";
@@ -13,18 +13,21 @@ export const dynamicParams = false;
 type Parametros = { params: Promise<{ caso: string }> };
 
 export async function generateStaticParams() {
-  return (await casosParaPublicar()).map((caso) => ({ caso: caso.slug }));
+  return (await casosParaConstruir()).map((caso) => ({ caso: caso.slug }));
 }
 
 export async function generateMetadata({ params }: Parametros) {
   const caso = await obtenerCaso((await params).caso);
-  return { title: caso?.titulo ?? "Caso" };
+  // Un caso solo de rutas en beta no se indexa hasta que se publique.
+  const enBeta = caso ? (await casosSoloParaProbadores()).has(caso.slug) : false;
+  return { title: caso?.titulo ?? "Caso", ...(enBeta ? { robots: { index: false, follow: false } } : {}) };
 }
 
 export default async function CasoPage({ params }: Parametros) {
   const caso = await obtenerCaso((await params).caso);
   if (!caso) notFound();
-  const requisitos = requisitosDelCaso(await rutasParaPublicar(), await casosParaPublicar(), caso.slug);
+  const requisitos = requisitosDelCaso(await rutasParaConstruir(), await casosParaConstruir(), caso.slug);
+  const soloProbadores = (await casosSoloParaProbadores()).has(caso.slug);
   const esClases = caso.tipo === "clases";
   return (
     <main className="mx-auto grid max-w-4xl gap-8 px-4 py-12 sm:px-6">
@@ -38,6 +41,7 @@ export default async function CasoPage({ params }: Parametros) {
         </p>
       </header>
       <PanelCaso
+        soloProbadores={soloProbadores}
         caso={caso.slug}
         tipo={caso.tipo}
         entregable={caso.entregable}

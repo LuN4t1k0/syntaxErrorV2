@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { RUBRICA_BASE } from "@syntaxerror/content/rubrica";
 import { getDb } from "@syntaxerror/db/client";
 import { FormularioRevision } from "@/components/comunidad/formulario-revision";
-import { casosParaPublicar } from "@/lib/contenido";
+import { casosParaConstruir } from "@/lib/contenido";
 import { listarEntregablesPorRevisar } from "@/lib/entregables/revision";
 import { esDocente } from "@/lib/roles";
 import { obtenerUsuarioActual } from "@/lib/sesion";
@@ -16,7 +16,7 @@ export default async function EntregablesPage() {
   const usuario = await obtenerUsuarioActual();
   if (!usuario) redirect("/login?callbackUrl=/profesor/entregables");
   if (!esDocente(usuario)) notFound();
-  const [lista, casos] = await Promise.all([listarEntregablesPorRevisar(getDb(), usuario), casosParaPublicar()]);
+  const [lista, casos] = await Promise.all([listarEntregablesPorRevisar(getDb(), usuario), casosParaConstruir()]);
   const rubricaDe = (slug: string) => casos.find((caso) => caso.slug === slug)?.rubrica ?? RUBRICA_BASE;
 
   return (

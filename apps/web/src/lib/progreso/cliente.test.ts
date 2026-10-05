@@ -101,7 +101,13 @@ describe("cargarProgreso", () => {
       certificados: [],
       bloqueadoPor: null,
       ordenLibre: true,
+      soloProbadores: false,
     });
+  });
+
+  it("en un caso de una ruta beta, sin ser probador, avisa soloProbadores con la sesión iniciada", async () => {
+    const progreso = await cargarProgreso("ventas", tareasPorMision, { fetch: fetchFalso(() => json(403, { error: "solo_probadores" })).fetch, almacen: almacenEnMemoria() });
+    expect(progreso).toMatchObject({ sesion: true, soloProbadores: true, misiones: {} });
   });
 
   it("sin sesión usa solo localStorage", async () => {
@@ -117,6 +123,7 @@ describe("cargarProgreso", () => {
       certificados: [],
       bloqueadoPor: null,
       ordenLibre: false,
+      soloProbadores: false,
     });
   });
 });

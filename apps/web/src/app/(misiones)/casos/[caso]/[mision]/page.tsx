@@ -8,7 +8,7 @@ import { componentesMision } from "@/components/mision/componentes";
 import { MisionProvider } from "@/components/mision/mision-provider";
 import { PreguntaDocente } from "@/components/mision/pregunta-docente";
 import { Tutor } from "@/components/mision/tutor";
-import { casosParaPublicar, obtenerCaso, rutasParaPublicar } from "@/lib/contenido";
+import { casosParaConstruir, casosSoloParaProbadores, obtenerCaso, rutasParaConstruir } from "@/lib/contenido";
 import { requisitosDelCaso } from "@/lib/progreso/requisitos-contenido";
 import { unidad } from "@/lib/unidad";
 
@@ -17,7 +17,7 @@ export const dynamicParams = false;
 type Parametros = { params: Promise<{ caso: string; mision: string }> };
 
 export async function generateStaticParams() {
-  return (await casosParaPublicar()).flatMap((caso) => caso.misiones.map((mision) => ({ caso: caso.slug, mision: mision.slug })));
+  return (await casosParaConstruir()).flatMap((caso) => caso.misiones.map((mision) => ({ caso: caso.slug, mision: mision.slug })));
 }
 
 async function buscar(params: Parametros["params"]) {
@@ -29,7 +29,9 @@ async function buscar(params: Parametros["params"]) {
 
 export async function generateMetadata({ params }: Parametros) {
   const encontrada = await buscar(params);
-  return { title: encontrada ? `${encontrada.mision.titulo} · ${encontrada.caso.titulo}` : "Misión" };
+  // Una misión solo de rutas en beta no se indexa hasta que se publique.
+  const enBeta = encontrada ? (await casosSoloParaProbadores()).has(encontrada.caso.slug) : false;
+  return { title: encontrada ? `${encontrada.mision.titulo} · ${encontrada.caso.titulo}` : "Misión", ...(enBeta ? { robots: { index: false, follow: false } } : {}) };
 }
 
 export default async function MisionPage({ params }: Parametros) {
@@ -40,7 +42,8 @@ export default async function MisionPage({ params }: Parametros) {
   const usaPython = mision.bloques.some((bloque) => bloque.tipo === "PythonTask" || bloque.tipo === "PythonEjemplo");
   const anterior = caso.misiones[indice - 1];
   const siguiente = caso.misiones[indice + 1];
-  const requisitos = requisitosDelCaso(await rutasParaPublicar(), await casosParaPublicar(), caso.slug);
+  const requisitos = requisitosDelCaso(await rutasParaConstruir(), await casosParaConstruir(), caso.slug);
+  const soloProbadores = (await casosSoloParaProbadores()).has(caso.slug);
   const sinGuia = mision.sinGuia;
   const tareas = tareasDeMision(mision).map((tarea) => tarea.props.id);
   return (
@@ -64,6 +67,7 @@ export default async function MisionPage({ params }: Parametros) {
         anterior={anterior ? { slug: anterior.slug, titulo: anterior.titulo, tareas: tareasDeMision(anterior).map((tarea) => tarea.props.id) } : null}
         requisitos={requisitos}
         sinGuia={sinGuia}
+        soloProbadores={soloProbadores}
       >
         <article className="grid gap-6"><Contenido components={componentesMision(caso)} /></article>
         <Tutor caso={caso.slug} mision={mision.slug} />

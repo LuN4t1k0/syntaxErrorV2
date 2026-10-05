@@ -10,6 +10,7 @@ import { cargarProgreso, dependenciasNavegador, type ProgresoVisible } from "@/l
 import type { TipoCaso } from "@syntaxerror/content/tipos";
 import type { CasoCorto } from "@/lib/progreso/requisitos";
 import { unidad } from "@/lib/unidad";
+import { AvisoBeta } from "./aviso-beta";
 import { ResultadoRevision } from "./resultado-revision";
 
 type MisionDelCaso = { slug: string; titulo: string; tiempo: number; tareas: string[]; sinGuia: boolean };
@@ -26,7 +27,21 @@ function etiquetaEstado(estado: "en_curso" | "aprobada" | undefined): string {
   return "Pendiente";
 }
 
-export function PanelCaso({ caso, tipo = "caso", misiones, entregable, requisitos }: { caso: string; tipo?: TipoCaso; misiones: MisionDelCaso[]; entregable: string; requisitos: CasoCorto[] }) {
+export function PanelCaso({
+  caso,
+  tipo = "caso",
+  misiones,
+  entregable,
+  requisitos,
+  soloProbadores = false,
+}: {
+  caso: string;
+  tipo?: TipoCaso;
+  misiones: MisionDelCaso[];
+  entregable: string;
+  requisitos: CasoCorto[];
+  soloProbadores?: boolean;
+}) {
   const [progreso, setProgreso] = useState<ProgresoVisible | null>(null);
   const [url, setUrl] = useState("");
   const [mensaje, setMensaje] = useState<string | null>(null);
@@ -69,7 +84,9 @@ export function PanelCaso({ caso, tipo = "caso", misiones, entregable, requisito
     }
   }
 
-  const casoPendiente = progreso ? (progreso.sesion ? progreso.bloqueadoPor : (requisitos[0] ?? null)) : null;
+  // En una ruta beta, quien no es probador ve el aviso de beta en vez del de orden.
+  const enBeta = soloProbadores && progreso !== null && (progreso.soloProbadores || !progreso.sesion);
+  const casoPendiente = progreso && !enBeta ? (progreso.sesion ? progreso.bloqueadoPor : (requisitos[0] ?? null)) : null;
   const todasAprobadas = misiones.every((mision) => progreso?.misiones[mision.slug]?.estado === "aprobada");
   const revision = progreso?.revision ?? null;
   const volverAqui = `/login?callbackUrl=${encodeURIComponent(`/casos/${caso}`)}`;
@@ -86,6 +103,7 @@ export function PanelCaso({ caso, tipo = "caso", misiones, entregable, requisito
 
   return (
     <div className="grid gap-8">
+      {enBeta ? <AvisoBeta sesion={progreso.sesion} volverA={`/casos/${caso}`} className="card p-4" /> : null}
       {casoPendiente ? (
         <p role="status" className="card p-4 text-sm leading-6">
           Puedes recorrer este caso, pero sus tareas se habilitan al completar{" "}

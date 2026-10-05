@@ -45,7 +45,11 @@ content/
 
 Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTask`, `SheetTask`, `PythonTask`, `Decision` y `Debrief`. El caso `content/casos/demo-motor` usa todos.
 
-- En desarrollo se ven también las rutas en `borrador` (`CONTENT_INCLUDE_DRAFTS=true`).
+- Una ruta tiene `estado: publicada`, `beta` o `borrador`.
+  - **`publicada`:** se lista en `/rutas`, el buscador y el sitemap.
+  - **`beta`:** sus páginas se construyen en producción, pero no se listan ni se indexan (`noindex`). Solo la hacen los probadores y los admins: al resto, el servidor le responde 403 `solo_probadores` en progreso, entregables, tutor y asistente, y las páginas muestran un aviso de beta. Los probadores la encuentran en su panel ("Rutas en beta"). Para abrirla a todos, se cambia a `publicada`.
+  - **`borrador`:** no se construye en producción.
+- En desarrollo y en los e2e se ven todas, incluidas las de `borrador` (`CONTENT_INCLUDE_DRAFTS=true`), y el cierre de las rutas beta no corre (sí el aviso).
 - `db-setup` sincroniza rutas y casos con la base en cada `npm run dev`.
 - El build de `web` corre `content:validate` primero y falla si algo no cumple.
 - El validador ejecuta soluciones de Python con Pyodide y descarga pandas desde jsDelivr la primera vez, así que necesita red.
@@ -90,7 +94,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 
 - **Panel:** vive en `/admin` y solo entra el rol `admin` (a otros roles les responde 404). En local, `admin@local.test` con clave `admin123456`.
 - **Usuarios:** permite buscar, cambiar rol y eliminar una cuenta por solicitud ARCO, confirmando con su email. Nadie cambia su propio rol ni elimina su propia cuenta desde el panel.
-- **Probadores y orden de las rutas:** en la ficha de un usuario se le marca como **probador**: hace las rutas en el orden que quiera, sin esperar la misión ni el caso anterior, para probarlas antes que el resto (un admin también puede marcarse a sí mismo). En la portada de la administración, **Orden de las rutas** libera el orden para todos los estudiantes, con confirmación. El servidor aplica el orden en `registrarIntento` y `enviarEntregable` según `opcionesDeProgreso` (`lib/progreso/orden.ts`), y avisa `ordenLibre` al navegador para no mostrar bloqueos. Los certificados se ganan igual: piden los entregables aprobados. Los dos cambios quedan en la bitácora.
+- **Probadores y orden de las rutas:** en la ficha de un usuario se le marca como **probador**: hace las rutas en el orden que quiera, sin esperar la misión ni el caso anterior, y entra a las rutas en `beta`, para probarlas antes que el resto (un admin también puede marcarse a sí mismo; los admins entran a las rutas beta siempre). En la portada de la administración, **Orden de las rutas** libera el orden para todos los estudiantes, con confirmación. El servidor aplica el orden en `registrarIntento` y `enviarEntregable` según `opcionesDeProgreso` (`lib/progreso/orden.ts`), y avisa `ordenLibre` al navegador para no mostrar bloqueos. Los certificados se ganan igual: piden los entregables aprobados. Los dos cambios quedan en la bitácora.
 - **Sesiones:** cada `auth()` revisa la cuenta en la base. Si administración elimina la cuenta, la sesión se cierra en todos sus dispositivos, y un cambio de rol rige al instante.
 - **Contenido:** muestra casos, rutas, inscripciones y métricas por misión: personas que iniciaron/aprobaron, intentos promedio, abandono tras 14 días sin avance y primera tarea pendiente.
 - **Comunidad:** aprueba solicitudes docentes, modera comentarios de reseñas y resuelve reportes. Un error real de un caso suma 25 puntos a quien lo reportó.

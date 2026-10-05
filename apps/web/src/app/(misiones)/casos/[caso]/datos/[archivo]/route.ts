@@ -1,4 +1,4 @@
-import { casosParaPublicar, obtenerCaso } from "@/lib/contenido";
+import { casosParaConstruir, obtenerCaso } from "@/lib/contenido";
 
 // Los CSV de cada caso, para trabajar fuera de la plataforma: la planilla del entregable, el notebook en Colab o
 // el dashboard en Power BI o Looker Studio. Se generan en el build, como las páginas del caso.
@@ -8,7 +8,7 @@ export const dynamicParams = false;
 type Parametros = { params: Promise<{ caso: string; archivo: string }> };
 
 export async function generateStaticParams() {
-  return (await casosParaPublicar()).flatMap((caso) => caso.datos.map((tabla) => ({ caso: caso.slug, archivo: `${tabla.nombre}.csv` })));
+  return (await casosParaConstruir()).flatMap((caso) => caso.datos.map((tabla) => ({ caso: caso.slug, archivo: `${tabla.nombre}.csv` })));
 }
 
 export async function GET(_request: Request, { params }: Parametros) {

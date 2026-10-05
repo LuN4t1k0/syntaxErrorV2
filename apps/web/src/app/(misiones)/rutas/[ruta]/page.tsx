@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { MapaRuta } from "@/components/rutas/mapa-ruta";
-import { casosDeRuta, obtenerRuta, rutasParaPublicar } from "@/lib/contenido";
+import { casosDeRuta, obtenerRuta, rutasParaConstruir } from "@/lib/contenido";
 import type { PiezaRuta } from "@/lib/rutas/mapa";
 
 export const dynamic = "error";
@@ -8,12 +8,13 @@ export const dynamicParams = false;
 type Parametros = { params: Promise<{ ruta: string }> };
 
 export async function generateStaticParams() {
-  return (await rutasParaPublicar()).map((ruta) => ({ ruta: ruta.slug }));
+  return (await rutasParaConstruir()).map((ruta) => ({ ruta: ruta.slug }));
 }
 
 export async function generateMetadata({ params }: Parametros) {
   const ruta = await obtenerRuta((await params).ruta);
-  return { title: ruta?.titulo ?? "Ruta" };
+  // Una ruta en beta no se indexa hasta que se publique.
+  return { title: ruta?.titulo ?? "Ruta", ...(ruta?.estado === "beta" ? { robots: { index: false, follow: false } } : {}) };
 }
 
 export default async function RutaPage({ params }: Parametros) {
@@ -37,7 +38,7 @@ export default async function RutaPage({ params }: Parametros) {
           Cada clase es una rama: aprendes en ella y se fusiona en el caso que la aplica, en un trabajo real.
         </p>
       </header>
-      <MapaRuta ruta={{ slug: ruta.slug, titulo: ruta.titulo }} piezas={piezas} />
+      <MapaRuta ruta={{ slug: ruta.slug, titulo: ruta.titulo, beta: ruta.estado === "beta" }} piezas={piezas} />
     </main>
   );
 }

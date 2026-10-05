@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { armarMapa, hashCorto, type AvanceCaso, type EstadoPieza, type PiezaMapa, type PiezaRuta } from "@/lib/rutas/mapa";
+import { AvisoBeta } from "../mision/aviso-beta";
 
 // La ruta como un `git log --graph --reverse`: main avanza con los casos y cada clase es una rama que sale de main y
 // se fusiona en el caso que la aplica. La página es estática; el avance de la persona se pide al cargar.
 
-type Props = { ruta: { slug: string; titulo: string }; piezas: PiezaRuta[] };
+type Props = { ruta: { slug: string; titulo: string; beta?: boolean }; piezas: PiezaRuta[] };
 
 const NODO: Record<EstadoPieza, string> = {
   completo: "border-success bg-success",
@@ -123,6 +124,7 @@ function Curva({ hacia, main, rama }: { hacia: "rama" | "main"; main: string; ra
 export function MapaRuta({ ruta, piezas }: Props) {
   const [avance, setAvance] = useState<Record<string, AvanceCaso> | null>(null);
   const [ordenLibre, setOrdenLibre] = useState(false);
+  const [conBeta, setConBeta] = useState(false);
   const [sesion, setSesion] = useState<"cargando" | "con" | "sin">("cargando");
 
   useEffect(() => {
@@ -131,10 +133,11 @@ export function MapaRuta({ ruta, piezas }: Props) {
       .then(async (respuesta) => {
         if (!vigente) return;
         if (!respuesta.ok) return setSesion("sin");
-        const datos = (await respuesta.json()) as { casos: Record<string, AvanceCaso>; ordenLibre?: boolean };
+        const datos = (await respuesta.json()) as { casos: Record<string, AvanceCaso>; ordenLibre?: boolean; accesoBeta?: boolean };
         if (!vigente) return;
         setAvance(datos.casos);
         setOrdenLibre(Boolean(datos.ordenLibre));
+        setConBeta(Boolean(datos.accesoBeta));
         setSesion("con");
       })
       .catch(() => vigente && setSesion("sin"));
@@ -149,6 +152,16 @@ export function MapaRuta({ ruta, piezas }: Props) {
 
   return (
     <div className="grid gap-6">
+      {ruta.beta && sesion !== "cargando" ? (
+        sesion === "con" && conBeta ? (
+          <p role="status" className="card p-4 text-sm leading-6">
+            <span className="badge mr-2">Beta</span>
+            Estás probando esta ruta antes que el resto. Si algo falla o no se entiende, usa «Reportar un problema» al pie de la página.
+          </p>
+        ) : (
+          <AvisoBeta sesion={sesion === "con"} volverA={`/rutas/${ruta.slug}`} className="card p-4" />
+        )
+      ) : null}
       {sesion === "con" ? (
         <div className="grid gap-3 sm:grid-cols-2" aria-label="Tu avance en la ruta">
           <Barra etiqueta="Lecciones" descripcion="Lecciones aprobadas" valor={resumen.leccionesAprobadas} total={resumen.lecciones} />

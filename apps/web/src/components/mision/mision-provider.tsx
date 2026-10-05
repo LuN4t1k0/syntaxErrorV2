@@ -8,7 +8,11 @@ import type { CasoCorto } from "@/lib/progreso/requisitos";
 import { PythonProvider } from "./python-contexto";
 
 export type MisionAnterior = { slug: string; titulo: string; tareas: string[] };
-export type Bloqueo = { tipo: "mision"; mision: { slug: string; titulo: string } } | { tipo: "caso"; caso: CasoCorto; sesion: boolean };
+export type Bloqueo =
+  | { tipo: "mision"; mision: { slug: string; titulo: string } }
+  | { tipo: "caso"; caso: CasoCorto; sesion: boolean }
+  // Un caso de una ruta en beta, para quien no es probador (o no ha entrado).
+  | { tipo: "beta"; sesion: boolean };
 
 type ContextoMision = {
   caso: string;
@@ -33,6 +37,7 @@ export function MisionProvider({
   anterior,
   requisitos,
   sinGuia,
+  soloProbadores = false,
   children,
 }: {
   caso: string;
@@ -42,6 +47,7 @@ export function MisionProvider({
   anterior: MisionAnterior | null;
   requisitos: CasoCorto[];
   sinGuia: boolean;
+  soloProbadores?: boolean;
   children: ReactNode;
 }) {
   const [aprobadas, setAprobadas] = useState<ReadonlySet<string>>(new Set());
@@ -65,7 +71,8 @@ export function MisionProvider({
       if (propia && propia.tareasAprobadas.length > 0) setAprobadas((actuales) => new Set([...actuales, ...propia.tareasAprobadas]));
       setFallidosServidor(propia?.fallidos ?? 0);
       const casoPendiente = progreso.sesion ? progreso.bloqueadoPor : (requisitos[0] ?? null);
-      if (casoPendiente) setBloqueo({ tipo: "caso", caso: casoPendiente, sesion: progreso.sesion });
+      if (soloProbadores && (progreso.soloProbadores || !progreso.sesion)) setBloqueo({ tipo: "beta", sesion: progreso.sesion });
+      else if (casoPendiente) setBloqueo({ tipo: "caso", caso: casoPendiente, sesion: progreso.sesion });
       else if (!progreso.ordenLibre && anterior && progreso.misiones[anterior.slug]?.estado !== "aprobada") setBloqueo({ tipo: "mision", mision: { slug: anterior.slug, titulo: anterior.titulo } });
       else setBloqueo(null);
       setListo(true);
@@ -73,7 +80,7 @@ export function MisionProvider({
     return () => {
       vigente = false;
     };
-  }, [caso, mision, claveTareas, anterior, requisitos]);
+  }, [caso, mision, claveTareas, anterior, requisitos, soloProbadores]);
 
   const registrarResultado = useCallback(
     (id: string, { aprobada, errorDeCodigo }: Pick<ResultadoTarea, "aprobada" | "errorDeCodigo">) => {

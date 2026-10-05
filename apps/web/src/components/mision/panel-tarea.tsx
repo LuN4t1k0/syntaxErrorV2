@@ -6,10 +6,12 @@ import { Badge } from "@syntaxerror/ui/components/badge";
 import { Button } from "@syntaxerror/ui/components/button";
 import type { ResultadoTarea } from "@syntaxerror/engines/tipos";
 import { INTENTOS_PARA_PISTA, pistasDisponibles } from "@/lib/progreso/ayudas";
+import { AvisoBeta } from "./aviso-beta";
 import { useMision, type Bloqueo } from "./mision-provider";
 
 function AvisoBloqueo({ bloqueo, caso }: { bloqueo: Bloqueo; caso: string }) {
   const clase = "rounded-md border border-border bg-surface-raised p-3 text-sm leading-6";
+  if (bloqueo.tipo === "beta") return <AvisoBeta sesion={bloqueo.sesion} volverA={`/casos/${caso}`} className={clase} />;
   if (bloqueo.tipo === "mision") {
     return (
       <p role="status" className={clase}>

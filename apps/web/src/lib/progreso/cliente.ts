@@ -15,6 +15,8 @@ export type ProgresoVisible = {
   bloqueadoPor: CasoCorto | null;
   // Sin bloqueos de orden para esta persona (probador, o todos si un admin lo encendió).
   ordenLibre: boolean;
+  // El caso es de una ruta en beta y la persona no es probadora (la API respondió 403 solo_probadores).
+  soloProbadores: boolean;
 };
 
 type Pendiente = Omit<IntentoTarea, "aprobada">;
@@ -76,10 +78,12 @@ export async function sincronizarPendientes(deps: Dependencias): Promise<number>
 }
 
 export async function cargarProgreso(caso: string, tareasPorMision: Record<string, string[]>, deps: Dependencias): Promise<ProgresoVisible> {
-  let servidor: Omit<ProgresoVisible, "sesion"> | null = null;
+  let servidor: Omit<ProgresoVisible, "sesion" | "soloProbadores"> | null = null;
+  let soloProbadores = false;
   try {
     const respuesta = await deps.fetch(`/api/progreso?caso=${encodeURIComponent(caso)}`, { cache: "no-store" });
-    if (respuesta.ok) servidor = (await respuesta.json()) as Omit<ProgresoVisible, "sesion">;
+    if (respuesta.ok) servidor = (await respuesta.json()) as Omit<ProgresoVisible, "sesion" | "soloProbadores">;
+    else if (respuesta.status === 403) soloProbadores = ((await respuesta.json().catch(() => ({}))) as { error?: string }).error === "solo_probadores";
   } catch {
     servidor = null;
   }
@@ -96,7 +100,7 @@ export async function cargarProgreso(caso: string, tareasPorMision: Record<strin
     };
   }
   return {
-    sesion: servidor !== null,
+    sesion: servidor !== null || soloProbadores,
     misiones,
     entregable: servidor?.entregable ?? null,
     revision: servidor?.revision ?? null,
@@ -104,6 +108,7 @@ export async function cargarProgreso(caso: string, tareasPorMision: Record<strin
     certificados: servidor?.certificados ?? [],
     bloqueadoPor: servidor?.bloqueadoPor ?? null,
     ordenLibre: servidor?.ordenLibre ?? false,
+    soloProbadores,
   };
 }
 
