@@ -66,7 +66,7 @@ export function MisionProvider({
       setFallidosServidor(propia?.fallidos ?? 0);
       const casoPendiente = progreso.sesion ? progreso.bloqueadoPor : (requisitos[0] ?? null);
       if (casoPendiente) setBloqueo({ tipo: "caso", caso: casoPendiente, sesion: progreso.sesion });
-      else if (anterior && progreso.misiones[anterior.slug]?.estado !== "aprobada") setBloqueo({ tipo: "mision", mision: { slug: anterior.slug, titulo: anterior.titulo } });
+      else if (!progreso.ordenLibre && anterior && progreso.misiones[anterior.slug]?.estado !== "aprobada") setBloqueo({ tipo: "mision", mision: { slug: anterior.slug, titulo: anterior.titulo } });
       else setBloqueo(null);
       setListo(true);
     });

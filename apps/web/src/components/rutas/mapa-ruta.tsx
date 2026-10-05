@@ -54,7 +54,7 @@ function etiquetaEstado(pieza: PiezaMapa): string {
 
 function Commit({ pieza, mensaje, decoraciones }: { pieza: PiezaMapa; mensaje: string; decoraciones: React.ReactNode }) {
   const unidad = pieza.tipo === "clases" ? "lecciones" : "misiones";
-  const conAvance = pieza.estado === "en_curso" || pieza.estado === "en_revision" || (pieza.estado === "bloqueado" && pieza.aprobadas > 0);
+  const conAvance = pieza.estado === "en_curso" || pieza.estado === "en_revision" || ((pieza.estado === "bloqueado" || pieza.estado === "disponible") && pieza.aprobadas > 0);
   const detalle = pieza.tipo === "clases" ? `${pieza.unidades} ${unidad}` : `Caso ${pieza.numeroCaso} · ${pieza.empresa} · ${pieza.unidades} ${unidad}`;
   return (
     <Link
@@ -122,6 +122,7 @@ function Curva({ hacia, main, rama }: { hacia: "rama" | "main"; main: string; ra
 
 export function MapaRuta({ ruta, piezas }: Props) {
   const [avance, setAvance] = useState<Record<string, AvanceCaso> | null>(null);
+  const [ordenLibre, setOrdenLibre] = useState(false);
   const [sesion, setSesion] = useState<"cargando" | "con" | "sin">("cargando");
 
   useEffect(() => {
@@ -130,9 +131,10 @@ export function MapaRuta({ ruta, piezas }: Props) {
       .then(async (respuesta) => {
         if (!vigente) return;
         if (!respuesta.ok) return setSesion("sin");
-        const datos = (await respuesta.json()) as { casos: Record<string, AvanceCaso> };
+        const datos = (await respuesta.json()) as { casos: Record<string, AvanceCaso>; ordenLibre?: boolean };
         if (!vigente) return;
         setAvance(datos.casos);
+        setOrdenLibre(Boolean(datos.ordenLibre));
         setSesion("con");
       })
       .catch(() => vigente && setSesion("sin"));
@@ -141,7 +143,7 @@ export function MapaRuta({ ruta, piezas }: Props) {
     };
   }, []);
 
-  const { etapas, resumen } = armarMapa(piezas, avance);
+  const { etapas, resumen } = armarMapa(piezas, avance, { ordenLibre });
   const ultimoCaso = [...etapas].reverse().find((etapa) => etapa.caso)?.caso ?? null;
   const release = resumen.completa ? "completo" : "release";
 

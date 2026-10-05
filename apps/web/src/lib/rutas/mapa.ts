@@ -24,8 +24,13 @@ function rama(slug: string): string {
 
 // Sin avance (sin sesión) todo queda disponible. Con avance, la ruta se recorre en orden: lo completo, después la
 // primera pieza sin completar (en curso, o en revisión si es un caso con todas sus misiones y falta el entregable)
-// y el resto bloqueado, igual que los requisitos del servidor.
-export function armarMapa(piezas: PiezaRuta[], avance: Record<string, AvanceCaso> | null): { etapas: Etapa[]; resumen: ResumenRuta } {
+// y el resto bloqueado, igual que los requisitos del servidor. Con orden libre (probadores, o todos si un admin lo
+// encendió), el resto queda disponible.
+export function armarMapa(
+  piezas: PiezaRuta[],
+  avance: Record<string, AvanceCaso> | null,
+  { ordenLibre = false }: { ordenLibre?: boolean } = {}
+): { etapas: Etapa[]; resumen: ResumenRuta } {
   let actualEncontrada = false;
   let casosAntes = 0;
   const conEstado = piezas.map((pieza): PiezaMapa => {
@@ -37,7 +42,7 @@ export function armarMapa(piezas: PiezaRuta[], avance: Record<string, AvanceCaso
       else if (!actualEncontrada) {
         actualEncontrada = true;
         estado = pieza.tipo === "caso" && pieza.unidades > 0 && aprobadas >= pieza.unidades ? "en_revision" : "en_curso";
-      } else estado = "bloqueado";
+      } else estado = ordenLibre ? "disponible" : "bloqueado";
     }
     const numeroCaso = pieza.tipo === "caso" ? casosAntes++ : null;
     return { ...pieza, hash: hashCorto(pieza.slug), numeroCaso, aprobadas, estado };

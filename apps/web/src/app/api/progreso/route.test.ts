@@ -61,6 +61,7 @@ describe("/api/progreso", () => {
       revision: null,
       completo: false,
       bloqueadoPor: null,
+      ordenLibre: false,
       certificados: [],
     });
   });

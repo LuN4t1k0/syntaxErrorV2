@@ -13,6 +13,8 @@ export type ProgresoVisible = {
   completo: boolean;
   certificados: CertificadoVisible[];
   bloqueadoPor: CasoCorto | null;
+  // Sin bloqueos de orden para esta persona (probador, o todos si un admin lo encendió).
+  ordenLibre: boolean;
 };
 
 type Pendiente = Omit<IntentoTarea, "aprobada">;
@@ -101,6 +103,7 @@ export async function cargarProgreso(caso: string, tareasPorMision: Record<strin
     completo: servidor?.completo ?? false,
     certificados: servidor?.certificados ?? [],
     bloqueadoPor: servidor?.bloqueadoPor ?? null,
+    ordenLibre: servidor?.ordenLibre ?? false,
   };
 }
 

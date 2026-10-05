@@ -130,6 +130,21 @@ describe("registrarIntento", () => {
     expect(await registrarIntento(db, userId, enStock)).toMatchObject({ misionAprobada: true });
     expect((await obtenerProgresoCaso(db, userId, "stock"))?.bloqueadoPor).toBeNull();
   });
+
+  it("con orden libre no exige la misión ni el caso anteriores, y el progreso lo avisa", async () => {
+    const { userId, rutaId } = await prepararCaso();
+    const [siguiente] = await db
+      .insert(casos)
+      .values({ slug: "stock", titulo: "Stock", cargo: "A", empresa: "E", entregable: "R", misiones: [{ slug: "s1", titulo: "S1", tareas: ["x"] }] })
+      .returning({ id: casos.id });
+    await db.insert(rutaCasos).values({ rutaId, casoId: siguiente.id, orden: 1 });
+    const libre = { incluirBorradores: false, ordenLibre: true };
+    expect(await registrarIntento(db, userId, intento("m2", "t3"), libre)).toMatchObject({ misionAprobada: true });
+    expect(await registrarIntento(db, userId, { caso: "stock", mision: "s1", tarea: "x", aprobada: true }, libre)).toMatchObject({ misionAprobada: true });
+    expect(await obtenerProgresoCaso(db, userId, "stock", libre)).toMatchObject({ bloqueadoPor: null, ordenLibre: true });
+    // Sin orden libre, la misma persona sigue con el orden normal.
+    expect(await obtenerProgresoCaso(db, userId, "stock")).toMatchObject({ bloqueadoPor: { slug: "ventas" }, ordenLibre: false });
+  });
 });
 
 describe("enviarEntregable", () => {
@@ -198,6 +213,7 @@ describe("sincronizarIntentos", () => {
       revision: null,
       completo: false,
       bloqueadoPor: null,
+      ordenLibre: false,
     });
   });
 });

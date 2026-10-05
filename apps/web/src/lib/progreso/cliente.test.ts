@@ -89,6 +89,7 @@ describe("cargarProgreso", () => {
       revision: null,
       completo: false,
       bloqueadoPor: null,
+      ordenLibre: true,
     };
     const progreso = await cargarProgreso("ventas", tareasPorMision, { fetch: fetchFalso(() => json(200, servidor)).fetch, almacen });
     expect(progreso).toEqual({
@@ -99,6 +100,7 @@ describe("cargarProgreso", () => {
       completo: false,
       certificados: [],
       bloqueadoPor: null,
+      ordenLibre: true,
     });
   });
 
@@ -114,6 +116,7 @@ describe("cargarProgreso", () => {
       completo: false,
       certificados: [],
       bloqueadoPor: null,
+      ordenLibre: false,
     });
   });
 });

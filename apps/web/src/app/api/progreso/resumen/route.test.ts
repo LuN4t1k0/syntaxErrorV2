@@ -35,12 +35,18 @@ describe("GET /api/progreso/resumen", () => {
       ],
     });
     vi.mocked(obtenerUsuarioId).mockResolvedValue(usuario.id);
-    expect(await (await GET()).json()).toEqual({ casos: {} });
+    expect(await (await GET()).json()).toEqual({ casos: {}, ordenLibre: false });
 
     const aprobar = { caso: "ventas", mision: "m1", tarea: "t1", aprobada: true };
     await POST(new Request("http://localhost:3000/api/progreso", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(aprobar) }));
     const respuesta = await GET();
     expect(respuesta.headers.get("cache-control")).toBe("no-store");
-    expect(await respuesta.json()).toEqual({ casos: { ventas: { aprobadas: 1, completo: false } } });
+    expect(await respuesta.json()).toEqual({ casos: { ventas: { aprobadas: 1, completo: false } }, ordenLibre: false });
+  });
+
+  it("avisa si la persona tiene el orden libre (probador)", async () => {
+    const [probador] = await db.insert(users).values({ email: "probador@correo.cl", probador: true }).returning({ id: users.id });
+    vi.mocked(obtenerUsuarioId).mockResolvedValue(probador.id);
+    expect(await (await GET()).json()).toEqual({ casos: {}, ordenLibre: true });
   });
 });

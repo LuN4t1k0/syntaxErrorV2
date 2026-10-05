@@ -33,7 +33,8 @@ export class ErrorProgreso extends Error {
 export type EstadoMision = { estado: "en_curso" | "aprobada"; tareasAprobadas: string[]; fallidos: number };
 // Lo que la persona ve de la revisión: el estado, el puntaje de cada dimensión, sus comentarios y el comentario general.
 export type RevisionEntregable = { estado: "pendiente" | "aprobado" | "observado"; puntajes: Puntajes; observaciones: Observaciones; comentario: string | null };
-export type ProgresoCaso = { misiones: Record<string, EstadoMision>; entregable: string | null; revision: RevisionEntregable | null; completo: boolean; bloqueadoPor: CasoCorto | null };
+// ordenLibre avisa al navegador que esta persona no tiene bloqueos de orden (ni de misión ni de caso).
+export type ProgresoCaso = { misiones: Record<string, EstadoMision>; entregable: string | null; revision: RevisionEntregable | null; completo: boolean; bloqueadoPor: CasoCorto | null; ordenLibre: boolean };
 export type ResultadoEntrega = { estado: "en_revision" } | { estado: "no_verificado"; problemas: string[]; reintentable: boolean };
 export type CasoDelUsuario = { slug: string; titulo: string; misionesAprobadas: number; totalMisiones: number; completo: boolean };
 
@@ -99,9 +100,10 @@ export async function registrarIntento(db: AppDb, userId: string, intento: Inten
     const mision = caso.misiones.find((candidata) => candidata.slug === intento.mision);
     if (!mision) throw new ErrorProgreso("mision_no_existe");
     if (!mision.tareas.includes(intento.tarea)) throw new ErrorProgreso("tarea_no_existe");
-    // El servidor es la autoridad sobre el orden: la misión anterior aprobada y el caso anterior completo.
+    // El servidor es la autoridad sobre el orden: la misión anterior aprobada y el caso anterior completo (salvo
+    // con orden libre).
     const indice = caso.misiones.findIndex((candidata) => candidata.slug === mision.slug);
-    if (indice > 0) {
+    if (indice > 0 && !opciones.ordenLibre) {
       const [previa] = await tx
         .select({ estado: misionProgreso.estado })
         .from(misionProgreso)
@@ -192,6 +194,7 @@ export async function obtenerProgresoCaso(db: AppDb, userId: string, slug: strin
       : null,
     completo: Boolean(inscripcion?.completadoEn),
     bloqueadoPor,
+    ordenLibre: Boolean(opciones.ordenLibre),
   };
 }
 

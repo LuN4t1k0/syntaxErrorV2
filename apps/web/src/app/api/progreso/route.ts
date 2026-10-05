@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { getDb } from "@syntaxerror/db/client";
 import { otorgarCertificados } from "@/lib/certificados/otorgar";
 import { certificadosDelCaso } from "@/lib/certificados/servicio";
-import { incluirBorradores } from "@/lib/contenido";
 import { encolarSinFallar } from "@/lib/emails";
 import { intentoSchema } from "@/lib/progreso/esquemas";
+import { opcionesDeProgreso } from "@/lib/progreso/orden";
 import { ErrorProgreso, estadoHttp, obtenerProgresoCaso, registrarIntento } from "@/lib/progreso/servicio";
 import { obtenerUsuarioId } from "@/lib/sesion";
 
@@ -15,9 +15,10 @@ export async function GET(request: Request) {
   if (!userId) return NextResponse.json({ error: "no_autenticado" }, { status: 401 });
   const caso = new URL(request.url).searchParams.get("caso");
   if (!caso) return NextResponse.json({ error: "falta_caso" }, { status: 400 });
-  const progreso = await obtenerProgresoCaso(getDb(), userId, caso, { incluirBorradores: incluirBorradores() });
+  const db = getDb();
+  const progreso = await obtenerProgresoCaso(db, userId, caso, await opcionesDeProgreso(db, userId));
   if (!progreso) return NextResponse.json({ error: "caso_no_existe" }, { status: 404 });
-  const certificados = await certificadosDelCaso(getDb(), userId, caso);
+  const certificados = await certificadosDelCaso(db, userId, caso);
   return NextResponse.json({ ...progreso, certificados }, { headers: { "Cache-Control": "no-store" } });
 }
 
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: "datos_invalidos" }, { status: 400 });
   try {
     const db = getDb();
-    const resultado = await registrarIntento(db, userId, parsed.data, { incluirBorradores: incluirBorradores() });
+    const resultado = await registrarIntento(db, userId, parsed.data, await opcionesDeProgreso(db, userId));
     const certificados = resultado.casoCompleto ? await otorgarCertificados(db, userId, parsed.data.caso, encolarSinFallar) : [];
     return NextResponse.json({ ...resultado, certificados });
   } catch (error) {

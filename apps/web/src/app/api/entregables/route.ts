@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { getDb } from "@syntaxerror/db/client";
-import { incluirBorradores, obtenerCaso } from "@/lib/contenido";
+import { obtenerCaso } from "@/lib/contenido";
 import { encolarSinFallar } from "@/lib/emails";
 import { avisarRevision } from "@/lib/entregables/revision";
 import { verificadorDesdeEntorno } from "@/lib/entregables/verificador";
 import { entregableSchema } from "@/lib/progreso/esquemas";
+import { opcionesDeProgreso } from "@/lib/progreso/orden";
 import { enviarEntregable, ErrorProgreso, estadoHttp } from "@/lib/progreso/servicio";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { obtenerUsuarioId } from "@/lib/sesion";
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
       userId,
       { caso: caso.slug, url: parsed.data.url, archivos: caso.archivos },
       { verificar: verificadorDesdeEntorno() },
-      { incluirBorradores: incluirBorradores() }
+      await opcionesDeProgreso(db, userId)
     );
     if (resultado.estado === "no_verificado") {
       return NextResponse.json({ error: "no_verificado", problemas: resultado.problemas, reintentable: resultado.reintentable }, { status: 422 });

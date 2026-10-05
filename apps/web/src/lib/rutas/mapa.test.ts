@@ -66,6 +66,18 @@ describe("armarMapa", () => {
     expect(etapas[1].clases?.estado).toBe("bloqueado");
   });
 
+  it("con orden libre nada queda bloqueado: lo empezado muestra su avance y el resto queda disponible", () => {
+    const { etapas } = armarMapa(RUTA, { "herramientas-del-oficio": { aprobadas: 2, completo: false }, "clases-de-sql": { aprobadas: 5, completo: false } }, { ordenLibre: true });
+    const estados = Object.fromEntries(etapas.flatMap((etapa) => [etapa.clases, etapa.caso]).filter((p) => p !== null).map((p) => [p.slug, [p.estado, p.aprobadas]]));
+    expect(estados).toEqual({
+      "herramientas-del-oficio": ["en_curso", 2],
+      "clases-de-excel": ["disponible", 0],
+      "despachos-rapidos": ["disponible", 0],
+      "clases-de-sql": ["disponible", 5],
+      "minimarkets-del-sur": ["disponible", 0],
+    });
+  });
+
   it("con todo completo la ruta queda completa", () => {
     const avance = Object.fromEntries(RUTA.map((p) => [p.slug, { aprobadas: p.unidades, completo: true }]));
     expect(armarMapa(RUTA, avance).resumen.completa).toBe(true);
