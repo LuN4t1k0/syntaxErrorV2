@@ -3,7 +3,8 @@ import type { DbClient } from "@syntaxerror/db/client";
 import { casoInscripciones, casos, rutaCasos, rutas } from "@syntaxerror/db/schema";
 
 export type CasoCorto = { slug: string; titulo: string };
-export type OpcionesRequisitos = { incluirBorradores: boolean };
+// ordenLibre: sin bloqueos de orden (probadores, o todos si un admin lo encendió).
+export type OpcionesRequisitos = { incluirBorradores: boolean; ordenLibre?: boolean };
 
 // Solo el caso inmediatamente anterior de cada ruta visible que contiene al caso: ese, a su vez, exigió el suyo.
 export async function casosRequeridos(db: DbClient, casoId: string, { incluirBorradores }: OpcionesRequisitos): Promise<(CasoCorto & { id: string })[]> {
@@ -27,6 +28,7 @@ export async function casosRequeridos(db: DbClient, casoId: string, { incluirBor
 }
 
 export async function casoPendiente(db: DbClient, userId: string, casoId: string, opciones: OpcionesRequisitos): Promise<CasoCorto | null> {
+  if (opciones.ordenLibre) return null;
   const requeridos = await casosRequeridos(db, casoId, opciones);
   if (requeridos.length === 0) return null;
   const completos = await db

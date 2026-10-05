@@ -12,14 +12,14 @@ import { listarCasosDelUsuario, type CasoDelUsuario } from "@/lib/progreso/servi
 import { esRol, type Rol } from "@/lib/roles";
 import { armarPagina, desplazamiento, TAMANO_PAGINA, type Pagina } from "./paginacion";
 
-export type FilaUsuario = { id: string; nombre: string | null; email: string; rol: Rol; verificado: boolean; creadoEn: Date };
+export type FilaUsuario = { id: string; nombre: string | null; email: string; rol: Rol; verificado: boolean; probador: boolean; creadoEn: Date };
 export type DetalleUsuario = FilaUsuario & { usuarioPublico: string | null; casos: CasoDelUsuario[]; nivel: Nivel; certificados: number };
 export type Admin = { id: string; email: string };
 
-const columnas = { id: users.id, nombre: users.name, email: users.email, rol: users.role, emailVerificado: users.emailVerified, creadoEn: users.createdAt };
+const columnas = { id: users.id, nombre: users.name, email: users.email, rol: users.role, emailVerificado: users.emailVerified, probador: users.probador, creadoEn: users.createdAt };
 
-function aFila(fila: { id: string; nombre: string | null; email: string; rol: string; emailVerificado: Date | null; creadoEn: Date }): FilaUsuario {
-  return { id: fila.id, nombre: fila.nombre, email: fila.email, rol: esRol(fila.rol) ? fila.rol : "student", verificado: fila.emailVerificado !== null, creadoEn: fila.creadoEn };
+function aFila(fila: { id: string; nombre: string | null; email: string; rol: string; emailVerificado: Date | null; probador: boolean; creadoEn: Date }): FilaUsuario {
+  return { id: fila.id, nombre: fila.nombre, email: fila.email, rol: esRol(fila.rol) ? fila.rol : "student", verificado: fila.emailVerificado !== null, probador: fila.probador, creadoEn: fila.creadoEn };
 }
 
 export function patronLiteral(texto: string): string {
@@ -57,6 +57,27 @@ export async function cambiarRol(db: AppDb, { admin, userId, rol }: { admin: Adm
       targetType: "user",
       targetId: userId,
       metadata: { rolAnterior: actual.rol, rolNuevo: rol, email: actual.email },
+      ipAddress: meta.ip,
+      userAgent: meta.userAgent,
+    });
+    return "ok";
+  });
+}
+
+// Un probador hace las rutas en el orden que quiera y entra a las rutas en beta, para probarlas antes que el resto.
+export async function cambiarProbador(db: AppDb, { admin, userId, probador }: { admin: Admin; userId: string; probador: boolean }, meta: MetaRequest): Promise<"ok" | "no_existe"> {
+  return db.transaction(async (tx) => {
+    const [actual] = await tx.select({ probador: users.probador, email: users.email }).from(users).where(eq(users.id, userId)).for("update");
+    if (!actual) return "no_existe";
+    if (actual.probador === probador) return "ok";
+    await tx.update(users).set({ probador, updatedAt: new Date() }).where(eq(users.id, userId));
+    await insertAuditLogEntry(tx, {
+      actorId: admin.id,
+      actorEmail: admin.email,
+      action: "tester_changed",
+      targetType: "user",
+      targetId: userId,
+      metadata: { probador, email: actual.email },
       ipAddress: meta.ip,
       userAgent: meta.userAgent,
     });

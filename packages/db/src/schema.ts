@@ -30,6 +30,8 @@ export const users = pgTable(
       .default(false),
     usuario: text("usuario"),
     portafolioPublico: boolean("portafolio_publico").notNull().default(false),
+    // Probador: hace las rutas en el orden que quiera y entra a las rutas en beta. Lo marca un admin.
+    probador: boolean("probador").notNull().default(false),
   },
   (table) => [uniqueIndex("users_email_idx").on(table.email), uniqueIndex("users_usuario_idx").on(table.usuario)]
 );
@@ -53,6 +55,14 @@ export const accounts = pgTable(
   },
   (table) => [primaryKey({ columns: [table.provider, table.providerAccountId] })]
 );
+
+// Ajustes generales de la plataforma que cambia un admin, por ejemplo el orden libre de las rutas para todos.
+export const ajustes = pgTable("ajustes", {
+  clave: text("clave").primaryKey(),
+  valor: jsonb("valor").notNull(),
+  actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
+  actualizadoPor: uuid("actualizado_por").references(() => users.id, { onDelete: "set null" }),
+});
 
 export const auditLog = pgTable(
   "audit_log",

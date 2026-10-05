@@ -71,6 +71,13 @@
       "when": 1790974048749,
       "tag": "0009_tipo_de_caso",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791218859273,
+      "tag": "0010_orden_libre",
+      "breakpoints": true
     }
   ]
 }

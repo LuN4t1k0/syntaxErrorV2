@@ -23,4 +23,6 @@ export const ETIQUETAS_ACCION: Record<AuditAction, string> = {
   report_resolved: "Reporte resuelto",
   tutor_cache_deleted: "Respuesta del tutor borrada",
   deliverable_reviewed: "Entregable revisado",
+  tester_changed: "Probador cambiado",
+  setting_changed: "Ajuste cambiado",
 };

@@ -5,7 +5,7 @@ import { auditLog, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { SIN_META } from "@/lib/cuenta/meta";
 import type { Encolar } from "@/lib/emails";
-import { cambiarRol, detalleUsuario, eliminarUsuario, listarUsuarios } from "./usuarios";
+import { cambiarProbador, cambiarRol, detalleUsuario, eliminarUsuario, listarUsuarios } from "./usuarios";
 
 const { db, close } = createTestDb();
 const enviados: TrabajoEmail[] = [];
@@ -59,6 +59,23 @@ describe("cambiarRol", () => {
     expect((await detalleUsuario(db, ana.id))?.rol).toBe("teacher");
     expect((await detalleUsuario(db, admin.id))?.rol).toBe("admin");
     expect(await acciones()).toEqual([["role_changed", { rolAnterior: "student", rolNuevo: "teacher", email: "ana@correo.cl" }]]);
+  });
+});
+
+describe("cambiarProbador", () => {
+  it("marca y desmarca a un probador, deja la bitácora y no repite si no cambia", async () => {
+    const admin = await persona("admin@correo.cl", "admin");
+    const ana = await persona("ana@correo.cl");
+    expect(await cambiarProbador(db, { admin, userId: ana.id, probador: true }, SIN_META)).toBe("ok");
+    expect((await detalleUsuario(db, ana.id))?.probador).toBe(true);
+    expect((await listarUsuarios(db, { busqueda: "ana", pagina: 1 })).filas[0].probador).toBe(true);
+    expect(await cambiarProbador(db, { admin, userId: ana.id, probador: true }, SIN_META)).toBe("ok");
+    expect(await cambiarProbador(db, { admin, userId: ana.id, probador: false }, SIN_META)).toBe("ok");
+    expect(await acciones()).toEqual([
+      ["tester_changed", { probador: true, email: "ana@correo.cl" }],
+      ["tester_changed", { probador: false, email: "ana@correo.cl" }],
+    ]);
+    expect(await cambiarProbador(db, { admin, userId: crypto.randomUUID(), probador: true }, SIN_META)).toBe("no_existe");
   });
 });
 
