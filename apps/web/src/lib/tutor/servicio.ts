@@ -3,9 +3,9 @@ import type { Caso, Mision } from "@syntaxerror/content/tipos";
 import type { AppDb } from "@syntaxerror/db/client";
 import { casos, tutorPreguntas } from "@syntaxerror/db/schema";
 import { buscarRespuestaEnCache } from "@syntaxerror/db/tutor";
-import { MENSAJE_ERROR_TUTOR, type ProveedorIA } from "@syntaxerror/ia/tutor";
+import { MENSAJE_ERROR_TUTOR, MISION_ASISTENTE, type ProveedorIA, type RolIA } from "@syntaxerror/ia/tutor";
 import type { TrabajoTutor } from "@syntaxerror/queue/tutor";
-import { contextoDeMision } from "./contexto";
+import { contextoDelCaso, contextoDeMision } from "./contexto";
 
 export type EstadoPregunta = "pendiente" | "respondida" | "desde_cache" | "fuera_de_tema" | "error";
 
@@ -19,6 +19,23 @@ type Dependencias = { proveedor: ProveedorIA | null; encolar: (trabajo: TrabajoT
 export async function preguntarAlTutor(
   db: AppDb,
   { userId, caso, mision, pregunta, clientId }: { userId: string; caso: Caso; mision: Mision; pregunta: string; clientId: string },
+  dependencias: Dependencias
+): Promise<ResultadoPregunta> {
+  return preguntar(db, { userId, caso, rol: "tutor", mision: mision.slug, contexto: contextoDeMision(caso, mision), pregunta, clientId }, dependencias);
+}
+
+// El asistente del curso usa la misma cola, caché y registro que el tutor, con su rol y la misión MISION_ASISTENTE.
+export function preguntarAlAsistente(
+  db: AppDb,
+  { userId, caso, pregunta, clientId }: { userId: string; caso: Caso; pregunta: string; clientId: string },
+  dependencias: Dependencias
+): Promise<ResultadoPregunta> {
+  return preguntar(db, { userId, caso, rol: "asistente", mision: MISION_ASISTENTE, contexto: contextoDelCaso(caso), pregunta, clientId }, dependencias);
+}
+
+async function preguntar(
+  db: AppDb,
+  { userId, caso, rol, mision, contexto, pregunta, clientId }: { userId: string; caso: Caso; rol: RolIA; mision: string; contexto: string; pregunta: string; clientId: string },
   { proveedor, encolar }: Dependencias
 ): Promise<ResultadoPregunta> {
   if (!proveedor) return { estado: "no_disponible" };
@@ -36,7 +53,7 @@ export async function preguntarAlTutor(
   const registrar = async (estado: EstadoPregunta, respuesta: string | null) => {
     const [nueva] = await db
       .insert(tutorPreguntas)
-      .values({ userId, casoId: fila.id, mision: mision.slug, pregunta, respuesta, estado, respondidaEn: respuesta ? new Date() : null })
+      .values({ userId, casoId: fila.id, mision, pregunta, respuesta, estado, respondidaEn: respuesta ? new Date() : null })
       .returning({ id: tutorPreguntas.id });
     return nueva.id;
   };
@@ -44,12 +61,12 @@ export async function preguntarAlTutor(
   // Lo fuera de tema lo decide el modelo con las instrucciones del tutor. El filtro por embeddings
   // de la v1 no separaba (medido con Gemini: se superponían preguntas legítimas y ajenas) y
   // arriesgaba bloquear dudas válidas. El costo lo contienen el límite por usuario y la caché.
-  const enCache = await buscarRespuestaEnCache(db, { casoId: fila.id, mision: mision.slug, embedding });
+  const enCache = await buscarRespuestaEnCache(db, { casoId: fila.id, mision, embedding });
   if (enCache) return { estado: "desde_cache", preguntaId: await registrar("desde_cache", enCache), respuesta: enCache };
 
   const preguntaId = await registrar("pendiente", null);
   try {
-    await encolar({ preguntaId, clientId, casoId: fila.id, mision: mision.slug, pregunta, contexto: contextoDeMision(caso, mision), embedding });
+    await encolar({ preguntaId, clientId, casoId: fila.id, mision, pregunta, contexto, embedding, rol });
   } catch (error) {
     console.error("[tutor] no se pudo encolar la pregunta", error);
     await db

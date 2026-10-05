@@ -20,9 +20,24 @@ export function contextoDeMision(caso: Caso, mision: Mision): string {
       lineas.push(`Tarea ${TIPO_DE_TAREA[bloque.tipo]}: ${bloque.props.enunciado ?? "resolver la tarea de la misión"}`);
     }
   }
-  if (caso.datos.length > 0) {
-    const tablas = caso.datos.map((tabla) => `${tabla.nombre}(${Object.keys(tabla.filas[0] ?? {}).join(", ")})`);
-    lineas.push(`Tablas del caso: ${tablas.join("; ")}.`);
-  }
+  lineas.push(...tablasDelCaso(caso));
+  return lineas.join("\n").slice(0, LARGO_MAXIMO);
+}
+
+function tablasDelCaso(caso: Caso): string[] {
+  if (caso.datos.length === 0) return [];
+  const tablas = caso.datos.map((tabla) => `${tabla.nombre}(${Object.keys(tabla.filas[0] ?? {}).join(", ")})`);
+  return [`Tablas del caso: ${tablas.join("; ")}.`];
+}
+
+// El contexto del asistente del curso: de qué trata el caso o las clases, sin encargos ni tareas, para que no pueda
+// resolverlas (eso queda para las pistas y el tutor, que se habilitan al intentar).
+export function contextoDelCaso(caso: Caso): string {
+  const unidades = caso.tipo === "clases" ? "Lecciones" : "Misiones";
+  const lineas = [
+    caso.tipo === "clases" ? `Caso: ${caso.titulo}. Son clases: una lección por tema, antes del caso que las aplica.` : `Caso: ${caso.titulo} (${caso.empresa}). El alumno trabaja como ${caso.cargo.toLowerCase()}.`,
+    `${unidades}: ${caso.misiones.map((mision) => mision.titulo).join("; ")}.`,
+    ...tablasDelCaso(caso),
+  ];
   return lineas.join("\n").slice(0, LARGO_MAXIMO);
 }

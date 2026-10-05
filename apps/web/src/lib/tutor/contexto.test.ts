@@ -2,13 +2,26 @@ import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
 import { cargarContenido } from "@syntaxerror/content/cargar";
 import type { Caso } from "@syntaxerror/content/tipos";
-import { contextoDeMision } from "./contexto";
+import { contextoDelCaso, contextoDeMision } from "./contexto";
 
 const FIXTURE = fileURLToPath(new URL("../../../../../packages/content/test/fixtures/valido", import.meta.url));
 let caso: Caso;
 
 beforeAll(async () => {
   [caso] = (await cargarContenido(FIXTURE)).casos;
+});
+
+describe("contextoDelCaso", () => {
+  it("describe el caso, sus temas y sus tablas, sin encargos, tareas ni soluciones", () => {
+    const contexto = contextoDelCaso(caso);
+    expect(contexto).toContain("Caso: Ventas de marzo (Distribuidora de prueba).");
+    expect(contexto).toContain("Filtrar clientes");
+    expect(contexto).toContain("Tablas del caso: clientes(id, nombre, ciudad, monto).");
+    expect(contexto).not.toContain("Encargo de");
+    expect(contexto).not.toContain("Tarea SQL");
+    expect(contexto).not.toContain("WHERE ciudad <> 'Santiago'");
+    expect(contexto).not.toContain("Misión:");
+  });
 });
 
 describe("contextoDeMision", () => {

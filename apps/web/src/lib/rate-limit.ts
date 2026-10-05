@@ -16,7 +16,8 @@ export type RateLimitKey =
   | "preguntas-profesor"
   | "entregables"
   | "github"
-  | "certificado-pdf";
+  | "certificado-pdf"
+  | "asistente";
 
 export type RateLimitResult = { allowed: true } | { allowed: false; retryAfterSeconds: number };
 
@@ -40,6 +41,8 @@ const LIMITER_CONFIGS: Record<RateLimitKey, { points: number; duration: number }
   github: { points: 20, duration: 600 },
   // Descargar el PDF de un certificado es público y cada descarga genera el archivo.
   "certificado-pdf": { points: 30, duration: 600 },
+  // El asistente está siempre disponible (el tutor espera los intentos fallidos): el límite contiene el costo.
+  asistente: { points: 20, duration: 3600 },
 };
 
 const limiters = new Map<RateLimitKey, RateLimiterRedis>();

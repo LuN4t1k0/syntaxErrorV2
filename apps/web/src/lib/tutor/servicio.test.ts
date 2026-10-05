@@ -6,9 +6,9 @@ import { casos, tutorPreguntas, users } from "@syntaxerror/db/schema";
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { guardarRespuestaEnCache } from "@syntaxerror/db/tutor";
 import { crearProveedorPrueba, vectorDePrueba } from "@syntaxerror/ia/prueba";
-import { MENSAJE_ERROR_TUTOR, type ProveedorIA } from "@syntaxerror/ia/tutor";
+import { MENSAJE_ERROR_TUTOR, MISION_ASISTENTE, type ProveedorIA } from "@syntaxerror/ia/tutor";
 import type { TrabajoTutor } from "@syntaxerror/queue/tutor";
-import { consultarPregunta, preguntarAlTutor } from "./servicio";
+import { consultarPregunta, preguntarAlAsistente, preguntarAlTutor } from "./servicio";
 
 const FIXTURE = fileURLToPath(new URL("../../../../../packages/content/test/fixtures/valido", import.meta.url));
 const { db, close } = createTestDb();
@@ -76,6 +76,26 @@ describe("preguntarAlTutor", () => {
     expect(resultado).toMatchObject({ estado: "error", respuesta: MENSAJE_ERROR_TUTOR });
     const [fila] = await db.select().from(tutorPreguntas);
     expect(fila.estado).toBe("error");
+  });
+});
+
+describe("preguntarAlAsistente", () => {
+  const preguntarAsistente = (pregunta: string) => preguntarAlAsistente(db, { userId, caso, pregunta, clientId: "c1" }, { proveedor, encolar });
+
+  it("encola con el rol del asistente y el contexto del caso, sin las tareas", async () => {
+    expect(await preguntarAsistente("¿Qué es un JOIN?")).toMatchObject({ estado: "en_cola" });
+    expect(trabajos[0]).toMatchObject({ rol: "asistente", mision: MISION_ASISTENTE, casoId, pregunta: "¿Qué es un JOIN?" });
+    expect(trabajos[0].contexto).toContain("Caso: Ventas de marzo");
+    expect(trabajos[0].contexto).not.toContain("Tarea SQL");
+    const [fila] = await db.select().from(tutorPreguntas);
+    expect(fila).toMatchObject({ mision: MISION_ASISTENTE, estado: "pendiente" });
+  });
+
+  it("su caché es aparte: una respuesta del tutor de una misión no le sirve", async () => {
+    await guardarRespuestaEnCache(db, { casoId, mision: "01-filtrar", pregunta: "¿Qué es WHERE?", respuesta: "Pista de la misión.", embedding: vectorDePrueba("¿Qué es WHERE?") });
+    expect(await preguntarAsistente("¿Qué es WHERE?")).toMatchObject({ estado: "en_cola" });
+    await guardarRespuestaEnCache(db, { casoId, mision: MISION_ASISTENTE, pregunta: "¿Qué es WHERE?", respuesta: "WHERE filtra filas.", embedding: vectorDePrueba("¿Qué es WHERE?") });
+    expect(await preguntarAsistente("¿qué es WHERE?")).toMatchObject({ estado: "desde_cache", respuesta: "WHERE filtra filas." });
   });
 });
 
