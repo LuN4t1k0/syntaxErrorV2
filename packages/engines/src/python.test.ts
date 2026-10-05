@@ -1,12 +1,13 @@
 import { readFileSync } from "node:fs";
 import { loadPyodide } from "pyodide";
 import { beforeAll, describe, expect, it } from "vitest";
-import { columnasDeArchivos, crearSesionPython, PYODIDE_VERSION, type SesionPython, type TareaPython } from "./python";
+import { columnasDeArchivos, crearSesionPython, PYODIDE_VERSION, quitarArchivos, type PyodideLike, type SesionPython, type TareaPython } from "./python";
 
 let sesion: SesionPython;
+let py: PyodideLike;
 
 beforeAll(async () => {
-  const py = await loadPyodide();
+  py = (await loadPyodide()) as unknown as PyodideLike;
   sesion = await crearSesionPython(py, {
     paquetes: [],
     archivos: [{ ruta: "datos/ventas.csv", contenido: "id,monto\n1,100\n2,250\n" }],
@@ -161,5 +162,15 @@ describe("tablas de pandas", () => {
     const resultado = await conPandas.ejecutar(preparacion, 'x = 1\ny = ventas["montos"]');
     expect(resultado).toMatchObject({ ok: false, error: { mensaje: "No existe la columna o clave «montos».", sugerencia: "¿Quisiste decir «monto»?", linea: 2 } });
     expect(resultado).not.toHaveProperty("tablas");
+  });
+});
+
+describe("quitarArchivos", () => {
+  it("borra los archivos de otro caso, para que no queden al cambiar de lección", async () => {
+    const otra = await crearSesionPython(py, { paquetes: [], archivos: [{ ruta: "datos/clientes.csv", contenido: "id\n7\n" }] });
+    expect(await otra.ejecutar("", 'print(open("datos/clientes.csv").read().strip())')).toMatchObject({ ok: true, salida: "id\n7" });
+    quitarArchivos(py, ["datos/clientes.csv", "datos/no-existe.csv"]);
+    const resultado = await otra.ejecutar("", 'open("datos/clientes.csv")');
+    expect(resultado.ok).toBe(false);
   });
 });

@@ -53,6 +53,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - `db-setup` sincroniza rutas y casos con la base en cada `npm run dev`.
 - El build de `web` corre `content:validate` primero y falla si algo no cumple.
 - El validador ejecuta soluciones de Python con Pyodide y descarga pandas desde jsDelivr la primera vez, así que necesita red.
+- En el navegador, Python (Pyodide) corre en un worker que se carga una vez por pestaña: al pasar de una misión o lección a otra sin recargar la página, se reutiliza y solo cambian sus paquetes y archivos (`reconfigurar`). Las variables se limpian en cada ejecución y los archivos de otro caso se borran.
 
 ## Emails, cuenta y certificados
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { Button } from "@syntaxerror/ui/components/button";
 import type { OpcionesPython } from "@syntaxerror/engines/python";
 import { crearClientePython, type ClientePython, type TrabajadorLike } from "@syntaxerror/engines/python-cliente";
@@ -14,18 +14,28 @@ function crearTrabajador(): TrabajadorLike {
   return new Worker(new URL("../../engines/python.worker.ts", import.meta.url), { type: "module" }) as unknown as TrabajadorLike;
 }
 
+// Un solo Python por pestaña: al pasar de una lección a otra sin recargar la página se reutiliza y solo cambian sus
+// paquetes y archivos (cargarlo de nuevo tomaba unos 2,5 s por lección). Si se corta por un ciclo infinito, el cliente
+// crea otro worker en la siguiente ejecución.
+let compartido: ClientePython | null = null;
+
+function clienteCompartido(opciones: OpcionesPython): ClientePython {
+  compartido ??= crearClientePython(opciones, { crearTrabajador });
+  return compartido;
+}
+
 export function PythonProvider({ opciones, children }: { opciones: OpcionesPython; children: ReactNode }) {
-  const clienteRef = useRef<ClientePython | null>(null);
   const [estado, setEstado] = useState<FaseCarga>("inactivo");
-  const cliente = useCallback(() => {
-    clienteRef.current ??= crearClientePython(opciones, { crearTrabajador });
-    return clienteRef.current;
-  }, [opciones]);
+  const cliente = useCallback(() => clienteCompartido(opciones), [opciones]);
   const iniciar = useCallback(() => {
     setEstado("cargando");
-    cliente().iniciar().then(() => setEstado("listo"), () => setEstado("error"));
-  }, [cliente]);
-  useEffect(() => () => clienteRef.current?.destruir(), []);
+    cliente()
+      .reconfigurar(opciones)
+      .then(
+        () => setEstado("listo"),
+        () => setEstado("error")
+      );
+  }, [cliente, opciones]);
   const valor = useMemo(() => ({ estado, iniciar, cliente, opciones }), [estado, iniciar, cliente, opciones]);
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

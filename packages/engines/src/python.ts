@@ -21,7 +21,8 @@ export type PyodideLike = {
   runPythonAsync(codigo: string): Promise<unknown>;
   loadPackage(nombres: string[]): Promise<unknown>;
   setStdout(opciones: { batched: (texto: string) => void }): void;
-  FS: { mkdirTree(ruta: string): void; writeFile(ruta: string, datos: string): void };
+  // unlink existe en Pyodide, pero sus tipos no lo declaran.
+  FS: { mkdirTree(ruta: string): void; writeFile(ruta: string, datos: string): void; unlink?(ruta: string): void };
 };
 
 export type SesionPython = {
@@ -89,6 +90,17 @@ function diagnosticoDePrueba(traceback: string, contexto: ContextoPython): strin
   const nombre = /^NameError: name '([^']+)' is not defined/.exec(linea)?.[1];
   if (nombre) return `Falta crear «${nombre}». Guarda el resultado con ese nombre exacto.`;
   return `Falta algo: ${explicarErrorPython(traceback, contexto).mensaje}`;
+}
+
+// Borra archivos de una sesión anterior (de otro caso), cuando el mismo Python se reutiliza al cambiar de lección.
+export function quitarArchivos(py: PyodideLike, rutas: string[]): void {
+  for (const ruta of rutas) {
+    try {
+      py.FS.unlink?.(`${DIRECTORIO_TRABAJO}/${ruta}`);
+    } catch {
+      // Ya no estaba.
+    }
+  }
 }
 
 export async function crearSesionPython(py: PyodideLike, opciones: OpcionesPython): Promise<SesionPython> {

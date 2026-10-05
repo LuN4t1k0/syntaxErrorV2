@@ -54,6 +54,42 @@ describe("crearClientePython", () => {
     expect(creados[0].mensajes[0]).toMatchObject({ tipo: "iniciar", opciones });
   });
 
+  it("reconfigurar con otras opciones reusa el mismo worker: le manda las nuevas sin volver a cargar Python", async () => {
+    const creados: TrabajadorFalso[] = [];
+    const cliente = crearClientePython(opciones, {
+      crearTrabajador: () => {
+        const trabajador = new TrabajadorFalso(responde({ iniciar: null, revisar: aprobada }));
+        creados.push(trabajador);
+        return trabajador;
+      },
+    });
+    await cliente.iniciar();
+    const otras = { paquetes: [], archivos: [{ ruta: "datos/ventas.csv", contenido: "id\n1\n" }] };
+    await cliente.reconfigurar(otras);
+    await cliente.revisar(tarea, "x = 1");
+    // Las mismas opciones no vuelven a configurar nada.
+    await cliente.reconfigurar({ ...otras });
+
+    expect(creados).toHaveLength(1);
+    expect(creados[0].mensajes.map((mensaje) => mensaje.tipo)).toEqual(["iniciar", "iniciar", "revisar"]);
+    expect(creados[0].mensajes[1]).toMatchObject({ tipo: "iniciar", opciones: otras });
+  });
+
+  it("reconfigurar antes de iniciar solo cambia las opciones con las que va a partir", async () => {
+    const creados: TrabajadorFalso[] = [];
+    const cliente = crearClientePython(opciones, {
+      crearTrabajador: () => {
+        const trabajador = new TrabajadorFalso(responde({ iniciar: null }));
+        creados.push(trabajador);
+        return trabajador;
+      },
+    });
+    const otras = { paquetes: [], archivos: [] };
+    await cliente.reconfigurar(otras);
+    expect(creados).toHaveLength(1);
+    expect(creados[0].mensajes).toEqual([expect.objectContaining({ tipo: "iniciar", opciones: otras })]);
+  });
+
   it("corta un ciclo infinito, avisa y la siguiente revisión usa un worker nuevo", async () => {
     const creados: TrabajadorFalso[] = [];
     const cliente = crearClientePython(opciones, {

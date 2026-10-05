@@ -16,6 +16,8 @@ export type TrabajadorLike = {
 
 export type ClientePython = {
   iniciar(): Promise<void>;
+  // Cambia los paquetes y archivos sin volver a cargar Python: el worker reutiliza el Pyodide que ya tiene.
+  reconfigurar(opciones: OpcionesPython): Promise<void>;
   ejecutar(preparacion: string, codigo: string): Promise<ResultadoEjecucion>;
   revisar(tarea: TareaPython, codigo: string): Promise<ResultadoRevision>;
   destruir(): void;
@@ -38,6 +40,7 @@ export function crearClientePython(
     limiteCargaMs = 120_000,
   }: { crearTrabajador: () => TrabajadorLike; limiteMs?: number; limiteCargaMs?: number }
 ): ClientePython {
+  let actuales = opciones;
   let trabajador: TrabajadorLike | null = null;
   let listo: Promise<void> | null = null;
   let siguienteId = 1;
@@ -85,15 +88,28 @@ export function crearClientePython(
         if (data.ok) pendiente.resolver(data.resultado);
         else pendiente.rechazar(new Error(data.error));
       };
-      const carga = enviar({ tipo: "iniciar", opciones }, limiteCargaMs).then(() => undefined);
-      carga.catch(() => reiniciar());
-      listo = carga;
+      configurar(actuales);
     }
-    return listo;
+    return listo!;
+  }
+
+  function configurar(nuevas: OpcionesPython) {
+    const carga = enviar({ tipo: "iniciar", opciones: nuevas }, limiteCargaMs).then(() => undefined);
+    carga.catch(() => reiniciar());
+    listo = carga;
+  }
+
+  function reconfigurar(nuevas: OpcionesPython): Promise<void> {
+    if (JSON.stringify(nuevas) === JSON.stringify(actuales)) return iniciar();
+    actuales = nuevas;
+    if (!trabajador) return iniciar();
+    configurar(nuevas);
+    return listo!;
   }
 
   return {
     iniciar,
+    reconfigurar,
     async ejecutar(preparacion, codigo) {
       await iniciar();
       try {
