@@ -1,3 +1,5 @@
+import { chromium } from "@playwright/test";
+
 // En desarrollo, Next compila cada ruta la primera vez que se pide. Si eso ocurre con varias pruebas en
 // paralelo, las recompilaciones abortan navegaciones de otras pruebas (net::ERR_ABORTED). Se piden las
 // rutas una vez, en orden, antes de empezar. Contra el build de producción no cuesta nada.
@@ -54,6 +56,27 @@ const RUTAS = [
   "/admin/bitacora",
 ];
 
+// Las e2e usan la misma base que el desarrollo local: si quedó encendido el orden libre desde la administración,
+// las pruebas que esperan bloqueos fallan. Se deja en el orden normal antes de empezar.
+async function dejarOrdenNormal(): Promise<void> {
+  const navegador = await chromium.launch();
+  try {
+    const ip = `10.${Math.floor(Math.random() * 250) + 1}.${Math.floor(Math.random() * 250) + 1}.${Math.floor(Math.random() * 250) + 1}`;
+    const contexto = await navegador.newContext({ baseURL: "http://localhost:3000", extraHTTPHeaders: { "x-forwarded-for": ip } });
+    const pagina = await contexto.newPage();
+    await pagina.goto("/login");
+    await pagina.locator('input[name="email"]').fill("admin@local.test");
+    await pagina.locator('input[name="password"]').fill("admin123456");
+    await pagina.getByRole("button", { name: "Entrar", exact: true }).click();
+    await pagina.waitForURL(/\/dashboard/);
+    const respuesta = await pagina.request.patch("/api/admin/ajustes", { headers: { Origin: "http://localhost:3000" }, data: { ordenLibre: false } });
+    if (!respuesta.ok()) throw new Error(`No se pudo dejar el orden normal: ${respuesta.status()}`);
+    await contexto.close();
+  } finally {
+    await navegador.close();
+  }
+}
+
 export default async function calentar(): Promise<void> {
   for (const ruta of RUTAS) {
     try {
@@ -62,4 +85,5 @@ export default async function calentar(): Promise<void> {
       // Una ruta que no responde se compila igual en su prueba; el calentamiento nunca hace fallar la suite.
     }
   }
+  await dejarOrdenNormal();
 }

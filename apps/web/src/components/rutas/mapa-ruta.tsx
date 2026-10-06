@@ -53,19 +53,33 @@ function etiquetaEstado(pieza: PiezaMapa): string {
   return "disponible";
 }
 
+function muestraAvance(pieza: PiezaMapa): boolean {
+  if (pieza.estado === "en_curso" || pieza.estado === "en_revision") return true;
+  return (pieza.estado === "bloqueado" || pieza.estado === "disponible") && pieza.aprobadas > 0;
+}
+
+function accionDe(pieza: PiezaMapa): string | null {
+  if (pieza.estado === "bloqueado" || pieza.estado === "completo") return null;
+  if (pieza.estado === "en_revision") return "Ver tu entregable →";
+  return pieza.aprobadas > 0 ? "Continuar →" : "Empezar →";
+}
+
 function Commit({ pieza, mensaje, decoraciones }: { pieza: PiezaMapa; mensaje: string; decoraciones: React.ReactNode }) {
   const unidad = pieza.tipo === "clases" ? "lecciones" : "misiones";
-  const conAvance = pieza.estado === "en_curso" || pieza.estado === "en_revision" || ((pieza.estado === "bloqueado" || pieza.estado === "disponible") && pieza.aprobadas > 0);
+  const aqui = pieza.estado === "en_curso" || pieza.estado === "en_revision";
+  const conAvance = muestraAvance(pieza);
   const detalle = pieza.tipo === "clases" ? `${pieza.unidades} ${unidad}` : `Caso ${pieza.numeroCaso} · ${pieza.empresa} · ${pieza.unidades} ${unidad}`;
+  const accion = accionDe(pieza);
   return (
     <Link
       href={`/casos/${pieza.slug}`}
       aria-label={`${pieza.titulo}: ${etiquetaEstado(pieza)}`}
-      className={`card grid min-w-0 flex-1 gap-1.5 p-4 hover:border-primary ${pieza.estado === "bloqueado" ? "opacity-70" : ""} ${pieza.estado === "en_curso" ? "border-primary" : ""}`}
+      className={`card grid min-w-0 flex-1 gap-1.5 p-4 hover:border-primary ${pieza.estado === "bloqueado" ? "opacity-70" : ""} ${aqui ? "border-primary ring-2 ring-primary/50" : ""}`}
     >
       <span className="flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground">
         <span>{pieza.hash}</span>
         {decoraciones}
+        {aqui ? <span className="rounded border border-primary px-1 font-mono text-[11px] font-bold leading-5 text-primary">Estás aquí</span> : null}
         <span className="min-w-0 truncate">{mensaje}</span>
       </span>
       <span className="flex items-start justify-between gap-3">
@@ -73,6 +87,7 @@ function Commit({ pieza, mensaje, decoraciones }: { pieza: PiezaMapa; mensaje: s
         <Estado pieza={pieza} />
       </span>
       <span className="text-sm text-muted-foreground">{detalle}</span>
+      {accion ? <span className="font-mono text-xs font-black text-primary">{accion}</span> : null}
       {conAvance ? (
         <span className="grid gap-1">
           <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
@@ -180,6 +195,7 @@ export function MapaRuta({ ruta, piezas }: Props) {
         <div className="h-14" aria-hidden="true" />
       )}
 
+      <Leyenda />
       <ol className="grid" aria-label={`Mapa de la ruta ${ruta.titulo}`}>
         {etapas.map((etapa, indice) => {
           const clases = etapa.clases;
@@ -205,7 +221,7 @@ export function MapaRuta({ ruta, piezas }: Props) {
             clases && caso ? <Curva key={`${indice}-vuelve`} hacia="main" main={lineaMain} rama={linea(clases.estado)} /> : null,
             caso ? (
               <li key={caso.slug} className="flex gap-1 pb-3">
-                <Carril main={linea(caso.estado)} nodo={{ carril: "main", clase: NODO[caso.estado], actual: caso.estado === "en_curso" }} />
+                <Carril main={linea(caso.estado)} nodo={{ carril: "main", clase: NODO[caso.estado], actual: caso.estado === "en_curso" || caso.estado === "en_revision" }} />
                 <Commit
                   pieza={caso}
                   mensaje={indice === 0 && !clases ? "Initial commit" : etapa.rama ? `Merge branch '${etapa.rama}'` : "feat: caso"}
@@ -257,5 +273,31 @@ function Barra({ etiqueta, descripcion, valor, total }: { etiqueta: string; desc
         <span className="block h-full rounded-full bg-primary" style={{ width: `${porcentaje}%` }} />
       </span>
     </div>
+  );
+}
+
+// El mapa usa palabras de git (lo que enseña la ruta); esto las traduce para quien recién empieza.
+function Leyenda() {
+  const filas: [string, string][] = [
+    ["main", "la ruta, de arriba hacia abajo"],
+    ["clases/...", "una rama de clases: aprendes ahí y se fusiona en el caso que lo aplica"],
+    ["HEAD -> tú", "dónde estás"],
+    ["✔ merged", "completado"],
+    ["PR en revisión", "tus misiones están listas; falta que aprueben tu entregable"],
+    ["LOCKED", "se habilita al completar lo anterior"],
+    ["tag: v1.0", "el certificado de la ruta"],
+  ];
+  return (
+    <details className="card p-4 text-sm">
+      <summary className="cursor-pointer font-bold">¿Cómo leer este mapa?</summary>
+      <dl className="mt-3 grid gap-2 sm:grid-cols-[auto_1fr] sm:gap-x-4">
+        {filas.map(([termino, significado]) => (
+          <div key={termino} className="grid gap-0.5 sm:contents">
+            <dt className="font-mono text-xs font-bold text-foreground sm:pt-0.5">{termino}</dt>
+            <dd className="text-muted-foreground">{significado}</dd>
+          </div>
+        ))}
+      </dl>
+    </details>
   );
 }

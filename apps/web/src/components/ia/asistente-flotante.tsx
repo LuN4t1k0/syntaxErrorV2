@@ -22,6 +22,7 @@ export function AsistenteFlotante({ caso }: { caso: string }) {
   const [usado, setUsado] = useState(false);
   const [vistas, setVistas] = useState(0);
   const [pregunta, setPregunta] = useState("");
+  const [oculto, setOculto] = useState(false);
   const campo = useRef<HTMLInputElement>(null);
   const fin = useRef<HTMLDivElement>(null);
   const { sesion, mensajes, enviando, aviso, enviar } = useConversacionIA({ activa: usado, url: "/api/asistente/preguntas", cuerpo: { caso }, avisos: AVISOS });
@@ -44,6 +45,27 @@ export function AsistenteFlotante({ caso }: { caso: string }) {
     if (abierto) fin.current?.scrollIntoView({ block: "end" });
   }, [abierto, mensajes, aviso]);
 
+  // En el teléfono, el botón se esconde al bajar para no tapar estados y acciones de las misiones.
+  useEffect(() => {
+    if (abierto) {
+      setOculto(false);
+      return;
+    }
+    const telefono = window.matchMedia("(max-width: 639px)");
+    let anterior = window.scrollY;
+    const alDesplazar = () => {
+      const actual = window.scrollY;
+      if (!telefono.matches) {
+        setOculto(false);
+      } else if (Math.abs(actual - anterior) >= 8) {
+        setOculto(actual > anterior && actual > 80);
+      }
+      if (Math.abs(actual - anterior) >= 8 || !telefono.matches) anterior = actual;
+    };
+    window.addEventListener("scroll", alDesplazar, { passive: true });
+    return () => window.removeEventListener("scroll", alDesplazar);
+  }, [abierto]);
+
   function abrir() {
     setUsado(true);
     setAbierto(true);
@@ -56,7 +78,11 @@ export function AsistenteFlotante({ caso }: { caso: string }) {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 grid justify-items-end gap-3">
+    <div
+      data-oculto={oculto}
+      inert={oculto}
+      className={`fixed bottom-4 right-4 z-40 grid justify-items-end gap-3 transition-all duration-200 motion-reduce:transition-none ${oculto ? "pointer-events-none translate-y-24 opacity-0" : ""}`}
+    >
       {abierto ? (
         <section aria-label="Asistente del curso" className="grid max-h-[min(36rem,calc(100svh-6rem))] w-[min(calc(100vw-2rem),24rem)] grid-rows-[auto_1fr_auto] overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
           <header className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
