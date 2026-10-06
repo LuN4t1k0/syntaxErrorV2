@@ -901,7 +901,7 @@ Expected: `67 passed`, dos corridas seguidas.
 - [ ] **Step 6: Commit**
 
 ```bash
-git add apps/web/src/components apps/web/src/app/(dashboard) e2e/tests README.md
+git add apps/web/src/components "apps/web/src/app/(dashboard)" e2e/tests README.md
 git commit -m "feat(mantenimiento): paginas paginadas, archivar clases y acciones con icono y confirmacion
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
