@@ -46,7 +46,8 @@ export function Confirmacion({
         </header>
         <div className="text-sm leading-6 text-muted-foreground">{descripcion}</div>
         <div className="flex flex-wrap justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={onCancelar}>
+          {/* El foco parte en Cancelar: con el teclado se llega directo a los botones y lo seguro es no hacer nada. */}
+          <Button type="button" variant="ghost" onClick={onCancelar} autoFocus>
             {cancelar}
           </Button>
           <Button type="button" variant={variante} onClick={onConfirmar}>

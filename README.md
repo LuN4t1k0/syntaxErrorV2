@@ -99,6 +99,7 @@ Bloques disponibles: `Brief`, `Concepto`, `SqlEjemplo`, `PythonEjemplo`, `SqlTas
 - **Sesiones:** cada `auth()` revisa la cuenta en la base. Si administración elimina la cuenta, la sesión se cierra en todos sus dispositivos, y un cambio de rol rige al instante.
 - **Contenido:** muestra casos, rutas, inscripciones y métricas por misión: personas que iniciaron/aprobaron, intentos promedio, abandono tras 14 días sin avance y primera tarea pendiente.
 - **Comunidad:** aprueba solicitudes docentes, modera comentarios de reseñas y resuelve reportes. Un error real de un caso suma 25 puntos a quien lo reportó.
+- **Listas largas:** las solicitudes y los comentarios pendientes se paginan por separado (`?solicitudes=` y `?comentarios=`). En el panel docente, los entregables por revisar se buscan por estudiante (`?q=`, nombre o email) y se paginan; las preguntas se filtran en Todas, Pendientes y Respondidas; y las clases se archivan o restauran (una archivada no acepta estudiantes nuevos y el avance de sus estudiantes no cambia). Las acciones llevan ícono y texto, y las que no se deshacen fácilmente piden confirmar en un modal que parte con el foco en Cancelar.
 - **Preguntas y tutor:** supervisa preguntas a docentes, al tutor y al asistente del curso, y permite borrar respuestas malas de la caché del tutor.
 - **Bitácora:** registra acciones de administración con quién actuó, IP, destino y detalle; se filtra por acción y email.
 

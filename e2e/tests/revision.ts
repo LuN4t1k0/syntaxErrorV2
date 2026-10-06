@@ -12,7 +12,8 @@ export async function entrarComoAdmin(page: Page) {
 // Aprueba por la API, con 2 en las tres dimensiones: no depende de que la página hidrate. La revisión con clics en
 // el formulario la prueba recorrido.spec.
 export async function aprobarEntregable(admin: Page, email: string) {
-  await admin.goto("/profesor/entregables");
+  // La lista se pagina y la base de e2e acumula entregables: se busca el de esta persona.
+  await admin.goto(`/profesor/entregables?q=${encodeURIComponent(email)}`);
   const tarjeta = admin.locator("li", { hasText: email });
   await expect(tarjeta).toHaveCount(1);
   const entregableId = await tarjeta.locator("[data-entregable-id]").getAttribute("data-entregable-id");

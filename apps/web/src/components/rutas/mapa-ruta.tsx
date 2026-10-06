@@ -59,7 +59,8 @@ function muestraAvance(pieza: PiezaMapa): boolean {
 }
 
 function accionDe(pieza: PiezaMapa): string | null {
-  if (pieza.estado === "bloqueado" || pieza.estado === "completo") return null;
+  // La acción va solo donde está la persona: con varias tarjetas diciendo "Empezar", el mapa no guía (auditoría, 8e).
+  if (pieza.estado !== "en_curso" && pieza.estado !== "en_revision") return null;
   if (pieza.estado === "en_revision") return "Ver tu entregable →";
   return pieza.aprobadas > 0 ? "Continuar →" : "Empezar →";
 }

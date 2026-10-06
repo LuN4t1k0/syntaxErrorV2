@@ -28,8 +28,7 @@ test("una solicitud docente aprobada da acceso docente y llega un mensaje", asyn
 
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  await admin.goto("/admin/comunidad");
-  const solicitud = admin.locator("li", { hasText: email });
+  const solicitud = await buscarSolicitudPendiente(admin, email);
   await solicitud.getByRole("button", { name: "Aprobar" }).click();
   await expect(solicitud).toHaveCount(0);
 
@@ -39,6 +38,18 @@ test("una solicitud docente aprobada da acceso docente y llega un mensaje", asyn
   await page.goto("/dashboard/mensajes");
   await expect(page.getByText("Tu acceso docente fue aprobado")).toBeVisible();
 });
+
+// Las solicitudes se listan del más antiguo al más nuevo, de 25 en 25. La base de e2e acumula solicitudes, así que la
+// recién creada puede quedar en otra página.
+async function buscarSolicitudPendiente(admin: Page, email: string) {
+  for (let pagina = 1; pagina <= 50; pagina += 1) {
+    await admin.goto(`/admin/comunidad?solicitudes=${pagina}`);
+    const solicitud = admin.locator("li", { hasText: email });
+    if ((await solicitud.count()) > 0) return solicitud;
+    if ((await admin.getByText("No hay solicitudes pendientes.").count()) > 0) break;
+  }
+  throw new Error(`No se encontró la solicitud pendiente: ${email}`);
+}
 
 // Los pendientes se listan del más antiguo al más nuevo, de 25 en 25. La base de e2e acumula reportes de
 // corridas anteriores, así que el recién creado puede quedar en otra página.

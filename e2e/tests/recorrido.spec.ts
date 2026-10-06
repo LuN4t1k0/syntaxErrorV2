@@ -60,7 +60,8 @@ test("un repositorio sin README no pasa, y con un 1 en la rúbrica la observaci�
 
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
-  await admin.goto("/profesor/entregables");
+  // La lista se pagina y la base de e2e acumula entregables: se busca el de esta persona.
+  await admin.goto(`/profesor/entregables?q=${encodeURIComponent(email)}`);
   const tarjeta = admin.locator("li", { hasText: email });
   // Se reintenta por si los puntajes se marcan antes de que la página hidrate: React no los registraría.
   await expect(async () => {

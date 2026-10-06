@@ -240,7 +240,8 @@ export async function completarCaso(page: Page, admin: Page, ip: string, email: 
   await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
   // Se aprueba por la API de revisión, con 2 en las tres dimensiones: es más rápido y no depende de que la página
   // hidrate. La revisión con clics en la rúbrica la prueba recorrido.spec.
-  await admin.goto("/profesor/entregables");
+  // La lista se pagina y la base de e2e acumula entregables: se busca el de esta persona.
+  await admin.goto(`/profesor/entregables?q=${encodeURIComponent(email)}`);
   const tarjeta = admin.locator("li", { hasText: email });
   await expect(tarjeta).toHaveCount(1);
   const entregableId = await tarjeta.locator("[data-entregable-id]").getAttribute("data-entregable-id");
