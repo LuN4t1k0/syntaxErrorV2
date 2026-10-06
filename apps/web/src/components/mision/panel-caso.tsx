@@ -7,10 +7,12 @@ import { Input } from "@syntaxerror/ui/components/input";
 import { Label } from "@syntaxerror/ui/components/label";
 import { PLAZO_REVISION_DIAS_HABILES } from "@/lib/entregables/plazo";
 import { cargarProgreso, dependenciasNavegador, type ProgresoVisible } from "@/lib/progreso/cliente";
+import { estadosDeMisiones } from "@/lib/progreso/estados";
 import type { TipoCaso } from "@syntaxerror/content/tipos";
 import type { CasoCorto } from "@/lib/progreso/requisitos";
 import { unidad } from "@/lib/unidad";
 import { AvisoBeta } from "./aviso-beta";
+import { EtiquetaEstado } from "./etiqueta-estado";
 import { ResultadoRevision } from "./resultado-revision";
 
 type MisionDelCaso = { slug: string; titulo: string; tiempo: number; tareas: string[]; sinGuia: boolean };
@@ -20,12 +22,6 @@ const MENSAJES_409: Record<string, string> = {
   entregable_aprobado: "Tu entregable ya fue aprobado.",
   caso_bloqueado: "Primero completa el caso anterior de la ruta.",
 };
-
-function etiquetaEstado(estado: "en_curso" | "aprobada" | undefined): string {
-  if (estado === "aprobada") return "Aprobada";
-  if (estado === "en_curso") return "En curso";
-  return "Pendiente";
-}
 
 export function PanelCaso({
   caso,
@@ -88,6 +84,12 @@ export function PanelCaso({
   const enBeta = soloProbadores && progreso !== null && (progreso.soloProbadores || !progreso.sesion);
   const casoPendiente = progreso && !enBeta ? (progreso.sesion ? progreso.bloqueadoPor : (requisitos[0] ?? null)) : null;
   const todasAprobadas = misiones.every((mision) => progreso?.misiones[mision.slug]?.estado === "aprobada");
+  const { estados, siguiente } = estadosDeMisiones(
+    misiones.map((mision) => ({ slug: mision.slug })),
+    Object.fromEntries(misiones.map((mision) => [mision.slug, progreso?.misiones[mision.slug]])),
+    { sesion: progreso?.sesion ?? false, ordenLibre: progreso?.ordenLibre ?? false, casoBloqueado: enBeta || casoPendiente !== null }
+  );
+  const empezado = misiones.some((mision) => progreso?.misiones[mision.slug]);
   const revision = progreso?.revision ?? null;
   const volverAqui = `/login?callbackUrl=${encodeURIComponent(`/casos/${caso}`)}`;
 
@@ -112,17 +114,25 @@ export function PanelCaso({
         </p>
       ) : null}
       <ol className="grid gap-3">
-        {misiones.map((mision, indice) => (
-          <li key={mision.slug}>
-            <Link href={`/casos/${caso}/${mision.slug}`} className="card flex items-center justify-between gap-4 p-4 hover:border-primary">
-              <span>
-                <span className="block font-mono text-xs text-muted-foreground">{`${unidad(tipo).Nombre} ${indice + 1} · ${mision.tiempo} min${mision.sinGuia ? " · sin guía" : ""}`}</span>
-                <span className="block font-bold">{mision.titulo}</span>
-              </span>
-              <span data-testid={`estado-${mision.slug}`} className="badge">{etiquetaEstado(progreso?.misiones[mision.slug]?.estado)}</span>
-            </Link>
-          </li>
-        ))}
+        {misiones.map((mision, indice) => {
+          const actual = progreso !== null && indice === siguiente;
+          return (
+            <li key={mision.slug}>
+              <Link
+                href={`/casos/${caso}/${mision.slug}`}
+                aria-current={actual ? "step" : undefined}
+                className={`card flex items-center justify-between gap-4 p-4 hover:border-primary ${actual ? "border-primary ring-2 ring-primary/50" : ""}`}
+              >
+                <span className="grid min-w-0 gap-0.5">
+                  <span className="block font-mono text-xs text-muted-foreground">{`${unidad(tipo).Nombre} ${indice + 1} · ${mision.tiempo} min${mision.sinGuia ? " · sin guía" : ""}`}</span>
+                  <span className="block font-bold">{mision.titulo}</span>
+                  {actual ? <span className="font-mono text-xs font-black text-primary">{empezado ? "Continuar aquí →" : "Empieza aquí →"}</span> : null}
+                </span>
+                <EtiquetaEstado estado={estados[indice]} testId={`estado-${mision.slug}`} />
+              </Link>
+            </li>
+          );
+        })}
       </ol>
       {tipo === "clases" ? (
         // Unas clases no tienen entregable: se completan al aprobar todas sus lecciones.
