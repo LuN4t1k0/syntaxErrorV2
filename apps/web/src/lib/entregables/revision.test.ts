@@ -5,7 +5,7 @@ import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { SIN_META } from "@/lib/cuenta/meta";
 import type { Encolar } from "@/lib/emails";
 import type { Rol } from "@/lib/roles";
-import { avisarRevision, listarEntregablesPorRevisar, revisarEntregable } from "./revision";
+import { avisarRevision, listarEntregablesPorRevisar, paginaEntregablesPorRevisar, revisarEntregable } from "./revision";
 
 const { db, close } = createTestDb();
 const enviados: TrabajoEmail[] = [];
@@ -104,5 +104,15 @@ describe("revisión de entregables", () => {
   it("una docente que no es de la clase no puede revisar", async () => {
     const { otra, entregableId } = await escenario();
     expect(await revisarEntregable(db, { entregableId, revisor: otra, puntajes: SUFICIENTE, observaciones: {}, comentario: null }, deps)).toEqual({ ok: false, motivo: "prohibido" });
+  });
+});
+
+describe("entregables por revisar, paginados y con búsqueda", () => {
+  it("busca por email o nombre del estudiante, sin importar mayúsculas", async () => {
+    const { admin } = await escenario();
+    expect((await paginaEntregablesPorRevisar(db, admin, { busqueda: "ANA", pagina: 1 })).filas.map((fila) => fila.estudiante.email)).toEqual(["ana@correo.cl"]);
+    expect((await paginaEntregablesPorRevisar(db, admin, { busqueda: "ana@correo", pagina: 1 })).total).toBe(1);
+    expect((await paginaEntregablesPorRevisar(db, admin, { busqueda: "nadie", pagina: 1 })).total).toBe(0);
+    expect(await paginaEntregablesPorRevisar(db, admin, { pagina: 1 })).toMatchObject({ total: 1, paginas: 1, pagina: 1 });
   });
 });

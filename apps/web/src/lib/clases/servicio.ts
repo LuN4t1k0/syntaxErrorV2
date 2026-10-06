@@ -1,6 +1,7 @@
 import { and, asc, count, desc, eq, inArray, isNotNull } from "drizzle-orm";
 import type { AppDb } from "@syntaxerror/db/client";
 import { casoInscripciones, casos, claseCasos, claseInscripciones, clases, misionProgreso, rutaCasos, rutas, users } from "@syntaxerror/db/schema";
+import { armarPagina, desplazamiento, TAMANO_PAGINA, type Pagina } from "@/lib/admin/paginacion";
 import { enlaceMisClases, enlacePanelDocente } from "@/lib/cuenta/enlaces";
 import type { Encolar } from "@/lib/emails";
 import { generarCodigo, normalizarCodigo } from "./codigo";
@@ -43,6 +44,43 @@ export async function clasesDelProfesor(db: AppDb, profesorId: string): Promise<
     .innerJoin(rutas, eq(rutas.id, clases.rutaId))
     .where(eq(clases.profesorId, profesorId))
     .orderBy(desc(clases.creadaEn));
+  return resumir(db, filas);
+}
+
+// Las clases del panel docente: activas o archivadas, de 25 en 25, más cuántas hay de cada una (para las pestañas).
+export async function paginaClasesDelProfesor(
+  db: AppDb,
+  profesorId: string,
+  { estado, pagina }: { estado: "activa" | "archivada"; pagina: number }
+): Promise<Pagina<ResumenClase> & { activas: number; archivadas: number }> {
+  const filtro = and(eq(clases.profesorId, profesorId), eq(clases.estado, estado));
+  const [filas, conteos] = await Promise.all([
+    db
+      .select({ id: clases.id, titulo: clases.titulo, codigo: clases.codigo, estado: clases.estado, ruta: rutas.titulo })
+      .from(clases)
+      .innerJoin(rutas, eq(rutas.id, clases.rutaId))
+      .where(filtro)
+      .orderBy(desc(clases.creadaEn))
+      .limit(TAMANO_PAGINA)
+      .offset(desplazamiento(pagina)),
+    db.select({ estado: clases.estado, total: count() }).from(clases).where(eq(clases.profesorId, profesorId)).groupBy(clases.estado),
+  ]);
+  const cuantas = (cual: string) => Number(conteos.find((conteo) => conteo.estado === cual)?.total ?? 0);
+  return { ...armarPagina(await resumir(db, filas), cuantas(estado), pagina), activas: cuantas("activa"), archivadas: cuantas("archivada") };
+}
+
+// Archivar saca la clase del panel y deja de aceptar su código; el avance de sus estudiantes no cambia. Se puede
+// restaurar. Solo la docente de la clase.
+export async function cambiarEstadoClase(db: AppDb, { profesorId, claseId, estado }: { profesorId: string; claseId: string; estado: "activa" | "archivada" }): Promise<boolean> {
+  const cambiadas = await db
+    .update(clases)
+    .set({ estado })
+    .where(and(eq(clases.id, claseId), eq(clases.profesorId, profesorId)))
+    .returning({ id: clases.id });
+  return cambiadas.length > 0;
+}
+
+async function resumir(db: AppDb, filas: { id: string; titulo: string; codigo: string; estado: string; ruta: string }[]): Promise<ResumenClase[]> {
   if (filas.length === 0) return [];
   const conteos = await db
     .select({ claseId: claseInscripciones.claseId, estado: claseInscripciones.estado, total: count() })

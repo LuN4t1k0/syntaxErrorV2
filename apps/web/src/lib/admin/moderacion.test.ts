@@ -10,6 +10,8 @@ import {
   listarComentariosPendientes,
   listarReportes,
   listarSolicitudesPendientes,
+  paginaComentariosPendientes,
+  paginaSolicitudesPendientes,
   resolverReporte,
   resolverSolicitudDocente,
 } from "./moderacion";
@@ -110,5 +112,22 @@ describe("reportes", () => {
     expect(await db.select().from(transaccionesPuntos)).toEqual([]);
     expect(await db.select().from(mensajes)).toEqual([]);
     expect(await listarReportes(db, { estado: "pendiente", pagina: 1 })).toMatchObject({ total: 0, filas: [] });
+  });
+});
+
+describe("listas paginadas de moderación", () => {
+  it("solicitudes y comentarios pendientes, de 25 en 25 y del más antiguo al más nuevo", async () => {
+    const [caso] = await db.insert(casos).values({ slug: "ventas", titulo: "Ventas", cargo: "A", empresa: "D", entregable: "R", misiones: [] }).returning({ id: casos.id });
+    for (let numero = 0; numero < 27; numero++) {
+      const persona = await db.insert(users).values({ email: `p${numero}@correo.cl`, name: `P${numero}` }).returning({ id: users.id });
+      const creadaEn = new Date(Date.UTC(2026, 0, 1, 0, numero));
+      await db.insert(solicitudesDocente).values({ userId: persona[0].id, creadaEn });
+      await db.insert(resenasCaso).values({ userId: persona[0].id, casoId: caso.id, estrellas: 5, comentario: `C${numero}`, estadoComentario: "pendiente", creadaEn });
+    }
+    const primera = await paginaSolicitudesPendientes(db, { pagina: 1 });
+    expect([primera.total, primera.paginas, primera.filas.length, primera.filas[0].email]).toEqual([27, 2, 25, "p0@correo.cl"]);
+    expect((await paginaSolicitudesPendientes(db, { pagina: 2 })).filas.map((fila) => fila.email)).toEqual(["p25@correo.cl", "p26@correo.cl"]);
+    const comentarios = await paginaComentariosPendientes(db, { pagina: 2 });
+    expect([comentarios.total, comentarios.filas.map((fila) => fila.comentario)]).toEqual([27, ["C25", "C26"]]);
   });
 });

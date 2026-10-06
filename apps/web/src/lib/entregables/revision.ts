@@ -3,6 +3,7 @@ import type { AppDb } from "@syntaxerror/db/client";
 import { insertAuditLogEntry } from "@syntaxerror/db/audit";
 import { casos, entregables, users } from "@syntaxerror/db/schema";
 import { otorgarCertificados } from "@/lib/certificados/otorgar";
+import { armarPagina, desplazamiento, TAMANO_PAGINA, type Pagina } from "@/lib/admin/paginacion";
 import type { CertificadoEmitido } from "@/lib/certificados/servicio";
 import type { MetaRequest } from "@/lib/cuenta/meta";
 import type { Encolar } from "@/lib/emails";
@@ -50,6 +51,16 @@ export async function listarEntregablesPorRevisar(db: AppDb, revisor: Revisor): 
     visibles.push({ id: fila.id, estudiante: { nombre: fila.nombre, email: fila.email }, caso: { slug: fila.casoSlug, titulo: fila.casoTitulo }, url: fila.url, enviadoEn: fila.enviadoEn });
   }
   return visibles;
+}
+
+// La lista del docente, de 25 en 25 y con búsqueda por estudiante (nombre o email): con muchos pendientes, así se
+// encuentra el de una persona. El filtro de quién puede revisar qué se hace antes de cortar la página.
+export async function paginaEntregablesPorRevisar(db: AppDb, revisor: Revisor, { busqueda, pagina }: { busqueda?: string; pagina: number }): Promise<Pagina<FilaEntregable>> {
+  const texto = busqueda?.trim().toLowerCase() ?? "";
+  const todas = (await listarEntregablesPorRevisar(db, revisor)).filter(
+    (fila) => !texto || fila.estudiante.email.toLowerCase().includes(texto) || (fila.estudiante.nombre ?? "").toLowerCase().includes(texto)
+  );
+  return armarPagina(todas.slice(desplazamiento(pagina), desplazamiento(pagina) + TAMANO_PAGINA), todas.length, pagina);
 }
 
 export async function avisarRevision(db: AppDb, { alumnoId, casoSlug }: { alumnoId: string; casoSlug: string }, { encolar }: { encolar: Encolar }): Promise<void> {

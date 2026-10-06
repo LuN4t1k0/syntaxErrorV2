@@ -6,7 +6,7 @@ import { auditLog, casos, claseCasos, claseInscripciones, clases, rutas, users }
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import { SIN_META } from "@/lib/cuenta/meta";
 import type { Rol } from "@/lib/roles";
-import { crearPreguntaProfesor, preguntasDelEstudiante, preguntasParaDocente, responderPregunta } from "./preguntas-profesor";
+import { crearPreguntaProfesor, paginaPreguntasParaDocente, preguntasDelEstudiante, preguntasParaDocente, responderPregunta } from "./preguntas-profesor";
 
 const { db, close } = createTestDb();
 const enviados: TrabajoEmail[] = [];
@@ -126,5 +126,21 @@ describe("preguntas a docentes", () => {
     const creada = await preguntar(ana);
     if (!creada.ok) throw new Error("no se creó");
     expect(await responderPregunta(db, { preguntaId: creada.id, respuesta: "Usa HAVING.", actor: admin }, { ...deps, meta: SIN_META })).toEqual({ ok: true });
+  });
+});
+
+describe("preguntas del docente por estado", () => {
+  it("separa pendientes y respondidas, con su total", async () => {
+    const { ana, admin } = await escenario();
+    const primera = await preguntar(ana);
+    await preguntar(ana);
+    if (!primera.ok) throw new Error("no se creó");
+    await responderPregunta(db, { preguntaId: primera.id, respuesta: "Usa WHERE.", actor: admin }, { ...deps, meta: SIN_META });
+    const pendientes = await paginaPreguntasParaDocente(db, admin, { estado: "pendiente", pagina: 1 });
+    const respondidas = await paginaPreguntasParaDocente(db, admin, { estado: "respondida", pagina: 1 });
+    expect([pendientes.total, pendientes.filas.map((fila) => fila.estado)]).toEqual([1, ["pendiente"]]);
+    expect([respondidas.total, respondidas.filas.map((fila) => fila.respuesta)]).toEqual([1, ["Usa WHERE."]]);
+    const todas = await paginaPreguntasParaDocente(db, admin, { pagina: 1 });
+    expect(todas.filas.map((fila) => fila.estado)).toEqual(["pendiente", "respondida"]);
   });
 });

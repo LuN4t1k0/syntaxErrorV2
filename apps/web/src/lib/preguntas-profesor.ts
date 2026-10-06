@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, or, sql, type SQL } from "drizzle-orm";
+import { and, count, desc, eq, isNull, or, sql, type SQL } from "drizzle-orm";
 import type { AppDb } from "@syntaxerror/db/client";
 import { insertAuditLogEntry } from "@syntaxerror/db/audit";
 import { casos, claseCasos, claseInscripciones, clases, preguntasProfesor, users, type MisionResumen } from "@syntaxerror/db/schema";
@@ -7,6 +7,7 @@ import type { Avisar } from "@/lib/avisos";
 import { enlaceMisPreguntas, enlacePreguntasDocente } from "@/lib/cuenta/enlaces";
 import type { MetaRequest } from "@/lib/cuenta/meta";
 import type { Encolar } from "@/lib/emails";
+import { armarPagina, desplazamiento, TAMANO_PAGINA, type Pagina } from "@/lib/admin/paginacion";
 import { listarAdmins, type Persona, type Rol } from "@/lib/roles";
 import type { UsuarioActual } from "@/lib/sesion";
 
@@ -136,7 +137,7 @@ export async function responderPregunta(
   return { ok: true };
 }
 
-async function listar(db: AppDb, filtro: SQL | undefined): Promise<FilaPregunta[]> {
+async function listar(db: AppDb, filtro: SQL | undefined, { limite = 100, desde = 0 }: { limite?: number; desde?: number } = {}): Promise<FilaPregunta[]> {
   const filas = await db
     .select({
       id: preguntasProfesor.id,
@@ -158,7 +159,8 @@ async function listar(db: AppDb, filtro: SQL | undefined): Promise<FilaPregunta[
     .innerJoin(casos, eq(casos.id, preguntasProfesor.casoId))
     .where(filtro)
     .orderBy(sql`case when ${preguntasProfesor.estado} = 'pendiente' then 0 else 1 end`, desc(preguntasProfesor.creadaEn))
-    .limit(100);
+    .limit(limite)
+    .offset(desde);
   return filas.map((fila) => ({
     id: fila.id,
     estudiante: fila.nombre ?? fila.email,
@@ -177,7 +179,25 @@ export function preguntasDelEstudiante(db: AppDb, alumnoId: string): Promise<Fil
   return listar(db, eq(preguntasProfesor.alumnoId, alumnoId));
 }
 
-export function preguntasParaDocente(db: AppDb, actor: { id: string; rol: Rol }): Promise<FilaPregunta[]> {
+function deDocente(actor: { id: string; rol: Rol }): SQL | undefined {
   const propias = eq(preguntasProfesor.profesorId, actor.id);
-  return listar(db, actor.rol === "admin" ? or(propias, isNull(preguntasProfesor.profesorId)) : propias);
+  return actor.rol === "admin" ? or(propias, isNull(preguntasProfesor.profesorId)) : propias;
+}
+
+export function preguntasParaDocente(db: AppDb, actor: { id: string; rol: Rol }): Promise<FilaPregunta[]> {
+  return listar(db, deDocente(actor));
+}
+
+// El panel del docente, de 25 en 25: todas (las pendientes primero), o solo pendientes o respondidas.
+export async function paginaPreguntasParaDocente(
+  db: AppDb,
+  actor: { id: string; rol: Rol },
+  { estado, pagina }: { estado?: "pendiente" | "respondida"; pagina: number }
+): Promise<Pagina<FilaPregunta>> {
+  const filtro = and(deDocente(actor), estado ? eq(preguntasProfesor.estado, estado) : undefined);
+  const [filas, [conteo]] = await Promise.all([
+    listar(db, filtro, { limite: TAMANO_PAGINA, desde: desplazamiento(pagina) }),
+    db.select({ total: count() }).from(preguntasProfesor).where(filtro),
+  ]);
+  return armarPagina(filas, Number(conteo?.total ?? 0), pagina);
 }

@@ -21,6 +21,23 @@ export async function listarSolicitudesPendientes(db: AppDb): Promise<SolicitudP
   return db.select({ id: solicitudesDocente.id, userId: solicitudesDocente.userId, nombre: users.name, email: users.email, creadaEn: solicitudesDocente.creadaEn }).from(solicitudesDocente).innerJoin(users, eq(users.id, solicitudesDocente.userId)).where(eq(solicitudesDocente.estado, "pendiente")).orderBy(asc(solicitudesDocente.creadaEn));
 }
 
+// La lista de la administración, de 25 en 25 (la de arriba la usan las pruebas y quien necesite todas).
+export async function paginaSolicitudesPendientes(db: AppDb, { pagina }: { pagina: number }): Promise<Pagina<SolicitudPendiente>> {
+  const filtro = eq(solicitudesDocente.estado, "pendiente");
+  const [filas, [conteo]] = await Promise.all([
+    db
+      .select({ id: solicitudesDocente.id, userId: solicitudesDocente.userId, nombre: users.name, email: users.email, creadaEn: solicitudesDocente.creadaEn })
+      .from(solicitudesDocente)
+      .innerJoin(users, eq(users.id, solicitudesDocente.userId))
+      .where(filtro)
+      .orderBy(asc(solicitudesDocente.creadaEn))
+      .limit(TAMANO_PAGINA)
+      .offset(desplazamiento(pagina)),
+    db.select({ total: count() }).from(solicitudesDocente).where(filtro),
+  ]);
+  return armarPagina(filas, Number(conteo?.total ?? 0), pagina);
+}
+
 export async function resolverSolicitudDocente(db: AppDb, { solicitudId, admin, decision }: { solicitudId: string; admin: Admin; decision: "aprobada" | "rechazada" }, { encolar, meta }: Dependencias): Promise<boolean> {
   const [solicitud] = await db.select({ userId: solicitudesDocente.userId }).from(solicitudesDocente).where(eq(solicitudesDocente.id, solicitudId));
   if (!solicitud) return false;
@@ -34,6 +51,24 @@ export async function resolverSolicitudDocente(db: AppDb, { solicitudId, admin, 
 export async function listarComentariosPendientes(db: AppDb): Promise<ComentarioPendiente[]> {
   const filas = await db.select({ id: resenasCaso.id, casoSlug: casos.slug, casoTitulo: casos.titulo, nombre: users.name, email: users.email, estrellas: resenasCaso.estrellas, comentario: resenasCaso.comentario, creadaEn: resenasCaso.creadaEn }).from(resenasCaso).innerJoin(casos, eq(casos.id, resenasCaso.casoId)).innerJoin(users, eq(users.id, resenasCaso.userId)).where(eq(resenasCaso.estadoComentario, "pendiente")).orderBy(asc(resenasCaso.creadaEn));
   return filas.map(({ casoSlug, casoTitulo, comentario, ...fila }) => ({ ...fila, caso: { slug: casoSlug, titulo: casoTitulo }, comentario: comentario ?? "" }));
+}
+
+export async function paginaComentariosPendientes(db: AppDb, { pagina }: { pagina: number }): Promise<Pagina<ComentarioPendiente>> {
+  const filtro = eq(resenasCaso.estadoComentario, "pendiente");
+  const [filas, [conteo]] = await Promise.all([
+    db
+      .select({ id: resenasCaso.id, casoSlug: casos.slug, casoTitulo: casos.titulo, nombre: users.name, email: users.email, estrellas: resenasCaso.estrellas, comentario: resenasCaso.comentario, creadaEn: resenasCaso.creadaEn })
+      .from(resenasCaso)
+      .innerJoin(casos, eq(casos.id, resenasCaso.casoId))
+      .innerJoin(users, eq(users.id, resenasCaso.userId))
+      .where(filtro)
+      .orderBy(asc(resenasCaso.creadaEn))
+      .limit(TAMANO_PAGINA)
+      .offset(desplazamiento(pagina)),
+    db.select({ total: count() }).from(resenasCaso).where(filtro),
+  ]);
+  const comentarios = filas.map(({ casoSlug, casoTitulo, comentario, ...fila }) => ({ ...fila, caso: { slug: casoSlug, titulo: casoTitulo }, comentario: comentario ?? "" }));
+  return armarPagina(comentarios, Number(conteo?.total ?? 0), pagina);
 }
 
 export async function listarReportes(db: AppDb, { estado, pagina }: { estado: "pendiente" | "resuelto"; pagina: number }): Promise<Pagina<FilaReporte>> {

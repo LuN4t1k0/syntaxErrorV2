@@ -4,12 +4,14 @@ import { casoInscripciones, casos, claseInscripciones, misionProgreso, rutaCasos
 import { createTestDb, truncateAll } from "@syntaxerror/db/testing";
 import type { Encolar } from "@/lib/emails";
 import {
+  cambiarEstadoClase,
   cambiarCasoHabilitado,
   casosDeClase,
   clasesDelEstudiante,
   clasesDelProfesor,
   crearClase,
   decidirInscripcion,
+  paginaClasesDelProfesor,
   rosterDeClase,
   unirseAClase,
 } from "./servicio";
@@ -122,5 +124,19 @@ describe("clases", () => {
     expect(await clasesDelEstudiante(db, anaId)).toEqual([{ id: clase.id, titulo: "3°A", docente: "Rosa", estado: "pendiente", casos: [] }]);
     await decidirInscripcion(db, { profesorId: docenteId, claseId: clase.id, userId: anaId, estado: "activa" }, { encolar });
     expect((await clasesDelEstudiante(db, anaId))[0].casos.map((caso) => caso.slug).sort()).toEqual(["stock", "ventas"]);
+  });
+});
+
+describe("archivar clases", () => {
+  it("la docente archiva y restaura su clase; archivada no recibe estudiantes nuevos; otra docente no puede", async () => {
+    const { docenteId, otraId, anaId, clase } = await escenario();
+    expect(await cambiarEstadoClase(db, { profesorId: otraId, claseId: clase.id, estado: "archivada" })).toBe(false);
+    expect(await cambiarEstadoClase(db, { profesorId: docenteId, claseId: clase.id, estado: "archivada" })).toBe(true);
+    const activas = await paginaClasesDelProfesor(db, docenteId, { estado: "activa", pagina: 1 });
+    const archivadas = await paginaClasesDelProfesor(db, docenteId, { estado: "archivada", pagina: 1 });
+    expect([activas.total, archivadas.total, archivadas.filas[0].titulo, archivadas.archivadas]).toEqual([0, 1, "3°A", 1]);
+    expect((await unirseAClase(db, { userId: anaId, codigo: clase.codigo }, { encolar })).ok).toBe(false);
+    expect(await cambiarEstadoClase(db, { profesorId: docenteId, claseId: clase.id, estado: "activa" })).toBe(true);
+    expect((await paginaClasesDelProfesor(db, docenteId, { estado: "activa", pagina: 1 })).total).toBe(1);
   });
 });
