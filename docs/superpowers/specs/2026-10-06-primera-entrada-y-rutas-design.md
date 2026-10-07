@@ -1,6 +1,6 @@
 # Primera entrada y rutas desde el admin: diseño
 
-**Fecha:** 2026-10-06. **Estado:** aprobado en conversación, falta revisar este documento.
+**Fecha:** 2026-10-06. **Estado:** implementado el 2026-10-07. Las decisiones que cambiaron al implementar están marcadas con **(al implementar)**.
 
 ## 1. Problema
 
@@ -167,7 +167,7 @@ Los textos son una propuesta; el equipo los puede cambiar en los YAML.
 
 ### Compilación
 
-- Se compilan las páginas de casos de toda ruta que no esté en `borrador` en el YAML y tenga casos. Así un cambio del admin no necesita un build nuevo.
+- Se compilan las páginas de casos de toda ruta que no esté en `borrador` en el YAML y tenga casos, incluidas las `filtrada`. Así un cambio del admin no necesita un build nuevo.
 - Las páginas de casos y misiones **siguen estáticas** (`dynamic = "error"`).
 
 ### Acceso
@@ -192,7 +192,8 @@ En desarrollo y e2e (`CONTENT_INCLUDE_DRAFTS=true`) todo sigue visible y usable,
 ### Páginas que pasan a leer el estado
 
 - `/rutas` y `/rutas/[ruta]` dejan de ser estáticas.
-- El estado de las rutas se lee con `unstable_cache`, con la etiqueta `estado-rutas`, y el admin invalida esa etiqueta al cambiar un estado.
+- **(al implementar)** El estado de las rutas se lee de la base en cada pedido, sin caché. Son pocas filas, y con `unstable_cache` + `revalidateTag` la primera página después de un cambio del admin todavía podía mostrar el estado anterior.
+- En desarrollo y e2e, `/rutas/[ruta]` muestra todas las rutas, como el resto del contenido.
 - `/rutas/[ruta]` da 404 si la ruta está oculta o filtrada, y también si está en beta y la persona no es probadora. El admin ve todas, con el aviso de beta que ya existe.
 
 ## 7. Admin de rutas
@@ -212,8 +213,7 @@ En desarrollo y e2e (`CONTENT_INCLUDE_DRAFTS=true`) todo sigue visible y usable,
 - **API `PATCH /api/admin/rutas/[slug]`** con `{ estado: "publicada" | "beta" | "filtrada" | "oculta" | null }`:
   - pasa por `exigirAdmin` y revisa el Origin;
   - responde 400 si se intenta abrir una ruta sin casos, y 404 si la ruta no existe o está en borrador;
-  - registra en la bitácora la acción nueva `ruta_estado_cambiado`, con `targetType` nuevo `route`;
-  - llama a `revalidateTag("estado-rutas")`.
+  - registra en la bitácora la acción nueva `ruta_estado_cambiado`, con `targetType` nuevo `route`.
 
 ## 8. APIs de la cuenta
 
@@ -223,7 +223,9 @@ En desarrollo y e2e (`CONTENT_INCLUDE_DRAFTS=true`) todo sigue visible y usable,
   - si llega `ruta`, la valida (que exista y esté disponible para la persona) y la guarda en `ruta_elegida`;
   - responde 400 si la ruta no está disponible.
 - **`PUT /api/cuenta/ruta`** con `{ ruta: string }`: cambia `ruta_elegida`, con la misma validación. También marca `bienvenida_vista_en` si estaba vacío, para que quien elige desde `/rutas` no vea la terminal después.
-- **Las dos revisan el Origin,** como el resto de las APIs con sesión.
+- **(al implementar)** El Origin lo revisa `middleware.ts`, como en el resto de las APIs; las rutas no lo repiten.
+
+**(al implementar)** El formulario y la API de clases del docente (`/profesor`, `POST /api/profesor/clases`) ofrecen las rutas con casos que el docente puede usar según el estado vigente (`rutasParaClases`). Con las rutas futuras sin casos, la primera ruta del listado ya no servía para una clase.
 
 ## 9. Pruebas
 
