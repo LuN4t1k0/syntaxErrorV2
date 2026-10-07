@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "./fixtures";
+import { cerrarBienvenida, expect, type Page, test } from "./fixtures";
 
 async function registrarse(page: Page, nombre: string): Promise<string> {
   const email = `admin-e2e-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`;
@@ -8,6 +8,7 @@ async function registrarse(page: Page, nombre: string): Promise<string> {
   await page.locator('input[name="password"]').fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear y entrar" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
+  await cerrarBienvenida(page);
   return email;
 }
 

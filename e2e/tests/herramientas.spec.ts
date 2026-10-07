@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "./fixtures";
+import { cerrarBienvenida, expect, type Page, test } from "./fixtures";
 
 const CASO = "/casos/herramientas-del-oficio";
 const MISIONES: [string, string][] = [
@@ -19,6 +19,7 @@ async function registrarse(page: Page) {
   await page.locator('input[name="password"]').fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear y entrar" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
+  await cerrarBienvenida(page);
 }
 
 // En e2e, ENTREGABLES_VERIFICACION=prueba: el usuario no-existe simula una cuenta inexistente.

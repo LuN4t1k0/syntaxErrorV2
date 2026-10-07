@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { cerrarBienvenida, expect, test } from "./fixtures";
 
 test("una alumna se registra, entra al dashboard y cierra sesión", async ({ page }) => {
   const email = `alumna-${Date.now()}@correo.cl`;
@@ -10,6 +10,7 @@ test("una alumna se registra, entra al dashboard y cierra sesión", async ({ pag
   await page.getByRole("button", { name: "Crear y entrar" }).click();
 
   await expect(page).toHaveURL(/\/dashboard/);
+  await cerrarBienvenida(page);
   await expect(page.getByRole("heading", { name: "Hola, Camila Rojas" })).toBeVisible();
 
   await page.getByLabel("Abrir menú de perfil").click();

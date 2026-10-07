@@ -1,4 +1,4 @@
-import { expect, reporteDeTarea, test, type Page } from "./fixtures";
+import { cerrarBienvenida, expect, type Page, reporteDeTarea, test } from "./fixtures";
 
 const MISION_SQL = "/casos/demo-motor/01-clientes-de-regiones";
 const CONSULTA_CORRECTA = "SELECT nombre, ciudad FROM clientes WHERE ciudad <> 'Santiago';";
@@ -10,6 +10,7 @@ async function registrarse(page: Page, nombre: string) {
   await page.locator('input[name="password"]').fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear y entrar" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
+  await cerrarBienvenida(page);
 }
 
 // El admin de desarrollo lo crea db-setup (SEED_ADMIN_EMAIL y SEED_ADMIN_PASSWORD).

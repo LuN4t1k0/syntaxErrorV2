@@ -1,4 +1,4 @@
-import { expect, reporteDeTarea, test, type Page } from "./fixtures";
+import { cerrarBienvenida, expect, type Page, reporteDeTarea, test } from "./fixtures";
 
 const CASO = "/casos/demo-motor";
 const MISION_SQL = `${CASO}/01-clientes-de-regiones`;
@@ -14,6 +14,7 @@ async function registrarse(page: Page) {
   await page.locator('input[name="password"]').fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear y entrar" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
+  await cerrarBienvenida(page);
 }
 
 async function validarYEsperar(page: Page) {

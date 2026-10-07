@@ -41,3 +41,11 @@ export function reporteDeTarea(page: Page, aprobada?: boolean) {
     (respuesta) => respuesta.url().endsWith("/api/progreso") && respuesta.request().method() === "POST" && (aprobada === undefined || respuesta.request().postDataJSON()?.aprobada === aprobada)
   );
 }
+
+// Toda estudiante nueva ve la terminal de bienvenida en su panel (bienvenida.spec la prueba). Los demás tests la
+// cierran como `explorar`: marcan la bienvenida por la API y recargan, sin elegir ruta.
+export async function cerrarBienvenida(page: Page) {
+  const respuesta = await page.request.post("/api/cuenta/bienvenida", { headers: { Origin: "http://localhost:3000" }, data: { ruta: null } });
+  if (!respuesta.ok()) throw new Error(`no se pudo cerrar la bienvenida: ${respuesta.status()}`);
+  await page.reload();
+}

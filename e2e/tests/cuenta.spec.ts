@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { expect, test, type Page } from "./fixtures";
+import { cerrarBienvenida, expect, type Page, test } from "./fixtures";
 import { esperarEmail, rutaDelEnlace } from "./mailpit";
 import { aprobarEntregable, entrarComoAdmin } from "./revision";
 
@@ -16,6 +16,7 @@ async function registrarse(page: Page, email: string, nombre = "Josefa Morales")
   await page.locator('input[name="password"]').fill(CLAVE);
   await page.getByRole("button", { name: "Crear y entrar" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
+  await cerrarBienvenida(page);
 }
 
 async function entrar(page: Page, email: string, clave: string) {
