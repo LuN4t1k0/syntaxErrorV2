@@ -89,6 +89,16 @@ describe("sincronizarContenido", () => {
     expect(despues.misiones[1].tareas).toEqual(["t3", "t4"]);
   });
 
+  it("actualiza el estado inicial y el teaser sin pisar el estado que eligió el admin", async () => {
+    await sincronizarContenido(db, contenido());
+    await db.update(rutas).set({ estadoAdmin: "oculta" }).where(eq(rutas.slug, "analista"));
+    const cambiado = contenido();
+    cambiado.rutas[0] = { ...cambiado.rutas[0], estado: "beta", teaser: "Pronto" };
+    await sincronizarContenido(db, cambiado);
+    const [ruta] = await db.select().from(rutas);
+    expect(ruta).toMatchObject({ estado: "beta", teaser: "Pronto", estadoAdmin: "oculta" });
+  });
+
   it("una ruta que sale del contenido pasa a borrador", async () => {
     await sincronizarContenido(db, contenido());
     await sincronizarContenido(db, { ...contenido(), rutas: [] });

@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  type AnyPgColumn,
   boolean,
   index,
   integer,
@@ -32,6 +33,9 @@ export const users = pgTable(
     portafolioPublico: boolean("portafolio_publico").notNull().default(false),
     // Probador: hace las rutas en el orden que quiera y entra a las rutas en beta. Lo marca un admin.
     probador: boolean("probador").notNull().default(false),
+    // La primera entrada: cuándo vio la terminal de bienvenida y qué ruta eligió (una inscripción liviana).
+    bienvenidaVistaEn: timestamp("bienvenida_vista_en"),
+    rutaElegida: uuid("ruta_elegida").references((): AnyPgColumn => rutas.id, { onDelete: "set null" }),
   },
   (table) => [uniqueIndex("users_email_idx").on(table.email), uniqueIndex("users_usuario_idx").on(table.usuario)]
 );
@@ -91,7 +95,11 @@ export const rutas = pgTable(
     titulo: text("titulo").notNull(),
     cargo: text("cargo").notNull(),
     descripcion: text("descripcion").notNull(),
+    teaser: text("teaser"),
     estado: text("estado").notNull().default("borrador"),
+    estadoAdmin: text("estado_admin"),
+    estadoCambiadoPor: uuid("estado_cambiado_por").references(() => users.id, { onDelete: "set null" }),
+    estadoCambiadoEn: timestamp("estado_cambiado_en"),
     creadoEn: timestamp("creado_en").notNull().defaultNow(),
     actualizadoEn: timestamp("actualizado_en").notNull().defaultNow(),
   },

@@ -27,7 +27,7 @@ describe("/api/progreso en una ruta beta", () => {
     vi.mocked(obtenerUsuarioId).mockResolvedValue(ana.id);
     const consulta = await GET(new Request("http://localhost:3000/api/progreso?caso=clases-de-sql"));
     expect(consulta.status).toBe(403);
-    expect(await consulta.json()).toEqual({ error: "solo_probadores" });
+    expect(await consulta.json()).toEqual({ error: "ruta_no_disponible" });
     expect((await enviar(POST, intento)).status).toBe(403);
     expect(await (await enviar(SINCRONIZAR, { intentos: [intento] })).json()).toMatchObject({ aplicados: 0, rechazados: 1 });
   });

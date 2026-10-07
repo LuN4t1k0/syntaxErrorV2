@@ -23,10 +23,11 @@ export const AUDIT_ACTIONS = [
   "deliverable_reviewed",
   "tester_changed",
   "setting_changed",
+  "ruta_estado_cambiado",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
-export type AuditTargetType = "user" | "teacher_request" | "teacher_question" | "review" | "report" | "tutor_cache" | "deliverable" | "setting";
+export type AuditTargetType = "user" | "teacher_request" | "teacher_question" | "review" | "report" | "tutor_cache" | "deliverable" | "setting" | "route";
 
 export type InsertAuditLogEntryInput = {
   actorId: string | null;

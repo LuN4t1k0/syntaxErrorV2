@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import type { DbClient } from "@syntaxerror/db/client";
 import { users } from "@syntaxerror/db/schema";
-import { casosSoloParaProbadores } from "@/lib/contenido";
 
 // Las rutas en beta están publicadas pero ocultas: las hacen los probadores (los marca un admin) y los admins.
 export async function accesoBeta(db: DbClient, userId: string): Promise<boolean> {
@@ -12,7 +11,7 @@ export async function accesoBeta(db: DbClient, userId: string): Promise<boolean>
 
 // Para las APIs de un caso: 403 si el caso solo está en rutas beta y la persona no tiene acceso.
 export async function exigirAccesoBeta(db: DbClient, userId: string, casoSlug: string): Promise<NextResponse | null> {
-  if (!(await casosSoloParaProbadores()).has(casoSlug)) return null;
-  if (await accesoBeta(db, userId)) return null;
-  return NextResponse.json({ error: "solo_probadores" }, { status: 403 });
+  const { puedeUsarCaso } = await import("@/lib/rutas/estado");
+  if (await puedeUsarCaso(db, userId, casoSlug)) return null;
+  return NextResponse.json({ error: "ruta_no_disponible" }, { status: 403 });
 }

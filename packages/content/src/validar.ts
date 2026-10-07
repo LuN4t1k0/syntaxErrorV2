@@ -95,7 +95,7 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
       }
     }
     // Una ruta en beta se va a publicar: se le exige lo mismo que a una publicada.
-    const publicado = contenido.rutas.some((ruta) => ruta.estado !== "borrador" && ruta.casos.includes(caso.slug));
+    const publicado = contenido.rutas.some((ruta) => (ruta.estado === "publicada" || ruta.estado === "beta") && ruta.casos.includes(caso.slug));
     const ultima = caso.misiones.at(-1);
     // En unas clases no se exige: el caso que viene después hace de misión sin guía.
     if (publicado && caso.tipo === "caso" && ultima && !ultima.sinGuia) {

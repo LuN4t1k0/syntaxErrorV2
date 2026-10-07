@@ -83,7 +83,10 @@ export async function cargarProgreso(caso: string, tareasPorMision: Record<strin
   try {
     const respuesta = await deps.fetch(`/api/progreso?caso=${encodeURIComponent(caso)}`, { cache: "no-store" });
     if (respuesta.ok) servidor = (await respuesta.json()) as Omit<ProgresoVisible, "sesion" | "soloProbadores">;
-    else if (respuesta.status === 403) soloProbadores = ((await respuesta.json().catch(() => ({}))) as { error?: string }).error === "solo_probadores";
+    else if (respuesta.status === 403) {
+      const error = ((await respuesta.json().catch(() => ({}))) as { error?: string }).error;
+      soloProbadores = error === "solo_probadores" || error === "ruta_no_disponible";
+    }
   } catch {
     servidor = null;
   }

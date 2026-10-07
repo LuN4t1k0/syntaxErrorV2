@@ -25,7 +25,7 @@ describe("acceso a las rutas en beta", () => {
 
     const bloqueo = await exigirAccesoBeta(db, estudiante.id, "clases-de-sql");
     expect(bloqueo?.status).toBe(403);
-    expect(await bloqueo?.json()).toEqual({ error: "solo_probadores" });
+    expect(await bloqueo?.json()).toEqual({ error: "ruta_no_disponible" });
     expect(await exigirAccesoBeta(db, probador.id, "clases-de-sql")).toBeNull();
     expect(await exigirAccesoBeta(db, admin.id, "clases-de-sql")).toBeNull();
   });

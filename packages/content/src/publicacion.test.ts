@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
 import { cargarContenido } from "./cargar";
 import { archivosPython, grillaDeHoja, paquetesPython, tablasSql } from "./datos";
-import { casosSoloBeta, casosVisibles, rutasVisibles, tareasDeMision } from "./publicacion";
+import { casosSoloBeta, casosVisibles, estadoVigenteRuta, rutasVisibles, rutaUsable, tareasDeMision } from "./publicacion";
 import type { Contenido } from "./tipos";
 
 const FIXTURE = fileURLToPath(new URL("../test/fixtures/valido", import.meta.url));
@@ -41,9 +41,33 @@ describe("visibilidad", () => {
     expect([...casosSoloBeta(tambienPublicado, false)]).toEqual([]);
   });
 
+  it("una ruta filtrada con casos se construye, para que el admin la pueda abrir sin deploy, pero no se lista", () => {
+    const filtrada: Contenido = { ...contenido, rutas: contenido.rutas.map((ruta) => ({ ...ruta, estado: "filtrada" as const })) };
+    expect(rutasVisibles(filtrada, false)).toEqual([]);
+    expect(rutasVisibles(filtrada, false, { beta: true }).map((ruta) => ruta.slug)).toEqual(["analista"]);
+    expect(casosVisibles(filtrada, false, { beta: true }).map((caso) => caso.slug)).toEqual(["ventas"]);
+  });
+
   it("tareasDeMision devuelve solo los bloques de tarea", () => {
     const ids = tareasDeMision(contenido.casos[0].misiones[0]).map((tarea) => tarea.props.id);
     expect(ids).toEqual(["fuera-de-santiago"]);
+  });
+});
+
+describe("estado vigente de una ruta", () => {
+  it("manda el admin, salvo en los borradores del repositorio", () => {
+    expect(estadoVigenteRuta({ estado: "beta" })).toBe("beta");
+    expect(estadoVigenteRuta({ estado: "beta", estadoAdmin: null })).toBe("beta");
+    expect(estadoVigenteRuta({ estado: "beta", estadoAdmin: "publicada" })).toBe("publicada");
+    expect(estadoVigenteRuta({ estado: "filtrada", estadoAdmin: "oculta" })).toBe("oculta");
+    expect(estadoVigenteRuta({ estado: "borrador", estadoAdmin: "publicada" })).toBe("borrador");
+  });
+
+  it("solo se usa una ruta publicada, o en beta para probadores y admins", () => {
+    expect(rutaUsable("publicada", false)).toBe(true);
+    expect(rutaUsable("beta", false)).toBe(false);
+    expect(rutaUsable("beta", true)).toBe(true);
+    for (const estado of ["filtrada", "oculta", "borrador"] as const) expect(rutaUsable(estado, true)).toBe(false);
   });
 });
 

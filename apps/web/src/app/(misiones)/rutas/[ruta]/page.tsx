@@ -1,10 +1,14 @@
 import { notFound } from "next/navigation";
+import { getDb } from "@syntaxerror/db/client";
 import { MapaRuta } from "@/components/rutas/mapa-ruta";
-import { casosDeRuta, obtenerRuta, rutasParaConstruir } from "@/lib/contenido";
+import { casosDeRuta, incluirBorradores, obtenerRuta, rutasParaConstruir } from "@/lib/contenido";
+import { accesoBeta } from "@/lib/beta";
+import { listarRutasConEstado, mapaVisible } from "@/lib/rutas/estado";
+import { obtenerUsuarioId } from "@/lib/sesion";
 import type { PiezaRuta } from "@/lib/rutas/mapa";
 
-export const dynamic = "error";
-export const dynamicParams = false;
+export const dynamic = "force-dynamic";
+export const dynamicParams = true;
 type Parametros = { params: Promise<{ ruta: string }> };
 
 export async function generateStaticParams() {
@@ -18,8 +22,12 @@ export async function generateMetadata({ params }: Parametros) {
 }
 
 export default async function RutaPage({ params }: Parametros) {
-  const ruta = await obtenerRuta((await params).ruta);
-  if (!ruta) notFound();
+  const slug = (await params).ruta;
+  const [ruta, estado] = await Promise.all([obtenerRuta(slug), listarRutasConEstado().then((rutas) => rutas.find((candidata) => candidata.slug === slug))]);
+  if (!ruta || !estado) notFound();
+  const userId = await obtenerUsuarioId();
+  const puedeBeta = userId ? await accesoBeta(getDb(), userId) : false;
+  if (!mapaVisible(estado.estadoVigente, puedeBeta, incluirBorradores())) notFound();
   const piezas: PiezaRuta[] = (await casosDeRuta(ruta)).map((caso) => ({
     slug: caso.slug,
     titulo: caso.titulo,
@@ -38,7 +46,7 @@ export default async function RutaPage({ params }: Parametros) {
           Cada clase es una rama: aprendes en ella y se fusiona en el caso que la aplica, en un trabajo real.
         </p>
       </header>
-      <MapaRuta ruta={{ slug: ruta.slug, titulo: ruta.titulo, beta: ruta.estado === "beta" }} piezas={piezas} />
+      <MapaRuta ruta={{ slug: ruta.slug, titulo: ruta.titulo, beta: estado.estadoVigente === "beta" }} piezas={piezas} />
     </main>
   );
 }

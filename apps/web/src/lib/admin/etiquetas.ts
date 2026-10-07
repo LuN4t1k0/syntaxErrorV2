@@ -25,4 +25,5 @@ export const ETIQUETAS_ACCION: Record<AuditAction, string> = {
   deliverable_reviewed: "Entregable revisado",
   tester_changed: "Probador cambiado",
   setting_changed: "Ajuste cambiado",
+  ruta_estado_cambiado: "Estado de ruta cambiado",
 };

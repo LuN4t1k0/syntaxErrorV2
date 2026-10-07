@@ -6,8 +6,8 @@ import { Paginacion } from "@/components/admin/paginacion";
 import { FormularioClase } from "@/components/comunidad/clases/formulario-clase";
 import { leerPagina } from "@/lib/admin/paginacion";
 import { paginaClasesDelProfesor } from "@/lib/clases/servicio";
-import { rutasParaPublicar } from "@/lib/contenido";
 import { esDocente } from "@/lib/roles";
+import { rutasParaClases } from "@/lib/rutas/estado";
 import { obtenerUsuarioActual } from "@/lib/sesion";
 
 export const metadata = { title: "Panel docente" };
@@ -19,7 +19,7 @@ export default async function ProfesorPage({ searchParams }: { searchParams: Pro
   const parametros = await searchParams;
   // Las archivadas salen del panel, pero quedan a mano para restaurarlas.
   const estado = parametros.vista === "archivadas" ? "archivada" : "activa";
-  const [resultado, rutas] = await Promise.all([paginaClasesDelProfesor(getDb(), usuario.id, { estado, pagina: leerPagina(parametros.pagina) }), rutasParaPublicar()]);
+  const [resultado, rutas] = await Promise.all([paginaClasesDelProfesor(getDb(), usuario.id, { estado, pagina: leerPagina(parametros.pagina) }), rutasParaClases(getDb(), usuario.id)]);
   const clases = resultado.filas;
 
   return (

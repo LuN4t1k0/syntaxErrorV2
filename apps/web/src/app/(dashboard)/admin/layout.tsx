@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 const SECCIONES = [
   { href: "/admin", texto: "Resumen" },
   { href: "/admin/usuarios", texto: "Usuarios" },
+  { href: "/admin/rutas", texto: "Rutas" },
   { href: "/admin/contenido", texto: "Contenido y métricas" },
   { href: "/admin/comunidad", texto: "Solicitudes y reseñas" },
   { href: "/admin/reportes", texto: "Reportes" },

@@ -20,9 +20,14 @@ export const rutaSchema = z.object({
   titulo: texto,
   cargo: texto,
   descripcion: texto,
-  // beta: se publica en producción, pero oculta; solo la hacen probadores y admins (fase 8c).
-  estado: z.enum(["publicada", "beta", "borrador"]),
-  casos: z.array(slug).min(1, "la ruta necesita al menos un caso"),
+  teaser: texto.optional(),
+  // beta: solo probadores y admins. filtrada: se muestra como filtración, pero no abre mapa.
+  estado: z.enum(["publicada", "beta", "filtrada", "borrador"]),
+  casos: z.array(slug).default([]),
+}).superRefine((ruta, ctx) => {
+  if ((ruta.estado === "publicada" || ruta.estado === "beta") && ruta.casos.length === 0) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["casos"], message: "la ruta necesita al menos un caso" });
+  }
 });
 
 // Qué se espera en cada dimensión de la rúbrica estándar, descrito para el entregable del caso.

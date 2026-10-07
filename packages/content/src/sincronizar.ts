@@ -21,7 +21,7 @@ export async function sincronizarContenido(db: AppDb, contenido: Contenido): Pro
     }
 
     for (const ruta of contenido.rutas) {
-      const datos = { titulo: ruta.titulo, cargo: ruta.cargo, descripcion: ruta.descripcion, estado: ruta.estado, actualizadoEn: ahora };
+      const datos = { titulo: ruta.titulo, cargo: ruta.cargo, descripcion: ruta.descripcion, estado: ruta.estado, teaser: ruta.teaser ?? null, actualizadoEn: ahora };
       const [fila] = await tx.insert(rutas).values({ slug: ruta.slug, ...datos }).onConflictDoUpdate({ target: rutas.slug, set: datos }).returning({ id: rutas.id });
       await tx.delete(rutaCasos).where(eq(rutaCasos.rutaId, fila.id));
       const orden = ruta.casos.map((slug, posicion) => {
