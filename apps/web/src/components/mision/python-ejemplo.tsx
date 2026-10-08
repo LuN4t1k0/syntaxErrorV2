@@ -5,7 +5,8 @@ import { Button } from "@syntaxerror/ui/components/button";
 import { errorSimple, type ErrorExplicado } from "@syntaxerror/engines/consola";
 import { ExplicacionError } from "@/components/consola/explicacion";
 import { usePython } from "./python-contexto";
-import type { TablaVisible } from "@syntaxerror/engines/python";
+import { VariablesPython } from "./variables-python";
+import type { TablaVisible, VariableVisible } from "@syntaxerror/engines/python";
 
 function formatear(valor: unknown): string {
   return valor === null || valor === undefined ? "NaN" : String(valor);
@@ -49,6 +50,7 @@ export function PythonEjemplo({ codigo, resaltado }: { codigo: string; resaltado
   const [salida, setSalida] = useState<string | null>(null);
   const [error, setError] = useState<ErrorExplicado | null>(null);
   const [tablas, setTablas] = useState<TablaVisible[]>([]);
+  const [variables, setVariables] = useState<VariableVisible[]>([]);
   const [corriendo, setCorriendo] = useState(false);
   async function probar() {
     setCorriendo(true);
@@ -57,9 +59,11 @@ export function PythonEjemplo({ codigo, resaltado }: { codigo: string; resaltado
       setSalida(ejecucion.salida || (ejecucion.ok ? "(sin salida)" : null));
       setError(ejecucion.ok ? null : ejecucion.error);
       setTablas(ejecucion.ok ? ejecucion.tablas : []);
+      setVariables(ejecucion.ok ? ejecucion.variables : []);
     } catch {
       setSalida(null);
       setTablas([]);
+      setVariables([]);
       setError(errorSimple("Algo falló al ejecutar Python. Intenta de nuevo."));
     } finally {
       setCorriendo(false);
@@ -71,6 +75,7 @@ export function PythonEjemplo({ codigo, resaltado }: { codigo: string; resaltado
       <div><Button type="button" size="sm" variant="secondary" disabled={python.estado !== "listo" || corriendo} onClick={() => void probar()}>Probar ejemplo</Button></div>
       {salida ? <pre className="overflow-x-auto rounded-md border border-border bg-background p-3 font-mono text-sm">{salida}</pre> : null}
       {error ? <ExplicacionError error={error} /> : null}
+      <VariablesPython variables={variables} />
       <TablasPython tablas={tablas} />
     </div>
   );

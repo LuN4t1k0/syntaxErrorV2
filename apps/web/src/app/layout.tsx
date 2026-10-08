@@ -24,8 +24,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es" data-accent="platform" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    // Las variables de next/font van en <html>: --font-sans y --font-mono se definen en :root y las usan; en <body>
+    // :root no las veía, quedaban vacías y ni Geist ni la fuente monoespaciada se aplicaban.
+    <html lang="es" data-accent="platform" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <body className="antialiased">
         <script
           type="application/ld+json"
           suppressHydrationWarning

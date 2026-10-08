@@ -103,7 +103,7 @@ export function SheetTask({ id, enunciado, grilla, opciones = {}, celdas, pistas
     <PanelTarea id={id} titulo="tarea de planilla" enunciado={enunciado} aprobada={tareaAprobada(id)} resultado={resultado} pistas={pistas} acciones={<><Button type="button" onClick={validar}>Validar</Button><Button type="button" variant="secondary" onClick={reiniciar}>Reiniciar hoja</Button></>}>
       <div className="flex flex-wrap items-end gap-2">
         <span className="rounded-md border border-border bg-surface-raised px-3 py-2 font-mono text-sm font-bold">{seleccionada}</span>
-        <label className="grid flex-1 gap-1 text-sm font-bold">Fórmula<input ref={campo} value={entrada} onChange={(evento) => setEntrada(evento.target.value)} onKeyDown={alPresionar} disabled={!editable} spellCheck={false} autoComplete="off" aria-describedby="ayuda-formula" placeholder="=SUMA(D2:D7)" className="field font-mono" /></label>
+        <label className="grid flex-1 gap-1 text-sm font-bold">Fórmula<input ref={campo} value={entrada} onChange={(evento) => setEntrada(evento.target.value)} onKeyDown={alPresionar} disabled={!editable} spellCheck={false} autoComplete="off" aria-describedby="ayuda-formula" placeholder="Un valor, o una fórmula que empiece con =" className="field font-mono" /></label>
         <Button type="button" variant="secondary" disabled={!editable} onClick={aplicar}>Aplicar</Button>
         <Button type="button" variant="secondary" disabled={!puedeRellenar} onClick={rellenar} title="Copia la fórmula de la celda seleccionada en las filas de abajo, ajustando las referencias">{`Rellenar hasta la fila ${ultimaFila}`}</Button>
       </div>
