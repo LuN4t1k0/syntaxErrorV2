@@ -88,6 +88,28 @@ describe("siguienteDelAvance y casoEnCurso", () => {
   });
 });
 
+describe("entrega en revisión", () => {
+  const entrega = (estado: "pendiente" | "observado") => ({ caso: { slug: "ventas", titulo: "Caso ventas" }, estado, url: "u", puntajes: {}, observaciones: {}, comentario: null, enviadaEn: haceDias(10), revisadaEn: null });
+  const listo = caso([leccion("m1", "aprobada", 0, haceDias(10))], "en_curso", "caso", "ventas");
+
+  it("quien espera la revisión no está inactivo y su siguiente paso es esperar", () => {
+    const datos = avance({ otrosCasos: [listo], entregas: [entrega("pendiente")], ultimaActividad: haceDias(10) });
+    expect(trabasDelAlumno(datos, AHORA)).toEqual([]);
+    expect(siguienteDelAvance(datos)).toEqual({ texto: "Tu entrega de Caso ventas está en revisión: te avisaremos por email cuando la revisen.", href: "/casos/ventas" });
+  });
+
+  it("con una entrega en revisión, el siguiente paso es otro caso que sí puede avanzar", () => {
+    const otro = caso([leccion("01", "en_curso", 0, haceDias(20))], "en_curso", "clases", "excel");
+    const datos = avance({ otrosCasos: [listo, otro], entregas: [entrega("pendiente")], ultimaActividad: haceDias(10) });
+    expect(casoEnCurso(datos)?.caso.slug).toBe("excel");
+    expect(trabasDelAlumno(datos, AHORA).map((traba) => traba.tipo)).toEqual(["inactivo"]);
+  });
+
+  it("una entrega observada pide corregirla, no enlazarla", () => {
+    expect(siguienteDelAvance(avance({ otrosCasos: [listo], entregas: [entrega("observado")] }))).toEqual({ texto: "Tu entrega de Caso ventas tiene observaciones: revísalas y vuelve a enviarla.", href: "/casos/ventas" });
+  });
+});
+
 describe("haceCuanto", () => {
   it("hoy, ayer y hace N días", () => {
     expect(haceCuanto(haceDias(0), AHORA)).toBe("hoy");

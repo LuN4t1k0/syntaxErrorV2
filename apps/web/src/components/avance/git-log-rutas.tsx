@@ -20,7 +20,7 @@ function Lecciones({ caso, modo, trabadas }: { caso: CasoAvance; modo: "admin" |
         <li key={leccion.slug} className={cn("flex flex-wrap gap-x-3", trabadas.has(leccion.href) ? "font-bold text-red-600 dark:text-red-400" : leccion.estado === "aprobada" ? "text-emerald-600 dark:text-emerald-400" : leccion.estado === "en_curso" ? "text-primary" : "text-muted-foreground")}>
           <Link href={leccion.href} className="hover:underline">{`${String(indice + 1).padStart(2, "0")} ${leccion.titulo}`}</Link>
           <span>{ESTADO_LECCION[leccion.estado]}</span>
-          {modo === "admin" && leccion.intentos > 0 ? <span>{`${leccion.intentos} intentos · ${leccion.fallidos} fallidos`}</span> : null}
+          {modo === "admin" && leccion.intentos > 0 ? <span>{`${leccion.intentos} ${leccion.intentos === 1 ? "intento" : "intentos"} · ${leccion.fallidos} ${leccion.fallidos === 1 ? "fallido" : "fallidos"}`}</span> : null}
           {leccion.actualizadoEn ? <span className="text-muted-foreground">{fecha(leccion.actualizadoEn)}</span> : null}
         </li>
       ))}
@@ -30,10 +30,13 @@ function Lecciones({ caso, modo, trabadas }: { caso: CasoAvance; modo: "admin" |
 
 function Caso({ caso, modo, trabadas }: { caso: CasoAvance; modo: "admin" | "alumno"; trabadas: ReadonlySet<string> }) {
   const resumen = (
-    <span className={cn("flex flex-wrap gap-x-3", COLOR[caso.estado])}>
+    // La marca queda junto al título también en pantallas angostas, donde el título ocupa varias líneas.
+    <span className={cn("flex gap-2", COLOR[caso.estado])}>
       <span aria-hidden="true">{MARCA[caso.estado]}</span>
-      <span className="font-bold">{caso.titulo}</span>
-      <span>{`${caso.aprobadas}/${caso.total} ${caso.total === 1 ? unidad(caso.tipo).nombre : caso.tipo === "clases" ? "lecciones" : "misiones"}`}</span>
+      <span>
+        <span className="font-bold">{caso.titulo}</span>{" "}
+        <span className="whitespace-nowrap">{`${caso.aprobadas}/${caso.total} ${caso.total === 1 ? unidad(caso.tipo).nombre : caso.tipo === "clases" ? "lecciones" : "misiones"}`}</span>
+      </span>
     </span>
   );
   return (

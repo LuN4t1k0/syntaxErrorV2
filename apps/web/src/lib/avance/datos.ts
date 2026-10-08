@@ -2,7 +2,7 @@ import { desc, eq, inArray } from "drizzle-orm";
 import type { AppDb } from "@syntaxerror/db/client";
 import { casoInscripciones, casos, entregables, misionProgreso, preguntasProfesor, rutaCasos, rutaInscripciones, rutas, transaccionesPuntos, tutorPreguntas, users } from "@syntaxerror/db/schema";
 import type { Nivel } from "@/lib/puntos/niveles";
-import { obtenerNivel } from "@/lib/puntos/servicio";
+import { obtenerNivel, type MotivoPuntos } from "@/lib/puntos/servicio";
 import { esRol, type Rol } from "@/lib/roles";
 import { unidad } from "@/lib/unidad";
 
@@ -40,6 +40,8 @@ export type AvanceAlumno = {
 };
 
 const ESTADOS_ENTREGA = new Set(["pendiente", "aprobado", "observado"]);
+// point_transactions guarda el motivo como código (MotivoPuntos); la actividad lo muestra en palabras.
+const MOTIVOS: Record<MotivoPuntos, string> = { mision_aprobada: "misión aprobada", caso_completo: "caso completo", decision: "decisión", reporte_util: "reporte útil" };
 
 // Todo el avance de una persona, para su ficha en administración, su página de avance y el email. Solo lee.
 export async function avanceDelAlumno(db: AppDb, userId: string): Promise<AvanceAlumno | null> {
@@ -143,7 +145,7 @@ export async function avanceDelAlumno(db: AppDb, userId: string): Promise<Avance
     ]),
     ...tutor.map((fila) => ({ fecha: fila.creadoEn, tipo: "tutor" as const, texto: `Pregunta al tutor · ${tituloMision(fila.casoId, fila.mision)} · ${corto(fila.casoId).titulo}`, href: `/casos/${corto(fila.casoId).slug}/${fila.mision}` })),
     ...preguntas.map((fila) => ({ fecha: fila.creadaEn, tipo: "docente" as const, texto: `Pregunta a un docente · ${tituloMision(fila.casoId, fila.mision)} · ${corto(fila.casoId).titulo}`, href: `/casos/${corto(fila.casoId).slug}/${fila.mision}` })),
-    ...puntos.map((fila) => ({ fecha: fila.creadoEn, tipo: "puntos" as const, texto: `+${fila.cantidad} puntos · ${fila.motivo}`, href: null })),
+    ...puntos.map((fila) => ({ fecha: fila.creadoEn, tipo: "puntos" as const, texto: `+${fila.cantidad} puntos · ${MOTIVOS[fila.motivo as MotivoPuntos] ?? fila.motivo}`, href: null })),
   ]
     .sort((a, b) => b.fecha.getTime() - a.fecha.getTime())
     .slice(0, LIMITE_ACTIVIDAD);

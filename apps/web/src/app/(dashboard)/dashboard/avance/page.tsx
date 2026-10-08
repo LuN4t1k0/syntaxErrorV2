@@ -28,8 +28,8 @@ export default async function AvancePage() {
       <SeccionTerminal comando="next" etiqueta="Qué sigue">
         {trabas.length > 0 ? (
           <ul className="grid gap-2">
-            {trabas.map((traba) => (
-              <li key={`${traba.tipo}-${traba.href}`}>
+            {trabas.map((traba, indice) => (
+              <li key={`${traba.tipo}-${indice}`}>
                 <Link href={traba.href} className="hover:underline">{`→ ${traba.alumno}`}</Link>
               </li>
             ))}

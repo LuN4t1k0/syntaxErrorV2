@@ -45,8 +45,8 @@ export default async function UsuarioAdminPage({ params }: { params: Promise<{ i
           <p className="text-emerald-600 dark:text-emerald-400">0 problemas · todo en orden</p>
         ) : (
           <ul className="grid gap-1">
-            {trabas.map((traba) => (
-              <li key={`${traba.tipo}-${traba.href}`} className="text-red-600 dark:text-red-400">
+            {trabas.map((traba, indice) => (
+              <li key={`${traba.tipo}-${indice}`} className="text-red-600 dark:text-red-400">
                 <span className="font-bold">{`[${traba.tipo}] `}</span>
                 <Link href={traba.href} className="hover:underline">{traba.admin}</Link>
               </li>

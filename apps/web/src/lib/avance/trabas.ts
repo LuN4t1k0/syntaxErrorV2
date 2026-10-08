@@ -26,11 +26,17 @@ function casosDelAvance(avance: AvanceAlumno): CasoAvance[] {
 
 const ultimaFecha = (caso: CasoAvance) => Math.max(0, ...caso.lecciones.map((leccion) => leccion.actualizadoEn?.getTime() ?? 0));
 
-// El caso en curso que tocó más recientemente, con su lección en curso más reciente o la primera sin aprobar.
+const estadoEntrega = (avance: AvanceAlumno, caso: CasoAvance) => avance.entregas.find((entrega) => entrega.caso.slug === caso.slug)?.estado ?? null;
+
+// Con todas las misiones aprobadas y la entrega enviada, lo que sigue depende del equipo, no de la persona.
+const esperaRevision = (avance: AvanceAlumno, caso: CasoAvance) => caso.lecciones.every((leccion) => leccion.estado === "aprobada") && estadoEntrega(avance, caso) === "pendiente";
+
+// El caso en curso que tocó más recientemente, con su lección en curso más reciente o la primera sin aprobar. Los que
+// esperan revisión van al final: si hay otro caso donde puede avanzar, ese es el siguiente paso.
 export function casoEnCurso(avance: AvanceAlumno): { caso: CasoAvance; leccion: LeccionAvance | null } | null {
   const [caso] = casosDelAvance(avance)
     .filter((fila) => fila.estado === "en_curso")
-    .sort((a, b) => ultimaFecha(b) - ultimaFecha(a));
+    .sort((a, b) => Number(esperaRevision(avance, a)) - Number(esperaRevision(avance, b)) || ultimaFecha(b) - ultimaFecha(a));
   if (!caso) return null;
   const enCurso = caso.lecciones.filter((leccion) => leccion.estado === "en_curso").sort((a, b) => (b.actualizadoEn?.getTime() ?? 0) - (a.actualizadoEn?.getTime() ?? 0))[0];
   return { caso, leccion: enCurso ?? caso.lecciones.find((leccion) => leccion.estado !== "aprobada") ?? null };
@@ -40,13 +46,16 @@ export function siguienteDelAvance(avance: AvanceAlumno): Siguiente {
   const actual = casoEnCurso(avance);
   if (!actual) return { texto: "Elige una ruta en tu panel y empieza el primer caso.", href: "/dashboard" };
   if (actual.leccion) return { texto: `Sigue con ${actual.leccion.titulo}, de ${actual.caso.titulo}.`, href: actual.leccion.href };
+  const entrega = estadoEntrega(avance, actual.caso);
+  if (entrega === "pendiente") return { texto: `Tu entrega de ${actual.caso.titulo} está en revisión: te avisaremos por email cuando la revisen.`, href: actual.caso.href };
+  if (entrega === "observado") return { texto: `Tu entrega de ${actual.caso.titulo} tiene observaciones: revísalas y vuelve a enviarla.`, href: actual.caso.href };
   return { texto: `Te falta enlazar tu entregable de ${actual.caso.titulo} para completarlo.`, href: actual.caso.href };
 }
 
 export function trabasDelAlumno(avance: AvanceAlumno, ahora: Date): Traba[] {
   const trabas: Traba[] = [];
   const actual = casoEnCurso(avance);
-  if (actual && avance.ultimaActividad) {
+  if (actual && avance.ultimaActividad && !esperaRevision(avance, actual.caso)) {
     const n = diasEntre(avance.ultimaActividad, ahora);
     if (n > DIAS_INACTIVO) {
       trabas.push({

@@ -63,7 +63,11 @@ export default async function DashboardPage() {
   const primerPaso = (slug: string) => rutasSelector.find((ruta) => ruta.slug === slug)?.primerPaso ?? null;
   return (
     <main className="mx-auto grid max-w-7xl gap-6 px-4 py-12 sm:px-6 lg:px-8">
-      <p className="font-mono text-sm font-bold text-primary">{"> whoami"}</p>
+      {/* Fuera de la tarjeta "Continuar": quien todavía no empieza o ya terminó todo también ve su avance. */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="font-mono text-sm font-bold text-primary">{"> whoami"}</p>
+        <Link href="/dashboard/avance" className="font-mono text-sm font-bold text-primary hover:underline">{"$ git status → Ver tu avance"}</Link>
+      </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-black">Hola, {name}</h1>
         {cuenta?.role === "student" ? (
@@ -121,7 +125,6 @@ export default async function DashboardPage() {
             {continuar.tipo === "paso" && continuar.ruta ? (
               <Link href={`/rutas/${continuar.ruta.slug}`} className="text-sm font-bold text-primary hover:underline">Ver el mapa de la ruta</Link>
             ) : null}
-            <Link href="/dashboard/avance" className="text-sm font-bold text-primary hover:underline">Ver tu avance</Link>
           </div>
         </section>
       ) : null}

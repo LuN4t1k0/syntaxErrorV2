@@ -127,7 +127,9 @@ describe("avanceDelAlumno", () => {
       { userId: id, casoId: excel, mision: "01", estado: "aprobada", intentos: 1, aprobadaEn: dia(1), actualizadoEn: dia(1) },
       { userId: id, casoId: ventas, mision: "m1", estado: "aprobada", intentos: 1, aprobadaEn: dia(2), actualizadoEn: dia(2) },
     ]);
+    // El motivo se guarda como código: la actividad lo muestra en palabras.
+    await db.insert(transaccionesPuntos).values({ userId: id, casoId: ventas, clave: "m1", motivo: "mision_aprobada", cantidad: 10, creadoEn: dia(3) });
     const textos = (await avanceDelAlumno(db, id))!.actividad.map((evento) => evento.texto);
-    expect(textos).toEqual(["Misión aprobada: Lección m1 · Título ventas", "Lección aprobada: Lección 01 · Título excel"]);
+    expect(textos).toEqual(["+10 puntos · misión aprobada", "Misión aprobada: Lección m1 · Título ventas", "Lección aprobada: Lección 01 · Título excel"]);
   });
 });
