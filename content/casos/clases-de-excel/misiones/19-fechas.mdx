@@ -10,11 +10,7 @@ Para Excel, una fecha es un número: la cantidad de días desde el 1 de enero de
 
 **Restar fechas da días.** Si G2 tiene la fecha de inicio de un arriendo y H2 la de término, `=H2-G2` da los días que pasan entre ellas. Sumar un número a una fecha avanza esa cantidad de días: `=G2+30` es el vencimiento a 30 días.
 
-```text
-G2 = 10/03/2026, H2 = 25/03/2026
-=H2-G2   → 15
-=G2+30   → 09/04/2026
-```
+<Planilla desde="G1" grilla={[["inicio", "termino", "dias", "vence", "mes"], ["10/03/2026", "25/03/2026", "=H2-G2", "=G2+30", "=MES(G2)"]]} />
 
 **Sacar partes de una fecha.** `DIA`, `MES` y `AÑO` devuelven cada parte como número: `=MES(G2)` da 3 para cualquier fecha de marzo. Sirven para agrupar por mes con `SUMAR.SI`.
 

@@ -11,7 +11,7 @@ import type { Caso, Contenido } from "./tipos";
 export type RevisorPython = (tarea: PropsBloque<"PythonTask">, caso: Caso) => Promise<ResultadoTarea>;
 
 const MAXIMO_PALABRAS_BRIEF = 150;
-const BLOQUES_DE_GUIA = new Set(["Concepto", "SqlEjemplo", "PythonEjemplo", "Sintaxis"]);
+const BLOQUES_DE_GUIA = new Set(["Concepto", "SqlEjemplo", "PythonEjemplo", "Sintaxis", "Planilla"]);
 
 // Para comparar una pista con la solución sin que importen los espacios, el punto y coma final ni las mayúsculas.
 const normalizarCodigo = (codigo: string) => codigo.replace(/\s+/g, " ").replace(/;\s*$/, "").trim().toLowerCase();

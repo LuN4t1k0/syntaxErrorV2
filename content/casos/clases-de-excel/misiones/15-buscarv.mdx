@@ -14,13 +14,7 @@ Tienes una tabla de pedidos con el código de cada producto, y el nombre y el pr
 3. Qué columna devolver, contando desde la primera de la tabla: 2 es la segunda, 3 la tercera.
 4. `FALSO()` (o 0): coincidencia exacta.
 
-```text
-Catálogo en A2:C4:   201 | Silla      | 85000
-                     202 | Escritorio | 180000
-                     203 | Estante    | 60000
-=BUSCARV(202;A2:C4;2;FALSO())   → Escritorio
-=BUSCARV(202;A2:C4;3;FALSO())   → 180000
-```
+<Planilla grilla={[["id", "producto", "precio"], [201, "Silla", 85000], [202, "Escritorio", 180000], [203, "Estante", 60000], [null, null, null], ["nombre del 202", "=BUSCARV(202;A2:C4;2;FALSO())", null], ["precio del 202", "=BUSCARV(202;A2:C4;3;FALSO())", null]]} />
 
 **Siempre coincidencia exacta.** Si omites el cuarto argumento o pones `VERDADERO()`, Excel busca una coincidencia aproximada y supone que la primera columna está ordenada. Si no lo está, devuelve datos de otra fila sin ningún aviso. Con códigos, nombres o RUT, usa siempre `FALSO()`.
 

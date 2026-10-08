@@ -14,13 +14,7 @@ Una fórmula es una instrucción para que Excel calcule por ti. En vez de hacer 
 
 **Usa celdas, no números.** Si el sueldo es 900000 y el bono 150000, podrías escribir `=900000+150000`, pero si mañana cambia el sueldo, ese resultado queda mal. Con `=B2+B3`, la fórmula toma lo que haya en esas celdas y el total se actualiza solo.
 
-```text
-     A          B
-1    concepto   monto
-2    sueldo     900000
-3    bono       150000
-4    total      =B2+B3   → muestra 1050000
-```
+<Planilla grilla={[["concepto", "monto"], ["sueldo", 900000], ["bono", 150000], ["total", "=B2+B3"]]} />
 
 **Lo que ves y lo que hay.** La celda muestra el resultado (1050000), pero guarda la fórmula. Al seleccionarla, la barra de fórmula muestra `=B2+B3`. Así puedes revisar de dónde sale cada número de una planilla.
 </Concepto>

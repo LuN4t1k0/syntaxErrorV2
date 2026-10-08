@@ -12,6 +12,7 @@ import { Decision } from "./decision";
 import { GithubTask } from "./github-task";
 import { LecturaTask } from "./lectura-task";
 import { MarkdownTask } from "./markdown-task";
+import { PlanillaEjemplo } from "./planilla-ejemplo";
 import { PythonEjemplo } from "./python-ejemplo";
 import { PythonTask } from "./python-task";
 import { QuizTask } from "./quiz-task";
@@ -75,6 +76,7 @@ export function componentesMision(caso: Caso): MDXComponents {
         </figure>
       );
     },
+    Planilla: ({ children, ...props }: PropsMdx) => <PlanillaEjemplo {...bloqueSchemas.Planilla.parse(props)}>{children}</PlanillaEjemplo>,
     // Listas y enlaces de Markdown: Tailwind les quita las viñetas, los números y el color por defecto.
     ul: ({ children }: PropsMdx) => <ul className="grid list-disc gap-1 pl-6">{children}</ul>,
     ol: ({ children }: PropsMdx) => <ol className="grid list-decimal gap-1 pl-6">{children}</ol>,

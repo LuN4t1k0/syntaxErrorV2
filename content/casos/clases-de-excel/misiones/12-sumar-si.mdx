@@ -10,14 +10,7 @@ tiempo: 14
 
 **Tres argumentos.** Dónde buscar (la columna de categorías), qué buscar (el criterio) y qué sumar (la columna de montos). Los dos rangos tienen que tener el mismo tamaño y empezar en la misma fila.
 
-```text
-     A          B          C
-1    gasto      area       monto
-2    Arriendo   oficina    500000
-3    Pasajes    ventas     120000
-4    Internet   oficina    35000
-=SUMAR.SI(B2:B4;"oficina";C2:C4)   → 535000
-```
+<Planilla grilla={[["gasto", "area", "monto"], ["Arriendo", "oficina", 500000], ["Pasajes", "ventas", 120000], ["Internet", "oficina", 35000], [null, null, null], ["total oficina", null, "=SUMAR.SI(B2:B4;\"oficina\";C2:C4)"]]} />
 
 **El criterio puede ser una celda.** En vez de escribir `"oficina"` dentro de la fórmula, puedes apuntar a una celda que diga oficina. Así armas una tabla de resumen: una fila por categoría, con la misma fórmula rellenada hacia abajo.
 

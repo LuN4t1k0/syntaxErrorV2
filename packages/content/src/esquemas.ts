@@ -179,6 +179,12 @@ export const bloqueSchemas = {
   Debrief: z.object({ entrevista: texto.optional() }),
   // La forma general de una instrucción, con nombres de ejemplo: se muestra pero no se ejecuta.
   Sintaxis: z.object({ codigo: texto, lenguaje: z.enum(["sql", "python", "planilla"]) }),
+  // Un ejemplo de planilla del Concepto: la grilla empieza en la celda «desde» y sus fórmulas se calculan al mostrarla.
+  Planilla: z.object({
+    grilla: z.array(z.array(z.union([z.string(), z.number(), z.null()]))).min(1, "la grilla necesita al menos una fila"),
+    desde: z.string().regex(/^[A-Z]+[1-9][0-9]*$/, "debe ser una celda como A1").default("A1"),
+    marcar: z.array(z.string().regex(/^[A-Z]+[1-9][0-9]*$/, "debe ser una celda como B3")).default([]),
+  }),
 };
 
 export type TipoBloque = keyof typeof bloqueSchemas;

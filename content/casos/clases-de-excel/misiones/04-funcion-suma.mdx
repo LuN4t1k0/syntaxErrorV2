@@ -14,15 +14,7 @@ Sumar cinco celdas con `=B2+B3+B4+B5+B6` funciona, pero con cien filas es inmane
 
 **Elegir bien el rango.** El rango decide qué entra en la cuenta. Incluir la fila de títulos no rompe la suma (el texto se ignora), pero incluir la celda del propio total crea una referencia circular: el total se sumaría a sí mismo.
 
-```text
-     A          B
-1    mes        gasto
-2    enero      120000
-3    febrero    95000
-4    marzo      134000
-5    Total      =SUMA(B2:B4)   → 349000
-6    Sin enero  =SUMA(B3:B4)   → 229000
-```
+<Planilla grilla={[["mes", "gasto"], ["enero", 120000], ["febrero", 95000], ["marzo", 134000], ["Total", "=SUMA(B2:B4)"], ["Sin enero", "=SUMA(B3:B4)"]]} />
 
 **Separador de argumentos.** En Excel en español, los argumentos de una función se separan con punto y coma: `=SUMA(B2:B4;D2:D4)` suma dos rangos. Esta plataforma también acepta la coma.
 </Concepto>

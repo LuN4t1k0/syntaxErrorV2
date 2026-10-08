@@ -10,11 +10,7 @@ Antes de analizar una tabla conviene saber cuántos datos tiene y entre qué val
 
 **CONTAR cuenta números.** Solo cuenta las celdas con números: las vacías y las que tienen texto no suman. `CONTARA` cuenta todas las celdas que no están vacías, con números o texto.
 
-```text
-B2:B5 → 120000, "pendiente", (vacía), 95000
-=CONTAR(B2:B5)    → 2
-=CONTARA(B2:B5)   → 3
-```
+<Planilla grilla={[["mes", "gasto"], ["enero", 120000], ["febrero", "pendiente"], ["marzo", null], ["abril", 95000], ["CONTAR", "=CONTAR(B2:B5)"], ["CONTARA", "=CONTARA(B2:B5)"]]} />
 
 La diferencia entre las dos es útil: si `CONTARA` da más que `CONTAR`, en esa columna de números hay datos escritos como texto.
 

@@ -8,10 +8,7 @@ Un error en una celda no es un fracaso: es Excel avisando que algo no se pudo ca
 
 **#¡DIV/0!: dividir por cero.** La fórmula divide por una celda que vale 0 o está vacía. Pasa, por ejemplo, al calcular un promedio por unidad de un producto que todavía no se vende. `SI.ERROR(fórmula; valor)` muestra otro valor cuando la fórmula da error.
 
-```text
-=F2/E2              → #¡DIV/0! si E2 es 0
-=SI.ERROR(F2/E2;0)  → 0 en ese caso, y el resultado normal en los demás
-```
+<Planilla desde="E1" grilla={[["unidades", "ingresos", "por_unidad", "con_si_error"], [0, 0, "=F2/E2", "=SI.ERROR(F2/E2;0)"], [5, 125000, "=F3/E3", "=SI.ERROR(F3/E3;0)"]]} />
 
 **#¿NOMBRE?: Excel no reconoce algo.** Una función mal escrita, una función en inglés en una planilla en español (`SUM` en vez de `SUMA`) o un texto sin comillas dentro de la fórmula.
 

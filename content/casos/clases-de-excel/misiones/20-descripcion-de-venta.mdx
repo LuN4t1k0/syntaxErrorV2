@@ -10,12 +10,7 @@ Muchos reportes no son números sueltos: son frases armadas con datos, como un m
 
 **Los espacios también se escriben.** `&` pega todo sin separación. Si quieres un espacio entre una palabra y un dato, tiene que ir dentro de las comillas.
 
-```text
-A2 = Silla, B2 = 4
-=A2&B2              → "Silla4"
-=A2&" x"&B2         → "Silla x4"
-=B2&" "&A2&"s"      → "4 Sillas"
-```
+<Planilla grilla={[["producto", "cantidad", "pegado", "con espacio", "al revés"], ["Silla", 4, "=A2&B2", "=A2&\" x\"&B2", "=B2&\" \"&A2&\"s\""]]} />
 
 **Cálculos dentro de la frase.** Puedes poner una operación entre los `&`, y conviene encerrarla entre paréntesis para que quede claro qué se calcula: `="Total: $"&(B2*C2)`.
 

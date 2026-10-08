@@ -10,17 +10,15 @@ tiempo: 16
 
 **COINCIDIR dice en qué posición está.** Busca un valor en una columna y devuelve su número de fila dentro de ese rango. El 0 final pide coincidencia exacta.
 
-```text
-B2:B4 = Silla, Escritorio, Estante
-=COINCIDIR("Escritorio";B2:B4;0)   → 2   (es el segundo del rango)
-```
+<Planilla desde="B1" grilla={[["producto", "precio"], ["Silla", 85000], ["Escritorio", 180000], ["Estante", 60000], [null, null], ["=COINCIDIR(\"Escritorio\";B2:B4;0)", null]]}>
+Escritorio es el segundo del rango B2:B4.
+</Planilla>
 
 **INDICE trae lo que está en esa posición.** Recibe una columna y un número, y devuelve el valor de esa posición.
 
-```text
-C2:C4 = 85000, 180000, 60000
-=INDICE(C2:C4;2)   → 180000
-```
+<Planilla desde="B1" grilla={[["producto", "precio"], ["Silla", 85000], ["Escritorio", 180000], ["Estante", 60000], [null, null], [null, "=INDICE(C2:C4;2)"]]}>
+El segundo valor del rango C2:C4.
+</Planilla>
 
 **Juntas.** `COINCIDIR` encuentra la fila y se la pasa a `INDICE`, que trae el dato de otra columna en esa misma fila: `=INDICE(C2:C4;COINCIDIR("Escritorio";B2:B4;0))` da 180000.
 

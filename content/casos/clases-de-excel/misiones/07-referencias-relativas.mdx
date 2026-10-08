@@ -10,13 +10,9 @@ En una tabla real, la misma cuenta se repite en cada fila: el stock total de cad
 
 **Las referencias se mueven con la fórmula.** `=B2+C2` en D2 no significa "la celda B2" de forma fija: significa "la celda de la columna B en mi misma fila". Al copiarla a D3, Excel la ajusta sola a `=B3+C3`; a D4, a `=B4+C4`. A esto se le llama referencia relativa.
 
-```text
-     B          C         D
-1    bodega     tienda    stock_total
-2    40         12        =B2+C2   → 52
-3    15         8         =B3+C3   → 23   (copiada, se ajustó sola)
-4    0          6         =B4+C4   → 6
-```
+<Planilla desde="B1" grilla={[["bodega", "tienda", "stock_total"], [40, 12, "=B2+C2"], [15, 8, "=B3+C3"], [0, 6, "=B4+C4"]]}>
+D3 y D4 son la fórmula de D2 copiada hacia abajo: las referencias se ajustaron solas a su fila.
+</Planilla>
 
 **Rellenar hacia abajo.** En Excel, seleccionas la celda y arrastras el cuadradito de su esquina, o haces doble clic en él. En esta plataforma, selecciona la celda con la fórmula y usa el botón **Rellenar hasta la fila…** que aparece arriba de la hoja.
 

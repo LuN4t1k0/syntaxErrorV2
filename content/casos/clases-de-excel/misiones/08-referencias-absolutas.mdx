@@ -6,22 +6,19 @@ tiempo: 14
 <Concepto>
 A veces una fórmula que se copia hacia abajo tiene que mirar siempre la misma celda: la tasa de IVA, el valor del dólar, una meta. Si esa referencia se mueve con la fórmula, en la fila siguiente apunta a una celda vacía. El signo `$` la deja fija.
 
-<Sintaxis lenguaje="planilla" codigo={"=B2*(1-$G$2)"} />
+<Sintaxis lenguaje="planilla" codigo={"=B2*(1-$D$2)"} />
 
-**Qué fija el $.** `$G$2` fija la columna (G) y la fila (2): al copiar la fórmula, sigue apuntando a G2. Las partes sin `$` se siguen moviendo normalmente.
+**Qué fija el $.** `$D$2` fija la columna (D) y la fila (2): al copiar la fórmula, sigue apuntando a D2. Las partes sin `$` se siguen moviendo normalmente.
 
-```text
-     B        C                    …   G
-1    precio   precio_con_descuento     descuento
-2    100000   =B2*(1-$G$2)             0.1
-3    80000    =B3*(1-$G$2)         ← B se movió a B3, $G$2 se quedó fija
-```
+<Planilla desde="B1" grilla={[["precio", "precio_con_descuento", "descuento"], [100000, "=B2*(1-$D$2)", 0.1], [80000, "=B3*(1-$D$2)", null]]} marcar={["D2"]}>
+Al copiar la fórmula a la fila 3, B2 pasó a B3 y $D$2 se quedó fija.
+</Planilla>
 
-**Sin $, el error es silencioso.** Con `=B2*(1-G2)` copiada hacia abajo, la fila 3 queda `=B3*(1-G3)`. G3 está vacía, Excel la toma como 0, y el resultado es el precio sin descuento: un número que no da error y está mal.
+**Sin $, el error es silencioso.** Con `=B2*(1-D2)` copiada hacia abajo, la fila 3 queda `=B3*(1-D3)`. D3 está vacía, Excel la toma como 0, y el resultado es el precio sin descuento: un número que no da error y está mal.
 
 **Un valor en una celda, no dentro de la fórmula.** Podrías escribir `=B2*0.9`, pero si el descuento cambia, tendrías que corregir cada fórmula. Con la tasa en su propia celda, cambias un número y toda la columna se actualiza.
 
-**Atajo en Excel.** Al escribir una referencia, la tecla F4 agrega los `$`. También existen las referencias mixtas, como `G$2`, que fijan solo la fila; las verás cuando trabajes con tablas de doble entrada.
+**Atajo en Excel.** Al escribir una referencia, la tecla F4 agrega los `$`. También existen las referencias mixtas, como `D$2`, que fijan solo la fila; las verás cuando trabajes con tablas de doble entrada.
 </Concepto>
 
 <SheetTask

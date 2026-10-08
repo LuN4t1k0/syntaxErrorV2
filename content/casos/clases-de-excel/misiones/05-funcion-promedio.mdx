@@ -12,16 +12,13 @@ tiempo: 12
 
 **Las celdas vacías no cuentan.** Una celda en blanco no se toma como cero: simplemente se ignora. Un cero escrito sí cuenta, y baja el promedio.
 
-```text
-gastos: 120000, 95000, (vacía), 134000
-=PROMEDIO(B2:B5)   → 116333.33   (divide por 3, no por 4)
-```
+<Planilla grilla={[["mes", "gasto"], ["enero", 120000], ["febrero", 95000], ["marzo", null], ["abril", 134000], ["promedio", "=PROMEDIO(B2:B5)"]]} marcar={["B4"]}>
+B4 está vacía: el promedio suma tres gastos y divide por 3, no por 4.
+</Planilla>
 
 **Redondear.** Un promedio suele traer decimales. `REDONDEAR(número; decimales)` lo ajusta: con 0 decimales queda un entero. Una función puede ir dentro de otra; Excel calcula de adentro hacia afuera.
 
-```text
-=REDONDEAR(PROMEDIO(B2:B5);0)   → 116333
-```
+<Planilla grilla={[["mes", "gasto"], ["enero", 120000], ["febrero", 95000], ["marzo", null], ["abril", 134000], ["promedio", "=PROMEDIO(B2:B5)"], ["redondeado", "=REDONDEAR(PROMEDIO(B2:B5);0)"]]} />
 
 **El promedio puede engañar.** Si un producto vende muchísimo más que el resto, el promedio sube y deja de representar al producto típico. Por eso conviene mirarlo junto con el máximo y el mínimo, que verás en la próxima lección.
 </Concepto>

@@ -12,12 +12,7 @@ Muchas decisiones dependen de más de una condición: "revisar si queda poco sto
 
 **O: basta con una.** `O(B2>=6; C2=100)` es verdadero si se cumple cualquiera de las dos, o ambas.
 
-```text
-     A        B      C            D
-1    alumno   nota   asistencia   aprueba
-2    Camila   5.8    90           =SI(Y(B2>=4;C2>=75);"Sí";"No")   → Sí
-3    Diego    6.1    60           =SI(Y(B3>=4;C3>=75);"Sí";"No")   → No
-```
+<Planilla grilla={[["alumno", "nota", "asistencia", "aprueba"], ["Camila", 5.8, 90, "=SI(Y(B2>=4;C2>=75);\"Sí\";\"No\")"], ["Diego", 6.1, 60, "=SI(Y(B3>=4;C3>=75);\"Sí\";\"No\")"]]} />
 
 **Y y O devuelven VERDADERO o FALSO.** Solas sirven para marcar filas; dentro de un `SI`, eligen qué texto mostrar.
 
