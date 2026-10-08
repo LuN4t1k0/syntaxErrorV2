@@ -39,6 +39,19 @@ const casos: Array<[TrabajoEmail, string]> = [
     { tipo: "entregable-observado", para: "ana@correo.cl", nombre: "Ana", caso: "Ventas", observaciones: ["Coherencia de las conclusiones (Insuficiente): falta explicar las conclusiones.", "Comentario general: buen README."], enlace },
     "Tu entregable necesita cambios",
   ],
+  [
+    {
+      tipo: "avance",
+      para: "ana@correo.cl",
+      nombre: "Ana",
+      nota: "Vi que te quedaste en BUSCARV: <b>prueba la pista 2</b>.",
+      rutas: [{ titulo: "Data Analyst", completos: 3, total: 9 }],
+      enCurso: { caso: "Clases de Excel", leccion: "BUSCARV" },
+      pasos: ["Llevas varios intentos en BUSCARV: abre las pistas o pregúntale al tutor."],
+      enlace,
+    },
+    "Tu avance en syntaxError.cl",
+  ],
 ];
 
 describe("construirEmail", () => {
@@ -75,6 +88,22 @@ describe("construirEmail", () => {
     const email = construirEmail(casos[8][0]);
     expect(email.texto).toContain("¿Uso WHERE?");
     expect(email.texto).toContain("Sí, con comillas.");
+  });
+
+  it("el avance trae la nota escapada, cada ruta, dónde va y los pasos", () => {
+    const email = construirEmail(casos.find(([trabajo]) => trabajo.tipo === "avance")![0]);
+    expect(email.texto).toContain("Nota del equipo: Vi que te quedaste en BUSCARV: <b>prueba la pista 2</b>.");
+    expect(email.html).not.toContain("<b>prueba");
+    expect(email.texto).toContain("Data Analyst: 3 de 9 casos");
+    expect(email.texto).toContain("Vas en BUSCARV, de Clases de Excel.");
+    expect(email.texto).toContain("Llevas varios intentos en BUSCARV");
+  });
+
+  it("el avance sin nota ni ruta en curso no deja párrafos vacíos", () => {
+    const email = construirEmail({ tipo: "avance", para: "a@b.cl", nombre: null, nota: null, rutas: [], enCurso: null, pasos: ["Elige una ruta en tu panel y empieza el primer caso."], enlace });
+    expect(email.texto).not.toContain("Nota del equipo");
+    expect(email.texto).not.toContain("Vas en");
+    expect(email.texto).toContain("Elige una ruta en tu panel");
   });
 
   it("el texto que escribe una persona se escapa en el HTML", () => {

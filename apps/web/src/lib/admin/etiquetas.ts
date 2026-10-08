@@ -26,4 +26,5 @@ export const ETIQUETAS_ACCION: Record<AuditAction, string> = {
   tester_changed: "Probador cambiado",
   setting_changed: "Ajuste cambiado",
   ruta_estado_cambiado: "Estado de ruta cambiado",
+  progress_sent: "Avance enviado",
 };

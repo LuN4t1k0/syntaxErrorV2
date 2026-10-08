@@ -25,7 +25,16 @@ export type TrabajoEmail =
   | (Destinatario & { tipo: "entregable-por-revisar"; alumno: string; caso: string; enlace: string })
   // Una observación por dimensión con puntaje insuficiente, más el comentario general si lo hay.
   | (Destinatario & { tipo: "entregable-observado"; caso: string; observaciones: string[]; enlace: string })
-  | (Destinatario & { tipo: "mensaje-nuevo"; asunto: string; enlace: string });
+  | (Destinatario & { tipo: "mensaje-nuevo"; asunto: string; enlace: string })
+  // El avance que un admin le envía a un alumno: su nota (si escribió una), cada ruta, dónde va y qué sigue.
+  | (Destinatario & {
+      tipo: "avance";
+      nota: string | null;
+      rutas: { titulo: string; completos: number; total: number }[];
+      enCurso: { caso: string; leccion: string | null } | null;
+      pasos: string[];
+      enlace: string;
+    });
 
 export type ColaEmails = {
   encolar(trabajo: TrabajoEmail): Promise<void>;

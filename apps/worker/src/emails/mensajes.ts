@@ -193,5 +193,19 @@ export function construirEmail(trabajo: TrabajoEmail): EmailListo {
         enlace: { texto: "Leer el mensaje", url: trabajo.enlace },
         comandoCierre: "cat ~/mensajes",
       });
+    case "avance":
+      return plantillaSyntaxError({
+        asunto: "Tu avance en syntaxError.cl",
+        estado: { etiqueta: "INFO", mensaje: "Resumen de tu avance" },
+        saludo: saludo(trabajo.nombre),
+        parrafos: [
+          ...(trabajo.nota ? [`Nota del equipo: ${trabajo.nota}`] : []),
+          ...trabajo.rutas.map((ruta) => `${ruta.titulo}: ${ruta.completos} de ${ruta.total} casos`),
+          ...(trabajo.enCurso ? [trabajo.enCurso.leccion ? `Vas en ${trabajo.enCurso.leccion}, de ${trabajo.enCurso.caso}.` : `Vas en ${trabajo.enCurso.caso}.`] : []),
+          ...trabajo.pasos,
+        ],
+        enlace: { texto: "Ver tu avance", url: trabajo.enlace },
+        comandoCierre: "git status",
+      });
   }
 }

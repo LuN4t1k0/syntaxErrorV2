@@ -24,6 +24,7 @@ export const AUDIT_ACTIONS = [
   "tester_changed",
   "setting_changed",
   "ruta_estado_cambiado",
+  "progress_sent",
 ] as const;
 
 export type AuditAction = (typeof AUDIT_ACTIONS)[number];
