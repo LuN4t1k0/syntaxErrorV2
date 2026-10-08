@@ -1,20 +1,30 @@
 ---
 titulo: "Power BI frente a Excel, SQL y Python"
-tiempo: 7
+tiempo: 10
 ---
 
 <Concepto>
-Llegaste al final de la ruta de analista de datos: SQL Aula, Excel Aula, Python y Pandas Aula, y ahora Power BI Aula.
+Con Power BI completas las cuatro herramientas de la ruta: Excel, SQL, Python con pandas y Power BI. No compiten: cada una es la mejor en una parte del trabajo con datos.
 
-Esta última lección compara las cuatro herramientas para que sepas cuando usar cada una en tu trabajo.
+- **SQL:** traer datos desde una base de datos, filtrados y resumidos. Es el punto de partida en casi cualquier empresa con datos organizados.
+- **Excel:** análisis rápidos y puntuales con datos que caben en una hoja, y entregar resultados a quien no usa otras herramientas.
+- **Python y pandas:** procesos con muchos pasos de limpieza, combinación de fuentes distintas o análisis que se repiten, dejados por escrito en un script.
+- **Power BI:** reportes visuales e interactivos que otras personas consultan de forma recurrente, con datos que se actualizan.
 
-**Cuando usar cada una.** SQL: cuando los datos viven en una base de datos y necesitas extraerlos o combinarlos con precisión -- es el punto de partida de casi cualquier análisis en una empresa con datos bien organizados. Excel: para análisis rapidos, ad-hoc, con datos que caben en una hoja de cálculo y que necesitas compartir con alguien que no tiene otra herramienta instalada. Python y pandas: cuando el análisis necesita lógica más compleja que una fórmula (limpieza de datos pesada, análisis repetible, estadística) o combinar datos de fuentes muy distintas. Power BI: cuando el objetivo final es un reporte visual, interactivo, que otras personas van a consultar de forma recurrente -- no un análisis de una sola vez.
+**Juntas en el trabajo real.** Un flujo típico: SQL extrae los datos de la base; Python (o Power Query) los limpia y los combina; Power BI los presenta en un tablero que se actualiza solo; y Excel queda para revisiones rápidas y para quien pide "los números en una planilla".
 
-**No son excluyentes.** En un flujo de trabajo real, es común usar las cuatro juntas: SQL para extraer los datos, Python para limpiarlos y transformarlos, y Power BI para publicar el resultado final -- Excel queda como la herramienta rápida para validaciones puntuales.
+**Las mismas ideas en todas.** Filtrar, agrupar, sumar y unir tablas aparecieron en las cuatro herramientas con distinta forma: `SUMAR.SI`, `GROUP BY`, `groupby` y una medida en un visual. Si entiendes la idea, cambiar de herramienta es aprender una sintaxis nueva, no empezar de cero.
+
+**Lo que viene en la ruta.** Después de estas clases viene un caso para aplicar Power BI a un problema real, y después, las clases de IA para datos y el proyecto final, donde vas a combinar todo lo aprendido.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="power-bi-vs-excel-sql-python"
-  pregunta={"De las cuatro herramientas de la ruta, ¿cuál sientes que te resultó más natural, y cuál te gustaría seguir practicando?"}
-  respuesta={"No hay una respuesta correcta -- el objetivo de esta pregunta es que reflexiones sobre tu propio recorrido y decidas en que herramienta seguir profundizando ahora que completaste las cuatro aulas."}
+  enunciado={"Para cada situación, elige la herramienta que conviene usar como base."}
+  preguntas={[{"pregunta":"La gerencia quiere un tablero que se actualice cada lunes y que puedan filtrar por región y mes.","opciones":["Excel enviado por correo","Power BI publicado en Service","Un script de Python que imprime una tabla","Una consulta SQL"],"correcta":1,"explicacion":"Un reporte visual, interactivo y recurrente es el caso de uso de Power BI."},{"pregunta":"Necesitas las ventas del último año desde la base de datos de la empresa, filtradas por sucursal.","opciones":["SQL","Power BI sin conexión a la base","Copiar a mano en Excel","Un gráfico circular"],"correcta":0,"explicacion":"Traer datos filtrados desde una base es el trabajo de SQL."},{"pregunta":"Cada mes llegan cinco archivos de sucursales con formatos distintos que hay que limpiar y unir antes de analizar.","opciones":["Excel, copiando y pegando cada mes","Python con pandas (o Power Query), con un proceso que se repite","Un gráfico de líneas","Una tarjeta de Power BI"],"correcta":1,"explicacion":"Limpieza y combinación repetida de varias fuentes: un proceso escrito que se vuelve a correr."},{"pregunta":"¿Qué tienen en común SUMAR.SI, GROUP BY, groupby de pandas y una medida en un visual por categoría?","opciones":["Nada","Resumen un valor por grupo: es la misma idea en cuatro herramientas","Solo funcionan con fechas","Todas necesitan Power BI"],"correcta":1,"explicacion":"Agrupar y resumir es una idea que reaparece en cada herramienta con otra sintaxis."}]}
+  pistas={["Pregúntate dónde están los datos, cuántos pasos tiene el trabajo y quién va a usar el resultado."]}
 />
+
+<Debrief>
+Cada herramienta tiene su lugar, y las ideas de fondo se repiten en todas. En los próximos pasos de la ruta vas a usarlas juntas en problemas reales.
+</Debrief>

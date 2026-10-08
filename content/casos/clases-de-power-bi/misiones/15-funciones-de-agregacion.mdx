@@ -1,30 +1,41 @@
 ---
 titulo: "Funciones de agregación"
-tiempo: 10
+tiempo: 12
 ---
 
 <Concepto>
-SUM no es la única función de agregación -- AVERAGE y COUNTROWS son igual de comunes en el día a día de un analista.
+`SUM` no es la única forma de resumir. Las funciones de agregación más usadas en DAX tienen equivalentes directos en Excel y SQL.
 
-En esta lección agregas dos medidas más a la tabla ventas.
+- `SUM(ventas[monto])`: la suma. En Excel, `SUMA`; en SQL, `SUM`.
+- `AVERAGE(ventas[monto])`: el promedio. En Excel, `PROMEDIO`; en SQL, `AVG`.
+- `MIN` y `MAX`: el menor y el mayor, igual que en Excel y SQL.
+- `COUNTROWS(ventas)`: la cantidad de filas. En SQL, `COUNT(*)`.
+- `DISTINCTCOUNT(ventas[producto])`: cuántos valores distintos hay. En SQL, `COUNT(DISTINCT ...)`.
 
-**AVERAGE y COUNTROWS.** AVERAGE(columna) calcula el promedio de una columna numérica. COUNTROWS(tabla) cuenta las filas de una tabla, sin necesitar ninguna columna en particular -- útil para saber cuántas transacciones hay.
+**COUNTROWS recibe una tabla.** Cuenta filas, no valores de una columna: `COUNTROWS(ventas)` es la cantidad de ventas.
+
+**DISTINCTCOUNT cuenta sin repetir.** `DISTINCTCOUNT(ventas[producto])` dice cuántos productos distintos se vendieron, aunque cada uno aparezca varias veces.
 
 ```text
 Venta Promedio = AVERAGE(ventas[monto])
 Cantidad de Ventas = COUNTROWS(ventas)
+Productos Vendidos = DISTINCTCOUNT(ventas[producto])
 ```
 
-**Práctica.** Crea las medidas Venta Promedio y Cantidad de Ventas y confirma cuánto da esta última.
+**Práctica.**
 
-1. En el panel Datos, crea una nueva medida en ventas: Venta Promedio = AVERAGE(ventas[monto])
-2. Crea una segunda medida: Cantidad de Ventas = COUNTROWS(ventas)
-3. Arrastra ambas medidas junto con Ventas Totales a tres tarjetas distintas en el lienzo.
-4. Compara los tres valores: el total, el promedio y la cantidad de filas.
+1. Crea en ventas las tres medidas de arriba.
+2. Pon cada una en una tarjeta, junto a la de Ventas Totales.
+3. Arma una tabla visual con region, Cantidad de Ventas y Venta Promedio.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="funciones-de-agregacion"
-  pregunta={"Con las 8 filas de ventas.csv, ¿cuánto da la medida Cantidad de Ventas = COUNTROWS(ventas)?"}
-  respuesta={"8."}
+  enunciado={"Responde con los valores de tus tarjetas y de la tabla por región."}
+  preguntas={[{"pregunta":"¿Cuánto da Cantidad de Ventas = COUNTROWS(ventas)?","opciones":["4","5","8","1.334.000"],"correcta":2,"explicacion":"ventas.csv tiene 8 filas."},{"pregunta":"¿Cuánto da Productos Vendidos = DISTINCTCOUNT(ventas[producto])?","opciones":["4","6","8","2"],"correcta":0,"explicacion":"Se vendieron 4 productos distintos, cada uno dos veces. La Silla y la Lámpara no tienen ventas."},{"pregunta":"En la tabla por región, ¿cuántas ventas tiene el norte?","opciones":["3","4","5","8"],"correcta":2,"explicacion":"5 de las 8 ventas son del norte; las otras 3, del sur."}]}
+  pistas={["COUNTROWS cuenta filas; DISTINCTCOUNT, valores distintos."]}
 />
+
+<Debrief>
+8 ventas de 4 productos distintos, 5 en el norte y 3 en el sur. Fíjate que el norte vende más veces, pero su venta promedio es más baja: tiene varios Mouse y Teclados. Mirar la cantidad junto al total y al promedio cuenta una historia más completa que el total solo.
+</Debrief>

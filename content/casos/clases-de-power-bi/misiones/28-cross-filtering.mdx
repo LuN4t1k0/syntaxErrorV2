@@ -1,25 +1,33 @@
 ---
-titulo: "Cross-filtering"
-tiempo: 10
+titulo: "Filtrado cruzado entre visuales"
+tiempo: 12
 ---
 
 <Concepto>
-El cross-filtering (filtrado cruzado) es lo que pasa cuando haces clic sobre un elemento de un visual y automáticamente se filtran los demas visuales del mismo lienzo -- ocurre por defecto, sin configurar nada.
+En un reporte de Power BI, los visuales de una página están conectados: si haces clic en una barra, los demás visuales se filtran o se resaltan para mostrar solo esa parte. Se llama filtrado cruzado y funciona sin configurar nada.
 
-En esta lección lo observas en acción y aprendes a ajustar su comportamiento.
+**Filtrar o resaltar.** Al hacer clic en la barra del Notebook, una tarjeta se filtra (muestra solo el Notebook) y otro gráfico de barras puede resaltar (atenúa lo que no es Notebook, pero sigue mostrando el total de fondo). Haz clic de nuevo en la misma barra para volver a ver todo.
 
-**Cómo funciona por defecto.** Al hacer clic en una barra o porción de un gráfico, Power BI resalta o filtra los demas visuales que comparten alguna relación con esos datos -- es la interactividad 'gratis' que viene incluida en cualquier reporte. Se puede ajustar visual por visual desde Formato > 'Editar interacciones', eligiendo si un visual filtra, resalta o no afecta a otro.
+**Editar interacciones.** A veces no quieres que un visual reaccione: por ejemplo, una tarjeta con el total del mes que debe quedarse fija. Con un visual seleccionado, la pestaña Formato > "Editar interacciones" muestra unos íconos sobre los demás visuales: filtrar, resaltar o ninguno.
 
-**Práctica.** Configura 'Editar interacciones' para que la tarjeta deje de reaccionar a los clics del gráfico y confirma el resultado.
+**Pensar el reporte como un todo.** Antes de publicar, haz clic en cada visual y mira qué pasa con los demás. Un total que cambia cuando no debería, o que no cambia cuando debería, confunde a quien lee.
 
-1. Haz clic en la barra 'Notebook' del gráfico de columnas por producto.
-2. Observa como la tarjeta de Ventas Totales y la tabla/matriz se actualizan para reflejar solo las filas de Notebook.
-3. Ve a la pestaña Formato > 'Editar interacciones' y selecciona el gráfico de columnas como origen.
-4. Cambia el icono de interacción sobre la tarjeta de 'Filtrar' a 'Ninguno' y repite el clic en 'Notebook' -- la tarjeta ya no debería cambiar.
+**Práctica.**
+
+1. Haz clic en la columna del Notebook del gráfico por producto.
+2. Observa cómo cambian la tarjeta de Ventas Totales y la matriz.
+3. Con el gráfico seleccionado, ve a Formato > 'Editar interacciones'.
+4. Sobre la tarjeta de Ventas Totales, elige 'Ninguno'.
+5. Haz clic otra vez en el Notebook y observa la tarjeta.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="cross-filtering"
-  pregunta={"Después de configurar 'Editar interacciones' con la tarjeta en 'Ninguno', ¿la tarjeta de Ventas Totales cambia al hacer clic en una barra del gráfico?"}
-  respuesta={"No -- al quedar configurada en 'Ninguno', esa tarjeta deja de reaccionar a los clics de ese visual."}
+  enunciado={"Responde con lo que pasó al hacer clic en las barras."}
+  preguntas={[{"pregunta":"Antes de editar interacciones, ¿qué muestra la tarjeta de Ventas Totales al hacer clic en la barra del Notebook?","opciones":["1.334.000","900.000","450.000","No cambia"],"correcta":1,"explicacion":"La tarjeta se filtra al Notebook: dos ventas de 450.000."},{"pregunta":"Con la interacción de la tarjeta en 'Ninguno', ¿qué muestra al hacer clic en el Notebook?","opciones":["900.000","1.334.000: ya no reacciona al gráfico","0","Desaparece"],"correcta":1,"explicacion":"Con 'Ninguno', ese visual ignora los clics del gráfico."},{"pregunta":"¿Cómo vuelves a ver todos los datos después de hacer clic en una barra?","opciones":["Recargando el archivo","Haciendo clic otra vez en la misma barra o en un espacio vacío del visual","Borrando el gráfico","Con Ctrl+Z"],"correcta":1,"explicacion":"El segundo clic quita la selección."}]}
+  pistas={["Mira el número de la tarjeta antes y después de cambiar la interacción."]}
 />
+
+<Debrief>
+Por defecto, un clic en el Notebook deja la tarjeta en 900.000; con la interacción en 'Ninguno', se queda en 1.334.000. Decidir qué visuales reaccionan y cuáles no es parte del diseño del reporte.
+</Debrief>

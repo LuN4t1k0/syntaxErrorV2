@@ -1,28 +1,41 @@
 ---
-titulo: "CALCULATE y el contexto"
-tiempo: 12
+titulo: "CALCULATE y el contexto de filtro"
+tiempo: 15
 ---
 
 <Concepto>
-CALCULATE es la función más importante de DAX: toma una medida y le cambia el contexto de filtro.
-
-En esta lección la usas para calcular las ventas de una sola region, sin tocar el visual.
-
-**Modificar el contexto con CALCULATE.** CALCULATE(expresión, filtro1, filtro2, ...) evalúa la expresión (normalmente otra medida) pero reemplazando o agregando los filtros indicados. Es la única forma en DAX de decir 'quiero este cálculo, pero ignorando o forzando tal condición'.
+Una medida se calcula dentro de un contexto: los filtros que vienen del visual, de las segmentaciones y de la página. `CALCULATE` es la función que permite cambiar ese contexto desde la fórmula: "calcula esto, pero solo para el norte", aunque el visual muestre todo.
 
 ```text
-Ventas Norte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
+CALCULATE(expresión, filtro1, filtro2, ...)
 ```
 
-**Práctica.** Crea la medida Ventas Norte con CALCULATE y confirma cuánto da comparado con Ventas Totales.
+**Un filtro fijo en la fórmula.** La medida de abajo suma solo las ventas de la categoría Tecnologia, sin importar qué muestre el visual:
 
-1. Crea una nueva medida en ventas: Ventas Norte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
-2. Arrastra la medida a una tarjeta nueva en el lienzo.
-3. Compara el valor contra la tarjeta de Ventas Totales -- Ventas Norte debería ser un subconjunto, nunca mayor.
+```text
+Ventas Tecnologia = CALCULATE(SUM(ventas[monto]), productos[categoria] = "Tecnologia")
+```
+
+Fíjate que el filtro usa una columna de productos: gracias a la relación, viaja hasta ventas.
+
+**Medidas que se comparan.** Lo valioso de `CALCULATE` es poner lado a lado un valor filtrado y el total, o dos segmentos, en la misma tabla. Es la base de los porcentajes, las metas y las comparaciones entre períodos.
+
+**Varios filtros.** Separados por comas, se cumplen todos a la vez: `CALCULATE(SUM(ventas[monto]), ventas[region] = "sur", productos[categoria] = "Tecnologia")`.
+
+**Práctica.**
+
+1. Crea en ventas la medida Ventas Norte, que sume monto solo de la región norte, usando CALCULATE.
+2. Pon Ventas Norte en una tarjeta, junto a Ventas Totales.
+3. Arma una tabla visual con producto, Ventas Totales y Ventas Norte.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="calculate-y-contexto"
-  pregunta={"¿Cuánto da Ventas Norte, sumando solo las filas de ventas.csv donde region es 'norte'?"}
-  respuesta={"679.000 -- las filas con region norte son 450000, 12000, 12000, 25000 y 180000."}
+  enunciado={"Responde con los valores de la tarjeta y la tabla."}
+  preguntas={[{"pregunta":"¿Cuánto da Ventas Norte en la tarjeta?","opciones":["1.334.000","679.000","655.000","450.000"],"correcta":1,"explicacion":"Notebook, dos Mouse, un Teclado y un Monitor del norte: 679.000."},{"pregunta":"En la tabla por producto, ¿cuánto muestra Ventas Norte en la fila Notebook?","opciones":["900.000","450.000","679.000","0"],"correcta":1,"explicacion":"La fila agrega el filtro producto = Notebook, y CALCULATE agrega region = norte: un solo Notebook."},{"pregunta":"¿Qué fórmula calcula las ventas del norte?","opciones":["Ventas Norte = SUM(ventas[monto]) WHERE ventas[region] = \"norte\"","Ventas Norte = CALCULATE(SUM(ventas[monto]), ventas[region] = \"norte\")","Ventas Norte = SUM(ventas[monto] = \"norte\")","Ventas Norte = FILTER(\"norte\")"],"correcta":1,"explicacion":"CALCULATE recibe la expresión y el filtro, separados por una coma."}]}
+  pistas={["En la tabla por producto, cada fila suma dos filtros: el del producto y el de la región."]}
 />
+
+<Debrief>
+Ventas Norte da 679.000, y en la tabla por producto se combina con el filtro de cada fila: el Notebook del norte vende 450.000. Esa combinación del filtro del visual con el de la fórmula es lo que hace a `CALCULATE` tan útil.
+</Debrief>

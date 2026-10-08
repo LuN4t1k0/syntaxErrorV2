@@ -1,20 +1,34 @@
 ---
-titulo: "Contexto de fila vs. contexto de filtro"
-tiempo: 12
+titulo: "Contexto de fila y contexto de filtro"
+tiempo: 15
 ---
 
 <Concepto>
-Es, según el syllabus, la parte conceptualmente más difícil de DAX -- y la razón por la que CALCULATE se comporta como se comporta.
+Es la idea más difícil de DAX, y la que explica por qué una fórmula da el resultado que da. Hay dos contextos, y cada tipo de fórmula vive en uno distinto.
 
-No hay pasos de clic en esta lección: es pura teoría, para leer con calma.
+**Contexto de filtro: qué filas están "a la vista".** Una medida siempre se calcula sobre las filas que dejan pasar los filtros activos: los del visual (cada fila de una tabla, cada barra de un gráfico), las segmentaciones, los filtros de página y los que agrega `CALCULATE`. En una tarjeta sin filtros, `SUM(ventas[monto])` suma todo; en una tabla con región, se calcula una vez por fila, cada vez con la región de esa fila.
 
-**Contexto de fila.** Existe cuando DAX evalúa una fórmula fila por fila -- típicamente dentro de una columna calculada, o dentro de funciones iterator como SUMX. En ese momento, cada columna de la fila actual tiene un valor concreto y accesible.
+```text
+Tabla visual por región       →  contexto de cada fila
+norte  | 679.000              →  solo filas con region = norte
+sur    | 655.000              →  solo filas con region = sur
+Total  | 1.334.000            →  sin filtro de región
+```
 
-**Contexto de filtro.** Es el conjunto de filtros activos en el momento de evaluar una medida -- vienen de los visuales (filas de una tabla, un slicer, un filtro de página) o de un CALCULATE que los modifica explícitamente. Una medida como SUM(ventas[monto]) siempre se evalúa dentro de un contexto de filtro: en una tarjeta sin filtros, suma todo; dentro de una tabla con la columna region, se recalcula fila por fila de la tabla, cada vez con region filtrada a un solo valor.
+**Contexto de fila: "la fila actual".** Una columna calculada se evalúa una vez por cada fila de la tabla, y en ese momento cada columna tiene un valor concreto: el de esa fila. Por eso `productos[precio_unitario] - productos[costo_unitario]` funciona como columna calculada: resta los valores de la fila actual.
+
+**Por qué SUM no funciona en una columna calculada.** El contexto de fila no filtra la tabla: dentro de una columna calculada, `SUM(ventas[monto])` sigue viendo todas las filas y repite el total en cada una. Ese es el error de la lección 13, ahora con su explicación.
+
+**Lo que viene.** Las funciones iteradoras de la próxima lección (`SUMX`, `AVERAGEX`) crean un contexto de fila dentro de una medida: recorren la tabla fila por fila y después suman.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="contexto-de-fila-vs-contexto-de-filtro"
-  pregunta={"Si arrastras la medida Ventas Totales a una tabla visual junto con la columna region, ¿el resultado por fila es siempre el mismo número (el total general) o cambia según la region de esa fila?"}
-  respuesta={"Cambia según la region de esa fila -- cada fila de la tabla visual le agrega un filtro implicito por region al contexto de filtro, así que SUM(ventas[monto]) se recalcula solo con las filas de esa region."}
+  enunciado={"Responde pensando en el contexto en que se calcula cada fórmula."}
+  preguntas={[{"pregunta":"Pones Ventas Totales en una tabla visual junto a region. ¿Qué muestra cada fila?","opciones":["El total general repetido","El total de las ventas de esa región","Un error, porque falta CALCULATE","Solo la primera venta de cada región"],"correcta":1,"explicacion":"Cada fila del visual agrega el filtro de su región al contexto de filtro."},{"pregunta":"¿Y qué muestra la fila Total de esa misma tabla?","opciones":["1.334.000","679.000","La suma de los promedios","Nada"],"correcta":0,"explicacion":"En la fila total no hay filtro de región: la medida suma todas las ventas."},{"pregunta":"En una columna calculada de ventas escribes SUM(ventas[monto]). ¿Qué pasa?","opciones":["Cada fila muestra su propio monto","Cada fila muestra el total general, 1.334.000","Da un error de sintaxis","Cada fila muestra el total de su producto"],"correcta":1,"explicacion":"El contexto de fila no filtra la tabla, así que SUM ve todas las filas."}]}
+  pistas={["Pregúntate en cada caso qué filas está viendo la fórmula cuando se calcula."]}
 />
+
+<Debrief>
+El contexto de filtro decide qué filas ve una medida; el contexto de fila dice cuál es "la fila actual" en una columna calculada. Cuando un resultado no te cuadre, pregúntate qué filas estaba viendo la fórmula en ese momento.
+</Debrief>

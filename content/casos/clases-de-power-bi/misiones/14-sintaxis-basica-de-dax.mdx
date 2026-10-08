@@ -1,29 +1,37 @@
 ---
 titulo: "Sintaxis básica de DAX"
-tiempo: 10
+tiempo: 12
 ---
 
 <Concepto>
-Es momento de escribir tu primera medida DAX real en Power BI Desktop.
-
-La sintaxis básica es siempre: nombre de la medida, signo igual, y la fórmula.
-
-**Crear una medida nueva.** Con la tabla ventas seleccionada en el panel Datos, clic derecho > 'Nueva medida' (o el botón 'Nueva medida' en la pestaña Inicio de la cinta). Se abre la barra de fórmulas donde se escribe el nombre y la expresión.
+Es momento de escribir tu primera medida. Toda medida tiene la misma forma: un nombre, el signo igual y una expresión.
 
 ```text
 Ventas Totales = SUM(ventas[monto])
 ```
 
-**Práctica.** Crea tu primera medida DAX y confirma que valor muestra al arrastrarla a una tarjeta.
+**Cómo se nombra una columna.** En DAX, una columna se escribe con el nombre de su tabla y la columna entre corchetes: `ventas[monto]`. Mientras escribes, Power BI sugiere las columnas disponibles: elegirlas de la lista evita errores de tipeo.
 
-1. En el panel Datos, haz clic derecho sobre la tabla ventas y selecciona 'Nueva medida'.
-2. En la barra de fórmulas, escribe: Ventas Totales = SUM(ventas[monto])
-3. Presiona Enter para confirmar -- la medida aparece en el panel Datos con un icono de calculadora.
-4. Arrastra la medida Ventas Totales a un visual de tarjeta en el lienzo para ver el resultado.
+**Dónde se crea.** Clic derecho sobre la tabla ventas en el panel Datos > "Nueva medida", o el botón "Nueva medida" de la pestaña Inicio. Se abre la barra de fórmulas arriba del lienzo. La medida aparece en el panel Datos con un ícono de calculadora, dentro de la tabla en que la creaste.
+
+**Los nombres de las medidas.** Pueden llevar espacios y tildes, y conviene que digan qué calculan: "Ventas Totales" se entiende en cualquier visual; "Medida 1" no.
+
+**Práctica.**
+
+1. En el panel Datos, haz clic derecho sobre ventas y elige 'Nueva medida'.
+2. Escribe: Ventas Totales = SUM(ventas[monto])
+3. Presiona Enter: la medida aparece con el ícono de calculadora.
+4. En la vista Informe, agrega un visual 'Tarjeta' y arrastra Ventas Totales.
+5. Agrega una tabla visual con region y Ventas Totales, y compara sus valores con la tarjeta.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="sintaxis-basica-de-dax"
-  pregunta={"¿Qué valor muestra la tarjeta con la medida Ventas Totales = SUM(ventas[monto]), sumando las 8 filas del dataset ventas.csv?"}
-  respuesta={"1.334.000 -- la suma de los 8 montos del dataset: dos ventas de 450.000, dos de 12.000, dos de 25.000 y dos de 180.000."}
+  enunciado={"Responde con los valores que muestran tus visuales."}
+  preguntas={[{"pregunta":"¿Qué valor muestra la tarjeta de Ventas Totales?","opciones":["1.334.000","900.000","166.750","8"],"correcta":0,"explicacion":"La suma de los 8 montos de ventas.csv."},{"pregunta":"En la tabla por región, ¿qué muestra Ventas Totales en la fila norte?","opciones":["1.334.000, el total general","679.000","655.000","5"],"correcta":1,"explicacion":"La misma medida se recalcula para cada fila del visual, solo con las ventas del norte."},{"pregunta":"¿Cómo se escribe en DAX la columna monto de la tabla ventas?","opciones":["ventas.monto","ventas[monto]","[ventas]monto","monto(ventas)"],"correcta":1,"explicacion":"El nombre de la tabla y, entre corchetes, el de la columna."}]}
+  pistas={["Compara la tarjeta con las filas de la tabla por región: ¿suman lo mismo?"]}
 />
+
+<Debrief>
+Una sola medida, tres resultados: 1.334.000 en la tarjeta, 679.000 en el norte y 655.000 en el sur. Esa es la idea central de las medidas: se escriben una vez y se adaptan a cada visual.
+</Debrief>

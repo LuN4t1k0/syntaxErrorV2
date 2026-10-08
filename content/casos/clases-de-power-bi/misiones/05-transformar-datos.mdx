@@ -1,27 +1,36 @@
 ---
-titulo: "Transformar datos"
-tiempo: 12
+titulo: "Transformar datos en Power Query"
+tiempo: 15
 ---
 
 <Concepto>
-En esta lección cargas una segunda tabla, productos, y le aplicas transformaciones básicas en el Editor de Power Query.
+En esta lección cargas una segunda tabla, productos, y le aplicas tres transformaciones muy comunes en el Editor de Power Query: revisar tipos de dato, quitar una columna y filtrar filas.
 
-Vas a practicar tres transformaciones muy comunes: cambiar tipos de dato, quitar una columna y filtrar filas.
+**El Editor de Power Query.** Se abre con Inicio > "Transformar datos". En el centro ves la tabla; a la derecha, la lista de "Pasos aplicados". Cada paso se puede revisar haciendo clic en él, o eliminar con la cruz de su izquierda.
 
-**El Editor de Power Query.** Se abre desde la pestaña Inicio con el botón 'Transformar datos'. Cada transformación que aplicas queda listada en el panel 'Pasos aplicados', a la derecha -- puedes deshacer cualquier paso haciendo clic en la cruz. Los tipos de dato se cambian haciendo clic en el icono a la izquierda del nombre de cada columna (ABC para texto, 1.2 para decimal, etc.).
+**Tipos de dato.** El ícono a la izquierda del nombre de cada columna indica su tipo: ABC es texto, 1.2 es número decimal, 123 es número entero y el calendario es fecha. Si una columna de montos aparece como ABC, no se podrá sumar: haz clic en el ícono y cámbiala a número.
 
-**Práctica.** Carga productos.csv en el Editor de Power Query y aplica los pasos indicados antes de confirmar cuántas filas quedan. Los datos están en [productos.csv](/casos/clases-de-power-bi/datos/productos.csv), también en «Datos del caso» de estas clases.
+**Quitar columnas.** Clic derecho en el encabezado > "Quitar". Conviene quitar lo que no usarás: el modelo pesa menos y el panel Datos queda más limpio.
 
-1. Descarga el dataset productos.csv de esta lección.
-2. En Power BI Desktop, ve a Inicio > Obtener datos > Texto/CSV y carga productos.csv, pero en vez de 'Cargar' haz clic en 'Transformar datos' para abrir el Editor de Power Query.
-3. Verifica que la columna precio_unitario tenga el tipo 'Número entero' o 'Decimal' -- si aparece como texto (ABC), haz clic en el icono de tipo y cambiala a 'Número decimal'.
-4. Prueba quitar una columna haciendo clic derecho en su encabezado y eligiendo 'Quitar', y después deshace ese paso desde el panel 'Pasos aplicados' para no perder columnas necesarias.
-5. Usa la flecha del encabezado de categoria para filtrar y dejar solo la categoria 'Tecnologia'.
-6. Haz clic en 'Cerrar y aplicar' en la pestaña Inicio del editor para cargar la tabla transformada al modelo.
+**Filtrar filas.** La flecha del encabezado abre una lista de valores con casillas, como en Excel. Lo que desmarcas no se carga al modelo.
+
+**Práctica.** Los datos están en [productos.csv](/casos/clases-de-power-bi/datos/productos.csv), también en «Datos del caso» de estas clases.
+
+1. Descarga productos.csv.
+2. En Power BI Desktop, ve a Inicio > Obtener datos > Texto/CSV, elige productos.csv y haz clic en 'Transformar datos' (no en 'Cargar').
+3. Revisa el tipo de dato de precio_unitario y cámbialo a número decimal si aparece como texto.
+4. Quita la columna stock con clic derecho > Quitar. Después elimina ese paso desde 'Pasos aplicados': la vas a necesitar más adelante.
+5. Filtra la columna categoria para dejar solo 'Tecnologia', y cuenta las filas.
+6. Elimina también el paso del filtro, para conservar todos los productos, y haz clic en 'Cerrar y aplicar'.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="transformar-datos"
-  pregunta={"Después de filtrar por categoria = Tecnologia, ¿cuántas filas quedan en productos?"}
-  respuesta={"4 filas -- las cuatro filas del CSV tienen categoria Tecnologia, así que el filtro no descarta ninguna."}
+  enunciado={"Responde con lo que viste en el Editor de Power Query."}
+  preguntas={[{"pregunta":"¿Cuántos productos tiene productos.csv en total?","opciones":["4","5","6","8"],"correcta":2,"explicacion":"Seis productos: cuatro de Tecnologia, uno de Muebles y uno de Hogar."},{"pregunta":"Después de filtrar categoria = Tecnologia, ¿cuántas filas quedan?","opciones":["2","4","6","8"],"correcta":1,"explicacion":"Notebook, Mouse, Teclado y Monitor; la Silla y la Lámpara quedan fuera."},{"pregunta":"Quitaste una columna por error. ¿Cómo la recuperas?","opciones":["Volviendo a descargar el archivo.","Eliminando ese paso en 'Pasos aplicados'.","Escribiendo la columna a mano.","No se puede recuperar."],"correcta":1,"explicacion":"Cada paso se puede eliminar; los datos originales nunca se modifican."}]}
+  pistas={["Cuenta las filas que muestra el editor antes y después del filtro."]}
 />
+
+<Debrief>
+El filtro dejó 4 de los 6 productos. Lo más valioso de esta lección es la lista de pasos aplicados: el archivo original nunca cambia, y cualquier transformación se puede deshacer o revisar. Por eso es seguro probar en Power Query.
+</Debrief>

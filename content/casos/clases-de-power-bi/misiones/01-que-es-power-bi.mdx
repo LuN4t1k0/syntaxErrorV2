@@ -1,20 +1,29 @@
 ---
 titulo: "Qué es Power BI"
-tiempo: 6
+tiempo: 8
 ---
 
 <Concepto>
-Power BI es la herramienta de Microsoft para conectar datos, transformarlos y armar reportes visuales interactivos.
+Power BI es la herramienta de Microsoft para conectar datos, limpiarlos, relacionar tablas y armar reportes visuales interactivos: tableros donde quien los mira puede filtrar, hacer clic y explorar sin saber de fórmulas. En las clases anteriores calculaste resultados; en Power BI los presentas para que otras personas tomen decisiones.
 
-Antes de tocar la interfaz, conviene entender las dos caras de la herramienta: Desktop y Service.
+**Dos piezas: Desktop y Service.**
+- **Power BI Desktop** es la aplicación de escritorio, gratuita, donde se construye el reporte: conectar datos, transformarlos con Power Query, crear relaciones, escribir medidas y diseñar las visualizaciones.
+- **Power BI Service** (app.powerbi.com) es la plataforma en la nube donde se publican los reportes para compartirlos, actualizarlos automáticamente y verlos desde el navegador o el celular.
 
-**Power BI Desktop vs. Power BI Service.** Power BI Desktop es la aplicación de escritorio, gratuita, donde se construyen los reportes: se conecta a los datos, se transforman con Power Query, se modelan las relaciones y se disenan las visualizaciones. Power BI Service es la plataforma en la nube (app.powerbi.com) donde se publican esos reportes para compartirlos con otras personas, programar actualizaciones automáticas y verlos desde el navegador o el celular.
+Se diseña en Desktop y se publica en Service cuando el reporte está listo. En estas clases trabajarás casi todo el tiempo en Desktop; Service aparece al final, al publicar.
 
-**Por que existen los dos.** Se disena en Desktop -- sin conexión a internet, sin limites de la nube -- y se publica en Service solo cuando el reporte ya está listo para compartirse. En este curso vas a trabajar casi todo el tiempo en Power BI Desktop; Power BI Service aparece recien en el modulo de Publicar y compartir.
+**Antes de empezar: necesitas Windows.** Power BI Desktop solo funciona en Windows. Si usas Mac o Linux, tienes tres caminos: usar un computador con Windows (de tu trabajo, de tu institución o un laboratorio), instalar Windows en una máquina virtual, o crear algunos reportes simples directamente en Power BI Service desde el navegador, que tiene menos funciones. Las prácticas están escritas para Desktop.
+
+**Cómo funcionan estas clases.** Cada lección trae una práctica con pasos y los datos para descargar. La haces en Power BI Desktop y después respondes unas preguntas que solo puedes contestar bien si hiciste la práctica: un total, una cantidad de filas, qué pasó al hacer clic.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="que-es-power-bi"
-  pregunta={"Antes de seguir: ¿qué instalarías primero en tu computador para empezar a practicar, Power BI Desktop o Power BI Service, y por qué?"}
-  respuesta={"Power BI Desktop es lo primero que se instala: es gratuito, no requiere cuenta para empezar a explorar, y es donde se construye todo el trabajo. Power BI Service solo hace falta cuando quieres publicar o compartir un reporte ya terminado."}
+  enunciado={"Antes de instalar nada, revisa que tengas claras las dos piezas de Power BI."}
+  preguntas={[{"pregunta":"Quieres empezar a practicar hoy en tu computador. ¿Qué instalas primero?","opciones":["Power BI Service, porque es donde se publica.","Power BI Desktop: es gratuito y es donde se construye el reporte.","Las dos a la vez; una no sirve sin la otra.","Ninguna: Power BI solo funciona con una licencia paga."],"correcta":1,"explicacion":"Desktop es gratuito y es donde se hace todo el trabajo; Service solo hace falta para publicar o compartir."},{"pregunta":"Terminaste un reporte y quieres que tu jefatura lo vea desde su celular. ¿Dónde tiene que estar?","opciones":["En Power BI Service, publicado.","En tu Power BI Desktop, abierto.","En un correo como archivo .csv.","En una carpeta compartida como .pbix sin publicar."],"correcta":0,"explicacion":"Service es la plataforma en la nube desde donde otras personas ven el reporte, incluso en el celular."},{"pregunta":"Tu computador es un Mac. ¿Qué es cierto?","opciones":["Power BI Desktop se instala igual desde la App Store.","Power BI Desktop solo funciona en Windows: necesitas un equipo con Windows, una máquina virtual o trabajar en Service desde el navegador.","Power BI no se puede usar de ninguna forma en Mac.","Basta con abrir el archivo .pbix con Numbers."],"correcta":1,"explicacion":"Desktop es solo para Windows; Service funciona en cualquier navegador, con menos funciones para crear reportes."}]}
+  pistas={["Piensa en qué pieza se construye y en cuál se comparte."]}
 />
+
+<Debrief>
+Desktop para construir, Service para publicar y compartir. Con Power BI Desktop instalado (o un equipo con Windows a mano) estás listo para la próxima lección: cargar tu primer archivo de datos.
+</Debrief>

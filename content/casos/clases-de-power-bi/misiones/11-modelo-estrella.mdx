@@ -1,22 +1,35 @@
 ---
 titulo: "Modelo estrella: hechos y dimensiones"
-tiempo: 8
+tiempo: 12
 ---
 
 <Concepto>
-Un modelo estrella organiza las tablas en dos roles claros: una tabla de hechos (los eventos que se miden, como cada venta) y una o más tablas de dimensión (el contexto que describe esos eventos, como el producto).
+Un modelo estrella organiza las tablas en dos roles: una tabla de **hechos**, con los eventos que se miden, y varias tablas de **dimensión**, con el contexto que describe esos eventos. Dibujado, los hechos quedan al centro y las dimensiones alrededor, como las puntas de una estrella.
 
-Ya armaste esto sin darte cuenta: ventas es la tabla de hechos, y productos es una tabla de dimensión.
+**La tabla de hechos: lo que pasó.** ventas es una tabla de hechos: cada fila es un evento (una venta), con columnas numéricas que se suman o promedian (monto) y columnas que la conectan con las dimensiones (producto). Suele ser la tabla con más filas y la que más crece.
 
-**Tabla de hechos: lo que se mide.** ventas es la tabla de hechos: cada fila es un evento (una venta), con una columna numérica que se puede sumar o promediar (monto) y una columna que la conecta a la dimensión (producto).
+**Las tablas de dimensión: quién, qué, dónde, cuándo.** productos es una dimensión: describe cada producto (categoría, precio, costo) una sola vez. Otras dimensiones típicas son clientes, vendedores, sucursales y el calendario, que verás en la próxima lección.
 
-**Tabla de dimensión: el contexto.** productos es una tabla de dimensión: describe el producto (categoria, precio_unitario, stock) sin repetir esos datos en cada fila de ventas. Una dimensión tiene un valor único por fila -- por eso es el lado 'uno' de la relación.
+```text
+            productos
+                │
+calendario ── ventas ── clientes
+                │
+            vendedores
+```
 
-**Por que no conviene una sola tabla gigante.** Si categoria y precio_unitario estuvieran copiados en cada fila de ventas, cualquier cambio de precio obligaría a actualizar filas repetidas, y el archivo pesaría más de lo necesario. Separar hechos de dimensiones evita esa repetición.
+**Por qué no una sola tabla gigante.** Si la categoría y el precio estuvieran copiados en cada venta, un cambio de categoría obligaría a corregir miles de filas, y el archivo pesaría mucho más. Separar hechos y dimensiones evita repetir datos, y además hace que las medidas sean más simples y rápidas.
+
+**Cómo reconocerlas.** Pregúntate qué tiene sentido sumar. Si la tabla tiene montos o cantidades por evento, son hechos. Si describe cosas que se repiten en los hechos, es una dimensión.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="modelo-estrella"
-  pregunta={"Si agregaras una tabla vendedores con nombre y region de cada vendedor, ¿sería una tabla de hechos o de dimensión?"}
-  respuesta={"De dimensión -- describe el contexto (quién hizo la venta) sin una columna que tenga sentido sumar, y cada vendedor aparece una sola vez en esa tabla, igual que productos."}
+  enunciado={"Clasifica cada tabla según su rol en un modelo estrella."}
+  preguntas={[{"pregunta":"Agregas una tabla vendedores con el nombre y la región de cada vendedor. ¿Qué es?","opciones":["Una tabla de hechos","Una tabla de dimensión","Una medida","Una columna calculada"],"correcta":1,"explicacion":"Describe quién hizo la venta; cada vendedor aparece una vez y no hay nada que sumar."},{"pregunta":"Agregas una tabla devoluciones con la fecha, el producto y el monto devuelto en cada devolución. ¿Qué es?","opciones":["Una tabla de hechos","Una tabla de dimensión","Una tabla de calendario","No pertenece al modelo"],"correcta":0,"explicacion":"Cada fila es un evento con un monto que se suma: es otra tabla de hechos."},{"pregunta":"¿Por qué no conviene copiar la categoría y el precio en cada fila de ventas?","opciones":["Porque Power BI no lo permite.","Porque repite datos: un cambio obligaría a corregir muchas filas y el modelo pesaría más.","Porque los precios no se pueden mostrar en un gráfico.","No hay problema en hacerlo."],"correcta":1,"explicacion":"Separar dimensiones evita repetir y desordenar los datos."}]}
+  pistas={["Pregunta clave: ¿cada fila es un evento con algo que sumar, o describe algo que se repite en los eventos?"]}
 />
+
+<Debrief>
+Hechos al centro, dimensiones alrededor. Ya tienes un modelo estrella pequeño: ventas como hechos y productos como dimensión. En la próxima lección agregas la dimensión más importante de todas: el calendario.
+</Debrief>

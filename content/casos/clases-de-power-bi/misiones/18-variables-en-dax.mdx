@@ -1,37 +1,47 @@
 ---
 titulo: "Variables en DAX (VAR y RETURN)"
-tiempo: 10
+tiempo: 15
 ---
 
 <Concepto>
-A medida que una medida DAX crece, repetir la misma subexpresión varias veces la hace más difícil de leer y más lenta de calcular. VAR guarda un resultado intermedio con un nombre, y RETURN indica que expresión final devolver.
-
-En esta lección reescribis una medida que compara ventas de una region contra el total, usando VAR en vez de repetir CALCULATE.
-
-**La sintaxis de VAR y RETURN.** Una medida con variables sigue el patrón: una o más líneas VAR nombre = expresión, seguidas de una línea RETURN con la expresión final, que puede usar esos nombres como si fueran medidas.
+Cuando una medida crece, repetir la misma parte varias veces la hace difícil de leer y de corregir. `VAR` guarda un resultado intermedio con un nombre, y `RETURN` indica qué devolver al final. Es como escribir la fórmula en pasos.
 
 ```text
-% Ventas Norte =
-VAR VentasNorte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
-VAR VentasTotal = SUM(ventas[monto])
-RETURN DIVIDE(VentasNorte, VentasTotal)
+Mi Medida =
+VAR Paso1 = ...
+VAR Paso2 = ...
+RETURN Paso1 / Paso2
 ```
 
-**De paso, DIVIDE en vez de /.** DIVIDE(numerador, denominador) hace lo mismo que numerador/denominador, pero devuelve un resultado en blanco en vez de un error cuando el denominador es cero -- una medida que puede terminar dividiendo por cero (por ejemplo, filtrada a una region sin ventas) no debería romper el reporte.
+**Un ejemplo con la categoría.** El peso de Tecnologia sobre las ventas totales:
 
-**Práctica.** Crea la medida % Ventas Norte con VAR y RETURN, y confirma que porcentaje muestra.
-
-1. En el panel Datos, crea una nueva medida en ventas.
-2. Escribe la fórmula completa en la barra de fórmulas: % Ventas Norte =
-VAR VentasNorte = CALCULATE(SUM(ventas[monto]), ventas[region] = "norte")
+```text
+% Tecnologia =
+VAR VentasTec = CALCULATE(SUM(ventas[monto]), productos[categoria] = "Tecnologia")
 VAR VentasTotal = SUM(ventas[monto])
-RETURN DIVIDE(VentasNorte, VentasTotal)
-3. Presiona Enter y arrastra la medida a una tarjeta -- aplica formato de porcentaje desde 'Herramientas de medida' si no aparece automáticamente.
-4. Compara el resultado contra Ventas Norte y Ventas Totales, dos medidas que ya tienes de modulos anteriores.
+RETURN DIVIDE(VentasTec, VentasTotal)
+```
+
+Se lee de arriba hacia abajo, como una receta, y si mañana cambia la definición de "ventas de tecnología", se corrige en un solo lugar.
+
+**DIVIDE en vez de /.** `DIVIDE(a, b)` divide igual que `a / b`, pero si b es 0 o está vacío devuelve un valor en blanco en vez de un error. Una medida que divide puede quedar con el denominador en 0 cuando el visual filtra algo sin datos, y no debería romper el reporte.
+
+**Formato de porcentaje.** El resultado es una proporción (0,509). Desde "Herramientas de medida", el formato Porcentaje lo muestra como 50,9 %.
+
+**Práctica.**
+
+1. Crea la medida % Ventas Norte: guarda en una variable las ventas del norte (con CALCULATE), en otra el total, y devuelve la división con DIVIDE.
+2. Dale formato de porcentaje con un decimal.
+3. Ponla en una tarjeta.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="variables-en-dax"
-  pregunta={"¿Cuánto muestra la medida % Ventas Norte sobre el dataset ventas.csv original?"}
-  respuesta={"Aproximadamente 50,9% -- 679.000 (Ventas Norte) dividido 1.334.000 (Ventas Totales)."}
+  enunciado={"Responde con tu medida % Ventas Norte."}
+  preguntas={[{"pregunta":"¿Cuánto muestra % Ventas Norte con formato de porcentaje?","opciones":["49,1 %","50,9 %","62,5 %","679 %"],"correcta":1,"explicacion":"679.000 dividido por 1.334.000. El 62,5 % sería la proporción de ventas en cantidad (5 de 8), no en monto."},{"pregunta":"¿Por qué conviene DIVIDE en vez de /?","opciones":["Porque es más rápido.","Porque devuelve un valor en blanco en vez de un error si el denominador es 0.","Porque redondea el resultado.","Porque / no existe en DAX."],"correcta":1,"explicacion":"Un visual filtrado puede dejar el denominador en 0; DIVIDE evita que eso rompa el reporte."},{"pregunta":"¿Qué hace RETURN en una medida con variables?","opciones":["Indica el valor que devuelve la medida.","Vuelve a calcular todas las variables.","Termina la medida con un error si algo falla.","Copia la medida en otra tabla."],"correcta":0,"explicacion":"Las variables preparan los pasos; RETURN dice cuál es el resultado."}]}
+  pistas={["El porcentaje es la proporción del monto del norte sobre el monto total, no de la cantidad de ventas."]}
 />
+
+<Debrief>
+El norte representa el 50,9 % del monto, aunque tiene el 62,5 % de las ventas: vende más veces, pero productos más baratos. Con variables, la medida se lee como una explicación de ese cálculo.
+</Debrief>

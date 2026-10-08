@@ -1,28 +1,36 @@
 ---
 titulo: "Funciones de tiempo básicas"
-tiempo: 9
+tiempo: 12
 ---
 
 <Concepto>
-Las funciones de inteligencia de tiempo de DAX (como TOTALYTD o SAMEPERIODLASTYEAR) necesitan una tabla de fechas marcada como tal -- pero antes de llegar ahí, hay funciones simples para extraer partes de una fecha.
-
-En esta lección usas MONTH y YEAR para agrupar ventas por mes.
-
-**Extraer partes de una fecha.** MONTH(fecha) devuelve el número de mes (1-12); YEAR(fecha) devuelve el ano. Se pueden usar dentro de una columna calculada para crear una etiqueta de agrupación.
+Antes de las funciones de inteligencia de tiempo, hay funciones simples para sacar partes de una fecha: `YEAR`, `MONTH`, `DAY` y `WEEKDAY`. Sirven para crear columnas por las que agrupar, como el mes de cada venta.
 
 ```text
-Mes de Venta = MONTH(ventas[fecha])
+Mes de Venta = MONTH(ventas_sucio[fecha])
+Nombre del Mes = FORMAT(ventas_sucio[fecha], "MMMM")
 ```
 
-**Práctica.** Crea una columna calculada con MONTH y confirma que número de mes devuelve para las fechas de este dataset.
+**Columnas calculadas, no medidas.** El mes de una fecha es un dato de cada fila que usarás en el eje de un gráfico: va como columna calculada (clic derecho en la tabla > "Nueva columna"). Lo aprendiste en la lección 13.
 
-1. En el panel Datos, con la tabla ventas seleccionada, crea una columna calculada nueva (clic derecho > 'Nueva columna', no medida): Mes de Venta = MONTH(ventas[fecha])
-2. Verifica en la vista Datos que la nueva columna muestre el número de mes de cada fila.
-3. En la vista Informe, arrastra Mes de Venta junto con la medida Ventas Totales a una tabla visual para ver el total agrupado por mes.
+**La jerarquía automática.** Si arrastras una columna de fecha a un visual, Power BI la divide sola en año, trimestre, mes y día. Es cómodo, pero cuando tienes una tabla Calendario conviene usar sus columnas en vez de la jerarquía automática: así todos los visuales agrupan igual.
+
+**Ordenar los meses.** Una columna con el nombre del mes se ordena alfabéticamente (abril, enero, febrero…). Para ordenarla bien, en la vista Datos selecciona la columna del nombre y usa "Ordenar por columna" con el número de mes.
+
+**Práctica.** Usa ventas_sucio, ya limpia, que tiene ventas de enero a mayo.
+
+1. En ventas_sucio, crea la columna calculada Mes de Venta = MONTH(ventas_sucio[fecha]).
+2. En la vista Datos, revisa la columna nueva.
+3. Arma una tabla visual con Mes de Venta y la suma de monto.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="funciones-de-tiempo-basicas"
-  pregunta={"Con las fechas del dataset ventas.csv (todas de marzo de 2026), ¿qué valor devuelve MONTH(fecha) para cualquier fila?"}
-  respuesta={"3 -- todas las fechas del dataset son de marzo."}
+  enunciado={"Responde con tu tabla de ventas por mes."}
+  preguntas={[{"pregunta":"¿Cuántos meses distintos aparecen en la tabla visual?","opciones":["3","4","5","12"],"correcta":1,"explicacion":"Enero, febrero, abril y mayo: no hubo ventas en marzo."},{"pregunta":"¿Qué mes tuvo el monto más alto?","opciones":["Enero (1)","Febrero (2)","Abril (4)","Mayo (5)"],"correcta":0,"explicacion":"Enero suma 1.117.000, con dos Notebook."},{"pregunta":"¿Por qué Mes de Venta va como columna calculada y no como medida?","opciones":["Porque las medidas no aceptan fechas.","Porque es un dato de cada fila que se usa para agrupar en el eje.","Porque MONTH solo funciona en Excel.","Da lo mismo."],"correcta":1,"explicacion":"Lo que se usa como eje, leyenda o filtro es una columna."}]}
+  pistas={["Si tus meses aparecen raros (13, 14…), revisa la configuración regional de la lección 2: las fechas pueden haberse leído como mes/día."]}
 />
+
+<Debrief>
+Cuatro meses con ventas: enero (1.117.000), febrero (679.000), abril (692.000) y mayo (847.000). Que marzo no aparezca en esta tabla, y sí en el calendario, es justo la diferencia que vas a aprovechar en la próxima lección.
+</Debrief>

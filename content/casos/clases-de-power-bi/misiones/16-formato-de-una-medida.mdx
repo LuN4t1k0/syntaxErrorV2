@@ -1,25 +1,32 @@
 ---
 titulo: "Formato de una medida"
-tiempo: 6
+tiempo: 8
 ---
 
 <Concepto>
-Una medida que suma dinero debería mostrarse como moneda, no como un número plano -- eso se controla desde el panel de formato de medida, sin tocar la fórmula.
+Una medida de dinero debería verse como dinero, y un porcentaje como porcentaje. El formato se define en la medida misma, una vez, y se aplica en todos los visuales donde la uses. No cambia el valor calculado: solo cómo se muestra.
 
-Es un paso pequeno pero que cambia mucho la legibilidad de un reporte.
+**Dónde se cambia.** Al seleccionar una medida en el panel Datos aparece la pestaña "Herramientas de medida" en la cinta. Ahí está el formato (General, Moneda, Porcentaje, Número entero, Decimal) y los botones para agregar o quitar decimales.
 
-**Formato desde la cinta.** Al seleccionar una medida en el panel Datos, la pestaña 'Herramientas de medida' aparece en la cinta de opciones, con un menu desplegable de formato (General, Moneda, Porcentaje, etc.) y control de decimales.
+**Moneda en pesos chilenos.** En el menú de moneda puedes elegir el símbolo $ con formato chileno, que usa punto para los miles. Para montos en pesos, 0 decimales.
 
-**Práctica.** Aplica formato de moneda a la medida Ventas Totales y confirma en que pestaña de la cinta se controla.
+**Formato del visual.** Las tarjetas muestran por defecto los números grandes abreviados ("1,33 M" o "1 mill."). En el panel de formato de la tarjeta, la opción "Unidades de visualización" permite elegir "Ninguno" para ver el número completo. Ese ajuste es del visual, no de la medida.
 
-1. En el panel Datos, selecciona la medida Ventas Totales.
-2. En la cinta de opciones, ve a la pestaña 'Herramientas de medida' y en el menu de formato elige 'Moneda'.
-3. Reduce los decimales a 0 usando el botón de disminuir decimales.
-4. Verifica en la tarjeta del lienzo que el valor ahora se muestre con el simbolo de moneda.
+**Práctica.**
+
+1. Selecciona la medida Ventas Totales en el panel Datos.
+2. En 'Herramientas de medida', elige formato Moneda y deja 0 decimales.
+3. Mira cómo cambian la tarjeta y la tabla por región que ya tenías.
+4. En el formato de la tarjeta, cambia 'Unidades de visualización' a 'Ninguno'.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="formato-de-una-medida"
-  pregunta={"¿Qué pestaña de la cinta de opciones aparece solo cuando seleccionas una medida en el panel Datos?"}
-  respuesta={"'Herramientas de medida'."}
+  enunciado={"Responde después de dar formato a Ventas Totales."}
+  preguntas={[{"pregunta":"¿Qué pestaña de la cinta aparece solo al seleccionar una medida?","opciones":["Herramientas de medida","Herramientas de tabla","Modelado","Vista"],"correcta":0,"explicacion":"Herramientas de medida tiene el formato, los decimales y la tabla donde vive la medida."},{"pregunta":"Cambiaste el formato de Ventas Totales a Moneda. ¿Dónde se ve el cambio?","opciones":["Solo en la tarjeta que tenías seleccionada","En todos los visuales que usan la medida","Solo en la vista Datos","En ninguno hasta publicar"],"correcta":1,"explicacion":"El formato pertenece a la medida, así que se aplica en todos los lugares donde se usa."},{"pregunta":"La tarjeta muestra \"1,33 M\" en vez del número completo. ¿Qué cambias?","opciones":["La fórmula de la medida","Las unidades de visualización en el formato de la tarjeta","El tipo de dato de la columna monto","Nada: es un error de Power BI"],"correcta":1,"explicacion":"Abreviar es un ajuste del visual; la medida sigue valiendo 1.334.000."}]}
+  pistas={["Distingue entre el formato de la medida (vale para todo) y el del visual (vale solo para ese visual)."]}
 />
+
+<Debrief>
+El formato de la medida se define una vez y aplica en todo el reporte; las unidades de visualización son de cada visual. Un reporte con montos en formato de pesos y sin abreviaturas confusas se lee mucho más rápido.
+</Debrief>

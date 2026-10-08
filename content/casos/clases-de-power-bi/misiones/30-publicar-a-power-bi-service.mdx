@@ -1,26 +1,34 @@
 ---
-titulo: "Publicar a Power BI Service"
-tiempo: 9
+titulo: "Publicar en Power BI Service"
+tiempo: 12
 ---
 
 <Concepto>
-Publicar sube tu archivo .pbix a Power BI Service, la plataforma en la nube, para que se pueda ver desde el navegador o compartir con otras personas.
+Publicar sube tu archivo .pbix a Power BI Service (app.powerbi.com), donde otras personas pueden verlo desde el navegador o el celular, sin instalar nada.
 
-Requiere una cuenta gratuita de Power BI (con un correo corporativo o educativo -- las cuentas de correo personal como Gmail no siempre son aceptadas para el plan gratuito).
+**La cuenta.** Para publicar se necesita una cuenta de Power BI con correo de trabajo o de una institución educativa. Los correos personales (Gmail, Outlook.com) no se aceptan para registrarse. Si no tienes una, puedes hacer el resto del curso igual: publicar es el último paso y no cambia nada de lo que construiste.
 
-**El botón Publicar.** En la pestaña Inicio de Power BI Desktop, el botón 'Publicar' sube el reporte al workspace que elijas en Power BI Service -- la primera vez te pide iniciar sesión con una cuenta de Microsoft.
+**El botón Publicar.** En la pestaña Inicio de Power BI Desktop. Pide guardar el archivo si hay cambios, iniciar sesión la primera vez y elegir un área de trabajo. "Mi área de trabajo" es la personal; las áreas compartidas son para equipos.
 
-**Práctica.** Publica tu reporte a Power BI Service y confirma que necesitas tener guardado antes de hacerlo.
+**Qué se sube.** Dos cosas: el informe (las páginas y los visuales) y el modelo semántico (las tablas, relaciones y medidas). En Service aparecen por separado en el área de trabajo.
 
-1. Guarda tu archivo .pbix (Archivo > Guardar) antes de publicar.
+**Los datos y su actualización.** Lo publicado es una copia de los datos del momento. Si el CSV cambia en tu computador, el reporte en Service no se entera. Para actualizar automáticamente desde archivos locales hace falta una puerta de enlace (gateway) o guardar los datos en la nube, como OneDrive o SharePoint. Por ahora, para actualizar, vuelves a publicar.
+
+**Práctica.** Si tienes una cuenta de trabajo o educativa:
+
+1. Guarda tu archivo .pbix (Archivo > Guardar).
 2. En la pestaña Inicio, haz clic en 'Publicar'.
-3. Inicia sesión con una cuenta de Microsoft si te lo pide (puedes usar una cuenta educativa o crear una gratuita).
-4. Elige el workspace 'Mi área de trabajo' (el que viene por defecto) y espera a que termine de subir.
-5. Haz clic en el enlace que aparece al finalizar para abrir el reporte en app.powerbi.com.
+3. Inicia sesión y elige 'Mi área de trabajo'.
+4. Abre el enlace que aparece al terminar y revisa el reporte en app.powerbi.com.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="publicar-a-power-bi-service"
-  pregunta={"¿Qué necesitas tener guardado antes de hacer clic en 'Publicar'?"}
-  respuesta={"El archivo .pbix -- Publicar sube la última versión guardada del archivo, no cambios sin guardar."}
+  enunciado={"Responde sobre cómo se publica un reporte."}
+  preguntas={[{"pregunta":"¿Qué tipo de correo necesitas para registrarte y publicar en Power BI Service?","opciones":["Cualquier correo, incluido Gmail","Uno de trabajo o de una institución educativa","No hace falta correo","Solo una cuenta de Microsoft 365 familiar"],"correcta":1,"explicacion":"Power BI no acepta correos personales para registrarse."},{"pregunta":"¿Qué se sube al publicar?","opciones":["Solo las imágenes de los gráficos","El informe y el modelo semántico con sus datos","Solo el archivo CSV","Solo las medidas"],"correcta":1,"explicacion":"Se publican las páginas del informe y el modelo con sus tablas, relaciones y medidas."},{"pregunta":"Después de publicar, cambias el CSV en tu computador. ¿Qué pasa con el reporte en Service?","opciones":["Se actualiza solo al instante","Sigue mostrando los datos de cuando publicaste, hasta que lo actualices","Se borra","Muestra un error"],"correcta":1,"explicacion":"Lo publicado es una copia; para actualizar desde archivos locales hace falta volver a publicar o configurar una puerta de enlace."}]}
+  pistas={["Lo publicado es una copia del momento en que publicaste."]}
 />
+
+<Debrief>
+Publicar sube el informe y el modelo a Service, con los datos de ese momento. Entender que es una copia evita la sorpresa más común: un reporte publicado que no muestra los datos nuevos.
+</Debrief>

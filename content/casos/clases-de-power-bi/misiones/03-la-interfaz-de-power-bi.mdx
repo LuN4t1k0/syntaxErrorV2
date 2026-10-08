@@ -1,25 +1,32 @@
 ---
 titulo: "La interfaz de Power BI"
-tiempo: 8
+tiempo: 10
 ---
 
 <Concepto>
-Power BI Desktop tiene tres vistas principales, accesibles por los iconos verticales de la izquierda.
+Power BI Desktop tiene tres vistas, a las que se entra con los íconos de la barra vertical de la izquierda. Saber para qué sirve cada una evita perderse más adelante.
 
-Entender para qué sirve cada una evita perderse más adelante en el curso.
+- **Informe:** el lienzo donde armas las visualizaciones (gráficos, tarjetas, tablas). Es donde pasarás la mayor parte del tiempo.
+- **Datos** (o vista de tabla): muestra cada tabla cargada como una grilla de filas y columnas, como una planilla. Sirve para revisar los datos y ver cuántas filas hay.
+- **Modelo:** muestra las tablas como cajas unidas por líneas, que son las relaciones entre ellas. Se usa cuando hay más de una tabla.
 
-**Las tres vistas.** Informe: el lienzo donde armas las visualizaciones (gráficos, tarjetas, tablas). Es la vista donde vas a pasar más tiempo. Datos: muestra las tablas cargadas como una grilla, fila por fila -- útil para inspeccionar los datos crudos. Modelo: muestra las tablas como cajas conectadas por líneas (relaciones) -- se usa cuando hay más de una tabla, como vas a ver en el modulo 3.
+**Los paneles de la derecha.** En la vista Informe, el panel **Visualizaciones** tiene los tipos de gráfico y los campos de cada visual, y el panel **Datos** lista las tablas con sus columnas y medidas. Para armar un gráfico, eliges el tipo en Visualizaciones y arrastras columnas desde Datos.
 
-**Práctica.** Recorre las tres vistas de Power BI Desktop y después confirma en cuál de ellas ves los datos como una grilla de filas y columnas.
+**Práctica.**
 
-1. Con ventas ya cargado, haz clic en el icono de 'Informe' (el primero de la barra vertical izquierda) y observa el lienzo en blanco.
-2. Haz clic en el icono de 'Datos' (el segundo) y revisa las filas de la tabla ventas tal como están en el CSV.
-3. Haz clic en el icono de 'Modelo' (el tercero) y observa la tabla ventas como una caja sola (todavía sin relaciones).
-4. Vuelve a la vista Informe -- es donde vas a trabajar la mayor parte del curso.
+1. Con ventas cargada, haz clic en el ícono de 'Informe' (el primero de la barra izquierda) y observa el lienzo en blanco.
+2. Haz clic en el ícono de 'Datos' (el segundo) y revisa las filas de la tabla ventas.
+3. Haz clic en el ícono de 'Modelo' (el tercero) y observa la tabla ventas como una caja sola, todavía sin relaciones.
+4. Vuelve a Informe, elige el visual 'Tabla' en el panel Visualizaciones y arrastra producto y monto desde el panel Datos.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="la-interfaz-de-power-bi"
-  pregunta={"¿En qué vista ves los datos como una grilla de filas y columnas, tal como en el CSV original?"}
-  respuesta={"En la vista Datos."}
+  enunciado={"Responde después de recorrer las tres vistas."}
+  preguntas={[{"pregunta":"¿En qué vista ves los datos como una grilla de filas y columnas, como en el CSV?","opciones":["Informe","Datos","Modelo","Power Query"],"correcta":1,"explicacion":"La vista Datos muestra cada tabla fila por fila."},{"pregunta":"Quieres ver si dos tablas están relacionadas. ¿Qué vista abres?","opciones":["Informe","Datos","Modelo"],"correcta":2,"explicacion":"La vista Modelo dibuja las tablas como cajas y las relaciones como líneas entre ellas."},{"pregunta":"En la tabla visual que armaste con producto y monto, ¿cuántas filas aparecen?","opciones":["8, una por venta","4, una por producto","2, una por región","1, con el total"],"correcta":1,"explicacion":"Un visual agrupa por las columnas de texto: muestra cada producto una vez, con su monto sumado."}]}
+  pistas={["Fíjate en lo que muestra la tabla visual: ¿repite los productos o los agrupa?"]}
 />
+
+<Debrief>
+Informe para construir, Datos para revisar, Modelo para relacionar. Lo más importante de esta lección es lo que viste en la tabla visual: Power BI agrupa y suma solo. Las 8 ventas se convirtieron en 4 filas, una por producto, sin escribir ninguna fórmula.
+</Debrief>

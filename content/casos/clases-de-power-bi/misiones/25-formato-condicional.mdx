@@ -1,25 +1,35 @@
 ---
 titulo: "Formato condicional"
-tiempo: 8
+tiempo: 10
 ---
 
 <Concepto>
-El formato condicional resalta valores según una regla -- por ejemplo, colorear de rojo las ventas por debajo de un umbral.
+El formato condicional colorea los valores según una regla: los montos altos en verde, los bajos en rojo, o una barra dentro de cada celda. Así el ojo encuentra lo importante sin leer número por número. Es lo mismo que el formato condicional de Excel.
 
-Se configura sin escribir DAX, desde el panel de formato del visual.
+**Tres formas comunes.**
+- **Escala de colores:** un degradado del valor mínimo al máximo.
+- **Reglas:** un color si el valor cumple una condición, por ejemplo menor que 100.000 en rojo.
+- **Barras de datos:** una barra horizontal dentro de la celda, proporcional al valor.
 
-**Configurar reglas de color.** En una tabla o matriz, selecciona la columna de valores, ve al panel de formato > 'Formato condicional' > 'Escala de colores' (o 'Reglas') y define los umbrales.
+**Dónde se configura.** Selecciona la tabla o matriz. En el panel Visualizaciones, en la lista de campos, abre el menú del campo de valores (la flecha junto a Ventas Totales) > "Formato condicional", y elige el tipo.
 
-**Práctica.** Aplica una escala de colores sobre Ventas Totales por producto y confirma que producto queda con el color del extremo máximo.
+**Con moderación.** Un color tiene que significar algo. Si todo está coloreado, nada destaca. Usa un solo tipo de formato por tabla y explica en el título qué significa el color si no es obvio.
 
-1. Selecciona la tabla o matriz que creaste en la lección anterior.
-2. En el panel de formato del visual, busca la sección 'Formato condicional' sobre la columna de Ventas Totales.
-3. Activa 'Escala de colores' y confirma los valores mínimo y máximo por defecto.
-4. Observa como las celdas con montos más altos se colorean distinto a las de montos más bajos.
+**Práctica.**
+
+1. Arma una tabla con producto y Ventas Totales.
+2. Aplica una escala de colores sobre Ventas Totales.
+3. Cambia a una regla: color rojo para valores menores que 100.000.
+4. Prueba también las barras de datos y deja la que te parezca más clara.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="formato-condicional"
-  pregunta={"Con una escala de colores de mínimo a máximo aplicada sobre Ventas Totales por producto, ¿qué producto va a tener el color del extremo 'máximo'?"}
-  respuesta={"Notebook, porque es el producto con el monto total más alto (900.000)."}
+  enunciado={"Responde mirando tu tabla con formato."}
+  preguntas={[{"pregunta":"Con la escala de colores, ¿qué producto queda con el color del extremo máximo?","opciones":["Notebook","Monitor","Teclado","Mouse"],"correcta":0,"explicacion":"Notebook tiene el total más alto, 900.000."},{"pregunta":"Con la regla \"rojo si es menor que 100.000\", ¿cuántos productos quedan en rojo?","opciones":["0","1","2","4"],"correcta":2,"explicacion":"Teclado (50.000) y Mouse (24.000)."},{"pregunta":"¿Cuándo conviene una regla en vez de una escala de colores?","opciones":["Cuando hay un umbral con significado, como una meta o un mínimo aceptable.","Siempre: las escalas no funcionan en tablas.","Cuando hay muchos productos.","Nunca: las reglas son solo para Excel."],"correcta":0,"explicacion":"Una regla marca lo que cruza un límite con significado; la escala muestra el ranking general."}]}
+  pistas={["Cuenta los productos con ventas bajo 100.000 en tu tabla."]}
 />
+
+<Debrief>
+La escala resalta al Notebook; la regla marca al Teclado y al Mouse. Elige la regla cuando hay un umbral con sentido para el negocio, y la escala cuando quieres mostrar el orden general.
+</Debrief>

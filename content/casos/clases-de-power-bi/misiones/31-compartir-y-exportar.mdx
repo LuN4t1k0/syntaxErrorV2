@@ -1,27 +1,34 @@
 ---
 titulo: "Compartir y exportar"
-tiempo: 8
+tiempo: 10
 ---
 
 <Concepto>
-Una vez publicado en Power BI Service, hay varias formas de que otras personas vean tu reporte: compartirlo directamente, o exportarlo a PDF/PowerPoint para enviarlo por fuera de Power BI.
+Hay dos caminos para que otras personas vean tu reporte: compartirlo en Power BI Service, donde sigue siendo interactivo, o exportarlo a un archivo estático, como PDF o PowerPoint, para enviarlo a quien no usa Power BI.
 
-En esta lección probas ambos caminos.
+**Compartir en Service.** En app.powerbi.com, el botón "Compartir" del reporte permite escribir el correo de otra persona. Esa persona necesita su propia cuenta de Power BI, y en organizaciones con licencias pagas, una licencia que le permita ver contenido compartido. Puedes decidir si podrá volver a compartirlo.
 
-**Compartir desde Power BI Service.** Desde app.powerbi.com, el botón 'Compartir' de un reporte permite ingresar el correo de otra persona -- que va a necesitar su propia cuenta de Power BI (con permisos) para verlo.
+**Exportar a PDF.** En Power BI Desktop, Archivo > Exportar > "Exportar a PDF" crea un archivo con una página por cada página del reporte. Se puede enviar a cualquier persona, pero es una foto: los filtros, los clics y los tooltips dejan de funcionar.
 
-**Exportar a PDF.** Desde Power BI Desktop, Archivo > Exportar > 'Exportar a PDF' genera un archivo estático con una página por cada página del reporte -- pierde la interactividad, pero se puede enviar a cualquier persona sin cuenta.
+**Exportar los datos de un visual.** En el menú "…" de un visual, "Exportar datos" descarga en un CSV o Excel lo que muestra ese visual. Útil cuando alguien pide "los números detrás del gráfico".
 
-**Práctica.** Exporta tu reporte a PDF y confirma que se pierde al hacerlo.
+**Elegir.** Si quien recibe va a explorar y filtrar, comparte en Service. Si necesita un documento para una reunión o un archivo adjunto, exporta. Si pide los datos, exporta los datos del visual.
 
-1. Desde app.powerbi.com, abre tu reporte publicado y haz clic en 'Compartir'.
-2. Escribe tu propio correo (o el de otra cuenta que tengas) para simular el envio, y luego cancela sin enviarlo si no quieres compartirlo de verdad.
-3. Vuelve a Power BI Desktop y ve a Archivo > Exportar > 'Exportar a PDF'.
-4. Abre el PDF generado y confirma que se ven las visualizaciones, aunque sin poder interactuar con los slicers.
+**Práctica.**
+
+1. En Power BI Desktop, ve a Archivo > Exportar > 'Exportar a PDF' y abre el archivo.
+2. Intenta usar la segmentación de región en el PDF.
+3. En el menú '…' de la matriz, usa 'Exportar datos' y abre el archivo descargado.
+4. Si publicaste en la lección anterior, abre el botón 'Compartir' en app.powerbi.com y revisa las opciones, sin enviar nada.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="compartir-y-exportar"
-  pregunta={"¿Qué se pierde al exportar un reporte de Power BI a PDF?"}
-  respuesta={"La interactividad -- los slicers, el cross-filtering y el drill-down/drill-through dejan de funcionar, porque el PDF es una imagen estática de cada página."}
+  enunciado={"Para cada situación, elige cómo entregar el reporte."}
+  preguntas={[{"pregunta":"¿Qué se pierde al exportar un reporte a PDF?","opciones":["Los colores","La interactividad: segmentaciones, clics y tooltips","Los títulos de las páginas","Nada"],"correcta":1,"explicacion":"El PDF es una imagen fija de cada página."},{"pregunta":"Tu jefatura quiere filtrar el reporte por región ella misma, cada semana. ¿Qué haces?","opciones":["Le mandas un PDF cada semana","Lo compartes en Power BI Service","Le mandas el CSV","Le haces capturas de pantalla"],"correcta":1,"explicacion":"Para explorar y filtrar, el reporte tiene que seguir siendo interactivo."},{"pregunta":"Finanzas te pide \"los números del gráfico de productos\" para su planilla. ¿Qué usas?","opciones":["Exportar a PDF","Exportar datos del visual","Publicar de nuevo","Compartir el .pbix completo"],"correcta":1,"explicacion":"Exportar datos descarga exactamente lo que muestra ese visual, en CSV o Excel."}]}
+  pistas={["Pregúntate si quien recibe va a explorar, a leer en una reunión o a seguir calculando."]}
 />
+
+<Debrief>
+Service para explorar, PDF para leer, exportar datos para seguir calculando. Elegir el formato según quién recibe el reporte es parte del trabajo del analista.
+</Debrief>

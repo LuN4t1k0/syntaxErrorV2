@@ -1,20 +1,30 @@
 ---
 titulo: "Cardinalidad y dirección del filtro"
-tiempo: 9
+tiempo: 12
 ---
 
 <Concepto>
-Cardinalidad y dirección del filtro son los dos conceptos que definen cómo 'viaja' un filtro de una tabla a otra a traves de una relación.
+Una relación tiene dos propiedades que explican por qué un visual muestra lo que muestra: la cardinalidad (cuántas filas de cada lado se conectan) y la dirección en que viaja el filtro.
 
-Son conceptos, no pasos de clic -- pero son la base para entender por que una medida da el resultado que da.
+**Cardinalidad: uno a varios.** Entre productos y ventas, un producto se conecta con muchas ventas, pero cada venta apunta a un solo producto. Es la cardinalidad más común. También existen uno a uno (poco frecuente) y varios a varios, que conviene evitar mientras aprendes porque produce resultados difíciles de interpretar.
 
-**Cardinalidad: uno a varios.** La relación entre productos y ventas es 'uno a varios': un producto en la tabla productos puede aparecer en muchas filas de ventas, pero cada fila de ventas apunta a un solo producto. Es la cardinalidad más común y la que Power BI detecta o sugiere por defecto en la mayoría de los modelos bien disenados.
+**El filtro viaja del lado uno al lado varios.** Si eliges la categoría Tecnologia (columna de productos), ese filtro baja por la relación hasta ventas, y las medidas suman solo las ventas de esos productos. Al revés no ocurre por defecto: filtrar ventas por región no reduce la lista de productos. En la vista Modelo, la flecha en el medio de la línea muestra la dirección.
 
-**Dirección del filtro.** Por defecto, el filtro viaja del lado 'uno' (productos) hacia el lado 'varios' (ventas): si filtras por categoria en productos, ese filtro se propaga y afecta el monto sumado en ventas. El filtro no viaja al reves a menos que se configure explícitamente como 'ambas direcciones' -- algo que se usa poco y con cuidado, porque puede generar ambigüedad en modelos con más de dos tablas.
+```text
+productos (1)  ──filtro──▶  ventas (*)
+categoria = Tecnologia  →  solo las ventas de Notebook, Mouse, Teclado y Monitor
+```
+
+**Ambas direcciones.** Una relación se puede configurar para filtrar en los dos sentidos. A veces es útil, pero en modelos con varias tablas crea caminos ambiguos y resultados inesperados. La regla práctica: déjala en una dirección hasta que tengas una razón concreta.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="cardinalidad-y-direccion-del-filtro"
-  pregunta={"Si filtras la tabla ventas por región = 'norte', ¿ese filtro afecta lo que ves en la tabla productos? ¿Por qué sí o por qué no?"}
-  respuesta={"No, por defecto no afecta -- el filtro solo viaja del lado 'uno' (productos) hacia el lado 'varios' (ventas), nunca al reves, a menos que la relación se configure manualmente como bidireccional."}
+  enunciado={"Responde pensando en cómo viaja el filtro por la relación entre productos y ventas."}
+  preguntas={[{"pregunta":"Filtras productos por categoria = Tecnologia. ¿Afecta el monto sumado de ventas?","opciones":["Sí: el filtro baja del lado uno (productos) al lado varios (ventas).","No: los filtros nunca cruzan relaciones.","Solo si la relación es de ambas direcciones.","Solo en las tarjetas."],"correcta":0,"explicacion":"La dirección por defecto es del lado uno al lado varios."},{"pregunta":"Filtras ventas por region = norte. Con la relación en una dirección, ¿se reduce la lista de productos en una segmentación de productos?","opciones":["Sí, quedan solo los productos vendidos en el norte.","No: el filtro no sube de ventas a productos.","Sí, pero solo los de Tecnologia.","Power BI muestra un error."],"correcta":1,"explicacion":"Por defecto, el filtro no viaja del lado varios al lado uno."},{"pregunta":"¿Qué cardinalidad tiene la relación entre productos y ventas?","opciones":["Uno a uno","Uno a varios","Varios a varios","Ninguna"],"correcta":1,"explicacion":"Cada producto aparece una vez en productos y muchas veces en ventas."}]}
+  pistas={["Recuerda la flecha de la línea: indica hacia dónde viaja el filtro."]}
 />
+
+<Debrief>
+Uno a varios, con el filtro bajando de productos a ventas. Esta dirección es la que hace funcionar los gráficos por categoría: eliges en la dimensión (productos) y se filtran los hechos (ventas).
+</Debrief>

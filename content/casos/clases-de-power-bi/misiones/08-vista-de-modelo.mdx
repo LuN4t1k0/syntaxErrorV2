@@ -1,25 +1,33 @@
 ---
 titulo: "La vista de Modelo"
-tiempo: 8
+tiempo: 10
 ---
 
 <Concepto>
-La vista Modelo muestra todas las tablas cargadas como cajas, con sus columnas listadas adentro.
+En la lección 6 combinaste ventas y productos en una sola tabla. Power BI tiene otra forma de unir tablas, más flexible y más usada: dejarlas separadas y **relacionarlas** en el modelo. La vista Modelo es donde se ven y se crean esas relaciones.
 
-Con ventas y productos ya cargadas, es el momento de mirarlas juntas por primera vez.
+**Qué muestra.** Cada tabla es una caja con su nombre arriba y sus columnas debajo. Las relaciones son líneas entre las cajas. Al pasar el mouse por una línea, se resaltan las dos columnas que conecta.
 
-**Que mirar en la vista Modelo.** Cada tabla aparece como una caja con su nombre arriba y la lista de columnas debajo. Si dos tablas comparten una columna con el mismo significado (como producto), Power BI a veces detecta la relación automáticamente y dibuja una línea entre ambas cajas. Si no la detecta, hay que crearla a mano -- eso es lo que vas a hacer en la próxima lección.
+**Relación automática.** Si dos tablas tienen una columna con el mismo nombre y valores que calzan, como producto, Power BI a veces crea la relación solo al cargar. Conviene revisarla siempre: una relación automática puede conectar columnas equivocadas.
 
-**Práctica.** Explora la vista Modelo con ventas y productos cargadas y confirma que columna en común las conecta.
+**Combinar o relacionar.** Combinar copia las columnas de productos dentro de ventas. Relacionar deja cada tabla en su lugar y le dice a Power BI cómo se conectan. Con la relación, un gráfico puede usar la categoría de productos y el monto de ventas sin duplicar datos.
 
-1. Con ventas y productos cargadas como tablas separadas (sin la combinación de la lección anterior, o cargando productos.csv de nuevo como tabla independiente), ve a la vista Modelo.
-2. Observa si Power BI ya dibujo una línea conectando ambas tablas por la columna producto.
-3. Haz clic sobre la tabla ventas y arrastrala para reacomodar el lienzo -- es solo organizacion visual, no afecta los datos.
-4. Haz doble clic en la línea de relación (si existe) para ver que columnas conecta.
+**Práctica.**
+
+1. Asegúrate de tener ventas y productos cargadas como tablas separadas. Si solo tienes la tabla combinada, carga productos.csv de nuevo.
+2. Ve a la vista Modelo.
+3. Observa si Power BI ya dibujó una línea entre ventas y productos.
+4. Arrastra las cajas para ordenar el lienzo: es solo orden visual, no cambia los datos.
+5. Si hay una línea, haz doble clic en ella y mira qué columnas conecta.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="vista-de-modelo"
-  pregunta={"¿Qué columna en común comparten las tablas ventas y productos, la que permite relacionarlas?"}
-  respuesta={"La columna producto."}
+  enunciado={"Responde mirando la vista Modelo."}
+  preguntas={[{"pregunta":"¿Qué columna comparten ventas y productos, la que permite relacionarlas?","opciones":["region","producto","monto","categoria"],"correcta":1,"explicacion":"producto aparece en las dos tablas y tiene el mismo significado en ambas."},{"pregunta":"¿Qué diferencia hay entre combinar consultas y relacionar tablas?","opciones":["Ninguna, son lo mismo.","Combinar copia columnas de una tabla en otra; relacionar deja las tablas separadas y conectadas.","Relacionar borra la segunda tabla.","Combinar solo funciona con Excel."],"correcta":1,"explicacion":"La relación conecta sin duplicar datos, y es la forma habitual de trabajar en Power BI."}]}
+  pistas={["Busca una columna con el mismo nombre en las dos cajas."]}
 />
+
+<Debrief>
+ventas y productos se conectan por producto. Desde ahora trabajarás con tablas relacionadas en vez de combinadas: es la forma en que se construyen los modelos de Power BI en el trabajo real.
+</Debrief>

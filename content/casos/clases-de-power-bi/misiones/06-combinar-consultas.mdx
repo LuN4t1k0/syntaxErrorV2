@@ -1,27 +1,36 @@
 ---
 titulo: "Combinar consultas"
-tiempo: 12
+tiempo: 15
 ---
 
 <Concepto>
-Combinar consultas te deja unir dos tablas relacionadas en una sola, similar a un BUSCARV de Excel pero integrado en Power Query.
+Combinar consultas une dos tablas en una, usando una columna en común: es el `BUSCARV` de Excel, el `JOIN` de SQL y el `merge` de pandas, hecho con clics en Power Query.
 
-Vas a combinar ventas y productos usando la columna en común: producto.
+**Combinar o anexar.**
+- **Combinar** (merge) agrega columnas de otra tabla a cada fila, buscando la coincidencia por una clave. Es horizontal: la tabla queda más ancha.
+- **Anexar** (append) pone las filas de una tabla debajo de las de otra, cuando tienen las mismas columnas. Es vertical: la tabla queda más larga. Sirve, por ejemplo, para juntar las ventas de enero y de febrero que vienen en archivos separados.
 
-**Combinar vs. Anexar.** 'Combinar consultas' (Merge) agrega columnas de una segunda tabla que coincidan por una clave -- es horizontal, como un BUSCARV. 'Anexar consultas' (Append) apila filas de dos tablas con las mismas columnas -- es vertical, como copiar y pegar filas debajo. En este curso vas a usar Combinar.
+**Tipos de combinación.** "Externa izquierda" conserva todas las filas de la primera tabla y trae las coincidencias de la segunda, igual que un `LEFT JOIN`. Es la más usada: ninguna venta se pierde aunque su producto no esté en el catálogo.
 
-**Práctica.** Combina ventas y productos por la columna producto y confirma cuántas filas tiene el resultado.
+**Expandir.** Después de combinar, aparece una columna con la tabla relacionada adentro. El ícono de flechas dobles de su encabezado permite elegir qué columnas traer.
 
-1. En el Editor de Power Query, con la consulta ventas seleccionada, ve a la pestaña Inicio y haz clic en 'Combinar consultas' > 'Combinar consultas como nuevas'.
-2. Selecciona ventas como la primera tabla y productos como la segunda.
-3. Haz clic en la columna producto de ambas tablas para marcarlas como la clave de coincidencia.
-4. En 'Tipo de combinación' deja seleccionado 'Externa izquierda' (todas las filas de ventas, coincidencias de productos) y haz clic en Aceptar.
-5. En la nueva consulta, expande la columna resultante (el icono de flechas dobles) y selecciona categoria y precio_unitario para agregarlas a la tabla.
-6. Haz clic en 'Cerrar y aplicar'.
+**Práctica.**
+
+1. En el Editor de Power Query, selecciona la consulta ventas y ve a Inicio > 'Combinar consultas' > 'Combinar consultas como nuevas'.
+2. Elige ventas como primera tabla y productos como segunda.
+3. Haz clic en la columna producto de ambas tablas para marcarla como clave.
+4. Deja 'Externa izquierda' como tipo de combinación y haz clic en Aceptar.
+5. En la consulta nueva, expande la columna de productos y elige categoria y precio_unitario.
+6. Haz clic en 'Cerrar y aplicar' y revisa la tabla combinada en la vista Datos.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="combinar-consultas"
-  pregunta={"Con una combinación 'Externa izquierda' de ventas y productos por la columna producto, ¿cuántas filas tiene la tabla resultante?"}
-  respuesta={"8 filas -- una por cada fila de ventas, ya que todos los productos vendidos existen en la tabla productos."}
+  enunciado={"Responde mirando la tabla combinada."}
+  preguntas={[{"pregunta":"¿Cuántas filas tiene la tabla combinada (ventas con externa izquierda de productos)?","opciones":["6, una por producto","8, una por venta","14, la suma de las dos tablas","4, una por producto vendido"],"correcta":1,"explicacion":"La externa izquierda conserva cada fila de ventas y le agrega las columnas de productos."},{"pregunta":"¿Aparecen la Silla y la Lámpara en la tabla combinada?","opciones":["Sí, con monto vacío","No: no tienen ventas, y la tabla parte de ventas","Sí, con monto 0","Solo la Silla"],"correcta":1,"explicacion":"La tabla izquierda es ventas: solo aparecen productos que se vendieron."},{"pregunta":"Tienes las ventas de enero y las de febrero en dos archivos con las mismas columnas. ¿Qué operación usas para tenerlas en una sola tabla?","opciones":["Combinar","Anexar","Filtrar","Quitar duplicados"],"correcta":1,"explicacion":"Anexar pone las filas de una tabla debajo de las de otra."}]}
+  pistas={["Combinar agrega columnas; anexar agrega filas."]}
 />
+
+<Debrief>
+La combinación dejó 8 filas, una por venta, con su categoría y precio. Los productos sin ventas no aparecen porque la tabla de la izquierda es ventas. En la próxima parte del curso verás otra forma de unir tablas, más flexible: las relaciones del modelo.
+</Debrief>

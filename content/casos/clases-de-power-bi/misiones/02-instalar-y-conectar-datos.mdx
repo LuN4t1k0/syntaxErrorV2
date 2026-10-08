@@ -1,29 +1,34 @@
 ---
 titulo: "Instalar Power BI y conectar datos"
-tiempo: 10
+tiempo: 15
 ---
 
 <Concepto>
-Power BI Desktop es gratuito y se instala directo desde Microsoft Store (Windows) o desde el sitio oficial.
+Power BI Desktop se instala gratis y no necesita una cuenta para trabajar. En esta lección lo instalas y haces tu primera conexión: el archivo de ventas que vas a usar durante buena parte del curso.
 
-En esta lección lo instalas y haces tu primera conexión de datos: el CSV de ventas que vas a usar durante buena parte del curso.
+**Instalar.** En Windows, abre la Microsoft Store y busca "Power BI Desktop", o descárgalo desde powerbi.microsoft.com/desktop. Al abrirlo puede aparecer una pantalla de inicio de sesión: puedes cerrarla.
 
-**Instalar Power BI Desktop.** Ve a la Microsoft Store en Windows y busca 'Power BI Desktop', o descárgalo desde powerbi.microsoft.com/desktop. La instalación es gratuita y no requiere licencia paga. Al abrirlo por primera vez puedes cerrar la pantalla de inicio de sesión -- no hace falta una cuenta para trabajar en Desktop.
+**Conectar un CSV.** En la pestaña Inicio, "Obtener datos" abre la lista de orígenes: archivos, bases de datos, servicios web. Para un CSV se elige "Texto/CSV". Antes de cargar, Power BI muestra una vista previa con las columnas detectadas y su tipo de dato (texto, número, fecha): revísala.
 
-**Conectar un archivo CSV.** En la pestaña Inicio, el botón 'Obtener datos' abre el listado de orígenes disponibles. Elige 'Texto/CSV' y selecciona el archivo que descargaste. Power BI muestra una vista previa de las columnas detectadas antes de cargar -- ahí puedes revisar que los tipos de dato (texto, número, fecha) se hayan interpretado bien.
+**Las fechas y la configuración regional.** Los archivos de este curso escriben las fechas como día/mes/año (01/03/2026 es el 1 de marzo). Si tu Power BI está configurado en inglés de Estados Unidos, puede leerlas como mes/día y confundir los meses. Para evitarlo, revisa en Archivo > Opciones y configuración > Opciones > Configuración regional que diga "Español (Chile)" u otro español, antes de cargar.
 
-**Práctica.** Vas a instalar Power BI Desktop y cargar tu primer dataset. Sigue los pasos y después confirma cuántas columnas tiene la tabla cargada. Los datos están en [ventas.csv](/casos/clases-de-power-bi/datos/ventas.csv), también en «Datos del caso» de estas clases.
+**Práctica.** Los datos están en [ventas.csv](/casos/clases-de-power-bi/datos/ventas.csv), también en «Datos del caso» de estas clases.
 
-1. Descarga el dataset ventas.csv de esta lección.
+1. Descarga el archivo ventas.csv.
 2. Instala Power BI Desktop desde la Microsoft Store o desde powerbi.microsoft.com/desktop.
 3. Abre Power BI Desktop y cierra la pantalla de inicio de sesión si aparece.
 4. En la pestaña Inicio, haz clic en 'Obtener datos' y elige 'Texto/CSV'.
-5. Selecciona el archivo ventas.csv que descargaste y haz clic en 'Cargar'.
-6. Verifica en el panel 'Datos' (a la derecha) que la tabla ventas aparezca con sus 4 columnas: fecha, producto, region, monto.
+5. Selecciona ventas.csv y, en la vista previa, mira las columnas y los primeros valores. Después haz clic en 'Cargar'.
+6. En el panel 'Datos', a la derecha, despliega la tabla ventas y revisa sus columnas.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="instalar-y-conectar-datos"
-  pregunta={"¿Cuántas columnas tiene la tabla ventas una vez cargada?"}
-  respuesta={"4 columnas: fecha, producto, region y monto."}
+  enunciado={"Responde mirando la tabla ventas que acabas de cargar."}
+  preguntas={[{"pregunta":"¿Cuántas columnas tiene la tabla ventas una vez cargada?","opciones":["3","4","5","8"],"correcta":1,"explicacion":"fecha, producto, region y monto. 8 es la cantidad de filas, no de columnas."},{"pregunta":"¿Cuántas filas de ventas tiene el archivo (sin contar los títulos)?","opciones":["4","6","8","9"],"correcta":2,"explicacion":"Son 8 ventas; la primera línea del CSV son los nombres de las columnas."},{"pregunta":"¿Por qué conviene revisar la configuración regional antes de cargar este archivo?","opciones":["Para que los montos se muestren en pesos.","Para que una fecha como 01/03/2026 se lea como 1 de marzo y no como 3 de enero.","Porque sin ella el archivo no se puede abrir.","Para traducir los nombres de las columnas."],"correcta":1,"explicacion":"Con configuración de Estados Unidos, Power BI lee mes/día; las fechas de este curso vienen como día/mes."}]}
+  pistas={["En el panel Datos, despliega la tabla para ver sus columnas; en la vista Datos, abajo, aparece la cantidad de filas."]}
 />
+
+<Debrief>
+La tabla ventas tiene 4 columnas y 8 filas, todas de marzo de 2026. Revisar la vista previa y la configuración regional antes de cargar es un hábito que evita errores difíciles de encontrar después, como ventas asignadas al mes equivocado.
+</Debrief>

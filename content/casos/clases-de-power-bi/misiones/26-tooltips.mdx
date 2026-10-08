@@ -1,25 +1,31 @@
 ---
-titulo: "Tooltips"
-tiempo: 7
+titulo: "Información sobre herramientas (tooltips)"
+tiempo: 10
 ---
 
 <Concepto>
-Un tooltip es la ventana que aparece al pasar el mouse sobre un punto de un gráfico -- por defecto muestra la categoria y el valor, pero se puede enriquecer con más campos.
+Un tooltip es el recuadro que aparece al pasar el mouse sobre una barra o un punto. Por defecto muestra la categoría y el valor, pero se le pueden agregar más datos, para que el gráfico responda una segunda pregunta sin agregar otro visual.
 
-En esta lección agregas un campo extra al tooltip de un gráfico existente.
+**Dónde se agregan.** Con el visual seleccionado, en el panel Visualizaciones, la sección de campos tiene un espacio llamado "Información sobre herramientas" (Tooltips). Lo que arrastras ahí aparece en el recuadro, calculado para la barra que estás mirando.
 
-**Agregar campos al tooltip.** En el panel de Visualizaciones, dentro del 'pozo' (well) de campos del visual, existe una sección 'Información sobre herramientas' (Tooltips) donde se pueden arrastrar columnas o medidas adicionales.
+**Ejemplo.** Un gráfico de columnas por producto muestra el monto. Si agregas Cantidad de Ventas al tooltip, al pasar el mouse por el Notebook ves también cuántas veces se vendió. El gráfico sigue limpio, y el detalle está a un movimiento del mouse.
 
-**Práctica.** Agrega Cantidad de Ventas al tooltip del gráfico de columnas y confirma en que sección del panel se hace.
+**Qué agregar.** Datos que complementan la medida principal: la cantidad junto al monto, el margen junto a las ventas, el promedio junto al total. No repitas lo que ya muestra el eje.
 
-1. Selecciona el gráfico de columnas por producto que creaste antes.
-2. En el panel de campos del visual, busca la sección 'Información sobre herramientas' (Tooltips).
-3. Arrastra la medida Cantidad de Ventas a esa sección.
-4. Pasa el mouse sobre una de las columnas del gráfico y verifica que el tooltip ahora muestre también la cantidad de ventas, no solo el monto.
+**Práctica.**
+
+1. Selecciona el gráfico de columnas por producto.
+2. Arrastra Cantidad de Ventas y Margen Total a 'Información sobre herramientas'.
+3. Pasa el mouse por cada columna y lee el recuadro.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="tooltips"
-  pregunta={"¿En qué sección del panel de campos de un visual se agregan columnas o medidas extra para enriquecer el tooltip?"}
-  respuesta={"En la sección 'Información sobre herramientas' (Tooltips)."}
+  enunciado={"Responde con lo que muestran tus tooltips."}
+  preguntas={[{"pregunta":"¿En qué sección del panel de campos se agregan datos extra al tooltip?","opciones":["Eje X","Leyenda","Información sobre herramientas","Filtros de página"],"correcta":2,"explicacion":"Lo que se arrastra ahí aparece en el recuadro al pasar el mouse."},{"pregunta":"Al pasar el mouse por la columna del Monitor, ¿qué Cantidad de Ventas muestra el tooltip?","opciones":["1","2","5","8"],"correcta":1,"explicacion":"El tooltip calcula la medida solo para esa columna: dos ventas de Monitor."},{"pregunta":"¿Y qué Margen Total muestra para el Monitor?","opciones":["50.000","100.000","360.000","270.000"],"correcta":1,"explicacion":"50.000 de margen por unidad, dos ventas."}]}
+  pistas={["Los valores del tooltip se calculan solo para la columna sobre la que está el mouse."]}
 />
+
+<Debrief>
+El tooltip del Monitor dice 2 ventas y 100.000 de margen. Las medidas del tooltip respetan el contexto de la columna, igual que una fila de una tabla: es el mismo contexto de filtro de la lección 19, en otro lugar.
+</Debrief>

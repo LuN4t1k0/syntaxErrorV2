@@ -1,26 +1,39 @@
 ---
 titulo: "Proyecto final: dashboard de ventas"
-tiempo: 30
+tiempo: 40
 ---
 
 <Concepto>
-Este es el proyecto final del curso: armar un dashboard completo con lo que ya tienes cargado, combinando ventas y productos en medidas, tablas y un filtro interactivo.
+El proyecto final del curso es un tablero de una página con lo que construiste lección a lección, pensado para que la gerencia responda en un minuto tres preguntas: cuánto se vendió, dónde y qué productos. Usa la tabla ventas (marzo) y su relación con productos.
 
-No hay pasos nuevos que aprender -- es integrar en un solo reporte lo que ya practicaste lección por lección.
+**Lo que tiene que tener.**
+- Tres medidas: Ventas Totales = `SUM(ventas[monto])`, Cantidad de Ventas = `COUNTROWS(ventas)` y Ticket Promedio = `DIVIDE([Ventas Totales], [Cantidad de Ventas])`, con formato de moneda.
+- Dos tarjetas arriba: Ventas Totales y Ticket Promedio.
+- Una tabla o gráfico de barras con Ventas Totales por región.
+- Un gráfico de barras con Ventas Totales por producto, ordenado de mayor a menor.
+- Una segmentación de datos por región.
+- Títulos que digan la conclusión de cada visual.
 
-**Lo que va a tener el dashboard.** Tres medidas (Ventas Totales, Cantidad de Ventas, Ticket Promedio), una tabla de monto por region, una tabla de monto por producto, dos tarjetas y un slicer por region -- todo en una sola página de reporte.
+**Ticket promedio.** Es el monto promedio por venta. Se calcula dividiendo dos medidas que ya tienes, en vez de con `AVERAGE`, para que siempre sea coherente con las otras dos tarjetas.
 
-**Práctica.** Arma el dashboard completo y confirma que region vende más y por cuanta diferencia.
+**Antes de darlo por terminado.** Haz clic en cada visual y en cada opción de la segmentación, y revisa que todo reaccione como esperas. Comprueba que la suma por región da el total de la tarjeta. Repasa la lista de la lección 32.
 
-1. Si ventas y productos no estan cargadas, cargalas de nuevo desde los archivos que ya descargaste en lecciones anteriores, y confirma que la relación por producto siga activa en la vista Modelo.
-2. Crea 3 medidas nuevas: Ventas Totales = SUM(ventas[monto]), Cantidad de Ventas = COUNTROWS(ventas), Ticket Promedio = AVERAGE(ventas[monto]).
-3. Agrega una tabla con region y Ventas Totales, y otra tabla con producto y Ventas Totales, ordenada de mayor a menor.
-4. Agrega dos tarjetas (Ventas Totales y Ticket Promedio) y un slicer con el campo region.
-5. Revisa el checklist de buenas practicas de diseno de la lección anterior antes de dar el dashboard por terminado.
+**Práctica.**
+
+1. Revisa en la vista Modelo que ventas y productos sigan relacionadas.
+2. Crea las tres medidas y dales formato.
+3. Arma la página con las tarjetas, los dos gráficos y la segmentación.
+4. Escribe un título con la conclusión en cada gráfico.
+5. Revisa el tablero con la segmentación en norte, en sur y sin selección.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="proyecto-final-dashboard-ventas"
-  pregunta={"Según tu tabla de monto por region, ¿qué region vende más y por cuánta diferencia?"}
-  respuesta={"norte, con 679.000 contra 655.000 de sur -- una diferencia de 24.000."}
+  enunciado={"Responde con los números de tu tablero."}
+  preguntas={[{"pregunta":"Sin selección en la segmentación, ¿cuánto muestra la tarjeta de Ticket Promedio?","opciones":["166.750","1.334.000","135.800","450.000"],"correcta":0,"explicacion":"1.334.000 dividido en 8 ventas."},{"pregunta":"¿Qué región vende más, y por cuánta diferencia?","opciones":["norte, por 24.000","sur, por 24.000","norte, por 679.000","Empatan"],"correcta":0,"explicacion":"679.000 frente a 655.000."},{"pregunta":"Con sur seleccionado en la segmentación, ¿cuánto muestra Ticket Promedio?","opciones":["166.750","218.333","135.800","655.000"],"correcta":1,"explicacion":"655.000 dividido en 3 ventas: el sur vende menos veces, pero productos más caros."},{"pregunta":"¿Y con norte seleccionado?","opciones":["135.800","218.333","166.750","679.000"],"correcta":0,"explicacion":"679.000 dividido en 5 ventas."}]}
+  pistas={["El ticket promedio cambia con la segmentación: es el total de la región dividido por sus ventas."]}
 />
+
+<Debrief>
+El norte vende más (679.000 contra 655.000), pero el sur tiene un ticket promedio mucho más alto (218.333 contra 135.800): vende menos veces, pero productos más caros. Un buen tablero deja ver ese tipo de matices, que un total solo esconde. Esa conclusión es un buen título para tu gráfico por región.
+</Debrief>

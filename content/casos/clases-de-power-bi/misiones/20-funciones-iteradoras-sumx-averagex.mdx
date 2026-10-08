@@ -1,39 +1,41 @@
 ---
 titulo: "Funciones iteradoras: SUMX y AVERAGEX"
-tiempo: 12
+tiempo: 18
 ---
 
 <Concepto>
-SUM y AVERAGE agregan una columna directo. Un iterador como SUMX o AVERAGEX recorre la tabla fila por fila, calcula una expresión en cada una, y recien al final suma o promedia esos resultados -- es la única forma de calcular algo que no existe como columna propia, como un margen.
+`SUM` suma una columna que ya existe. Pero a veces lo que quieres sumar no existe como columna: el margen de cada venta, por ejemplo, sale de restar el costo al precio, y esos datos están en productos. Las funciones iteradoras recorren una tabla fila por fila, calculan una expresión en cada fila y recién al final suman o promedian.
 
-En esta lección agregas costo_unitario a productos y calculas el margen total de todas las ventas con SUMX.
+```text
+SUMX(tabla, expresión por fila)
+AVERAGEX(tabla, expresión por fila)
+```
 
-**Por que hace falta un iterador aca.** El margen (precio_unitario menos costo_unitario) vive en productos, pero cada venta está en ventas. No existe una columna 'margen de esta venta' -- hay que calcularla fila por fila, y ahí es donde entra SUMX.
-
-**SUMX con RELATED.** SUMX(tabla, expresión) recorre tabla fila por fila y evalúa expresión en cada una. RELATED trae una columna de la tabla del lado 'uno' de una relación (productos) hacia la tabla del lado 'varios' (ventas).
+**RELATED: traer un dato de la tabla relacionada.** Dentro de `SUMX(ventas, ...)`, cada fila es una venta. `RELATED(productos[costo_unitario])` busca, por la relación, el costo del producto de esa venta. Funciona desde el lado varios (ventas) hacia el lado uno (productos).
 
 ```text
 Margen Total = SUMX(ventas, RELATED(productos[precio_unitario]) - RELATED(productos[costo_unitario]))
-```
-
-**AVERAGEX para el promedio.** AVERAGEX funciona igual que SUMX pero promedia en vez de sumar -- útil para saber el margen promedio por venta, no el total.
-
-```text
 Margen Promedio = AVERAGEX(ventas, RELATED(productos[precio_unitario]) - RELATED(productos[costo_unitario]))
 ```
 
-**Práctica.** Agrega costo_unitario a productos, crea Margen Total con SUMX y confirma cuánto da. Los datos están en [productos.csv](/casos/clases-de-power-bi/datos/productos.csv), también en «Datos del caso» de estas clases.
+**Cómo se lee.** "Para cada venta, calcula precio menos costo de su producto; después suma todo". Es lo mismo que agregar una columna de margen a ventas y sumarla, pero sin crear la columna.
 
-1. Elimina la tabla productos actual: clic derecho sobre productos en el panel Datos > 'Eliminar del modelo'.
-2. Descarga productos.csv (versión actualizada, con la columna costo_unitario) desde esta lección y cargala igual que en el modulo de Power Query.
-3. En la vista Modelo, vuelve a crear la relación entre ventas y productos por la columna producto.
-4. Crea una medida nueva en ventas: Margen Total = SUMX(ventas, RELATED(productos[precio_unitario]) - RELATED(productos[costo_unitario]))
-5. Arrastra Margen Total a una tarjeta y confirma el valor.
-6. Opcional: crea Margen Promedio = AVERAGEX(ventas, RELATED(productos[precio_unitario]) - RELATED(productos[costo_unitario])) y compara los dos valores.
+**Atención con este ejemplo.** El margen por unidad se suma una vez por venta porque en este archivo cada venta es de una unidad (el monto es igual al precio). Si una venta tuviera cantidad, la expresión sería `(precio - costo) * cantidad`.
+
+**Práctica.** Necesitas productos.csv con la columna costo_unitario, que ya venía en el archivo desde la lección 5: no hay que descargar nada nuevo. Revisa solo que la relación entre ventas y productos siga activa.
+
+1. Crea en ventas la medida Margen Total con SUMX y RELATED, como arriba.
+2. Crea Margen Promedio con AVERAGEX.
+3. Pon ambas en tarjetas, y arma una tabla visual con producto y Margen Total.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="funciones-iteradoras-sumx-averagex"
-  pregunta={"¿Cuánto da Margen Total sobre las 8 filas de ventas.csv, con el costo_unitario nuevo de productos.csv?"}
-  respuesta={"270.000 -- margen unitario de 70.000 (Notebook), 5.000 (Mouse), 10.000 (Teclado) y 50.000 (Monitor), cada uno multiplicado por sus 2 apariciones en ventas.csv."}
+  enunciado={"Responde con tus medidas de margen."}
+  preguntas={[{"pregunta":"¿Cuánto da Margen Total?","opciones":["135.000","270.000","1.334.000","1.064.000"],"correcta":1,"explicacion":"Márgenes de 70.000, 5.000, 10.000 y 50.000, cada uno dos veces. 135.000 sería sumar cada producto una sola vez."},{"pregunta":"¿Cuánto da Margen Promedio por venta?","opciones":["33.750","67.500","166.750","270.000"],"correcta":0,"explicacion":"270.000 repartido en 8 ventas."},{"pregunta":"En la tabla por producto, ¿qué producto deja más margen?","opciones":["Monitor","Notebook","Teclado","Mouse"],"correcta":1,"explicacion":"Notebook: 70.000 por venta, dos ventas, 140.000."}]}
+  pistas={["El margen de cada venta es el precio menos el costo de su producto; SUMX los suma venta por venta."]}
 />
+
+<Debrief>
+Margen Total es 270.000 y el promedio por venta, 33.750. El Notebook deja 140.000 de margen, más de la mitad del total. Fíjate en la diferencia con las ventas: el Notebook también lidera en ventas, pero su margen es solo un 15,6 % de su precio, mientras el Mouse deja un 41,7 %.
+</Debrief>

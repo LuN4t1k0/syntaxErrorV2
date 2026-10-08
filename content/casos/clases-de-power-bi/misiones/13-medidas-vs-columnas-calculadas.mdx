@@ -1,28 +1,35 @@
 ---
-titulo: "Medidas vs. columnas calculadas"
-tiempo: 8
+titulo: "Medidas y columnas calculadas"
+tiempo: 12
 ---
 
 <Concepto>
-DAX (Data Analysis Expressions) es el lenguaje de fórmulas de Power BI -- se usa tanto en el modelo como en las visualizaciones.
+DAX (Data Analysis Expressions) es el lenguaje de fórmulas de Power BI. Se usa de dos formas muy distintas, y elegir la correcta es la primera decisión al escribir una fórmula.
 
-Antes de escribir la primera fórmula, hay que distinguir entre dos formas de usar DAX: medidas y columnas calculadas.
-
-**Columna calculada.** Se calcula fila por fila y el resultado se guarda como una columna más de la tabla, ocupando espacio en el modelo. Se usa para valores que tienen sentido por fila, como concatenar dos columnas de texto.
+**Columna calculada: un valor por fila.** Se calcula una vez por cada fila y se guarda en la tabla como una columna más, igual que una fórmula rellenada hacia abajo en Excel. Sirve para valores que tienen sentido por fila y que quieres usar para agrupar o filtrar.
 
 ```text
-MargenUnitario = productos[precio_unitario] - productos[costo_unitario]
+Margen Unitario = productos[precio_unitario] - productos[costo_unitario]
 ```
 
-**Medida.** Se calcula al vuelo, en el momento en que se arrastra a un visual, y siempre resume varias filas a la vez (una suma, un promedio, un conteo). No ocupa espacio fijo en el modelo y se recalcula según el contexto del visual donde se usa. La gran mayoría del trabajo en Power BI se hace con medidas, no con columnas calculadas -- son más flexibles y más livianas.
+**Medida: un resumen que depende del contexto.** No se guarda en la tabla: se calcula en el momento, según lo que muestre el visual. La misma medida da el total general en una tarjeta, el total de cada región en una tabla por región y el de cada mes en un gráfico por mes.
 
 ```text
 Ventas Totales = SUM(ventas[monto])
 ```
+
+**Cómo elegir.** Si el resultado es un total, un promedio, un conteo o un porcentaje que se va a mostrar en visuales, es una medida. Si es un dato de cada fila que vas a usar como eje, leyenda o filtro (un tramo de precio, el mes de una fecha), es una columna calculada. La mayor parte del trabajo en Power BI se hace con medidas.
+
+**El error típico.** Crear una columna calculada con un total, como `SUM(ventas[monto])`, repite el total general en cada fila: no responde nada y ocupa espacio.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="medidas-vs-columnas-calculadas"
-  pregunta={"Si necesitas el total de ventas del mes, sumado y listo para poner en una tarjeta, ¿usarías una medida o una columna calculada?"}
-  respuesta={"Una medida -- un total agregado (una suma) es exactamente el caso de uso de una medida, no de una columna calculada, que solo tiene sentido para valores por fila."}
+  enunciado={"Para cada necesidad, elige si corresponde una medida o una columna calculada."}
+  preguntas={[{"pregunta":"El total de ventas, para mostrarlo en una tarjeta y en un gráfico por mes.","opciones":["Medida","Columna calculada"],"correcta":0,"explicacion":"Es un resumen que cambia según el visual: medida."},{"pregunta":"Un tramo de precio de cada producto (\"alto\" o \"bajo\"), para usarlo como leyenda de un gráfico.","opciones":["Medida","Columna calculada"],"correcta":1,"explicacion":"Es un valor por fila que se usa para agrupar: columna calculada."},{"pregunta":"Creas una columna calculada con SUM(ventas[monto]). ¿Qué ves en la tabla?","opciones":["El monto de cada venta","El total general repetido en todas las filas","Un error","El total de cada producto"],"correcta":1,"explicacion":"Una columna calculada evalúa la fórmula en cada fila, y SUM de toda la columna da siempre el mismo total."}]}
+  pistas={["¿El resultado es un resumen que cambia según el visual, o un dato de cada fila?"]}
 />
+
+<Debrief>
+Medidas para resumir, columnas calculadas para describir cada fila. Si dudas, empieza por una medida: es más liviana y se adapta sola a cada visual.
+</Debrief>

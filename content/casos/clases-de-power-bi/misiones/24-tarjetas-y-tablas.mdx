@@ -1,25 +1,31 @@
 ---
-titulo: "Tarjetas y tablas"
-tiempo: 10
+titulo: "Tarjetas, tablas y matrices"
+tiempo: 12
 ---
 
 <Concepto>
-Las tarjetas muestran un solo número grande -- perfectas para KPIs. Las tablas y matrices muestran el detalle fila por fila.
+No todo se cuenta con un gráfico. Las tarjetas muestran un número clave; las tablas y matrices, el detalle para quien quiere revisar los datos.
 
-En esta lección combinas ambas en un mismo lienzo.
+- **Tarjeta:** un único valor grande, como Ventas Totales. Va arriba del reporte, donde se mira primero.
+- **Tabla:** filas y columnas planas, como una planilla. Sirve para listar el detalle: cada producto con su total.
+- **Matriz:** una tabla que agrupa por filas **y** por columnas, como una tabla dinámica de Excel, con subtotales y totales automáticos. Por ejemplo, regiones en filas y productos en columnas.
 
-**Tarjeta vs. Tabla vs. Matriz.** Tarjeta: un único valor, sin desglose -- ideal para 'Ventas Totales' arriba de todo el reporte. Tabla: filas y columnas planas, como una grilla de Excel. Matriz: como una tabla, pero permite agrupar filas y columnas con jerarquías (por ejemplo, region y dentro de cada region, producto), con totales automáticos.
+**Leer una matriz.** Cada celda es el cruce de una fila y una columna: la venta de Monitor en el sur. La última columna y la última fila son los totales. La esquina inferior derecha es el total general.
 
-**Práctica.** Arma una matriz con region en filas y Ventas Totales como valor, y confirma que region tiene el total más alto.
+**Práctica.**
 
-1. Agrega una tarjeta con la medida Ventas Totales en la parte superior del lienzo.
-2. Debajo, agrega una tabla con las columnas producto, region y monto.
-3. Reemplaza esa tabla por una matriz: en filas pon region, en columnas producto, y como valor Ventas Totales.
-4. Observa como la matriz agrega totales por fila y columna automáticamente.
+1. Agrega una tarjeta con Ventas Totales arriba del lienzo.
+2. Agrega una matriz con region en filas, producto en columnas y Ventas Totales en valores.
+3. Revisa los totales de cada fila, de cada columna y el total general.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="tarjetas-y-tablas"
-  pregunta={"En una matriz con region en filas y Ventas Totales como valor, ¿qué fila muestra el total más alto: norte o sur?"}
-  respuesta={"norte, con 679.000 contra 655.000 de sur."}
+  enunciado={"Responde leyendo tu matriz."}
+  preguntas={[{"pregunta":"¿Qué región tiene el total más alto?","opciones":["norte, con 679.000","sur, con 655.000","Empatan","norte, con 1.334.000"],"correcta":0,"explicacion":"La columna de totales de la matriz muestra 679.000 para el norte y 655.000 para el sur."},{"pregunta":"¿Cuánto vendió el Monitor en el sur (la celda del cruce)?","opciones":["180.000","360.000","0","655.000"],"correcta":0,"explicacion":"Hubo un Monitor en el sur y otro en el norte."},{"pregunta":"¿Qué valor aparece en la esquina inferior derecha de la matriz?","opciones":["El total general, 1.334.000","El total del sur","El total del Notebook","Nada"],"correcta":0,"explicacion":"Es el cruce de la fila Total con la columna Total."}]}
+  pistas={["Cada celda de la matriz es el cruce de una región y un producto."]}
 />
+
+<Debrief>
+El norte vende 679.000 y el sur 655.000. La matriz muestra además de dónde sale la diferencia de 24.000: las dos regiones venden un Notebook, un Teclado y un Monitor, y el norte suma además dos Mouse. Una matriz deja ver ese detalle que una tarjeta resume.
+</Debrief>

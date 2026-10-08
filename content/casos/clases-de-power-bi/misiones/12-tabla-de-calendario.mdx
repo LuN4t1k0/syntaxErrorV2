@@ -1,34 +1,42 @@
 ---
 titulo: "Tabla de calendario"
-tiempo: 10
+tiempo: 18
 ---
 
 <Concepto>
-Una tabla de fechas (o calendario) es una dimensión especial: en vez de describir productos o clientes, describe el tiempo. Sin ella, funciones de inteligencia de tiempo como TOTALYTD no tienen de donde tomar un rango continuo de fechas.
+Una tabla de calendario es una dimensión que describe el tiempo: una fila por cada día de un período. Las funciones de tiempo de DAX, como el acumulado del año, la necesitan para recorrer todos los días, incluidos los que no tuvieron ventas.
 
-En esta lección creas una tabla de calendario y la conectas a ventas_sucio, ya limpia desde el modulo anterior.
+**Por qué no basta la fecha de ventas.** La columna fecha de ventas_sucio solo tiene los días en que hubo ventas. Marzo, por ejemplo, no aparece. Para acumular o comparar períodos, Power BI necesita un calendario sin huecos.
 
-**Por que no alcanza con la columna fecha de ventas.** La columna fecha de ventas_sucio solo tiene los días en que hubo una venta -- si un día no vendiste nada, ese día no existe en la tabla. TOTALYTD necesita recorrer todos los días del rango, incluso los que no tuvieron ventas, para acumular correctamente.
-
-**Crear la tabla con CALENDAR.** En el panel Datos, botón 'Nueva tabla' (pestaña Modelado), y escribe una fórmula DAX con CALENDAR indicando un rango explicito de fechas -- no CALENDARAUTO, que toma el rango de todas las columnas de fecha del modelo (incluida ventas, de marzo) y podría darte un resultado distinto según que otras tablas tengas cargadas.
+**Crear la tabla con CALENDAR.** En la pestaña Modelado, "Nueva tabla", y una fórmula DAX con el rango de fechas:
 
 ```text
 Calendario = CALENDAR(DATE(2026,1,1), DATE(2026,5,31))
 ```
 
-**Marcarla como tabla de fechas.** Con Calendario seleccionada en el panel Datos, pestaña 'Herramientas de tabla' > 'Marcar como tabla de fechas' > elegir la columna Date. Esto le avisa a Power BI que esta tabla es la que deben usar las funciones de inteligencia de tiempo. Por último, en la vista Modelo, arrastra Date (de Calendario) hasta fecha (de ventas_sucio) para crear la relación.
+También existe `CALENDARAUTO()`, que toma el rango de todas las fechas del modelo. Aquí usamos un rango explícito para saber exactamente qué días tiene la tabla.
 
-**Práctica.** Crea la tabla Calendario con el rango exacto indicado y confirma cuántas filas tiene.
+**Marcarla como tabla de fechas.** Con Calendario seleccionada: "Herramientas de tabla" > "Marcar como tabla de fechas" > elegir la columna Date. Así las funciones de tiempo saben qué tabla usar.
 
-1. Con ventas_sucio ya limpia y cargada, ve al panel Datos y haz clic en 'Nueva tabla' (pestaña Modelado).
-2. Escribe la fórmula: Calendario = CALENDAR(DATE(2026,1,1), DATE(2026,5,31))
-3. Presiona Enter -- la tabla Calendario aparece en el panel Datos con una sola columna Date.
-4. Con Calendario seleccionada, ve a 'Herramientas de tabla' > 'Marcar como tabla de fechas' y confirma la columna Date.
-5. En la vista Modelo, arrastra Date (de Calendario) hasta fecha (de ventas_sucio) para crear la relación.
+**Relacionarla.** En la vista Modelo, arrastra Date de Calendario hasta fecha de ventas_sucio. Calendario es el lado uno (cada día una vez) y ventas_sucio el lado varios.
+
+**Práctica.**
+
+1. Con ventas_sucio limpia y cargada (lección 7), ve a Modelado > 'Nueva tabla'.
+2. Escribe: Calendario = CALENDAR(DATE(2026,1,1), DATE(2026,5,31)) y presiona Enter.
+3. Revisa la tabla en la vista Datos y cuenta sus filas.
+4. Marca Calendario como tabla de fechas con la columna Date.
+5. En la vista Modelo, relaciona Date de Calendario con fecha de ventas_sucio.
+6. En la vista Informe, arma una tabla visual con el mes de Date y la suma de monto de ventas_sucio.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="tabla-de-calendario"
-  pregunta={"¿Cuántas filas tiene la tabla Calendario generada con CALENDAR(DATE(2026,1,1), DATE(2026,5,31))?"}
-  respuesta={"151 filas -- una por cada día entre el 1 de enero y el 31 de mayo de 2026 inclusive (31+28+31+30+31 días; 2026 no es bisiesto)."}
+  enunciado={"Responde con la tabla Calendario que creaste."}
+  preguntas={[{"pregunta":"¿Cuántas filas tiene la tabla Calendario?","opciones":["5, una por mes","20, una por venta","151, una por día","365, un año completo"],"correcta":2,"explicacion":"31 + 28 + 31 + 30 + 31 días, del 1 de enero al 31 de mayo de 2026 (no es bisiesto)."},{"pregunta":"En ventas_sucio no hay ninguna venta de marzo. ¿Cuántos días de marzo tiene la tabla Calendario?","opciones":["0, porque no hubo ventas","31","Solo los días con ventas de otros meses","1"],"correcta":1,"explicacion":"El calendario tiene todos los días del rango, haya o no ventas: eso es lo que lo hace continuo."},{"pregunta":"En la relación entre Calendario y ventas_sucio, ¿cuál es el lado uno?","opciones":["ventas_sucio","Calendario","Las dos","Ninguna"],"correcta":1,"explicacion":"Cada día aparece una sola vez en Calendario y puede repetirse en ventas."}]}
+  pistas={["La vista Datos muestra la cantidad de filas de la tabla seleccionada, abajo."]}
 />
+
+<Debrief>
+151 días, sin huecos: marzo tiene sus 31 días aunque no hubo ventas. En el visual por mes, Power BI oculta por defecto los meses sin datos; si activas "Mostrar elementos sin datos" en el campo del eje, marzo aparece vacío. Ese calendario continuo es lo que permite que un acumulado o una comparación entre meses funcionen bien.
+</Debrief>

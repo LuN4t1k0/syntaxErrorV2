@@ -1,25 +1,37 @@
 ---
-titulo: "Slicers"
-tiempo: 9
+titulo: "Segmentaciones de datos (slicers)"
+tiempo: 10
 ---
 
 <Concepto>
-Un slicer es un filtro visual que el usuario del reporte puede manipular directamente -- un botón, una lista o un rango, sin tocar el modelo.
+Una segmentación de datos es un filtro que queda a la vista en el reporte: una lista, unos botones o un rango de fechas. Quien mira el reporte la usa para elegir qué ver, sin tocar el modelo ni las fórmulas.
 
-En esta lección agregas un slicer de region a tu reporte.
+**Agregar una segmentación.** En el panel Visualizaciones, el ícono "Segmentación de datos" crea el visual. Arrastra una columna a su campo, por ejemplo region, y aparece una lista con casillas.
 
-**Agregar un slicer.** En el panel de Visualizaciones, elige el icono de 'Segmentación de datos' (Slicer) y arrastra la columna region al campo del visual. Por defecto aparece como una lista con casillas de verificación.
+**Qué filtra.** Una segmentación filtra todos los visuales de la página que estén relacionados con esa columna. Si eliges norte, la tarjeta, la tabla y el gráfico muestran solo el norte: el mismo resultado que obtuviste con `CALCULATE` en la lección 17, pero elegido por quien mira el reporte.
 
-**Práctica.** Agrega un slicer de region y confirma que valor muestra Ventas Totales al seleccionar 'norte'.
+**Formatos útiles.**
+- Para pocas opciones, los **botones** (en el formato del visual, estilo "Mosaico") ahorran clics.
+- Para fechas, el estilo **entre** muestra un rango con dos extremos.
+- Mantén Ctrl presionado para elegir varias opciones a la vez.
 
-1. En el lienzo, agrega un nuevo visual de tipo 'Segmentación de datos' (Slicer).
-2. Arrastra la columna region al campo de valores del slicer.
-3. Haz clic en 'norte' dentro del slicer y observa como se actualizan la tarjeta de Ventas Totales y el gráfico de columnas.
-4. Haz clic de nuevo en 'norte' para deseleccionarlo y volver a ver todos los datos.
+**Un filtro a la vista.** A diferencia de los filtros del panel de filtros, la segmentación está en el lienzo: quien lee sabe qué se está mostrando. Por eso conviene que las segmentaciones importantes estén arriba, junto a las tarjetas.
+
+**Práctica.**
+
+1. Agrega una segmentación de datos con la columna region.
+2. Elige norte y mira cómo cambian la tarjeta de Ventas Totales y la matriz.
+3. Cambia el estilo de la segmentación a botones (Mosaico).
+4. Elige sur, y después deselecciona para volver a ver todo.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="slicers"
-  pregunta={"Al seleccionar 'norte' en un slicer de region, ¿qué valor muestra la tarjeta de Ventas Totales?"}
-  respuesta={"679.000 -- el mismo valor que la medida Ventas Norte calculada con CALCULATE en el modulo 5."}
+  enunciado={"Responde usando tu segmentación de región."}
+  preguntas={[{"pregunta":"Con norte seleccionado, ¿qué muestra la tarjeta de Ventas Totales?","opciones":["1.334.000","679.000","655.000","5"],"correcta":1,"explicacion":"La segmentación filtra la tarjeta: solo las ventas del norte."},{"pregunta":"Con sur seleccionado, ¿cuántas ventas cuenta Cantidad de Ventas?","opciones":["3","5","8","2"],"correcta":0,"explicacion":"El sur tiene 3 de las 8 ventas."},{"pregunta":"Con norte seleccionado, ¿qué pasa con la medida Ventas Norte que creaste con CALCULATE?","opciones":["Sigue mostrando 679.000","Muestra 0","Muestra 1.334.000","Da error"],"correcta":0,"explicacion":"El filtro de la segmentación y el de CALCULATE piden lo mismo: el norte."}]}
+  pistas={["Mira las tarjetas después de cada selección."]}
 />
+
+<Debrief>
+La segmentación pone el filtro en manos de quien lee el reporte. Con sur seleccionado, Ventas Norte mostraría vacío o 0, porque los dos filtros se contradicen: es un buen ejemplo de cómo se combinan el contexto del reporte y el de la fórmula.
+</Debrief>

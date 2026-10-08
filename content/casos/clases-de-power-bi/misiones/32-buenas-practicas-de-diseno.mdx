@@ -1,20 +1,31 @@
 ---
-titulo: "Buenas practicas de diseno"
-tiempo: 7
+titulo: "Buenas prácticas de diseño"
+tiempo: 12
 ---
 
 <Concepto>
-Un reporte técnicamente correcto puede seguir siendo difícil de usar si el diseno no ayuda a encontrar la información rápido.
+Un reporte correcto puede ser difícil de usar si el diseño no ayuda a encontrar lo importante. Estas prácticas simples marcan una gran diferencia.
 
-Estas son algunas practicas simples que marcan una diferencia grande.
+**Empieza por la pregunta.** Antes de agregar un visual, escribe qué pregunta de negocio responde: "¿qué región vende más?", "¿cómo van las ventas este mes?". Si no responde ninguna, sobra.
 
-**Jerarquía visual.** Los KPIs más importantes (tarjetas) van arriba o a la izquierda, donde el ojo mira primero. Los detalles (tablas) van más abajo, para quien quiera profundizar.
+**Jerarquía visual.** Las tarjetas con los números clave van arriba a la izquierda, donde la vista empieza. Después, los gráficos que explican esos números. Al final, las tablas de detalle para quien quiere revisar.
 
-**Menos es más.** Un reporte con 15 gráficos distintos en una sola página es más difícil de leer que uno con 4 o 5 bien elegidos. Cada visual debería responder una pregunta de negocio concreta, no simplemente mostrar todos los datos disponibles. Usar colores con moderación y consistencia (por ejemplo, siempre el mismo color para 'norte' en todos los visuales) ayuda a que el reporte se lea de un vistazo.
+**Menos es más.** Una página con 4 o 5 visuales bien elegidos se lee mejor que una con 15. Si necesitas más, crea otra página con un tema propio, o usa drill-through.
+
+**Colores con significado.** Usa pocos colores y siempre igual: si el norte es azul en un gráfico, que sea azul en todos. Reserva el rojo para lo que requiere atención.
+
+**Títulos que dicen algo.** "Ventas por región" describe; "El norte vende 4 % más que el sur" informa. Un título que dice la conclusión ahorra trabajo a quien lee.
+
+**Revisar como lo vería otra persona.** Antes de publicar: ¿se entiende sin explicación? ¿Los números de las tarjetas cuadran con los de las tablas? ¿Los filtros visibles dicen qué se está mostrando?
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="buenas-practicas-de-diseno"
-  pregunta={"Pensando en el reporte que armaste durante el curso, ¿qué visual sacarías si tuvieras que dejar solo 4?"}
-  respuesta={"No hay una única respuesta correcta -- lo importante es identificar cuál de los visuales aporta menos a la pregunta de negocio principal del reporte y estar dispuesto a sacarlo, en vez de acumular visuales solo porque el dato esta disponible."}
+  enunciado={"Aplica las prácticas de diseño a decisiones concretas."}
+  preguntas={[{"pregunta":"Tu página tiene 12 visuales y quien la lee no sabe dónde mirar. ¿Qué haces primero?","opciones":["Agregar colores más llamativos","Quedarte con los visuales que responden la pregunta principal y mover el resto a otra página","Achicar todos los visuales","Agregar más tarjetas"],"correcta":1,"explicacion":"Cada visual debería responder una pregunta concreta; lo demás distrae."},{"pregunta":"¿Dónde va la tarjeta con las ventas totales del mes?","opciones":["Arriba a la izquierda","Abajo, al final de la página","En una página aparte","Dentro de la tabla de detalle"],"correcta":0,"explicacion":"Es donde la vista empieza a leer: ahí va lo más importante."},{"pregunta":"¿Cuál es el mejor título para un gráfico de ventas por región?","opciones":["Gráfico 1","Ventas por región","El norte vende 4 % más que el sur","Región"],"correcta":2,"explicacion":"Un título que dice la conclusión informa, no solo describe."}]}
+  pistas={["Piensa en quien abre el reporte por primera vez: ¿qué necesita ver primero?"]}
 />
+
+<Debrief>
+Pregunta primero, lo importante arriba, pocos visuales y títulos que concluyen. Antes del proyecto final, repasa tu reporte con estas preguntas y saca lo que no ayude.
+</Debrief>

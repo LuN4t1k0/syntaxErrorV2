@@ -1,27 +1,36 @@
 ---
-titulo: "Drill-down y drill-through"
-tiempo: 12
+titulo: "Explorar en profundidad: drill-down y drill-through"
+tiempo: 15
 ---
 
 <Concepto>
-Drill-down permite bajar de nivel dentro de una jerarquía en el mismo visual (por ejemplo, de region a producto). Drill-through permite saltar a una página distinta, filtrada por el elemento en el que hiciste clic.
+Dos formas de pasar de lo general al detalle. Se parecen en el nombre, pero funcionan distinto.
 
-Son dos formas distintas de 'profundizar' en un dato, y en esta lección probas ambas.
+**Drill-down: bajar de nivel en el mismo visual.** Si un gráfico tiene una jerarquía en el eje (por ejemplo, region y debajo producto), puedes bajar de las regiones a los productos de cada región sin salir del gráfico. Las flechas que aparecen arriba del visual al pasar el mouse controlan los niveles:
+- flecha hacia abajo: activa el modo de exploración; después, al hacer clic en una barra, se baja a su detalle;
+- doble flecha: baja todas las barras al siguiente nivel;
+- flecha hacia arriba: vuelve al nivel anterior.
 
-**Drill-down.** Se activa arrastrando dos o más campos jerárquicos al eje de un visual (por ejemplo, region y luego producto) y usando las flechas de drill que aparecen en la esquina superior del visual al pasar el mouse.
+**Drill-through: saltar a una página de detalle.** Creas una página dedicada a un tema, por ejemplo "Detalle de producto", y pones el campo producto en su sección "Obtener detalles" (Drill through). Desde cualquier otra página, clic derecho en un producto > "Obtener detalles" > esa página: llegas a la página de detalle, ya filtrada por ese producto. Aparece un botón para volver.
 
-**Drill-through.** Se configura creando una página nueva y arrastrando un campo (por ejemplo, producto) al pozo 'Drill through' del panel de campos de esa página -- luego, clic derecho sobre un valor de producto en cualquier otro visual muestra la opcion 'Ir a' esa página.
+**Cuándo usar cada uno.** Drill-down para explorar una jerarquía sin cambiar de lugar (región, producto; año, mes, día). Drill-through para una página completa de detalle con varios visuales sobre un elemento.
 
-**Práctica.** Configura drill-down y drill-through y confirma la diferencia principal entre ambos.
+**Práctica.**
 
-1. En el gráfico de columnas, arrastra region al eje y luego arrastra producto debajo de region en el mismo campo (para crear una jerarquía).
-2. Pasa el mouse sobre el gráfico y haz clic en la flecha doble de 'Bajar un nivel en la jerarquía' para ver el detalle por producto dentro de cada region.
-3. Crea una página nueva y arrastra producto al pozo 'Drill through' del panel de campos.
-4. Vuelve a la página anterior, haz clic derecho sobre una barra del gráfico y selecciona 'Ir a' > la página nueva para ver el drill-through en acción.
+1. En el gráfico de columnas, pon region en el eje y, debajo, producto.
+2. Activa la exploración (flecha hacia abajo) y haz clic en la columna del sur.
+3. Vuelve al nivel anterior con la flecha hacia arriba.
+4. Crea una página nueva 'Detalle de producto' con una tarjeta de Ventas Totales y una tabla con fecha y monto, y pon producto en 'Obtener detalles'.
+5. Vuelve a la primera página, haz clic derecho en una barra de producto > Obtener detalles > Detalle de producto.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="drill-down-y-drill-through"
-  pregunta={"¿Qué diferencia principal hay entre drill-down y drill-through?"}
-  respuesta={"Drill-down baja de nivel dentro del mismo visual y la misma página; drill-through salta a una página distinta, filtrada por el elemento seleccionado."}
+  enunciado={"Responde con tus pruebas de exploración."}
+  preguntas={[{"pregunta":"Al bajar a la región sur, ¿cuántos productos aparecen?","opciones":["1","2","3","4"],"correcta":2,"explicacion":"En el sur se vendieron Teclado, Monitor y Notebook; el Mouse solo se vendió en el norte."},{"pregunta":"¿Cuál es la diferencia principal entre drill-down y drill-through?","opciones":["No hay diferencia.","Drill-down baja de nivel en el mismo visual; drill-through salta a otra página filtrada por el elemento elegido.","Drill-down solo funciona con fechas.","Drill-through borra los filtros."],"correcta":1,"explicacion":"Uno explora una jerarquía en el lugar; el otro lleva a una página de detalle."},{"pregunta":"Haces drill-through desde la barra del Notebook. ¿Qué muestra la tarjeta de la página de detalle?","opciones":["1.334.000","900.000","450.000","Nada"],"correcta":1,"explicacion":"La página de detalle llega filtrada por el Notebook."}]}
+  pistas={["En el sur, revisa qué productos aparecen al bajar de nivel."]}
 />
+
+<Debrief>
+Al bajar al sur aparecen tres productos: el Mouse solo se vendió en el norte. La página de detalle llega filtrada por el producto que elegiste. Drill-down para recorrer niveles; drill-through para ir a una página de detalle.
+</Debrief>

@@ -1,24 +1,31 @@
 ---
 titulo: "Qué es Power Query"
-tiempo: 7
+tiempo: 10
 ---
 
 <Concepto>
-Power Query es el motor de Power BI para limpiar y transformar datos antes de que lleguen al modelo.
+Power Query es la parte de Power BI que limpia y transforma los datos **antes** de que lleguen al modelo: cambiar tipos de dato, quitar columnas, filtrar filas, corregir textos, combinar tablas. Es el mismo motor que existe en Excel (pestaña Datos > Obtener y transformar).
 
-Cada paso que aplicas (quitar una columna, cambiar un tipo de dato, filtrar filas) queda registrado como un paso reproducible.
+**Pasos que se repiten solos.** Cada cosa que haces con un clic queda registrada como un paso en la lista "Pasos aplicados". Cuando llegue el archivo del mes siguiente, Power BI repite todos los pasos automáticamente al actualizar: limpias una vez y queda limpio para siempre. Es la diferencia con corregir a mano en Excel cada mes.
 
-**El lenguaje M.** Detras de cada transformación que haces con clics, Power Query genera código en un lenguaje llamado M. No hace falta escribirlo a mano para este curso -- el editor visual genera el M por ti. Ejemplo de cómo se ve un paso de M (filtrar una columna), aunque en este curso lo vas a hacer siempre con clics:
+**El lenguaje M.** Detrás de cada clic, Power Query escribe código en un lenguaje llamado M. No necesitas escribirlo en este curso, pero conviene reconocerlo cuando lo veas en la barra de fórmulas:
 
 ```text
 = Table.SelectRows(ventas, each [region] = "norte")
 ```
 
-**Por que transformar antes de cargar.** Corregir tipos de dato, quitar columnas que no sirven o filtrar filas irrelevantes en Power Query es mucho más liviano que hacerlo después con fórmulas DAX -- y mantiene el modelo final limpio.
+**Por qué limpiar antes de cargar.** Si una región viene escrita como "Norte" y como "norte", y no lo corriges en Power Query, cada gráfico, medida y filtro va a mostrar dos regiones distintas. Corregirlo en el origen lo arregla una vez para todo el reporte. Corregirlo después con fórmulas obliga a repetir el arreglo en cada lugar donde se use esa columna.
+
+**Dónde se abre.** Pestaña Inicio > "Transformar datos". O, al cargar un archivo, el botón "Transformar datos" en vez de "Cargar".
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="que-es-power-query"
-  pregunta={"¿Qué preferirías: corregir un error de tipeo en los datos antes de cargarlos a Power BI, o después con una fórmula? ¿Por qué?"}
-  respuesta={"Siempre conviene corregirlo antes, en Power Query -- así el error no se arrastra a cada medida o visual que use esa columna, y el problema se resuelve una sola vez en el origen."}
+  enunciado={"Responde pensando en cómo trabajarías con un archivo que llega todos los meses."}
+  preguntas={[{"pregunta":"Un archivo trae la región escrita como \"Norte\" y \"norte\". ¿Dónde conviene corregirlo?","opciones":["En Power Query, antes de cargar: se corrige una vez para todo el reporte.","En cada gráfico, con un filtro.","Con una medida DAX distinta para cada caso.","No hace falta: Power BI las junta solo."],"correcta":0,"explicacion":"Corregir en el origen evita repetir el arreglo en cada visual y medida."},{"pregunta":"El mes que viene llega un archivo nuevo con el mismo formato. ¿Qué pasa con la limpieza que hiciste en Power Query?","opciones":["Hay que repetirla a mano.","Se aplica sola al actualizar, porque cada paso quedó registrado.","Se pierde y hay que crear un reporte nuevo.","Solo se aplica si el archivo tiene las mismas filas."],"correcta":1,"explicacion":"Los pasos aplicados se repiten automáticamente sobre los datos nuevos."}]}
+  pistas={["Piensa en qué pasa el mes siguiente, cuando llegue un archivo nuevo."]}
 />
+
+<Debrief>
+Power Query limpia en el origen y recuerda cada paso. Esa es su gran ventaja frente a corregir datos a mano: el trabajo de limpieza se hace una vez y se repite solo cada vez que llegan datos nuevos.
+</Debrief>

@@ -1,25 +1,32 @@
 ---
 titulo: "Crear relaciones"
-tiempo: 10
+tiempo: 12
 ---
 
 <Concepto>
-Si Power BI no detecto la relación automáticamente (o si la borraste para practicar), se crea a mano arrastrando una columna sobre la otra.
+Una relación le dice a Power BI que la columna producto de ventas y la columna producto de productos hablan de lo mismo. Con ella, un gráfico puede mostrar el monto vendido (de ventas) por categoría (de productos), aunque esos datos estén en tablas distintas.
 
-Una relación bien definida es lo que le permite a una medida de ventas 'saber' a que categoria de producto pertenece cada fila.
+**Crear una relación a mano.** En la vista Modelo, arrastra la columna producto de ventas y suéltala sobre la columna producto de productos. Power BI abre un cuadro con lo que detectó. También se puede crear desde Modelado > "Administrar relaciones" > "Nueva".
 
-**Crear una relación manualmente.** En la vista Modelo, se arrastra la columna producto de la tabla ventas hacia la columna producto de la tabla productos. Power BI abre un dialogo de confirmación con el tipo de relación detectado. También se puede crear desde la pestaña Modelado > 'Administrar relaciones' > 'Nueva'.
+**Uno a varios.** En productos, cada producto aparece una sola vez: es el lado **uno**. En ventas, el mismo producto aparece en muchas filas: es el lado **varios**. Power BI muestra un 1 y un asterisco (*) en los extremos de la línea.
 
-**Práctica.** Crea la relación entre productos y ventas y después confirma cuál es la tabla del lado 'uno'.
+**Cómo saber si funciona.** Arma una tabla visual con una columna de productos (categoria) y una de ventas (monto). Si la relación está bien, el monto se reparte por categoría. Si no existe o está mal, aparece el mismo total repetido en todas las filas: la señal clásica de una relación que falta.
 
-1. En la vista Modelo, si no existe una línea entre ventas y productos, arrastra la columna producto de ventas hasta la columna producto de productos.
-2. En el dialogo que aparece, confirma que la relación sea 'Uno a varios' desde productos hacia ventas, y haz clic en Aceptar.
-3. Verifica que ahora aparezca una línea conectando ambas tablas en el lienzo.
-4. Ve a la vista Informe y arrastra categoria (de productos) junto a monto (de ventas) a una tabla nueva -- si la relación funciona, vas a ver el monto total agrupado por categoria.
+**Práctica.**
+
+1. En la vista Modelo, si no hay línea entre ventas y productos, arrastra producto de ventas hasta producto de productos.
+2. Confirma que la relación sea 'Varios a uno' de ventas a productos (o 'Uno a varios', según el orden) y haz clic en Aceptar.
+3. Ve a la vista Informe y arma una tabla visual con categoria (de productos) y monto (de ventas).
+4. Elimina la relación por un momento (clic derecho en la línea > Eliminar), mira qué le pasa a la tabla visual y vuelve a crearla.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="crear-relaciones"
-  pregunta={"¿Cuál es la tabla 'del lado uno' de la relación entre productos y ventas (la que tiene un valor único por producto)?"}
-  respuesta={"productos -- cada producto aparece una sola vez ahí, mientras que en ventas puede repetirse en varias filas."}
+  enunciado={"Responde con lo que viste al crear y borrar la relación."}
+  preguntas={[{"pregunta":"¿Cuál es la tabla del lado 'uno' de la relación?","opciones":["ventas, porque tiene más filas","productos, porque cada producto aparece una sola vez","Las dos son del lado uno","Depende del gráfico"],"correcta":1,"explicacion":"El lado uno tiene un valor único por fila; en ventas, el mismo producto se repite."},{"pregunta":"Con la relación creada, ¿cuánto vendió la categoría Tecnologia en la tabla visual?","opciones":["1.334.000","900.000","0","655.000"],"correcta":0,"explicacion":"Todas las ventas son de productos de Tecnologia, así que su total es el total general."},{"pregunta":"Sin la relación, ¿qué muestra la tabla visual en la fila de cada categoría?","opciones":["Un error","El mismo total general repetido en todas las categorías","Cero en todas","Solo la categoría Tecnologia"],"correcta":1,"explicacion":"Sin relación, Power BI no sabe repartir el monto por categoría y repite el total. Es la señal de que falta una relación."}]}
+  pistas={["Fíjate en lo que cambia en la tabla visual cuando borras la línea."]}
 />
+
+<Debrief>
+Productos es el lado uno, ventas el lado varios. Recuerda la señal que viste al borrar la relación: el mismo total repetido en todas las filas. Cuando te pase en un reporte, lo primero que hay que revisar es la vista Modelo.
+</Debrief>

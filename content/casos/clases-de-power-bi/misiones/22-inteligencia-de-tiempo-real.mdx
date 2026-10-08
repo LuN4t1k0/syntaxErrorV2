@@ -1,35 +1,45 @@
 ---
-titulo: "Inteligencia de tiempo real"
-tiempo: 12
+titulo: "Inteligencia de tiempo"
+tiempo: 18
 ---
 
 <Concepto>
-Con la tabla Calendario ya relacionada a ventas_sucio, puedes usar las funciones de inteligencia de tiempo de DAX de verdad: acumulados del ano y comparaciones contra el periodo anterior.
+Con la tabla Calendario relacionada y marcada como tabla de fechas, DAX puede responder preguntas de tiempo: cuánto llevamos vendido en el año, cuánto vendimos el mes anterior, cuánto creció un mes respecto al otro.
 
-Una función que vas a encontrar en cualquier tutorial de Power BI, SAMEPERIODLASTYEAR, no se practica en esta lección a proposito: necesita datos de dos anos distintos para comparar, y este dataset cubre solo 2026.
-
-**TOTALYTD: acumulado del ano.** TOTALYTD(expresión, columna_fecha) acumula la expresión desde el primer día del ano hasta la fecha de cada fila del contexto -- usa la columna Date de la tabla Calendario, no la fecha de ventas_sucio.
+**TOTALYTD: acumulado del año.** Suma desde el 1 de enero hasta la fecha de cada fila del visual. Usa la columna Date del calendario, no la fecha de ventas.
 
 ```text
 Ventas Acumuladas = TOTALYTD(SUM(ventas_sucio[monto]), Calendario[Date])
 ```
 
-**DATEADD: comparar contra el periodo anterior.** DATEADD(columna_fecha, -1, MONTH) desplaza el contexto de fecha un mes hacia atras -- combinado con CALCULATE, sirve para comparar el mes actual contra el anterior.
+**DATEADD: el período anterior.** Dentro de `CALCULATE`, desplaza las fechas del contexto. Con -1 y MONTH, cada mes muestra lo que se vendió el mes anterior.
 
 ```text
 Ventas Mes Anterior = CALCULATE(SUM(ventas_sucio[monto]), DATEADD(Calendario[Date], -1, MONTH))
 ```
 
-**Práctica.** Crea las medidas Ventas Acumuladas y Ventas Mes Anterior y confirma sus valores para abril y mayo.
+**La variación.** Con las dos medidas, la diferencia es una resta y el crecimiento, una división (con `DIVIDE`, porque el mes anterior puede estar vacío):
 
-1. Crea una medida en ventas_sucio: Ventas Acumuladas = TOTALYTD(SUM(ventas_sucio[monto]), Calendario[Date])
-2. Crea una segunda medida: Ventas Mes Anterior = CALCULATE(SUM(ventas_sucio[monto]), DATEADD(Calendario[Date], -1, MONTH))
-3. Arrastra la columna Date de Calendario (o el mes extraido con MONTH) junto con Ventas Acumuladas a una tabla visual, y confirma el acumulado a fines de abril.
-4. Agrega Ventas Mes Anterior a la misma tabla y compara mayo contra el mes anterior (abril).
+```text
+Variación Mensual = SUM(ventas_sucio[monto]) - [Ventas Mes Anterior]
+```
+
+**Por qué no SAMEPERIODLASTYEAR.** Compara contra el mismo período del año anterior, y estos datos son solo de 2026. Es la misma idea que DATEADD con -1 y YEAR.
+
+**Práctica.**
+
+1. Crea en ventas_sucio las medidas Ventas Acumuladas y Ventas Mes Anterior.
+2. Arma una tabla visual con el mes de Calendario[Date], la suma de monto, Ventas Acumuladas y Ventas Mes Anterior.
+3. Revisa los valores de abril y mayo.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="inteligencia-de-tiempo-real"
-  pregunta={"¿Cuánto da Ventas Acumuladas al 30 de abril de 2026, y cuál es la diferencia entre mayo y el mes anterior según Ventas Mes Anterior?"}
-  respuesta={"Acumulado a fin de abril: 2.488.000 (enero + febrero + abril). Mayo (847.000) contra el mes anterior, abril (692.000): una diferencia de +155.000."}
+  enunciado={"Responde con tu tabla mensual."}
+  preguntas={[{"pregunta":"¿Cuánto muestra Ventas Acumuladas en abril?","opciones":["692.000","1.796.000","2.488.000","3.335.000"],"correcta":2,"explicacion":"Enero (1.117.000) + febrero (679.000) + abril (692.000). Marzo no suma nada."},{"pregunta":"¿Qué muestra Ventas Mes Anterior en la fila de mayo?","opciones":["847.000","692.000","0","2.488.000"],"correcta":1,"explicacion":"El mes anterior a mayo es abril."},{"pregunta":"¿Y en la fila de abril?","opciones":["679.000, lo de febrero","Vacío, porque en marzo no hubo ventas","692.000","Un error"],"correcta":1,"explicacion":"DATEADD mira exactamente un mes atrás: marzo, que no tiene ventas."}]}
+  pistas={["El acumulado del año suma todos los meses desde enero hasta el de la fila."]}
 />
+
+<Debrief>
+El acumulado llega a 2.488.000 en abril y a 3.335.000 en mayo. Mayo vendió 847.000 frente a 692.000 de abril: una variación de +155.000. Abril no tiene mes anterior con ventas: DATEADD no salta meses vacíos, compara exactamente con el mes calendario anterior.
+</Debrief>

@@ -1,31 +1,36 @@
 ---
 titulo: "Limpiar datos reales"
-tiempo: 12
+tiempo: 20
 ---
 
 <Concepto>
-Hasta ahora trabajaste con datasets ya prolijos. En esta lección cargas un archivo real de ventas con tres problemas típicos: texto mal escrito, filas duplicadas y valores vacios.
+Hasta ahora trabajaste con archivos ordenados. En esta lección cargas un archivo de ventas como los que llegan de verdad, con los tres problemas más comunes: texto escrito de distintas formas, filas duplicadas y valores vacíos.
 
-Estos problemas rara vez vienen solos -- y el orden en que los corregis importa.
+**El orden importa.** Primero se normaliza el texto, después se quitan duplicados y al final se quitan las filas sin datos. Si buscas duplicados antes de normalizar, dos filas que solo se diferencian en "Norte" y "norte" no se reconocen como iguales y se te escapan.
 
-**Por que el orden importa.** Si primero buscas duplicados y después normalizas texto, puedes dejar pasar duplicados escondidos por una diferencia de mayúsculas (Norte vs norte). Por eso conviene: primero normalizar texto, después quitar duplicados exactos, y recien al final descartar las filas con datos faltantes que no se pueden corregir.
+**Normalizar texto.** Clic derecho en el encabezado de region > Transformar > "minúsculas", y otra vez > Transformar > "Recortar", que quita los espacios del principio y del final. Así "Norte", "NORTE " y " sur" quedan como norte y sur.
 
-**Normalizar texto.** En el Editor de Power Query, clic derecho en el encabezado de region > Transformar > 'poner en minúsculas', y clic derecho de nuevo > Transformar > 'Recortar' -- así Norte, NORTE y sur con espacios de más quedan todos como norte o sur.
+**Quitar duplicados.** Selecciona todas las columnas (clic en la primera, Mayúscula + clic en la última) y usa Inicio > Quitar filas > Quitar duplicados. Se eliminan las filas idénticas en todas las columnas seleccionadas.
 
-**Duplicados y valores vacios.** Para los duplicados exactos: seleccionar todas las columnas y usar Inicio > Quitar filas > Quitar duplicados. Para las filas sin monto: hacer clic en la flecha de filtro del encabezado de monto y desmarcar la opcion vacía.
+**Filas sin monto.** La flecha de filtro de monto permite desmarcar "(null)" o el valor vacío. Antes de quitarlas, pregúntate qué significa que falte: aquí son ventas incompletas que no se pueden usar, pero en otros casos el vacío significa 0.
 
-**Práctica.** Limpia ventas_sucio.csv aplicando los 3 pasos en orden y confirma cuántas filas quedan. Los datos están en [ventas_sucio.csv](/casos/clases-de-power-bi/datos/ventas_sucio.csv), también en «Datos del caso» de estas clases.
+**Práctica.** Los datos están en [ventas_sucio.csv](/casos/clases-de-power-bi/datos/ventas_sucio.csv), también en «Datos del caso» de estas clases.
 
-1. Descarga el dataset ventas_sucio.csv de esta lección.
-2. En Power BI Desktop, ve a Inicio > Obtener datos > Texto/CSV, selecciona ventas_sucio.csv y haz clic en 'Transformar datos' para abrir el Editor de Power Query.
-3. Clic derecho en el encabezado de region > Transformar > 'poner en minúsculas', y clic derecho de nuevo > Transformar > 'Recortar'.
-4. Selecciona todas las columnas (clic en la primera columna y Shift+clic en la última) y ve a Inicio > Quitar filas > Quitar duplicados.
-5. En el encabezado de monto, haz clic en la flecha de filtro y desmarca la opcion vacía para quitar las filas sin monto.
-6. Haz clic en 'Cerrar y aplicar' y confirma en el panel Datos cuántas filas quedaron cargadas.
+1. Descarga ventas_sucio.csv y cárgalo con Obtener datos > Texto/CSV > 'Transformar datos'.
+2. Antes de limpiar, abre el filtro de region y mira cuántos valores distintos aparecen.
+3. Normaliza region: Transformar > minúsculas, y después Transformar > Recortar.
+4. Selecciona todas las columnas y usa Quitar filas > Quitar duplicados.
+5. Filtra monto para quitar las filas vacías.
+6. 'Cerrar y aplicar' y cuenta las filas en la vista Datos.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="limpiar-datos-reales"
-  pregunta={"¿Cuántas filas crudas tiene ventas_sucio.csv antes de limpiar, y cuántas quedan después de normalizar texto, quitar duplicados y quitar filas con monto vacío?"}
-  respuesta={"24 filas crudas, 20 después de limpiar -- se van 2 filas duplicadas exactas y 2 filas sin monto."}
+  enunciado={"Responde con lo que encontraste al limpiar ventas_sucio."}
+  preguntas={[{"pregunta":"Antes de normalizar, ¿cuántos valores distintos de region aparecen en el filtro?","opciones":["2","4","6","24"],"correcta":2,"explicacion":"norte, sur, Norte, NORTE con espacio, sur con espacio y Sur: seis escrituras de dos regiones."},{"pregunta":"¿Cuántas filas tiene el archivo crudo y cuántas quedan después de los tres pasos?","opciones":["24 y 22","24 y 20","24 y 18","22 y 20"],"correcta":1,"explicacion":"Se van 2 filas duplicadas y 2 filas sin monto."},{"pregunta":"¿Por qué se normaliza el texto antes de quitar duplicados?","opciones":["Porque Power Query no permite hacerlo al revés.","Porque dos filas iguales salvo por \"Norte\" y \"norte\" solo se reconocen como duplicadas después de normalizar.","Para que el archivo pese menos.","No importa el orden."],"correcta":1,"explicacion":"Quitar duplicados compara el texto exacto: primero hay que dejarlo escrito igual."}]}
+  pistas={["Abre el filtro de region antes de cualquier paso y cuenta los valores."]}
 />
+
+<Debrief>
+De 24 filas quedaron 20, con solo dos regiones. Las seis escrituras de región son el ejemplo perfecto de por qué limpiar antes de graficar: sin normalizar, un gráfico por región mostraría seis barras.
+</Debrief>
