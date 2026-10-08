@@ -1,26 +1,31 @@
 ---
-titulo: "Bienvenida: IA para datos"
-tiempo: 10
+titulo: "IA para datos: en qué ayuda y en qué no"
+tiempo: 12
 ---
 
 <Concepto>
-**Objetivo:** Entender cómo la IA puede apoyar análisis de datos sin reemplazar criterio, fuente ni validación.
+Un asistente de IA (ChatGPT, Claude, Gemini, Copilot) puede acelerar mucho el trabajo con datos: proponer qué revisar en una tabla, escribir una fórmula o una consulta SQL, explicar un error, ordenar un reporte. Pero no reemplaza tu criterio. En estas clases vas a usarlo como un colega rápido que a veces se equivoca con total seguridad.
 
-La IA puede ayudarte a entender tablas, limpiar datos, proponer fórmulas, escribir SQL, explicar tendencias y preparar reportes.
+**En qué ayuda.**
+- Proponer: qué chequeos de calidad hacer, qué preguntas responder, qué gráfico usar.
+- Escribir un primer borrador: una fórmula, una consulta, un código de limpieza, la estructura de un reporte.
+- Explicar: un error, una función que no conoces, el código que heredaste.
 
-Pero los datos mandan. Si la fuente está mal definida, si faltan reglas de negocio o si no validas resultados, la IA puede producir conclusiones convincentes pero incorrectas.
+**En qué no confiar sin revisar.**
+- **Cálculos sobre datos pegados en el chat.** Un modelo de lenguaje puede sumar mal una columna y presentarlo con seguridad. Los números se calculan con tus herramientas (Excel, SQL, Python), no se leen de una respuesta.
+- **Datos que no le diste.** Puede mencionar una columna que no existe o un dato que "suena" correcto. A eso se le llama alucinación.
+- **Decisiones con consecuencias.** Clasificar un reclamo como fraude o descartar un cliente requiere una persona que revise.
 
-**Conceptos clave.**
-
-- Dato: observación registrada con significado dentro de un contexto.
-- Análisis asistido: uso de IA para acelerar exploración y explicación.
-- Validación: comprobación contra fuente, reglas y casos conocidos.
-
-**Un caso.** Un equipo tiene una planilla de reclamos. La IA ayuda a detectar categorías y tendencias, pero una persona valida columnas, duplicados y casos sensibles.
+**La regla de estas clases.** La IA propone; los datos deciden. Cada vez que la IA te dé un número, una fórmula o una conclusión, compruébalo con los datos antes de usarlo. En las próximas lecciones vas a corregir fórmulas, consultas y código que propuso una IA.
 </Concepto>
 
 <QuizTask
   id="bienvenida-ia-para-datos"
-  preguntas={[{"pregunta": "La IA para datos sirve principalmente para...", "opciones": ["Acelerar exploración, limpieza, fórmulas, consultas y explicaciones.", "Garantizar conclusiones perfectas.", "Inventar datos faltantes.", "Eliminar validación humana."], "correcta": 0, "explicacion": "La IA asiste el análisis, no lo vuelve infalible."}, {"pregunta": "¿Qué manda en un análisis?", "opciones": ["La fuente de datos, su significado y sus reglas.", "El tono seguro del modelo.", "La respuesta más larga.", "La primera conclusión generada."], "correcta": 0, "explicacion": "Sin fuente y reglas, no hay análisis defendible."}, {"pregunta": "Antes de usar una conclusión debes...", "opciones": ["Validarla contra datos, reglas y contexto.", "Copiarla sin leer.", "Publicarla por rapidez.", "Ocultar supuestos."], "correcta": 0, "explicacion": "La validación reduce errores."}]}
-  pistas={["La IA acelera; la evidencia decide."]}
+  enunciado={"Decide qué harías en cada situación."}
+  preguntas={[{"pregunta":"Pegas 20 filas de ventas en un chat de IA y le pides el total. Responde \"$1.250.000\" con mucha seguridad. ¿Qué haces?","opciones":["Lo uso: la IA calcula mejor que yo.","Le pido que lo explique con palabras y, si suena bien, lo uso.","Calculo el total con SUMA, SQL o pandas y comparo.","Le pregunto de nuevo hasta que dé el mismo número dos veces."],"correcta":2,"explicacion":"Los números se calculan con tus herramientas. Que la IA repita o explique su número no lo vuelve correcto."},{"pregunta":"¿Cuál de estos es un buen uso de la IA en un análisis?","opciones":["Pedirle que complete los montos que faltan con valores probables.","Pedirle una lista de chequeos de calidad para revisar antes de analizar.","Pegarle la base completa de clientes para que encuentre patrones.","Que decida sola qué reclamos son fraude."],"correcta":1,"explicacion":"Proponer qué revisar es una ayuda; inventar datos, exponer información de clientes o decidir sin revisión no lo son."},{"pregunta":"La IA te dice: \"Según la columna margen_neto, el producto más rentable es el Notebook\". Tu tabla tiene producto, precio y costo, pero no margen_neto. ¿Qué pasó?","opciones":["La IA calculó margen_neto por su cuenta, así que está bien.","Es una alucinación: menciona una columna que no existe. Calculas el margen tú y compruebas.","Hay que agregar margen_neto a la tabla con esos valores.","Nada: los nombres de columnas no importan."],"correcta":1,"explicacion":"Citar datos que no existen es la señal más clara de una alucinación."}]}
+  pistas={["Pregúntate en cada caso: ¿de dónde sale el número o la conclusión, y cómo lo compruebo?"]}
 />
+
+<Debrief>
+La IA propone y tus herramientas comprueban. Un total que no calculaste tú, una columna que no existe o una decisión sin revisión son las tres trampas más comunes. En las próximas lecciones vas a encontrarlas y corregirlas en datos reales.
+</Debrief>

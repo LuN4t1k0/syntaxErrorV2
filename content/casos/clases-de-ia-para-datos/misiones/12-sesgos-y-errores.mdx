@@ -1,26 +1,29 @@
 ---
-titulo: "Sesgos y errores en datos"
-tiempo: 10
+titulo: "Sesgos en los datos"
+tiempo: 12
 ---
 
 <Concepto>
-**Objetivo:** Reconocer que los datos pueden representar mal la realidad.
+Los datos no son un espejo exacto de la realidad: reflejan cómo se recolectaron. Si la forma de recolectarlos deja grupos fuera o cambia en el camino, las conclusiones quedan torcidas aunque cada cálculo esté bien. La IA puede ayudarte a listar posibles sesgos, pero evaluarlos requiere conocer el proceso.
 
-Los datos no son neutrales por defecto. Pueden tener sesgos de captura, definiciones cambiantes, muestras incompletas o errores sistemáticos.
+**Sesgos frecuentes.**
+- **De captura:** solo se registra lo que llega por cierto canal. Si los reclamos por teléfono no se anotan, el análisis subestima los problemas de quienes llaman, que pueden ser personas mayores o sin internet.
+- **De respuesta:** en una encuesta voluntaria responden más las personas muy contentas o muy molestas; el promedio no representa a todas.
+- **De supervivencia:** analizar solo a los clientes actuales esconde a los que se fueron, que son justo los que más tienen que decir sobre los problemas.
+- **Cambio de definición:** si en marzo "cliente activo" pasó de "compró en 3 meses" a "compró en 6 meses", el número de activos sube sin que haya más clientes.
 
-La IA puede ayudarte a listar riesgos de sesgo, pero necesitas conocimiento del proceso para evaluarlos.
+**Preguntas para detectarlos.** ¿Quién queda fuera de estos datos? ¿Cómo y desde cuándo se registran? ¿Cambió algo en el proceso durante el período? ¿A quién le pregunté y quién eligió responder?
 
-**Conceptos clave.**
-
-- Sesgo de captura: datos recolectados de forma desigual.
-- Muestra incompleta: datos que no representan todo el universo.
-- Cambio de definición: métrica que no significa lo mismo en todo el periodo.
-
-**Un caso.** Solo se registran reclamos por email, pero muchos clientes reclaman por telefono. El análisis subestima problemas telefónicos.
+**Qué hacer con un sesgo.** No siempre se puede corregir, pero siempre se puede declarar: "estos datos solo incluyen reclamos por email y web". Un límite dicho a tiempo evita una mala decisión.
 </Concepto>
 
 <QuizTask
   id="sesgos-y-errores"
-  preguntas={[{"pregunta": "Un sesgo de captura ocurre cuando...", "opciones": ["Los datos se recolectan de forma desigual.", "La tabla tiene encabezados.", "Se documentan reglas.", "Se valida una métrica."], "correcta": 0, "explicacion": "La forma de captura afecta representatividad."}, {"pregunta": "Una muestra incompleta puede causar...", "opciones": ["Conclusiones no representativas.", "Más verdad automáticamente.", "Menos necesidad de contexto.", "Mejores decisiones siempre."], "correcta": 0, "explicacion": "Si faltan grupos, falta realidad."}, {"pregunta": "Para evaluar sesgos necesitas...", "opciones": ["Conocimiento del proceso y fuente.", "Solo una respuesta generada.", "Ignorar el origen.", "Eliminar preguntas."], "correcta": 0, "explicacion": "El contexto operativo es clave."}]}
-  pistas={["Pregunta siempre: qué datos faltan y cómo se capturaron."]}
+  enunciado={"Identifica el sesgo de cada situación."}
+  preguntas={[{"pregunta":"Un análisis concluye que los clientes mayores de 65 casi no tienen problemas, porque casi no aparecen en la tabla de reclamos, que solo registra los que llegan por email y web. ¿Qué pasa?","opciones":["Los mayores de 65 tienen menos problemas.","Sesgo de captura: si reclaman sobre todo por teléfono, no quedan registrados.","Es un error de cálculo.","No hay ningún problema."],"correcta":1,"explicacion":"La ausencia en los datos puede deberse a cómo se registran, no a que no haya problemas."},{"pregunta":"La encuesta de satisfacción, que es voluntaria, da un promedio de 6,5 sobre 7. ¿Qué precaución tomas?","opciones":["Ninguna: 6,5 es excelente.","Recordar que responden sobre todo quienes quieren hacerlo; el promedio puede no representar a todos los clientes.","Borrar las respuestas bajas.","Multiplicar por la cantidad de clientes."],"correcta":1,"explicacion":"Sesgo de respuesta: quienes eligen responder no son una muestra al azar."},{"pregunta":"Los \"clientes activos\" suben 30 % entre febrero y marzo. Ese mes cambió la definición de activo de 3 a 6 meses sin compras. ¿Qué concluyes?","opciones":["La base de clientes creció un 30 %.","El aumento puede venir del cambio de definición; hay que recalcular febrero con la definición nueva para comparar.","Hay que volver a la definición antigua sin avisar.","La IA calculó mal."],"correcta":1,"explicacion":"Una métrica que cambia de definición no se puede comparar consigo misma sin recalcular."}]}
+  pistas={["En cada caso, pregúntate quién queda fuera de los datos o qué cambió en cómo se miden."]}
 />
+
+<Debrief>
+Captura, respuesta y cambio de definición: en los tres casos el cálculo era correcto y la conclusión, equivocada. Antes de concluir, pregúntate cómo llegaron los datos a tu tabla.
+</Debrief>

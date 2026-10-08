@@ -1,26 +1,39 @@
 ---
-titulo: "Fórmulas y hojas de cálculo"
-tiempo: 10
+titulo: "Fórmulas asistidas en la planilla"
+tiempo: 14
 ---
 
 <Concepto>
-**Objetivo:** Pedir fórmulas y pasos de planilla con contexto suficiente.
+Pedirle una fórmula a la IA es muy cómodo, pero la fórmula tiene que calzar con tu planilla: tus columnas, tu idioma de Excel y tu separador. Y antes de confiar en ella, se prueba con un caso cuyo resultado ya conoces.
 
-La IA puede ayudarte a escribir fórmulas, explicar errores y proponer validaciones en Excel o Google Sheets.
+**Un buen pedido de fórmula.**
 
-Para que la respuesta sirva, debes indicar nombres de columnas, separador regional si aplica, ejemplos y resultado esperado.
+```text
+Excel en español, separador punto y coma. Columnas: A fecha, B area, C estado,
+D monto (pesos), datos de la fila 2 a la 9. Quiero en G2 el total de monto
+de las filas con area "Ventas" y estado "Pagado".
+```
 
-**Conceptos clave.**
+**Los errores típicos de una fórmula sugerida.**
+- Nombres en inglés (`SUMIFS`) en una planilla en español, que dan `#¿NOMBRE?`.
+- Argumentos en otro orden: `SUMAR.SI.CONJUNTO` pide **primero** el rango a sumar, al revés que `SUMAR.SI`, y es una confusión frecuente.
+- Rangos que no cubren todas las filas.
 
-- Fórmula: expresión que calcula un resultado.
-- Caso de prueba: fila conocida para validar la fórmula.
-- Separador regional: coma o punto y coma según configuración.
+**El caso de prueba.** Antes de usar la fórmula, calcula a mano un caso pequeño: filtra la planilla (o mírala) y suma tú las filas que cumplen. Si la fórmula no da lo mismo, está mal, aunque no muestre error.
 
-**Un caso.** Prompt: 'En Excel en español, necesito sumar Monto si Estado es Pagado y Area es Ventas. Columnas: A Fecha, B Area, C Estado, D Monto'.
+**Pide la explicación.** "Explícame qué hace cada argumento" sirve para detectar el error: si la explicación dice que el primer rango es el de áreas, y la función pide el de montos, ya sabes qué corregir.
 </Concepto>
 
-<QuizTask
+<SheetTask
   id="formulas-y-hojas-calculo"
-  preguntas={[{"pregunta": "Para pedir una fórmula conviene entregar...", "opciones": ["Columnas, objetivo, ejemplos y configuración relevante.", "Solo 'haz formula'.", "Datos sin encabezado.", "Una captura incompleta."], "correcta": 0, "explicacion": "La fórmula depende de estructura y contexto."}, {"pregunta": "Un caso de prueba sirve para...", "opciones": ["Comprobar si la fórmula entrega el resultado esperado.", "Decorar la hoja.", "Eliminar revisión.", "Inventar datos."], "correcta": 0, "explicacion": "Prueba contra filas conocidas."}, {"pregunta": "El separador regional importa porque...", "opciones": ["Algunas configuraciones usan coma y otras punto y coma.", "Cambia el contenido de datos.", "Elimina errores siempre.", "No existe en planillas."], "correcta": 0, "explicacion": "Puede hacer que una fórmula no funcione."}]}
-  pistas={["Fórmula útil: columnas + objetivo + ejemplo + configuración."]}
+  enunciado={"En G2 está la fórmula que propuso la IA para sumar el monto de las filas con area Ventas y estado Pagado. Pruébala con un caso que calcules tú y corrígela para que dé el total correcto."}
+  grilla={[["fecha","area","estado","monto","","","total_ventas_pagado"],["2026-06-01","Ventas","Pagado",120000,"","",null],["2026-06-02","Ventas","Pendiente",80000,"","",""],["2026-06-03","Soporte","Pagado",30000,"","",""],["2026-06-04","Ventas","Pagado",95000,"","",""],["2026-06-05","Logística","Pagado",60000,"","",""],["2026-06-06","Ventas","Anulado",40000,"","",""],["2026-06-07","Soporte","Pendiente",25000,"","",""],["2026-06-08","Ventas","Pagado",150000,"","",""]]}
+  inicial={{"G2":"=SUMAR.SI.CONJUNTO(B2:B9;\"Ventas\";C2:C9;\"Pagado\";D2:D9)"}}
+  celdas={[{"celda":"G2","valor":365000,"funcion":"SUMAR.SI.CONJUNTO"}]}
+  solucion={{"G2":"=SUMAR.SI.CONJUNTO(D2:D9;B2:B9;\"Ventas\";C2:C9;\"Pagado\")"}}
+  pistas={["Primero suma tú las filas de Ventas que están Pagado: ese es tu caso de prueba.","En SUMAR.SI.CONJUNTO, el primer argumento es el rango que se suma."]}
 />
+
+<Debrief>
+`=SUMAR.SI.CONJUNTO(D2:D9;B2:B9;"Ventas";C2:C9;"Pagado")` da 365.000: las ventas pagadas del 1, el 4 y el 8 de junio. La fórmula de la IA tenía el rango de montos al final, como en `SUMAR.SI`. Con un caso de prueba calculado a mano, el error salta antes de que el número llegue a un reporte.
+</Debrief>

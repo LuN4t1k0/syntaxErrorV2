@@ -1,26 +1,36 @@
 ---
 titulo: "Reportes asistidos"
-tiempo: 10
+tiempo: 18
 ---
 
 <Concepto>
-**Objetivo:** Crear reportes con estructura, métricas, lectura y proximos pasos.
+Un reporte no es un bloque de texto: tiene una estructura que permite encontrar lo importante en un minuto. La IA es muy útil para ordenar un borrador y ajustar el tono a quien lo lee; los números y las conclusiones los pones tú, desde tus cálculos.
 
-Un reporte útil no es un bloque de texto. Tiene objetivo, periodo, fuente, métricas, hallazgos, riesgos, decisiones y proximos pasos.
+**Las partes de un reporte breve.**
+- **Título** con el tema y el período.
+- **Resumen:** dos o tres frases con lo más importante, para quien no va a leer más.
+- **Métricas:** una tabla corta con los números clave y su comparación.
+- **Hallazgos:** lo que muestran los datos, cada uno con su número.
+- **Límites:** lo que estos datos no permiten afirmar.
+- **Próximos pasos:** acciones concretas, con responsable si se puede.
 
-La IA puede ayudarte a ordenar el reporte y ajustar lenguaje para audiencia ejecutiva, técnica u operativa.
+**La audiencia cambia el reporte.** Para gerencia: resumen y decisiones, poco detalle. Para el equipo técnico: cómo se calculó cada cosa. Pedirle a la IA "reescribe este resumen para gerencia, en tres frases, sin tecnicismos" ahorra mucho tiempo.
 
-**Conceptos clave.**
+**Lo que no se delega.** Los números salen de tus consultas. Si la IA agrega un dato que no le diste ("un aumento del 12 % respecto al año anterior"), bórralo: es una alucinación.
 
-- Métrica: medida clave del reporte.
-- Periodo: rango temporal analizado.
-- Próximo paso: acción recomendada después del reporte.
-
-**Un caso.** Reporte semanal: volumen de tickets, tiempo de respuesta, áreas con más casos, riesgos y acciones para la próxima semana.
+**Los datos para tu reporte.** En las lecciones anteriores calculaste, para junio de 2026: 10 reclamos (4 de despacho, 3 de cobro y 3 de soporte, ya normalizados), 2 reclamos sin monto informado, 8 tickets cerrados (3 de Soporte, 2 de Ventas, 2 de Logística y 1 de Finanzas), y que no hay tickets de abril en los datos.
 </Concepto>
 
-<QuizTask
+<MarkdownTask
   id="reportes-asistidos"
-  preguntas={[{"pregunta": "Un reporte útil debe incluir...", "opciones": ["Objetivo, fuente, periodo, métricas, hallazgos y acciones.", "Solo texto largo.", "Datos sin fecha.", "Conclusiones sin evidencia."], "correcta": 0, "explicacion": "La estructura facilita decisión."}, {"pregunta": "La audiencia afecta...", "opciones": ["Lenguaje, detalle y foco del reporte.", "Solo el color.", "El cálculo real.", "La existencia de datos."], "correcta": 0, "explicacion": "No todos necesitan el mismo nivel."}, {"pregunta": "Un próximo paso responde...", "opciones": ["Qué acción se debe tomar después.", "Qué fuente se oculta.", "Cómo hacerlo más largo.", "Qué dato inventar."], "correcta": 0, "explicacion": "El reporte debe mover acción."}]}
-  pistas={["Reporte: objetivo, fuente, métrica, hallazgo, riesgo y acción."]}
+  enunciado={"Escribe el reporte de junio de 2026 en Markdown con los datos de la lección: un título, al menos cuatro secciones con subtítulo (por ejemplo Resumen, Métricas, Hallazgos y Próximos pasos), una tabla con las métricas y una lista de próximos pasos. Usa solo números que calculaste en las lecciones."}
+  documento={"reporte"}
+  inicial={"# Reporte de reclamos y tickets, junio 2026"}
+  requisitos={["titulo","subtitulos:4","tabla","lista"]}
+  solucion={"# Reporte de reclamos y tickets, junio 2026\n\n## Resumen\n\nEn junio hubo 10 reclamos, la mayoría de despacho, y se cerraron 8 tickets. Dos reclamos no tienen monto informado y faltan los datos de tickets de abril.\n\n## Métricas\n\n| Métrica | Junio 2026 |\n| --- | --- |\n| Reclamos | 10 |\n| Reclamos de despacho | 4 |\n| Reclamos sin monto informado | 2 |\n| Tickets cerrados | 8 |\n\n## Hallazgos\n\n- Despacho concentra 4 de los 10 reclamos.\n- Soporte cerró 3 de los 8 tickets del mes.\n\n## Límites\n\n- No hay tickets de abril en los datos: no se puede comparar la evolución mensual.\n\n## Próximos pasos\n\n- Pedir al área de cobro los montos de los 2 reclamos sin monto.\n- Revisar con TI por qué no hay tickets de abril."}
+  pistas={["Un título se escribe con #, y cada sección con ##.","Una tabla en Markdown tiene una fila de encabezados, una de separación con | --- | y filas de datos.","Los próximos pasos van como lista, con - al inicio de cada línea."]}
 />
+
+<Debrief>
+Un reporte con resumen, métricas, hallazgos, límites y próximos pasos se lee en un minuto y responde lo que la jefatura va a preguntar. Si usaste la IA para el borrador, revisa que cada número del reporte salga de tus cálculos: es la parte que no se delega.
+</Debrief>

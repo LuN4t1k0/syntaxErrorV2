@@ -1,26 +1,35 @@
 ---
-titulo: "Proyecto final: mini análisis asistido"
-tiempo: 10
+titulo: "Proyecto final: plan de un análisis asistido por IA"
+tiempo: 30
 ---
 
 <Concepto>
-**Objetivo:** Diseñar un análisis de datos asistido por IA con fuente, pregunta, limpieza, resultado y validación.
+El proyecto final de estas clases es el plan de un análisis completo, escrito como documento: qué pregunta responde, con qué datos, cómo se limpian, qué se calcula, dónde ayuda la IA y cómo se comprueba cada resultado. Es el documento que te gustaría recibir de otra persona antes de confiar en sus números.
 
-El proyecto final consiste en elegir una tabla real o ficticia y diseñar un flujo de análisis: pregunta, columnas, limpieza, cálculos, visualización, hallazgos y validación.
+**Las partes del plan.**
+1. **Pregunta:** una, concreta y medible. "¿Qué área concentra los reclamos de junio y cuánto dinero reclamado representan?", no "analizar los reclamos".
+2. **Datos:** qué tablas y columnas usarás, su diccionario mínimo y sus problemas conocidos.
+3. **Limpieza:** las reglas, escritas para que otra persona las repita (normalizar area con strip y lower; no rellenar montos vacíos y marcarlos).
+4. **Cálculos:** qué vas a calcular y con qué herramienta (SQL, pandas, Excel).
+5. **Uso de la IA:** en qué pasos te va a ayudar, con el pedido que le harías, y qué datos no vas a compartir.
+6. **Validación:** cómo comprobarás cada resultado: un caso calculado a mano, un total de control, una muestra revisada.
+7. **Límites:** lo que estos datos no permiten afirmar.
 
-No basta con pedir conclusiones. Debes demostrar que sabes preparar datos, pedir ayuda de forma estructurada y revisar resultados.
+**El pedido a la IA, escrito.** Incluye en el plan el texto exacto de al menos un pedido, en un bloque de código, con contexto, estructura, una muestra sin datos personales y la pregunta.
 
-**Conceptos clave.**
-
-- Pregunta de análisis: duda concreta que el dato debe responder.
-- Flujo de análisis: pasos desde fuente hasta reporte.
-- Criterio de validación: cómo sabrás si el resultado es correcto.
-
-**Un caso.** Dataset de tickets: pregunta principal, limpieza de categorías, conteo por área, tendencia mensual, gráfico y reporte con límites.
+**Un plan corto es mejor.** Cada sección puede tener dos o tres líneas. Lo importante es que no falte ninguna.
 </Concepto>
 
-<QuizTask
+<MarkdownTask
   id="proyecto-final-analisis-datos"
-  preguntas={[{"pregunta": "El proyecto final debe partir con...", "opciones": ["Una pregunta de análisis clara.", "Una conclusión inventada.", "Un gráfico decorativo.", "Datos sin contexto."], "correcta": 0, "explicacion": "La pregunta guía todo el flujo."}, {"pregunta": "El flujo debe incluir...", "opciones": ["Fuente, columnas, limpieza, cálculos, visualización y validación.", "Solo una respuesta de IA.", "Datos sensibles sin permiso.", "Cero revisión."], "correcta": 0, "explicacion": "El análisis necesita pasos defendibles."}, {"pregunta": "¿Qué demuestra aprendizaje?", "opciones": ["Usar IA para acelerar análisis sin perder evidencia ni control.", "Copiar conclusiones sin revisar.", "Inventar datos faltantes.", "Ignorar privacidad."], "correcta": 0, "explicacion": "El objetivo es criterio aplicado."}]}
-  pistas={["Tu análisis debe responder: pregunta, datos, limpieza, resultado y validación."]}
+  enunciado={"Escribe en Markdown el plan de análisis para responder qué área concentra los reclamos de junio y cuánto dinero reclamado representan, con los datos de estas clases. Incluye un título, al menos cinco secciones con subtítulo (pregunta, datos, limpieza, uso de la IA y validación), los pasos de limpieza como lista numerada y el pedido que le harías a la IA en un bloque de código."}
+  documento={"plan"}
+  inicial={"# Plan de análisis"}
+  requisitos={["titulo","subtitulos:5","lista-numerada","codigo"]}
+  solucion={"# Plan de análisis: reclamos de junio 2026\n\n## Pregunta\n\n¿Qué área concentra los reclamos de junio y cuánto dinero reclamado representan?\n\n## Datos\n\nTabla reclamos: id, fecha, canal, area (texto con variantes) y monto_reclamado (pesos; vacío si no se informó).\n\n## Limpieza\n\n1. Normalizar area con strip y lower.\n2. No rellenar los montos vacíos: marcarlos en revisar_monto.\n3. Quitar cliente, rut y email antes de compartir datos.\n\n## Uso de la IA\n\nLe pediré el código de pandas para el resumen por área, con una muestra sin datos personales:\n\n```text\npandas. Tabla reclamos: area (despacho, cobro, soporte), monto_reclamado en pesos, vacío si no se informó.\nQuiero, por área, la cantidad de reclamos y la suma de monto_reclamado, sin rellenar vacíos.\n```\n\n## Validación\n\nCompararé la cantidad total de reclamos del resumen con len(reclamos) y revisaré a mano el total de un área.\n\n## Límites\n\nDos reclamos no tienen monto: el total reclamado es un mínimo."}
+  pistas={["Cada sección empieza con ## y su nombre.","La lista numerada se escribe con 1., 2., 3. al inicio de cada línea.","El bloque de código empieza y termina con tres comillas invertidas (```)."]}
 />
+
+<Debrief>
+Un plan con pregunta, datos, limpieza, uso de la IA, validación y límites es lo que distingue un análisis confiable de una respuesta rápida. Si alguien te entrega números, pídele este documento; si tú los entregas, adjúntalo.
+</Debrief>

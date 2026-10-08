@@ -1,26 +1,44 @@
 ---
-titulo: "Calidad de datos"
-tiempo: 10
+titulo: "Calidad de datos: comprobar lo que dice la IA"
+tiempo: 14
 ---
 
 <Concepto>
-**Objetivo:** Reconocer problemas frecuentes antes de analizar.
+Antes de analizar, hay que saber si los datos están en condiciones: duplicados, vacíos, categorías escritas de varias formas, fechas con formatos distintos. La IA puede sugerir qué revisar, pero a veces "revisa" mirando solo unas pocas filas, y su diagnóstico queda incompleto.
 
-La calidad de datos determina la calidad del resultado. Problemas comunes: duplicados, valores faltantes, formatos inconsistentes, categorías mezcladas y errores de captura.
+**Una conversación típica.** Le muestras a la IA las primeras filas de reclamos y responde:
 
-La IA puede ayudarte a detectar patrones de error, pero debes comprobarlos en la fuente.
+```text
+"La columna area tiene tres valores: Despacho, cobro y soporte. Está limpia,
+puedes agrupar directamente."
+```
 
-**Conceptos clave.**
+Si en las filas que vio solo aparecían esas tres escrituras, la respuesta suena razonable. Pero no revisó la tabla completa.
 
-- Duplicado: registro repetido o equivalente.
-- Valor faltante: dato esperado que no está informado.
-- Formato inconsistente: misma información escrita de varias formas.
+**Comprobar con los datos.** La forma de saberlo es preguntarle a la tabla entera: listar cada valor distinto de la columna tal como está escrito, y cuántas veces aparece. En SQL es un `GROUP BY` de la columna sobre sí misma.
 
-**Un caso.** La categoría 'Ventas' aparece como Ventas, venta, VENTAS y Vtas. Antes de contar casos, hay que normalizar.
+<SqlEjemplo consulta={"SELECT canal, COUNT(*) AS reclamos FROM reclamos GROUP BY canal;"} />
+
+**Qué revisar en una primera pasada.**
+- Valores distintos de cada columna de categorías: ¿hay variantes de mayúsculas o espacios?
+- Vacíos en las columnas que vas a sumar o promediar.
+- Duplicados de la clave (el id).
+- Rango de fechas: ¿empieza y termina donde esperas?
 </Concepto>
 
-<QuizTask
+<SqlTask
   id="calidad-de-datos"
-  preguntas={[{"pregunta": "Un problema común de calidad es...", "opciones": ["Duplicados, faltantes o formatos inconsistentes.", "Tener encabezados claros.", "Documentar columnas.", "Validar fuentes."], "correcta": 0, "explicacion": "Estos problemas distorsionan resultados."}, {"pregunta": "Categorías mezcladas pueden causar...", "opciones": ["Conteos y filtros incorrectos.", "Más precisión automáticamente.", "Menos necesidad de limpieza.", "Mejores gráficos siempre."], "correcta": 0, "explicacion": "La misma categoría escrita distinto se cuenta por separado."}, {"pregunta": "La IA puede sugerir limpieza, pero debes...", "opciones": ["Comprobar contra fuente y reglas.", "Aplicar todo sin revisar.", "Inventar valores.", "Eliminar evidencia."], "correcta": 0, "explicacion": "La limpieza también requiere criterio."}]}
-  pistas={["Antes de analizar: revisa duplicados, faltantes, formatos y categorías."]}
+  enunciado={"La IA dice que la columna area de reclamos tiene tres valores y está limpia. Compruébalo: muestra cada valor de area tal como está escrito, con la cantidad de reclamos de cada uno, en columnas area y reclamos."}
+  inicial={"SELECT area FROM reclamos LIMIT 3;"}
+  solucion={"SELECT area, COUNT(*) AS reclamos FROM reclamos GROUP BY area;"}
+  comparar={"filas-sin-orden"}
+  pistas={["Agrupa por la misma columna que quieres revisar.","COUNT(*) cuenta los reclamos de cada valor.","No uses LOWER ni TRIM: quieres ver los valores tal como están escritos."]}
 />
+
+<Debrief>
+```sql
+SELECT area, COUNT(*) AS reclamos FROM reclamos GROUP BY area;
+```
+
+No son tres valores: son siete escrituras distintas ("Despacho", "DESPACHO " con espacio, "cobro", "Cobro", " Soporte"…) de tres áreas. Si hubieras agrupado directamente, como sugirió la IA, cada área aparecería partida en dos o tres filas. Normalizar con LOWER y TRIM sirve para limpiar después; para diagnosticar, primero hay que mirar los datos tal como vienen.
+</Debrief>

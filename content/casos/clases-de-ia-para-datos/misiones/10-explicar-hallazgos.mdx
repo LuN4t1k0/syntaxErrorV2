@@ -1,26 +1,35 @@
 ---
-titulo: "Explicar hallazgos"
-tiempo: 10
+titulo: "Explicar hallazgos sin exagerar"
+tiempo: 14
 ---
 
 <Concepto>
-**Objetivo:** Convertir resultados en explicaciones claras con evidencia y límites.
+La IA escribe conclusiones convincentes, y justamente por eso hay que leerlas con cuidado: puede presentar una sospecha como un hecho, o una correlación como una causa. Una buena explicación separa cuatro cosas:
 
-La IA puede ayudarte a redactar conclusiones, pero debes separar hallazgos, interpretaciones, supuestos y recomendaciones.
+- **Hallazgo:** lo que se observa en los datos, con su número. "Los reclamos de despacho subieron de 20 a 27 entre mayo y junio."
+- **Interpretación:** una lectura posible del hallazgo, dicha como posibilidad. "Podría estar relacionado con el cambio de empresa de transporte."
+- **Límite:** lo que impide afirmar más. "No tenemos el número de envíos de cada mes: si se enviaron más pedidos, también es esperable que haya más reclamos."
+- **Recomendación:** qué hacer, proporcional a la evidencia. "Revisar los reclamos de junio por empresa de transporte antes de decidir."
 
-Una buena explicación dice que se observo, por que importa, que evidencia lo respalda y que no se puede afirmar todavía.
+**Causa no es lo mismo que coincidencia.** Que dos cosas pasen al mismo tiempo no prueba que una cause la otra. Las palabras "causó", "provocó", "se debe a" exigen evidencia que casi nunca está en una sola tabla.
 
-**Conceptos clave.**
+**Un párrafo escrito por la IA.**
 
-- Hallazgo: resultado observado en los datos.
-- Interpretación: lectura posible del hallazgo.
-- Límite: condición que reduce certeza o alcance.
-
-**Un caso.** Hallazgo: reclamos suben 35% en junio. Interpretación: posible efecto de nuevo proveedor. Limite: faltan datos de volumen de ventas.
+```text
+(1) Los reclamos de despacho aumentaron un 35 % en junio respecto de mayo.
+(2) El nuevo proveedor de transporte causó este aumento.
+(3) No contamos con el volumen de pedidos de cada mes.
+(4) Se recomienda cambiar de proveedor de inmediato.
+```
 </Concepto>
 
 <QuizTask
   id="explicar-hallazgos"
-  preguntas={[{"pregunta": "Una buena explicación separa...", "opciones": ["Hallazgos, interpretaciones, supuestos y recomendaciones.", "Hechos e inventos mezclados.", "Datos sin fuente.", "Opiniones como verdades."], "correcta": 0, "explicacion": "Separar piezas evita conclusiones abusivas."}, {"pregunta": "Un límite indica...", "opciones": ["Que no se puede afirmar todavía o bajo qué condición aplica.", "Que el análisis es inútil.", "Que no hay datos.", "Que todo es falso."], "correcta": 0, "explicacion": "Los límites hacen la conclusión más honesta."}, {"pregunta": "Una recomendación debe apoyarse en...", "opciones": ["Evidencia, contexto y criterio.", "Solo intuición.", "Un gráfico decorativo.", "Una frase convincente."], "correcta": 0, "explicacion": "La recomendación necesita respaldo."}]}
-  pistas={["Explica con cuatro capas: dato, lectura, límite y acción."]}
+  enunciado={"Revisa el párrafo de la IA de la lección, frase por frase."}
+  preguntas={[{"pregunta":"¿Qué es la frase (1)?","opciones":["Un hallazgo: lo que muestran los datos.","Una interpretación.","Una recomendación.","Un límite."],"correcta":0,"explicacion":"Describe lo observado, con su número."},{"pregunta":"¿Cuál es el problema de la frase (2)?","opciones":["Ninguno.","Presenta como causa algo que es solo una interpretación posible: los datos muestran que coinciden en el tiempo, no que el proveedor lo causó.","Debería tener más decimales.","Es un límite mal escrito."],"correcta":1,"explicacion":"Debería decir \"podría estar relacionado con\", y quedar sujeto a revisión."},{"pregunta":"Con el límite de la frase (3), ¿qué recomendación es proporcional a la evidencia?","opciones":["La frase (4): cambiar de proveedor de inmediato.","Calcular los reclamos por cada 100 pedidos de cada mes, y revisar los de junio por proveedor, antes de decidir.","No hacer nada.","Despedir al equipo de despacho."],"correcta":1,"explicacion":"Sin el volumen de pedidos, el aumento podría deberse a que se vendió más: primero hay que medir la tasa."}]}
+  pistas={["Busca las palabras que afirman una causa y pregúntate qué evidencia las respalda."]}
 />
+
+<Debrief>
+El hallazgo (1) y el límite (3) están bien. La frase (2) convierte una coincidencia en una causa y la (4) recomienda algo drástico con datos incompletos. Separar las cuatro piezas hace que tus conclusiones resistan las preguntas de quien las lee.
+</Debrief>

@@ -1,26 +1,41 @@
 ---
-titulo: "Entender tablas y columnas"
-tiempo: 10
+titulo: "Describir una tabla para pedir ayuda"
+tiempo: 12
 ---
 
 <Concepto>
-**Objetivo:** Describir una tabla para que la IA pueda razonar con menos supuestos.
+La IA solo sabe lo que le cuentas. Si le muestras una tabla sin explicarla, va a suponer qué significa cada columna, y cada suposición es un posible error. Describir bien la tabla es la mitad de una buena respuesta.
 
-Una tabla no se entiende solo por sus valores. Necesita nombres de columnas, significado, tipos de datos, unidad de medida y reglas de negocio.
+**El diccionario de datos.** Una descripción breve de cada columna: qué significa, su tipo de dato, su unidad y sus reglas. Ejemplo para la tabla de reclamos de estas clases:
 
-Cuando pidas ayuda a la IA, entrega una muestra pequeña, explica columnas y define que pregunta quieres responder.
+```text
+reclamos (una fila por reclamo de un cliente, junio de 2026)
+- id: número único del reclamo
+- fecha: día en que se recibió (AAAA-MM-DD)
+- canal: email, telefono o web
+- area: área responsable (despacho, cobro o soporte); viene escrita de varias formas
+- monto_reclamado: pesos chilenos que el cliente pide devolver; vacío si no lo informó; 0 si no reclama dinero
+- descripcion: texto libre escrito por el cliente
+```
 
-**Conceptos clave.**
+**Las unidades y los vacíos cambian todo.** "monto 1500" puede ser 1.500 pesos o 1.500.000 si la columna está en miles. Y un vacío no es lo mismo que un 0: aquí, vacío significa "no lo informó" y 0 significa "no reclama dinero".
 
-- Diccionario de datos: descripción de columnas y significado.
-- Tipo de dato: texto, número, fecha, categoría o booleano.
-- Unidad: escala o medida usada por una columna.
+**Un buen pedido tiene cuatro partes.**
+1. Contexto: qué es la tabla y de dónde sale.
+2. Estructura: el diccionario, o al menos las columnas con su significado.
+3. Una muestra pequeña: 5 a 10 filas, sin datos personales.
+4. La pregunta: qué quieres lograr, y en qué herramienta (Excel en español, PostgreSQL, pandas).
 
-**Un caso.** La columna 'monto' puede significar venta neta, venta bruta, deuda, costo o reclamo. Sin definición, cualquier análisis queda debil.
+**No pegues la tabla completa.** Para que la IA te ayude a escribir una fórmula o una consulta basta con la estructura y una muestra. Pegar miles de filas expone datos que quizás no debías compartir y no mejora la respuesta.
 </Concepto>
 
 <QuizTask
   id="entender-tablas-y-columnas"
-  preguntas={[{"pregunta": "Un diccionario de datos describe...", "opciones": ["Columnas, significado, tipo y reglas relevantes.", "Solo colores de una tabla.", "Contrasenas del sistema.", "Una respuesta final."], "correcta": 0, "explicacion": "El diccionario da contexto a la tabla."}, {"pregunta": "¿Por qué importa explicar las unidades?", "opciones": ["Porque un número puede representar pesos, dolares, horas, unidades u otra escala.", "Porque cambia la tipografía.", "Porque elimina errores siempre.", "Porque no afecta al análisis."], "correcta": 0, "explicacion": "La unidad cambia interpretación."}, {"pregunta": "Para pedir ayuda con una tabla conviene entregar...", "opciones": ["Muestra, columnas, significado y pregunta de análisis.", "Solo una captura borrosa.", "Datos sin encabezados.", "Una instrucción vaga."], "correcta": 0, "explicacion": "La IA necesita estructura y objetivo."}]}
-  pistas={["Tabla clara: columnas, tipos, unidades, reglas y pregunta."]}
+  enunciado={"Elige el mejor pedido y detecta lo que falta."}
+  preguntas={[{"pregunta":"¿Cuál de estos pedidos va a obtener la respuesta más útil?","opciones":["\"Analiza mis reclamos\", con el archivo completo adjunto.","\"Tengo una tabla de reclamos de junio (columnas: fecha, canal, area, monto_reclamado en pesos, vacío si no se informó). Te pego 8 filas de ejemplo sin datos personales. En pandas, quiero el monto total reclamado por área.\"","\"Dame una fórmula para sumar los montos.\"","\"¿Qué área tiene más reclamos?\", sin adjuntar nada."],"correcta":1,"explicacion":"Tiene contexto, estructura, una muestra sin datos personales, la pregunta y la herramienta."},{"pregunta":"En una muestra, la columna monto_reclamado tiene algunos valores vacíos y otros en 0. ¿Qué le aclaras a la IA?","opciones":["Nada: vacío y 0 son lo mismo.","Que vacío significa \"no lo informó\" y 0 significa \"no reclama dinero\".","Que reemplace los vacíos por el promedio.","Que elimine esas filas."],"correcta":1,"explicacion":"Si no lo explicas, la IA puede tratar los vacíos como cero o rellenarlos, y el total cambia."},{"pregunta":"La IA te propone sumar monto_reclamado y dividir por 1.000 \"para pasarlo a pesos\". ¿Qué falló?","opciones":["Nada, es correcto.","No le dijiste la unidad de la columna y supuso que estaba en otra escala.","La IA no sabe dividir.","Faltó pedir un gráfico."],"correcta":1,"explicacion":"Sin unidad, la IA adivina; el diccionario de datos evita esa suposición."}]}
+  pistas={["Un buen pedido tiene contexto, estructura, muestra y pregunta."]}
 />
+
+<Debrief>
+Un diccionario de datos de seis líneas evita la mayoría de las suposiciones equivocadas. Y la muestra pequeña, sin datos personales, basta para casi cualquier pedido: lo vas a ver en la lección de privacidad.
+</Debrief>

@@ -1,26 +1,35 @@
 ---
-titulo: "Gráficos y visualizaciones"
-tiempo: 10
+titulo: "Revisar los gráficos que sugiere la IA"
+tiempo: 12
 ---
 
 <Concepto>
-**Objetivo:** Elegir visualizaciones adecuadas para comunicar datos.
+La IA puede sugerir un gráfico y hasta escribir el código para hacerlo. Sus sugerencias suelen ser razonables, pero no siempre las mejores para tu pregunta, y a veces arman gráficos que engañan sin querer. Ya conoces las reglas de las clases de Python y Power BI; aquí las aplicas para revisar.
 
-La IA puede sugerir gráficos según la pregunta: barras para comparar categorías, líneas para tendencias, dispersión para relaciones y tablas para detalle.
+**Las preguntas para revisar un gráfico sugerido.**
+1. ¿Qué pregunta responde? Si no lo puedes decir en una frase, el gráfico sobra.
+2. ¿El tipo calza con la pregunta? Comparar categorías: barras. Evolución en el tiempo: líneas. Partes de un total con pocas categorías: circular. Relación entre dos números: dispersión.
+3. ¿El eje engaña? En barras, el eje vertical empieza en 0. Si empieza en 90, una diferencia de 5 % se ve como el doble.
+4. ¿Se lee sin explicación? Título con la conclusión, ejes con nombre y unidad, pocas categorías y colores con sentido.
 
-Un gráfico debe responder una pregunta. Si solo se ve bonito pero no aclara nada, no sirve.
+**Pídele alternativas.** "Dame dos formas de mostrar esto y dime qué pregunta responde cada una" obliga a la IA a explicitar la pregunta, y te deja elegir.
 
-**Conceptos clave.**
+**Algunas sugerencias reales.**
 
-- Comparación: diferencias entre categorías.
-- Tendencia: cambio a lo largo del tiempo.
-- Relación: cómo dos variables se mueven juntas.
-
-**Un caso.** Para mostrar reclamos por mes usas línea. Para comparar áreas usas barras. Para listar casos críticos usas tabla.
+```text
+A. "Para mostrar los tickets por área, usa un gráfico de líneas con las áreas en el eje X."
+B. "Para el reparto de reclamos entre 9 motivos, un gráfico circular es lo más claro."
+C. "Para destacar el aumento de reclamos, empieza el eje Y en 90 y así se nota más."
+```
 </Concepto>
 
 <QuizTask
   id="graficos-y-visualizaciones"
-  preguntas={[{"pregunta": "Barras suelen servir para...", "opciones": ["Comparar categorías.", "Mostrar texto largo.", "Guardar claves.", "Reemplazar todos los reportes."], "correcta": 0, "explicacion": "Las barras comparan magnitudes."}, {"pregunta": "Líneas suelen servir para...", "opciones": ["Mostrar tendencias en el tiempo.", "Comparar textos.", "Ocultar outliers.", "Validar contraseñas."], "correcta": 0, "explicacion": "Las líneas muestran evolución."}, {"pregunta": "Un gráfico útil debe...", "opciones": ["Responder una pregunta clara.", "Solo verse decorativo.", "Ocultar la fuente.", "Agregar complejidad innecesaria."], "correcta": 0, "explicacion": "La visualización debe comunicar."}]}
-  pistas={["Elige gráfico por pregunta, no por moda."]}
+  enunciado={"Revisa las sugerencias A, B y C de la lección."}
+  preguntas={[{"pregunta":"¿Qué problema tiene la sugerencia A?","opciones":["Ninguno, las líneas sirven para todo.","Las áreas no son una secuencia en el tiempo: una línea entre ellas sugiere una evolución que no existe. Corresponden barras.","Debería ser un circular.","Faltan colores."],"correcta":1,"explicacion":"Las líneas unen puntos consecutivos, como meses; para comparar categorías se usan barras."},{"pregunta":"¿Qué cambiarías en la sugerencia B?","opciones":["Nada.","Usaría barras ordenadas de mayor a menor: con 9 porciones, el circular no permite comparar.","Usaría un gráfico de líneas.","Usaría dos circulares."],"correcta":1,"explicacion":"El circular sirve para dos o tres partes; con más, las barras ordenadas se leen mucho mejor."},{"pregunta":"¿Por qué no seguir la sugerencia C?","opciones":["Porque el eje en 90 exagera la diferencia: un aumento chico parece enorme.","Porque el eje debería empezar en 100.","Porque los ejes no importan.","Sí conviene: así se nota el aumento."],"correcta":0,"explicacion":"Un eje recortado hace que una diferencia pequeña parezca grande; es una de las formas más comunes de engañar con un gráfico."}]}
+  pistas={["Para cada sugerencia: ¿qué pregunta responde y el gráfico la muestra con honestidad?"]}
 />
+
+<Debrief>
+A confunde categorías con tiempo, B usa un circular con demasiadas partes y C exagera con el eje. Las tres suenan razonables dichas con seguridad. Revisar un gráfico es preguntarse qué responde y si lo muestra con honestidad, igual que con un gráfico hecho por ti.
+</Debrief>

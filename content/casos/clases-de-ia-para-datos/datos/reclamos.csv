@@ -1,0 +1,11 @@
+id,fecha,cliente,rut,email,canal,area,monto_reclamado,descripcion
+1,2026-06-02,Camila Rojas,12.345.678-9,camila@correo.cl,email,Despacho,15000,El pedido llegó con cinco días de atraso
+2,2026-06-03,Diego Soto,9.876.543-2,diego@correo.cl,telefono,cobro,32000,Me cobraron dos veces la misma compra
+3,2026-06-05,Antonia Pérez,15.111.222-3,antonia@correo.cl,web,DESPACHO ,,No me llegó el pedido
+4,2026-06-08,Camila Rojas,12.345.678-9,camila@correo.cl,email,soporte,0,No puedo entrar a mi cuenta
+5,2026-06-10,Martín Silva,18.222.333-4,martin@correo.cl,telefono,Cobro,12000,El descuento no se aplicó
+6,2026-06-12,Javiera Díaz,16.333.444-5,javiera@correo.cl,web,despacho,8000,El producto llegó dañado
+7,2026-06-15,Nicolás Fuentes,19.444.555-6,nicolas@correo.cl,email, Soporte,0,La aplicación se cierra sola
+8,2026-06-18,Sofía Araya,17.555.666-7,sofia@correo.cl,telefono,cobro,,Me cobraron un envío que no correspondía
+9,2026-06-20,Diego Soto,9.876.543-2,diego@correo.cl,web,Despacho,25000,Llegó otro producto y además me cobraron el despacho
+10,2026-06-22,Tomás Muñoz,20.666.777-8,tomas@correo.cl,email,soporte,0,No recibo los correos de confirmación

@@ -1,0 +1,67 @@
+# Intentos equivocados típicos de cada tarea y un trozo del mensaje que deben recibir, por misión y tarea.
+# Los revisa `npm run content:intentos` y la prueba de content/ del repositorio.
+03-calidad-de-datos:
+  calidad-de-datos:
+    - codigo: SELECT LOWER(TRIM(area)) AS area, COUNT(*) AS reclamos FROM reclamos GROUP BY LOWER(TRIM(area));
+      espera: se esperan 7
+    - codigo: SELECT DISTINCT area FROM reclamos;
+      espera: debe devolver 2 columnas
+04-limpieza-asistida:
+  limpieza-asistida:
+    - codigo: |-
+        reclamos["area"] = reclamos["area"].str.lower()
+        reclamos["revisar_monto"] = reclamos["monto_reclamado"].isna()
+      espera: más de tres valores distintos
+    - codigo: |-
+        reclamos["area"] = reclamos["area"].str.strip().str.lower()
+        reclamos["revisar_monto"] = reclamos["monto_reclamado"].isna()
+        reclamos["monto_reclamado"] = reclamos["monto_reclamado"].fillna(0)
+      espera: Los montos vacíos se rellenaron
+06-formulas-y-hojas-calculo:
+  formulas-y-hojas-calculo:
+    - codigo:
+        G2: =SUMAR.SI(B2:B9;"Ventas";D2:D9)
+      espera: debe calcularse con la función SUMAR.SI.CONJUNTO
+    - codigo:
+        G2: =SUMAR.SI.CONJUNTO(D2:D9;B2:B9;"Ventas")
+      espera: La celda G2 muestra "485000"
+07-sql-asistido:
+  sql-asistido:
+    - codigo: |-
+        SELECT a.nombre, COUNT(*) AS cerrados
+        FROM tickets AS t
+        JOIN areas AS a ON a.id = t.area_id
+        WHERE t.estado = 'cerrado'
+        GROUP BY a.nombre;
+      espera: cerrados
+    - codigo: |-
+        SELECT a.nombre, COUNT(*) AS cerrados
+        FROM tickets AS t
+        JOIN areas AS a ON a.id = t.id
+        WHERE t.estado = 'cerrado'
+          AND t.fecha_creacion >= '2026-06-01' AND t.fecha_creacion < '2026-07-01'
+        GROUP BY a.nombre;
+      espera: se esperan 4
+08-analisis-exploratorio:
+  analisis-exploratorio:
+    - codigo: |-
+        SELECT SUBSTRING(fecha_creacion, 1, 7) AS mes, COUNT(*) AS tickets
+        FROM tickets
+        GROUP BY SUBSTRING(fecha_creacion, 1, 7);
+      espera: orden
+    - codigo: |-
+        SELECT SUBSTRING(fecha_creacion, 6, 2) AS mes, COUNT(*) AS tickets
+        FROM tickets
+        GROUP BY SUBSTRING(fecha_creacion, 6, 2)
+        ORDER BY mes;
+      espera: mes
+13-privacidad-en-datos:
+  privacidad-en-datos:
+    - codigo: |-
+        para_ia = reclamos.drop(columns=["cliente", "email"])
+        para_ia["cliente_id"] = reclamos["rut"].factorize()[0] + 1
+      espera: "todavía tiene datos personales: rut"
+    - codigo: |-
+        para_ia = reclamos.drop(columns=["cliente", "rut", "email"])
+        para_ia["cliente_id"] = range(1, len(para_ia) + 1)
+      espera: debe ser el mismo para todos los reclamos de un mismo cliente

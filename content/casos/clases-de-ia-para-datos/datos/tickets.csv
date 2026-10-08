@@ -1,0 +1,15 @@
+id,area_id,estado,fecha_creacion
+1,2,cerrado,2026-05-28
+2,1,cerrado,2026-06-02
+3,2,abierto,2026-06-03
+4,3,cerrado,2026-06-05
+5,2,cerrado,2026-06-09
+6,4,cerrado,2026-06-12
+7,2,cerrado,2026-06-15
+8,1,abierto,2026-06-18
+9,3,cerrado,2026-06-21
+10,2,cerrado,2026-06-25
+11,1,cerrado,2026-06-30
+12,3,cerrado,2026-07-02
+13,2,abierto,2026-07-04
+14,4,cerrado,2026-03-15

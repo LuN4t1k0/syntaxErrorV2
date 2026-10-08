@@ -1,26 +1,45 @@
 ---
-titulo: "Privacidad en datos"
-tiempo: 10
+titulo: "Privacidad: preparar los datos antes de compartirlos"
+tiempo: 16
 ---
 
 <Concepto>
-**Objetivo:** Reducir exposición de datos personales o sensibles al usar IA.
+Cuando pegas datos en un asistente de IA, salen de tu organización y quedan en un servicio externo. Si incluyen nombres, RUT, correos o teléfonos, estás compartiendo datos personales, y en Chile la ley de protección de datos personales exige cuidarlos. La regla práctica: comparte solo lo que la tarea necesita.
 
-Trabajar con datos suele implicar información personal, comercial o confidencial. No debes copiar bases completas en herramientas sin autorización.
+**Tres herramientas.**
+- **Minimizar:** quita las columnas que no hacen falta para la pregunta. Para clasificar reclamos por tema, el nombre y el correo del cliente no aportan.
+- **Seudonimizar:** reemplaza el identificador por un código (C1, C2…). El mismo cliente recibe siempre el mismo código, así se puede seguir contando cuántos reclamos tiene cada uno sin saber quién es.
+- **Usar una muestra:** para pedir una fórmula o un código basta con 5 a 10 filas, no con la tabla completa.
 
-Usa minimización, anonimización, muestras controladas y permisos adecuados.
+**En pandas.** `drop(columns=[...])` quita columnas. `factorize()` asigna un número a cada valor distinto de una columna, siempre el mismo para el mismo valor:
 
-**Conceptos clave.**
+```python
+codigos, _ = clientes["email"].factorize()
+clientes["cliente_id"] = codigos + 1     # 1, 2, 3… el mismo número para el mismo email
+```
 
-- Dato personal: información asociada a una persona identificada o identificable.
-- Anonimización: quitar identificadores directos o indirectos cuando sea posible.
-- Muestra controlada: subconjunto suficiente para resolver la tarea.
+**También en el texto libre.** Una descripción puede traer un teléfono o un nombre ("llámenme al 912345678"). Antes de compartirla, revísala o reemplaza esos patrones.
 
-**Un caso.** Para analizar temas de reclamos se reemplazan nombres, RUT, telefonos y correos por IDs antes de pedir clasificación.
+**Y siempre:** usa las herramientas de IA que tu organización autoriza, y pregunta antes de compartir datos de clientes.
 </Concepto>
 
-<QuizTask
+<PythonTask
   id="privacidad-en-datos"
-  preguntas={[{"pregunta": "Al usar IA con datos debes evitar...", "opciones": ["Compartir datos sensibles innecesarios o sin autorización.", "Anonimizar.", "Minimizar.", "Usar muestras controladas."], "correcta": 0, "explicacion": "La exposición innecesaria aumenta riesgo."}, {"pregunta": "Anonimizar significa...", "opciones": ["Quitar identificadores cuando no son necesarios.", "Inventar datos.", "Borrar toda evidencia.", "Publicar bases."], "correcta": 0, "explicacion": "Reduce exposición."}, {"pregunta": "Una muestra controlada sirve para...", "opciones": ["Resolver o probar una tarea con menos datos expuestos.", "Ocultar errores.", "Compartir todo.", "Evitar permisos."], "correcta": 0, "explicacion": "Menos datos puede ser suficiente."}]}
-  pistas={["Si el dato real no aporta al análisis, no lo compartas."]}
+  enunciado={"Vas a pedirle a una IA que clasifique los reclamos por tema. Prepara el DataFrame para_ia a partir de reclamos: sin las columnas cliente, rut ni email, y con una columna cliente_id que dé el mismo número a los reclamos del mismo cliente (según su rut)."}
+  preparacion={"import pandas as pd\nreclamos = pd.read_csv(\"datos/reclamos.csv\")"}
+  inicial={"# reclamos ya está cargada; no la modifiques\npara_ia = reclamos.copy()"}
+  solucion={"para_ia = reclamos.drop(columns=[\"cliente\", \"rut\", \"email\"])\ncodigos, _ = reclamos[\"rut\"].factorize()\npara_ia[\"cliente_id\"] = codigos + 1"}
+  pruebas={"_r = pd.read_csv(\"datos/reclamos.csv\")\nassert isinstance(para_ia, pd.DataFrame), \"para_ia debe ser un DataFrame.\"\n_quedan = [c for c in [\"cliente\", \"rut\", \"email\"] if c in para_ia.columns]\nassert not _quedan, f\"para_ia todavía tiene datos personales: {', '.join(_quedan)}. Quítalas antes de compartir los datos.\"\nassert len(para_ia) == len(_r), \"para_ia debe tener todos los reclamos: quita columnas, no filas.\"\nassert \"descripcion\" in para_ia.columns and \"area\" in para_ia.columns, \"No quites las columnas que la IA necesita para clasificar, como descripcion y area.\"\nassert \"cliente_id\" in para_ia.columns, \"Falta la columna cliente_id.\"\n_pares = pd.DataFrame({\"rut\": _r[\"rut\"], \"id\": para_ia[\"cliente_id\"]})\nassert (_pares.groupby(\"rut\")[\"id\"].nunique() == 1).all(), \"cliente_id debe ser el mismo para todos los reclamos de un mismo cliente (mismo rut).\"\nassert _pares[\"id\"].nunique() == _r[\"rut\"].nunique(), \"cada cliente distinto debe tener un cliente_id distinto.\"\nassert not para_ia[\"cliente_id\"].astype(str).isin(_r[\"rut\"].astype(str)).any(), \"cliente_id no puede ser el rut: tiene que ser un código que no identifique a la persona.\""}
+  paquetes={["pandas"]}
+  pistas={["drop(columns=[\"cliente\", \"rut\", \"email\"]) devuelve la tabla sin esas columnas.","factorize() sobre la columna rut de reclamos da un número por cada rut distinto.","Haz el factorize sobre reclamos, que todavía tiene el rut, y guarda el resultado en para_ia."]}
 />
+
+<Debrief>
+```python
+para_ia = reclamos.drop(columns=["cliente", "rut", "email"])
+codigos, _ = reclamos["rut"].factorize()
+para_ia["cliente_id"] = codigos + 1
+```
+
+Camila Rojas y Diego Soto tienen dos reclamos cada uno: con un código por rut, la IA puede seguir viendo que son clientes que reclaman más de una vez, sin saber quiénes son. Numerar cada fila por separado habría borrado esa información útil.
+</Debrief>

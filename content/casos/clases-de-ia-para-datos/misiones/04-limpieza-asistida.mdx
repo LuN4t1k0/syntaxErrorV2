@@ -1,26 +1,44 @@
 ---
-titulo: "Limpieza asistida con IA"
-tiempo: 10
+titulo: "Limpieza asistida: revisar el código que propone la IA"
+tiempo: 16
 ---
 
 <Concepto>
-**Objetivo:** Pedir reglas de limpieza claras y reproducibles.
+Pedirle a la IA el código de limpieza ahorra tiempo, y el código que devuelve suele correr sin errores. Que corra no significa que haga lo correcto: hay que leerlo, ejecutarlo y comprobar el resultado como si lo hubiera escrito otra persona.
 
-La IA puede proponer pasos de limpieza: normalizar texto, separar columnas, corregir formatos, detectar outliers y clasificar valores.
+**Lo que pediste.** "En pandas: normaliza la columna area de reclamos y resuelve los montos vacíos."
 
-Una regla de limpieza debe ser explícita y reproducible. Evita que el modelo invente datos faltantes como si fueran reales.
+**Lo que respondió la IA.**
 
-**Conceptos clave.**
+```python
+reclamos["area"] = reclamos["area"].str.lower()
+reclamos["monto_reclamado"] = reclamos["monto_reclamado"].fillna(reclamos["monto_reclamado"].mean())
+```
 
-- Normalización: convertir valores a un formato consistente.
-- Regla reproducible: instrucción que otra persona puede aplicar igual.
-- Outlier: valor inusual que requiere revisión.
+**Cómo revisarlo.**
+1. **¿Hace todo lo que hace falta?** Después de correrlo, mira los valores distintos de area con `unique()`. Si quedan variantes, faltó un paso.
+2. **¿Inventa datos?** Rellenar los montos vacíos con el promedio convierte "el cliente no informó el monto" en un número que nadie dijo. Los totales que calcules después incluirán dinero inventado.
+3. **¿Qué decisión correspondía?** Un monto que falta se marca para revisión o se deja vacío y se informa cuántos son. Rellenarlo es una decisión de negocio, no de la IA.
 
-**Un caso.** Prompt: 'Propone reglas para normalizar la columna Area. No inventes datos faltantes. Marca casos ambiguos para revision manual'.
+**Pide la regla, no solo el código.** Un buen pedido de limpieza dice qué no hacer: "No inventes valores faltantes; márcalos en una columna aparte". Una regla escrita así puede revisarla otra persona y repetirse el mes siguiente.
 </Concepto>
 
-<QuizTask
+<PythonTask
   id="limpieza-asistida"
-  preguntas={[{"pregunta": "Una buena regla de limpieza debe ser...", "opciones": ["Clara y reproducible.", "Secreta.", "Ambigua.", "Imposible de auditar."], "correcta": 0, "explicacion": "Debe poder repetirse y revisarse."}, {"pregunta": "¿Qué no debe hacer la IA con valores faltantes?", "opciones": ["Inventarlos como si fueran reales.", "Marcarlos para revisión.", "Sugerir criterios.", "Explicar impactos."], "correcta": 0, "explicacion": "Inventar datos rompe el análisis."}, {"pregunta": "Un outlier es...", "opciones": ["Un valor inusual que debe revisarse.", "Un encabezado.", "Una categoría normal siempre.", "Una fórmula."], "correcta": 0, "explicacion": "Puede ser error o caso real extremo."}]}
-  pistas={["Limpieza responsable: regla clara, nada inventado y casos ambiguos marcados."]}
+  enunciado={"Este es el código que propuso la IA. Ejecútalo, revisa el resultado y corrígelo: la columna area tiene que quedar solo con despacho, cobro y soporte; los montos vacíos no se rellenan, y una columna nueva revisar_monto marca con True los reclamos sin monto."}
+  preparacion={"import pandas as pd\nreclamos = pd.read_csv(\"datos/reclamos.csv\")"}
+  inicial={"# Código propuesto por la IA: revísalo antes de usarlo\nreclamos[\"area\"] = reclamos[\"area\"].str.lower()\nreclamos[\"monto_reclamado\"] = reclamos[\"monto_reclamado\"].fillna(reclamos[\"monto_reclamado\"].mean())"}
+  solucion={"reclamos[\"area\"] = reclamos[\"area\"].str.strip().str.lower()\nreclamos[\"revisar_monto\"] = reclamos[\"monto_reclamado\"].isna()"}
+  pruebas={"_original = pd.read_csv(\"datos/reclamos.csv\")\nassert sorted(reclamos[\"area\"].unique().tolist()) == [\"cobro\", \"despacho\", \"soporte\"], \"area todavía tiene más de tres valores distintos: después de ejecutar, mira qué variantes quedan.\"\nassert reclamos[\"monto_reclamado\"].isna().sum() == _original[\"monto_reclamado\"].isna().sum(), \"Los montos vacíos se rellenaron: eso inventa dinero que ningún cliente reclamó. Déjalos vacíos.\"\nassert \"revisar_monto\" in reclamos.columns, \"Falta la columna revisar_monto que marca los reclamos sin monto.\"\nassert reclamos[\"revisar_monto\"].tolist() == _original[\"monto_reclamado\"].isna().tolist(), \"revisar_monto debe ser True exactamente en los reclamos sin monto, y False en los demás.\""}
+  paquetes={["pandas"]}
+  pistas={["Ejecuta el código de la IA y después print(reclamos[\"area\"].unique()). ¿Quedaron tres valores?","Para los montos: borra la línea del fillna; marcar no es lo mismo que rellenar.","isna() devuelve True donde falta el dato."]}
 />
+
+<Debrief>
+```python
+reclamos["area"] = reclamos["area"].str.strip().str.lower()
+reclamos["revisar_monto"] = reclamos["monto_reclamado"].isna()
+```
+
+La IA olvidó los espacios ("DESPACHO " y " Soporte" quedaban como valores aparte) e inventó dos montos de 11.500 pesos cada uno, el promedio de los demás. El código corría sin errores en los dos casos: por eso se revisa el resultado, no solo que no falle.
+</Debrief>

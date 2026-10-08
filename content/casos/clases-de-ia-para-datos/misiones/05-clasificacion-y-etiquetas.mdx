@@ -1,26 +1,43 @@
 ---
-titulo: "Clasificación y etiquetas"
-tiempo: 10
+titulo: "Clasificar textos con etiquetas revisables"
+tiempo: 14
 ---
 
 <Concepto>
-**Objetivo:** Usar IA para crear categorías revisables en datos no estructurados.
+Muchos datos llegan como texto libre: reclamos, comentarios de encuestas, tickets. La IA es muy buena para proponer etiquetas a esos textos, siempre que las categorías estén bien definidas y alguien revise los casos dudosos.
 
-Muchos datos vienen como texto libre: comentarios, reclamos, tickets, encuestas o descripciones. La IA puede proponer etiquetas para agruparlos.
+**Primero la taxonomía.** Antes de pedir la clasificación, define las categorías con una regla y un ejemplo:
 
-Las etiquetas deben tener definición, ejemplos y criterios de revisión para evitar categorías solapadas o demasiado amplias.
+```text
+- despacho: el problema es la entrega (atraso, no llegó, llegó dañado u otro producto)
+- cobro: el problema es el dinero (cobro doble, descuento no aplicado, cargo indebido)
+- soporte: el problema es la cuenta o la aplicación (acceso, errores, correos)
+- revisar: el texto menciona problemas de más de una categoría o no se entiende
+```
 
-**Conceptos clave.**
+**La categoría "revisar".** Sin ella, la IA fuerza cada texto a una categoría aunque no calce, y los casos mixtos se esconden. Con ella, los dudosos quedan a la vista para que una persona decida.
 
-- Etiqueta: categoría asignada a un registro.
-- Taxonomía: conjunto organizado de categorías.
-- Criterio de asignación: regla para decidir una etiqueta.
+**Pide la razón.** Si la IA devuelve la etiqueta junto a una frase que la justifique ("cobro: menciona un cargo duplicado"), revisar se vuelve mucho más rápido.
 
-**Un caso.** Reclamos de clientes se etiquetan como despacho, cobro, calidad, soporte o devolución. Los casos mixtos quedan marcados para revisión.
+**Revisa una muestra.** Antes de usar las etiquetas para contar, revisa a mano una muestra: 10 o 20 textos. Si encuentras errores, ajusta las definiciones y vuelve a clasificar.
+
+**Un ejemplo.** La IA clasificó cuatro reclamos:
+
+```text
+1. "El pedido llegó con cinco días de atraso"            → despacho
+2. "Me cobraron un envío que no correspondía"            → despacho
+3. "No recibo los correos de confirmación"               → soporte
+4. "Llegó otro producto y además me cobraron el despacho" → despacho
+```
 </Concepto>
 
 <QuizTask
   id="clasificacion-y-etiquetas"
-  preguntas={[{"pregunta": "La IA puede etiquetar especialmente bien...", "opciones": ["Textos libres como reclamos, tickets o encuestas.", "Datos sin ningun contexto.", "Contrasenas.", "Hechos sin fuente."], "correcta": 0, "explicacion": "El texto libre es un buen caso de clasificación asistida."}, {"pregunta": "Una buena etiqueta necesita...", "opciones": ["Definición, ejemplos y criterio de asignación.", "Nombre ambiguo solamente.", "Cero revisión.", "Datos sensibles."], "correcta": 0, "explicacion": "Eso permite consistencia."}, {"pregunta": "Casos mixtos o ambiguos deberían...", "opciones": ["Marcarse para revisión.", "Forzarse a cualquier categoría.", "Borrarse siempre.", "Usarse como hechos finales."], "correcta": 0, "explicacion": "La ambigüedad debe quedar visible."}]}
-  pistas={["Etiqueta bien: define categorías y marca dudas."]}
+  enunciado={"Revisa las etiquetas que puso la IA en el ejemplo de la lección."}
+  preguntas={[{"pregunta":"¿Qué etiqueta del ejemplo está mal según la taxonomía?","opciones":["La 1: un atraso es soporte.","La 2: un cargo de envío que no correspondía es un problema de cobro, aunque mencione el envío.","La 3: los correos son despacho.","Ninguna, todas están bien."],"correcta":1,"explicacion":"La palabra \"envío\" confundió a la IA, pero el problema es el dinero: cobro."},{"pregunta":"¿Qué hacer con el reclamo 4?","opciones":["Dejarlo en despacho, que es lo primero que menciona.","Marcarlo como revisar: tiene un problema de despacho y uno de cobro.","Borrarlo del análisis.","Contarlo dos veces, una en cada categoría, sin avisar."],"correcta":1,"explicacion":"Es un caso mixto: queda visible para que una persona decida cómo contarlo."},{"pregunta":"¿Qué mejora más la clasificación la próxima vez?","opciones":["Pedir que responda más rápido.","Agregar a la definición de cobro un ejemplo de cargo de envío indebido, y pedir una razón junto a cada etiqueta.","Usar más categorías, aunque se parezcan.","No revisar ninguna muestra."],"correcta":1,"explicacion":"Definiciones con ejemplos de los casos difíciles, y una razón por etiqueta, hacen la revisión más rápida y confiable."}]}
+  pistas={["Lee cada texto y pregúntate cuál es el problema de fondo, no qué palabra aparece."]}
 />
+
+<Debrief>
+La IA se equivocó en el reclamo 2 porque se guió por la palabra "envío", y forzó el 4 a una sola categoría. Las dos cosas se resuelven igual: definiciones con ejemplos de los casos difíciles, una categoría para revisar y una muestra revisada a mano antes de contar.
+</Debrief>

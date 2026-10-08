@@ -1,26 +1,48 @@
 ---
-titulo: "Análisis exploratorio"
-tiempo: 10
+titulo: "Análisis exploratorio: conocer el terreno"
+tiempo: 14
 ---
 
 <Concepto>
-**Objetivo:** Pedir preguntas, cortes y chequeos iniciales para entender un dataset.
+Antes de responder la pregunta del análisis, conviene conocer los datos: cuántos registros hay, qué período cubren, qué categorías tienen, si hay huecos o valores raros. A eso se le llama análisis exploratorio. La IA es buena para proponer la lista de chequeos; los resultados tienen que salir de los datos.
 
-El análisis exploratorio busca conocer el terreno: volumen, periodos, categorías, distribuciones, valores raros, faltantes y relaciones.
+**Una lista de chequeos típica.**
+- Volumen: cuántas filas, y si coincide con lo que esperabas.
+- Período: primera y última fecha, y si hay meses sin datos.
+- Categorías: valores distintos de cada columna de texto.
+- Distribución: mínimo, máximo y promedio de cada número; valores extremos.
+- Faltantes y duplicados.
 
-La IA puede sugerir una lista de chequeos, pero los resultados salen de los datos, no del modelo.
+**Una afirmación para comprobar.** Le describes la tabla tickets a la IA, con su primera y su última fecha, y responde:
 
-**Conceptos clave.**
+```text
+"Los datos van de marzo a julio de 2026: puedes comparar la evolución
+mensual de los cinco meses."
+```
 
-- Distribución: cómo se reparten los valores.
-- Segmento: subconjunto por categoría, periodo o condición.
-- Chequeo inicial: prueba rápida para entender calidad y forma.
+Que el primer ticket sea de marzo y el último de julio no significa que haya tickets todos los meses. Un mes sin datos puede ser un mes tranquilo, un sistema caído o un archivo que no se exportó, y cambia completamente la comparación.
 
-**Un caso.** Antes de reportar ventas, revisas meses disponibles, tiendas sin datos, productos top, devoluciones, outliers y cambios bruscos.
+**Contar por período.** La forma de comprobarlo es contar los registros de cada mes. Con fechas guardadas como texto AAAA-MM-DD, los primeros 7 caracteres son el año y el mes:
+
+<SqlEjemplo consulta={"SELECT SUBSTRING(fecha_creacion, 1, 7) AS mes, estado\nFROM tickets\nORDER BY fecha_creacion;"} />
 </Concepto>
 
-<QuizTask
+<SqlTask
   id="analisis-exploratorio"
-  preguntas={[{"pregunta": "Análisis exploratorio busca...", "opciones": ["Entender forma, calidad y patrones iniciales del dataset.", "Confirmar una conclusión sin mirar datos.", "Publicar inmediatamente.", "Eliminar preguntas."], "correcta": 0, "explicacion": "Primero se conoce el terreno."}, {"pregunta": "Un segmento puede ser...", "opciones": ["Un subconjunto por fecha, categoría o condición.", "Una contrasena.", "Un color.", "Una fórmula sin datos."], "correcta": 0, "explicacion": "Segmentar permite comparar."}, {"pregunta": "Los resultados del análisis vienen de...", "opciones": ["Los datos y cálculos validados.", "La confianza verbal del modelo.", "La respuesta más larga.", "Una suposición sin fuente."], "correcta": 0, "explicacion": "El modelo sugiere; los datos prueban."}]}
-  pistas={["Explora antes de concluir."]}
+  enunciado={"Comprueba la afirmación de la IA: cuenta los tickets de cada mes, con columnas mes (como AAAA-MM) y tickets, ordenados del mes más antiguo al más reciente."}
+  inicial={"-- Las fechas de todos los tickets, de la más antigua a la más reciente\nSELECT fecha_creacion FROM tickets ORDER BY fecha_creacion;"}
+  solucion={"SELECT SUBSTRING(fecha_creacion, 1, 7) AS mes, COUNT(*) AS tickets\nFROM tickets\nGROUP BY SUBSTRING(fecha_creacion, 1, 7)\nORDER BY mes;"}
+  comparar={"filas-en-orden"}
+  pistas={["SUBSTRING(fecha_creacion, 1, 7) deja solo el año y el mes.","Agrupa por esa misma expresión y cuenta con COUNT(*).","Ordena por mes: el texto AAAA-MM se ordena igual que las fechas."]}
 />
+
+<Debrief>
+```sql
+SELECT SUBSTRING(fecha_creacion, 1, 7) AS mes, COUNT(*) AS tickets
+FROM tickets
+GROUP BY SUBSTRING(fecha_creacion, 1, 7)
+ORDER BY mes;
+```
+
+Marzo tiene 1 ticket, mayo 1, junio 10 y julio 2, y **abril no aparece**. La IA dio por hecho un período continuo mirando solo la primera y la última fecha. Antes de comparar meses, hay que averiguar qué pasó en abril, y casi todos los datos son de junio: comparar "la evolución de cinco meses" con estos datos no se sostiene.
+</Debrief>
