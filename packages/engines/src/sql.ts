@@ -139,6 +139,13 @@ function describirDiferencia(esperadas: Fila[], actuales: Fila[], sinOrden: bool
         return `La columna '${columna}' no coincide en algunas filas. Revisa el cálculo o el filtro.`;
       }
     }
+  } else {
+    // Sin orden, se comparan los valores de cada columna sin importar en qué fila están.
+    const valores = (filas: Fila[], columna: string) => JSON.stringify(filas.map((fila) => JSON.stringify(fila[columna])).sort());
+    const distintas = columnas.filter((columna) => valores(comparables, columna) !== valores(esperadas, columna));
+    if (distintas.length > 0 && distintas.length < columnas.length) {
+      return `La columna '${distintas[0]}' no coincide en algunas filas. Revisa el cálculo o el filtro.`;
+    }
   }
   return "Tu resultado no coincide con lo esperado. Revisa el filtro, el orden y las columnas.";
 }
@@ -171,6 +178,15 @@ export function compararSql(tablas: Tablas, tarea: SqlComparacion, consulta: str
 
   const sinOrden = tarea.comparar === "filas-sin-orden";
   const columnas = tarea.esperadas.length ? Object.keys(tarea.esperadas[0]) : null;
+  // Las columnas se comparan por nombre o por posición (así un alias distinto no reprueba), pero no se aceptan columnas
+  // de más: con ellas, un SELECT * aprobaba cualquier tarea que pidiera elegir columnas.
+  const columnasActuales = actuales.length ? Object.keys(actuales[0]).length : 0;
+  if (columnas && columnasActuales > columnas.length) {
+    return {
+      aprobada: false,
+      diagnostico: `Tu consulta trae ${plural(columnasActuales, "columna")} y se piden ${columnas.length} (${columnas.join(", ")}). Pide solo esas: en un reporte, cada columna de más es ruido.`,
+    };
+  }
   const comparables = columnas ? actuales.map((fila) => tomarColumnas(fila, columnas)) : actuales;
   if (serializar(comparables, sinOrden) === serializar(tarea.esperadas, sinOrden)) {
     return { aprobada: true, diagnostico: null };

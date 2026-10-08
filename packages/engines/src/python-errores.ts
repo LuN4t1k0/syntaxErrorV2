@@ -98,6 +98,21 @@ function tipos(detalle: string): Explicacion {
       sugerencia: "Quita los paréntesis, o revisa si le pusiste a una variable el nombre de una función (por ejemplo, sum = 10).",
     };
   }
+  const faltan = /(\w+)\(\) missing \d+ required positional arguments?: (.+)$/.exec(detalle);
+  if (faltan) {
+    const parametros = faltan[2].replace(/'(\w+)'/g, "«$1»").replace(" and ", " y ");
+    return {
+      mensaje: `Llamaste a «${faltan[1]}» sin el valor de ${parametros}.`,
+      sugerencia: `Pasa un valor por cada parámetro entre los paréntesis. Si se la estás dando a apply, va sin paréntesis: apply(${faltan[1]}).`,
+    };
+  }
+  const sobran = /(\w+)\(\) takes (\d+) positional arguments? but (\d+) (?:was|were) given/.exec(detalle);
+  if (sobran) {
+    return {
+      mensaje: `«${sobran[1]}» recibe ${sobran[2]} ${sobran[2] === "1" ? "valor" : "valores"}, pero le pasaste ${sobran[3]}.`,
+      sugerencia: "Revisa cuántos parámetros definiste con def y cuántos valores pasas al llamarla.",
+    };
+  }
   const corchetes = /'(\w+)' object is not subscriptable/.exec(detalle)?.[1];
   if (corchetes) return { mensaje: `${conMayuscula(nombreTipo(corchetes))} no se puede leer con corchetes [].`, sugerencia: null };
   return { mensaje: "Estás combinando tipos de datos o argumentos que no son compatibles.", sugerencia: null };

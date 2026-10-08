@@ -164,6 +164,27 @@ describe("avisosSql", () => {
     ]);
   });
 
+  it("no avisa por los nombres de un WITH ni por el alias de una subconsulta en FROM", () => {
+    const conWith = "WITH resumen AS (SELECT cliente_id, SUM(monto) AS total FROM ventas GROUP BY cliente_id)\nSELECT c.nombre, r.total FROM resumen AS r JOIN clientes AS c ON c.id = r.cliente_id";
+    expect(avisosSql(conWith, tablas)).toEqual([]);
+    expect(avisosSql("WITH resumen AS (SELECT cliente_id FROM ventas) SELECT cliente_id FROM resumen", tablas)).toEqual([]);
+    expect(avisosSql("SELECT r.total FROM (SELECT cliente_id, SUM(monto) AS total FROM ventas GROUP BY cliente_id) AS r WHERE r.total > 100000", tablas)).toEqual([]);
+    // Un alias de columna después de un paréntesis sigue siendo un alias de columna, no una tabla.
+    expect(avisosSql("SELECT ROUND(AVG(monto), 2) AS promedio FROM ventas WHERE promedio.x > 1", tablas)).toEqual([
+      { mensaje: "«promedio» no es una tabla ni un alias de esta consulta.", linea: 1 },
+    ]);
+  });
+
+  it("avisa que MIN y MAX no funcionan con texto en este editor, y propone ORDER BY", () => {
+    expect(avisosSql("SELECT MIN(nombre) AS primero FROM clientes", tablas)).toEqual([
+      {
+        mensaje: "En este editor, MIN y MAX solo funcionan con números: con la columna de texto «nombre» dan NULL. Para el primero o el último, ordena con ORDER BY nombre y toma una fila con LIMIT 1.",
+        linea: 1,
+      },
+    ]);
+    expect(avisosSql("SELECT MAX(monto) FROM ventas", tablas)).toEqual([]);
+  });
+
   it("columna con otras mayúsculas", () => {
     expect(avisosSql("SELECT NOMBRE FROM clientes", tablas)).toEqual([
       { mensaje: "Las columnas distinguen mayúsculas y minúsculas: escribe «nombre» en vez de «NOMBRE».", linea: 1 },

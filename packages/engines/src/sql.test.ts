@@ -66,6 +66,21 @@ describe("revisarSql", () => {
     expect(revisarSql(tablas, fueraDeSantiago, consulta).aprobada).toBe(true);
   });
 
+  it("rechaza columnas de más, aunque las pedidas estén bien", () => {
+    const resultado = revisarSql(tablas, fueraDeSantiago, "SELECT * FROM clientes WHERE ciudad <> 'Santiago'");
+    expect(resultado).toStrictEqual({
+      aprobada: false,
+      diagnostico: "Tu consulta trae 3 columnas y se piden 2 (nombre, ciudad). Pide solo esas: en un reporte, cada columna de más es ruido.",
+    });
+  });
+
+  it("sin orden, también dice qué columna no coincide", () => {
+    const tarea: SqlTarea = { solucion: "SELECT nombre, UPPER(ciudad) AS ciudad FROM clientes", comparar: "filas-sin-orden" };
+    expect(revisarSql(tablas, tarea, "SELECT nombre, LOWER(ciudad) AS ciudad FROM clientes").diagnostico).toBe(
+      "La columna 'ciudad' no coincide en algunas filas. Revisa el cálculo o el filtro."
+    );
+  });
+
   it("dice cuántas filas trae y cuántas se esperan", () => {
     const resultado = revisarSql(tablas, fueraDeSantiago, "SELECT nombre, ciudad FROM clientes");
     expect(resultado).toStrictEqual({ aprobada: false, diagnostico: "Tu consulta trae 4 filas, se esperan 2." });

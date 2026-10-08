@@ -87,22 +87,49 @@ const esFuncion = (tokens: TokenSql[], indice: number) => esSimbolo(tokens[indic
 type Alcance = { tablas: Map<string, string>; alias: Set<string> };
 
 // Primera pasada: qué nombres son tablas (o sus alias) y cuáles son alias de columnas.
+// Si el token en «cierre» es el ) de una subconsulta, como en «FROM (SELECT ...) AS r».
+function cierraSubconsulta(tokens: TokenSql[], cierre: number): boolean {
+  if (!esSimbolo(tokens[cierre], ")")) return false;
+  let profundidad = 0;
+  for (let indice = cierre; indice >= 0; indice -= 1) {
+    if (esSimbolo(tokens[indice], ")")) profundidad += 1;
+    if (esSimbolo(tokens[indice], "(")) profundidad -= 1;
+    if (profundidad === 0) return esPalabra(tokens[indice + 1], "SELECT");
+  }
+  return false;
+}
+
 function alcanceDe(tokens: TokenSql[], esquema: EsquemaSql): Alcance {
   const tablas = new Map<string, string>(Object.keys(esquema).map((tabla) => [tabla.toLowerCase(), tabla]));
   const alias = new Set<string>();
+  // Los nombres de un WITH («resumen AS (SELECT ...)») y los alias de una subconsulta en FROM también son tablas de la
+  // consulta. Sus columnas no se conocen, así que se guardan con tabla "" y no se revisan.
+  const derivadas = new Set(
+    tokens
+      .filter((token, indice) => token.tipo === "palabra" && esPalabra(tokens[indice + 1], "AS") && esSimbolo(tokens[indice + 2], "("))
+      .map((token) => token.valor.toLowerCase())
+  );
+  for (const derivada of derivadas) tablas.set(derivada, "");
+  const esDerivada = (t: TokenSql | undefined) => t?.tipo === "palabra" && derivadas.has(t.valor.toLowerCase());
   tokens.forEach((token, indice) => {
     if (token.tipo !== "palabra" || esClave(token) || esFuncion(tokens, indice)) return;
     const previo = tokens[indice - 1];
     const tablaPrevia = (t: TokenSql | undefined) => (t?.tipo === "palabra" ? esquema[t.valor] && t.valor : undefined);
     if (esPalabra(previo, "AS")) {
+      if (esSimbolo(tokens[indice + 1], "(")) return;
       const tabla = tablaPrevia(tokens[indice - 2]);
       if (tabla) tablas.set(token.valor.toLowerCase(), tabla);
+      else if (esDerivada(tokens[indice - 2]) || cierraSubconsulta(tokens, indice - 2)) tablas.set(token.valor.toLowerCase(), "");
       else alias.add(token.valor.toLowerCase());
       return;
     }
     const tabla = tablaPrevia(previo);
     if (tabla) {
       tablas.set(token.valor.toLowerCase(), tabla);
+      return;
+    }
+    if (esDerivada(previo) || cierraSubconsulta(tokens, indice - 1)) {
+      tablas.set(token.valor.toLowerCase(), "");
       return;
     }
     const siguiente = tokens[indice + 1];
@@ -282,6 +309,21 @@ export function avisosSql(consulta: string, tablas: Tablas): Aviso[] {
   const avisar = (mensaje: string, linea: number) => {
     if (!avisos.has(mensaje)) avisos.set(mensaje, { mensaje, linea });
   };
+
+  // alasql ignora los textos en MIN y MAX (PostgreSQL y los demás motores los comparan): con una columna de texto, como
+  // una fecha AAAA-MM-DD, el resultado sale NULL sin ningún error.
+  const esTexto = (columna: string) =>
+    Object.values(tablas).some((filas) => typeof filas.find((fila) => fila[columna] !== null && fila[columna] !== undefined)?.[columna] === "string");
+  tokens.forEach((token, indice) => {
+    if (token.tipo !== "palabra" || !["MIN", "MAX"].includes(token.valor.toUpperCase()) || !esSimbolo(tokens[indice + 1], "(")) return;
+    const columna = esSimbolo(tokens[indice + 3], ".") ? tokens[indice + 4] : tokens[indice + 2];
+    if (columna?.tipo === "palabra" && esTexto(columna.valor)) {
+      avisar(
+        `En este editor, MIN y MAX solo funcionan con números: con la columna de texto «${columna.valor}» dan NULL. Para el primero o el último, ordena con ORDER BY ${columna.valor} y toma una fila con LIMIT 1.`,
+        token.linea
+      );
+    }
+  });
 
   tokens.forEach((token, indice) => {
     if (token.tipo !== "palabra" || esClave(token) || esFuncion(tokens, indice)) return;

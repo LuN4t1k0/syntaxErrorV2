@@ -113,6 +113,27 @@ describe("revisarHoja", () => {
     expect(revisarHoja(hoja, total)).toEqual({ aprobada: true, diagnostico: null });
   });
 
+  it("si la celda pide una fórmula, no acepta el número escrito a mano", () => {
+    const hoja = crearHoja(ventas);
+    expect(revisarHoja(hoja, { celdas: [{ celda: "C2", valor: 247000, formula: true }] }).diagnostico).toBe("La celda C2 está vacía. Escribe ahí una fórmula que empiece con =.");
+    escribirCelda(hoja, "C2", "247000");
+    const tarea: SheetTarea = { celdas: [{ celda: "C2", valor: 247000, formula: true }] };
+    expect(revisarHoja(hoja, tarea).diagnostico).toBe(
+      "La celda C2 tiene el valor escrito a mano. Escribe una fórmula que empiece con =, para que el resultado se recalcule si cambian los datos."
+    );
+    escribirCelda(hoja, "C2", "=B2+B3");
+    expect(revisarHoja(hoja, tarea).aprobada).toBe(true);
+  });
+
+  it("si la celda pide una referencia, la fórmula tiene que usarla", () => {
+    const hoja = crearHoja(ventas);
+    const tarea: SheetTarea = { celdas: [{ celda: "C2", valor: 185000, referencia: "$B$2" }] };
+    escribirCelda(hoja, "C2", "=B2");
+    expect(revisarHoja(hoja, tarea).diagnostico).toBe("La fórmula de C2 debe usar la referencia $B$2.");
+    escribirCelda(hoja, "C2", "=$b$2");
+    expect(revisarHoja(hoja, tarea).aprobada).toBe(true);
+  });
+
   it("exige la función cuando la tarea la pide, aunque el número sea correcto", () => {
     const hoja = crearHoja(ventas);
     escribirCelda(hoja, "C2", "487000");
@@ -125,10 +146,12 @@ describe("revisarHoja", () => {
     expect(revisarHoja(hoja, total).aprobada).toBe(false);
   });
 
-  it("muestra el valor obtenido y el esperado", () => {
+  it("dice qué muestra la celda, pero no revela el valor esperado", () => {
     const hoja = crearHoja(ventas);
     escribirCelda(hoja, "C2", "=SUMA(B2:B3)");
-    expect(revisarHoja(hoja, total)).toStrictEqual({ aprobada: false, diagnostico: 'La celda C2 muestra "247000" y se espera "487000".' });
+    const revision = revisarHoja(hoja, total);
+    expect(revision).toStrictEqual({ aprobada: false, diagnostico: 'La celda C2 muestra "247000", que no es el resultado esperado. Revisa la fórmula y las celdas que usa.' });
+    expect(revision.diagnostico).not.toContain("487000");
   });
 
   it("informa los errores de fórmula", () => {

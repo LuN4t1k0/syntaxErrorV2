@@ -103,6 +103,16 @@ describe("explicarErrorPython", () => {
       "Un número entero (int) no es una función: no lleva paréntesis después."
     );
     expect(explicarErrorPython(traza(enLinea(1), "TypeError: f() takes 1 positional argument but 2 were given")).mensaje).toBe(
+      "«f» recibe 1 valor, pero le pasaste 2."
+    );
+    expect(explicarErrorPython(traza(enLinea(1), "TypeError: grupo_edad() missing 1 required positional argument: 'edad'"))).toMatchObject({
+      mensaje: "Llamaste a «grupo_edad» sin el valor de «edad».",
+      sugerencia: "Pasa un valor por cada parámetro entre los paréntesis. Si se la estás dando a apply, va sin paréntesis: apply(grupo_edad).",
+    });
+    expect(explicarErrorPython(traza(enLinea(1), "TypeError: total() missing 2 required positional arguments: 'precio' and 'cantidad'")).mensaje).toBe(
+      "Llamaste a «total» sin el valor de «precio» y «cantidad»."
+    );
+    expect(explicarErrorPython(traza(enLinea(1), "TypeError: unhashable type: 'list'")).mensaje).toBe(
       "Estás combinando tipos de datos o argumentos que no son compatibles."
     );
   });

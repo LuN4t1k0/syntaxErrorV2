@@ -27,13 +27,28 @@ describe("crearSesionPython", () => {
     expect(paquete.version).toBe(PYODIDE_VERSION);
   });
 
+  it("ejecutar devuelve las variables que quedaron, con su tipo y su valor, aunque no se imprima nada", async () => {
+    const codigo = 'import math\nproducto = "Notebook"\nprecio = 450000\ndisponible = True\ndescuento = 0.1\ndef total(p):\n    return p\nlargo = "x" * 200';
+    const resultado = await sesion.ejecutar("stock = 3", codigo);
+    expect(resultado).toMatchObject({ ok: true, salida: "" });
+    expect(resultado.ok && resultado.variables).toEqual([
+      { nombre: "stock", tipo: "int", valor: "3" },
+      { nombre: "producto", tipo: "str", valor: "'Notebook'" },
+      { nombre: "precio", tipo: "int", valor: "450000" },
+      { nombre: "disponible", tipo: "bool", valor: "True" },
+      { nombre: "descuento", tipo: "float", valor: "0.1" },
+      { nombre: "total", tipo: "function", valor: "función total" },
+      { nombre: "largo", tipo: "str", valor: `'${"x".repeat(76)}…` },
+    ]);
+  });
+
   it("ejecutar devuelve lo impreso", async () => {
-    expect(await sesion.ejecutar("", 'print("hola")')).toEqual({ ok: true, salida: "hola", tablas: [] });
+    expect(await sesion.ejecutar("", 'print("hola")')).toEqual({ ok: true, salida: "hola", tablas: [], variables: [] });
   });
 
   it("deja los archivos del caso disponibles con ruta relativa", async () => {
     const resultado = await sesion.ejecutar("", 'print(open("datos/ventas.csv").read().splitlines()[1])');
-    expect(resultado).toEqual({ ok: true, salida: "1,100", tablas: [] });
+    expect(resultado).toEqual({ ok: true, salida: "1,100", tablas: [], variables: [] });
   });
 
   it("aprueba cuando pasan las pruebas", async () => {
@@ -47,6 +62,31 @@ describe("crearSesionPython", () => {
   it("muestra el mensaje del assert que falla", async () => {
     const resultado = await sesion.revisar(totalTarea, "total = precio + stock");
     expect(resultado.diagnostico).toBe("total debe ser el precio por el stock");
+  });
+
+  it("las pruebas ven lo impreso en _salida, también con comillas y saltos de línea", async () => {
+    const tarea: TareaPython = { preparacion: 'nombre = "Ana"', pruebas: 'assert _salida == \'Hola, "Ana"\\nchao\', "No imprimiste el saludo."' };
+    expect((await sesion.revisar(tarea, 'print(f\'Hola, "{nombre}"\')\nprint("chao")')).aprobada).toBe(true);
+    const fallida = await sesion.revisar(tarea, 'saludo = "Hola"');
+    expect(fallida.diagnostico).toBe("No imprimiste el saludo.");
+  });
+
+  it("las pruebas pueden volver a ejecutar el código de la persona con otros valores, desde _codigo", async () => {
+    const tarea: TareaPython = {
+      preparacion: "stock = 3",
+      pruebas: 'for s, e in [(3, "Reponer"), (12, "OK")]:\n    v = {"stock": s}\n    exec(_codigo, v)\n    assert v["estado"] == e, f"Con stock {s}, estado no es correcto."',
+    };
+    expect((await sesion.revisar(tarea, 'if stock < 5:\n    estado = "Reponer"\nelse:\n    estado = "OK"')).aprobada).toBe(true);
+    expect((await sesion.revisar(tarea, 'estado = "Reponer"')).diagnostico).toBe("Con stock 12, estado no es correcto.");
+  });
+
+  it("si se guardó lo que devuelve print, explica que print no guarda el valor", async () => {
+    const resultado = await sesion.revisar(totalTarea, "total = print(precio * stock)");
+    expect(resultado.salida).toBe("1350000");
+    expect(resultado.diagnostico).toBe(
+      "print muestra el valor en la salida, pero no lo guarda: «total» quedó en None. Asígnale el valor sin print, por ejemplo: total = precio * stock"
+    );
+    expect(resultado.errorDeCodigo).toBeUndefined();
   });
 
   it("da un mensaje genérico si el assert no tiene mensaje", async () => {
@@ -64,7 +104,7 @@ describe("crearSesionPython", () => {
   it("no arrastra variables de una ejecución anterior", async () => {
     await sesion.ejecutar("", "total = 1350000");
     const resultado = await sesion.revisar(totalTarea, "x = 1");
-    expect(resultado.diagnostico).toBe("Falta crear «total». Guarda el resultado con ese nombre exacto.");
+    expect(resultado.diagnostico).toBe("Falta crear «total». Revisa que exista y que el nombre esté escrito igual que en el enunciado.");
   });
 
   it("ejecutar explica el error con la línea del editor, aunque haya preparación", async () => {
@@ -129,6 +169,8 @@ describe("tablas de pandas", () => {
         { nombre: "ventas", columnas: ["id", "ciudad", "fecha", "monto"], filas: [[1, "Temuco", "2025-03-01", 100], [2, "Santiago", "2025-03-02", 250], [3, "Temuco", "2025-03-03", null]], total: 3 },
         { nombre: "por_ciudad", columnas: ["ciudad", "monto"], filas: [["Santiago", 250], ["Temuco", 100]], total: 2 },
       ],
+      // El módulo pd y las tablas de pandas no se repiten como variables.
+      variables: [{ nombre: "total", tipo: "int", valor: "350" }],
     });
   });
 

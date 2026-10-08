@@ -11,7 +11,9 @@ if (!HyperFormula.getRegisteredLanguagesCodes().includes("esES")) {
 export type ValorCelda = string | number | boolean | null;
 export type Grilla = ValorCelda[][];
 export type Hoja = HyperFormula;
-export type CeldaEsperada = { celda: string; valor: string | number | boolean; funcion?: string };
+// formula: la celda tiene que calcularse con una fórmula; un número escrito a mano no aprueba aunque sea el correcto.
+// referencia: una celda que la fórmula tiene que usar, como $B$5 en la lección de referencias absolutas.
+export type CeldaEsperada = { celda: string; valor: string | number | boolean; funcion?: string; formula?: boolean; referencia?: string };
 export type SheetTarea = { celdas: CeldaEsperada[] };
 // Una tarea trabaja sobre su hoja principal (índice 0, la única que se edita) y puede consultar otras,
 // por ejemplo «comunas», con referencias como comunas!A2:E13. «inicial» deja celdas escritas de antemano.
@@ -162,6 +164,21 @@ export function revisarHoja(hoja: Hoja, tarea: SheetTarea): ResultadoTarea {
     if (error) {
       return { aprobada: false, diagnostico: `La celda ${esperada.celda} tiene el error ${error.original}. ${textoDeError(error)}`, errorDeCodigo: true };
     }
+    if (valor === null || valor === "") {
+      return { aprobada: false, diagnostico: `La celda ${esperada.celda} está vacía.${esperada.formula ? " Escribe ahí una fórmula que empiece con =." : ""}` };
+    }
+    if (esperada.formula && !leerFormula(hoja, esperada.celda)) {
+      return {
+        aprobada: false,
+        diagnostico: `La celda ${esperada.celda} tiene el valor escrito a mano. Escribe una fórmula que empiece con =, para que el resultado se recalcule si cambian los datos.`,
+      };
+    }
+    if (esperada.referencia) {
+      const formula = (leerFormula(hoja, esperada.celda) ?? "").toUpperCase().replace(/\s+/g, "");
+      if (!formula.includes(esperada.referencia.toUpperCase())) {
+        return { aprobada: false, diagnostico: `La fórmula de ${esperada.celda} debe usar la referencia ${esperada.referencia}.` };
+      }
+    }
     if (esperada.funcion) {
       const formula = leerFormula(hoja, esperada.celda);
       if (!formula || !usaFuncion(formula, esperada.funcion)) {
@@ -174,7 +191,8 @@ export function revisarHoja(hoja: Hoja, tarea: SheetTarea): ResultadoTarea {
     if (!mismoValor(valor, esperada.valor)) {
       return {
         aprobada: false,
-        diagnostico: `La celda ${esperada.celda} muestra "${formatearValor(valor)}" y se espera "${esperada.valor}".`,
+        // Como en SQL y Python, no se revela el valor esperado: la persona lo calcula con su fórmula.
+        diagnostico: `La celda ${esperada.celda} muestra "${formatearValor(valor)}", que no es el resultado esperado. Revisa la fórmula y las celdas que usa.`,
       };
     }
   }
