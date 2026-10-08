@@ -121,6 +121,7 @@ export default async function DashboardPage() {
             {continuar.tipo === "paso" && continuar.ruta ? (
               <Link href={`/rutas/${continuar.ruta.slug}`} className="text-sm font-bold text-primary hover:underline">Ver el mapa de la ruta</Link>
             ) : null}
+            <Link href="/dashboard/avance" className="text-sm font-bold text-primary hover:underline">Ver tu avance</Link>
           </div>
         </section>
       ) : null}
