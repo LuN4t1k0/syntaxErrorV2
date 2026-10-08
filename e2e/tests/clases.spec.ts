@@ -31,7 +31,7 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
   await consulta.fill("SELECT nombre FROM estudiantes");
   await page.getByRole("button", { name: "Validar" }).click();
   await expect(page.getByText("Tu consulta debe devolver 2 columnas", { exact: false })).toBeVisible();
-  await consulta.fill("SELECT nombre, ciudad FROM estudiantes");
+  await consulta.fill("SELECT nombre, correo FROM estudiantes");
   const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
@@ -53,7 +53,7 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
   await expect(page.getByText("sus tareas se habilitan al completar", { exact: false })).toHaveCount(0);
 });
 
-test("con el Caso 0 completo: las clases de Excel traen su propia planilla y una lectura se completa al marcarla", async ({ page, ip, nuevaPagina }) => {
+test("con el Caso 0 completo: las clases de Excel traen su propia planilla y un quiz se aprueba con todo correcto", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(180_000);
   const email = await registrarse(page, "Martina Rojas");
   const admin = await nuevaPagina();
@@ -71,6 +71,10 @@ test("con el Caso 0 completo: las clases de Excel traen su propia planilla y una
     await page.getByLabel("Fórmula").press("Enter");
     await expect(page.getByRole("button", { name: "Celda D2", exact: true })).toHaveText("1350000", { timeout: 2_000 });
   }).toPass({ timeout: 20_000 });
+  await page.getByRole("button", { name: "Celda D3", exact: true }).click();
+  await page.getByLabel("Fórmula").fill("=B3*C3");
+  await page.getByLabel("Fórmula").press("Enter");
+  await expect(page.getByRole("button", { name: "Celda D3", exact: true })).toHaveText("120000");
   const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
@@ -78,11 +82,12 @@ test("con el Caso 0 completo: las clases de Excel traen su propia planilla y una
 
   await aprobar(page, ip, "clases-de-excel", excel.slice(2, 21));
   await page.goto("/casos/clases-de-excel/22-excel-vs-base-de-datos");
-  await expect(page.getByText("¿usarías Excel o una base de datos?", { exact: false })).toBeVisible();
-  const marcada = reporteDeTarea(page, true);
-  await page.getByRole("button", { name: "Ver la respuesta y marcar como completada" }).click();
-  await marcada;
-  await expect(page.getByText("Una base de datos: el volumen y la edición simultánea", { exact: false })).toBeVisible();
+  await page.getByLabel("Una base de datos, consultada con SQL.").check();
+  await page.getByLabel("Excel, con SUMAR.SI o una tabla dinámica.").check();
+  await page.getByLabel("Reglas: tipos de dato obligatorios y relaciones que no se pueden romper.").check();
+  const respondida = reporteDeTarea(page, true);
+  await page.getByRole("button", { name: "Validar" }).click();
+  await respondida;
   await expect(page.getByText("Aprobada", { exact: true })).toBeVisible();
 });
 
@@ -99,20 +104,20 @@ test("con el Caso 2 completo: una lección de Python se resuelve en el editor y 
   await expect(page.getByText("Python listo").first()).toBeVisible({ timeout: 150_000 });
   await expect(page.locator('.cm-content[aria-label="Código Python"]')).toBeVisible({ timeout: 30_000 });
   const codigo = page.getByLabel("Código Python");
-  await codigo.fill("resultado = precio * descuento");
+  await codigo.fill("precio_final = precio * descuento\npoco_stock = stock < 5\nreponer_urgente = poco_stock and precio > 100000");
   const fallida = reporteDeTarea(page, false);
   await page.getByRole("button", { name: "Validar" }).click();
   await fallida;
-  await expect(page.getByText("resultado no tiene el valor esperado: revisa el cálculo.")).toBeVisible();
+  await expect(page.getByText("precio_final no da lo esperado", { exact: false })).toBeVisible();
   await expect(page.getByText("405000")).toHaveCount(0);
-  await codigo.fill("resultado = precio * (1 - descuento)");
+  await codigo.fill("precio_final = precio * (1 - descuento)\npoco_stock = stock < 5\nreponer_urgente = poco_stock and precio > 100000");
   const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
   await expect(page.getByRole("heading", { name: "Lección aprobada" })).toBeVisible();
 });
 
-test("con el Caso 3 completo: una práctica de Power BI muestra sus pasos, su dataset y se autocorrige al marcarla", async ({ page, ip, nuevaPagina }) => {
+test("con el Caso 3 completo: una práctica de Power BI muestra sus pasos, su dataset y su quiz revisa el resultado", async ({ page, ip, nuevaPagina }) => {
   test.setTimeout(300_000);
   const email = await registrarse(page, "Catalina Nahuel");
   const admin = await nuevaPagina();
@@ -130,11 +135,20 @@ test("con el Caso 3 completo: una práctica de Power BI muestra sus pasos, su da
   const csv = await page.request.get("/casos/clases-de-power-bi/datos/ventas.csv");
   expect((await csv.text()).split("\n")[0]).toBe("fecha,producto,region,monto");
 
-  await expect(page.getByText("¿Cuántas columnas tiene la tabla ventas una vez cargada?")).toBeVisible();
-  const marcada = reporteDeTarea(page, true);
-  await page.getByRole("button", { name: "Ver la respuesta y marcar como completada" }).click();
-  await marcada;
-  await expect(page.getByText("4 columnas: fecha, producto, region y monto.")).toBeVisible();
+  // La práctica se hace en Power BI Desktop; el quiz revisa su resultado, y cada respuesta se elige dentro de su pregunta.
+  const pregunta = (texto: RegExp) => page.getByRole("group", { name: texto });
+  await pregunta(/Cuántas columnas tiene la tabla ventas/).getByLabel("4", { exact: true }).check();
+  await pregunta(/Cuántas filas de ventas tiene el archivo/).getByLabel("6", { exact: true }).check();
+  await pregunta(/configuración regional/).getByLabel("Para que una fecha como 01/03/2026 se lea como 1 de marzo y no como 3 de enero.").check();
+  const fallida = reporteDeTarea(page, false);
+  await page.getByRole("button", { name: "Validar" }).click();
+  await fallida;
+  await expect(page.getByText("Tienes 2 de 3 respuestas correctas. Revisa la pregunta 2.")).toBeVisible();
+  await pregunta(/Cuántas filas de ventas tiene el archivo/).getByLabel("8", { exact: true }).check();
+  const aprobada = reporteDeTarea(page, true);
+  await page.getByRole("button", { name: "Validar" }).click();
+  await aprobada;
+  await expect(page.getByText("Aprobada", { exact: true })).toBeVisible();
 });
 
 test("con el Caso 4 completo: el quiz de IA para datos marca qué revisar sin dar la respuesta y se aprueba con todo correcto", async ({ page, ip, nuevaPagina }) => {
@@ -145,26 +159,26 @@ test("con el Caso 4 completo: el quiz de IA para datos marca qué revisar sin da
   for (const caso of ["herramientas-del-oficio", "clases-de-excel", "despachos-rapidos", "clases-de-sql", "minimarkets-del-sur", "clases-de-python", "tienda-online-pewen", "clases-de-power-bi", "clinica-cordillera-central"]) {
     await completarCaso(page, admin, ip, email, caso);
   }
-  await aprobar(page, ip, "clases-de-ia-para-datos", MISIONES["clases-de-ia-para-datos"].slice(0, 2));
+  await aprobar(page, ip, "clases-de-ia-para-datos", MISIONES["clases-de-ia-para-datos"].slice(0, 4));
 
-  await page.goto("/casos/clases-de-ia-para-datos/03-calidad-de-datos");
-  await expect(page.getByText("> lección 3/14", { exact: false })).toBeVisible();
+  await page.goto("/casos/clases-de-ia-para-datos/05-clasificacion-y-etiquetas");
+  await expect(page.getByText("> lección 5/14", { exact: false })).toBeVisible();
   const responder = async (segunda: string) => {
-    await page.getByLabel("Duplicados, faltantes o formatos inconsistentes.").check();
+    await page.getByLabel("La 2: un cargo de envío que no correspondía es un problema de cobro, aunque mencione el envío.").check();
     await page.getByLabel(segunda).check();
-    await page.getByLabel("Comprobar contra fuente y reglas.").check();
+    await page.getByLabel("Agregar a la definición de cobro un ejemplo de cargo de envío indebido, y pedir una razón junto a cada etiqueta.").check();
     const reportado = reporteDeTarea(page);
     await page.getByRole("button", { name: "Validar" }).click();
     await reportado;
   };
   await expect(async () => {
-    await responder("Más precisión automáticamente.");
+    await responder("Dejarlo en despacho, que es lo primero que menciona.");
     await expect(page.getByText("Tienes 2 de 3 respuestas correctas. Revisa la pregunta 2.")).toBeVisible({ timeout: 3_000 });
   }).toPass({ timeout: 30_000 });
   await expect(page.getByText("Revisa esta pregunta.")).toHaveCount(1);
-  await expect(page.getByText("La misma categoría escrita distinto se cuenta por separado.")).toHaveCount(0);
+  await expect(page.getByText("Es un caso mixto: queda visible para que una persona decida cómo contarlo.")).toHaveCount(0);
 
-  await responder("Conteos y filtros incorrectos.");
+  await responder("Marcarlo como revisar: tiene un problema de despacho y uno de cobro.");
   await expect(page.getByText("Aprobada", { exact: true })).toBeVisible();
-  await expect(page.getByText("La misma categoría escrita distinto se cuenta por separado.")).toBeVisible();
+  await expect(page.getByText("Es un caso mixto: queda visible para que una persona decida cómo contarlo.")).toBeVisible();
 });

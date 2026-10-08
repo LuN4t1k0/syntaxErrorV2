@@ -22,13 +22,13 @@ test("al pasar a la lección siguiente, Python no se vuelve a cargar y no queda 
   await page.goto(`/casos/${CLASES}/12-funciones`);
   await expect(page.getByText("Python listo")).toBeVisible({ timeout: 150_000 });
   const codigo = page.getByLabel("Código Python");
-  await codigo.fill("def calcular_total(precio, cantidad):\n    return precio * cantidad\n\nresultado = calcular_total(precio, cantidad)\nhuella = 1");
+  await codigo.fill("def calcular_total(precio, cantidad, descuento=0):\n    return precio * cantidad * (1 - descuento)\n\ntotal_notebooks = calcular_total(450000, 3, 0.1)\ntotal_mouse = calcular_total(12000, 2)\nhuella = 1");
   const aprobada = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await aprobada;
 
   // Navegación sin recargar, con el enlace a la lección siguiente.
-  await page.getByRole("navigation", { name: "Misiones cercanas" }).getByRole("link", { name: "Series →" }).click();
+  await page.getByRole("navigation", { name: "Misiones cercanas" }).getByRole("link", { name: "pandas y las Series →" }).click();
   await expect(page).toHaveURL(new RegExp(`/casos/${CLASES}/13-series$`));
   await expect(page.getByText("Python listo")).toBeVisible({ timeout: 30_000 });
   await codigo.fill("print(huella)");
@@ -36,7 +36,7 @@ test("al pasar a la lección siguiente, Python no se vuelve a cargar y no queda 
   await expect(page.getByText("No existe nada llamado «huella»", { exact: false })).toBeVisible();
 
   // La 13 usa pandas, que la 12 no cargaba.
-  await codigo.fill("resultado = int(calificaciones.sum())");
+  await codigo.fill("notas = pd.Series([5, 3, 4, 2, 4, 5])\npromedio = notas.mean()\nmejor = notas.max()\nnotas_100 = notas * 20");
   const conPandas = reporteDeTarea(page, true);
   await page.getByRole("button", { name: "Validar" }).click();
   await conPandas;
