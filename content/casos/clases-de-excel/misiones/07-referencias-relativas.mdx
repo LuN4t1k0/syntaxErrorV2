@@ -4,22 +4,23 @@ tiempo: 12
 ---
 
 <Concepto>
-En una tabla real, la misma cuenta se repite en cada fila: el total de cada venta, el precio con IVA de cada producto. No hace falta escribir la fórmula cien veces: se escribe una vez y se copia hacia abajo.
+En una tabla real, la misma cuenta se repite en cada fila: el stock total de cada producto, el precio con IVA de cada uno. No hace falta escribir la fórmula cien veces: se escribe una vez y se copia hacia abajo.
 
-<Sintaxis lenguaje="planilla" codigo={"=B2*C2   →   copiada a la fila 3   →   =B3*C3"} />
+<Sintaxis lenguaje="planilla" codigo={"=B2+C2   →   copiada a la fila 3   →   =B3+C3"} />
 
-**Las referencias se mueven con la fórmula.** `=B2*C2` en D2 no significa "la celda B2" de forma fija: significa "la celda de la columna B en mi misma fila". Al copiarla a D3, Excel la ajusta sola a `=B3*C3`; a D4, a `=B4*C4`. A esto se le llama referencia relativa.
+**Las referencias se mueven con la fórmula.** `=B2+C2` en D2 no significa "la celda B2" de forma fija: significa "la celda de la columna B en mi misma fila". Al copiarla a D3, Excel la ajusta sola a `=B3+C3`; a D4, a `=B4+C4`. A esto se le llama referencia relativa.
 
 ```text
-     B         C          D
-2    85000     4          =B2*C2   → 340000
-3    60000     2          =B3*C3   → 120000   (copiada, se ajustó sola)
-4    24000     5          =B4*C4   → 120000
+     B          C         D
+1    bodega     tienda    stock_total
+2    40         12        =B2+C2   → 52
+3    15         8         =B3+C3   → 23   (copiada, se ajustó sola)
+4    0          6         =B4+C4   → 6
 ```
 
 **Rellenar hacia abajo.** En Excel, seleccionas la celda y arrastras el cuadradito de su esquina, o haces doble clic en él. En esta plataforma, selecciona la celda con la fórmula y usa el botón **Rellenar hasta la fila…** que aparece arriba de la hoja.
 
-**Revisar después de copiar.** Selecciona una celda del medio y mira su fórmula: si dice `=B5*C5` en la fila 5, la copia quedó bien. Si todas dicen `=B2*C2`, la fórmula se pegó como valor fijo.
+**Revisar después de copiar.** Selecciona una celda del medio y mira su fórmula: si dice `=B5+C5` en la fila 5, la copia quedó bien. Si todas dicen `=B2+C2`, la fórmula se pegó como valor fijo.
 
 **Por qué importa.** Una fórmula copiada es una sola regla aplicada a toda la tabla: si está bien en la primera fila, está bien en todas. Escribir cada fila a mano multiplica las oportunidades de equivocarse.
 </Concepto>

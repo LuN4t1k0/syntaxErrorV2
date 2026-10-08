@@ -8,17 +8,17 @@ Para Excel, una fecha es un número: la cantidad de días desde el 1 de enero de
 
 <Sintaxis lenguaje="planilla" codigo={"=fecha_final - fecha_inicial\n=MES(fecha)"} />
 
-**Restar fechas da días.** `=C2-B2` con dos fechas da los días que pasan entre ellas. Sumar un número a una fecha avanza esa cantidad de días: `=B2+30` es el vencimiento a 30 días.
+**Restar fechas da días.** Si G2 tiene la fecha de inicio de un arriendo y H2 la de término, `=H2-G2` da los días que pasan entre ellas. Sumar un número a una fecha avanza esa cantidad de días: `=G2+30` es el vencimiento a 30 días.
 
 ```text
-B2 = 10/03/2026, C2 = 25/03/2026
-=C2-B2   → 15
-=B2+30   → 09/04/2026
+G2 = 10/03/2026, H2 = 25/03/2026
+=H2-G2   → 15
+=G2+30   → 09/04/2026
 ```
 
-**Sacar partes de una fecha.** `DIA`, `MES` y `AÑO` devuelven cada parte como número: `=MES(B2)` da 3 para cualquier fecha de marzo. Sirven para agrupar por mes con `SUMAR.SI`.
+**Sacar partes de una fecha.** `DIA`, `MES` y `AÑO` devuelven cada parte como número: `=MES(G2)` da 3 para cualquier fecha de marzo. Sirven para agrupar por mes con `SUMAR.SI`.
 
-**HOY().** Devuelve la fecha de hoy y se actualiza cada día: `=HOY()-B2` dice cuántos días han pasado desde una fecha.
+**HOY().** Devuelve la fecha de hoy y se actualiza cada día: `=HOY()-G2` dice cuántos días han pasado desde una fecha.
 
 **Cuidado con el formato.** En Chile las fechas se escriben día/mes/año. Si una planilla viene configurada en formato de Estados Unidos (mes/día/año), 03/04/2026 puede leerse como 4 de marzo. Y si una fecha quedó guardada como texto, las restas dan error: una pista es que se alinea a la izquierda de la celda.
 </Concepto>

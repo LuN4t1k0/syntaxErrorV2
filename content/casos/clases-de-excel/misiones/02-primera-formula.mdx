@@ -6,21 +6,23 @@ tiempo: 12
 <Concepto>
 Una fórmula es una instrucción para que Excel calcule por ti. En vez de hacer la cuenta con la calculadora y escribir el resultado, le dices a Excel qué celdas usar y él calcula, y recalcula solo cada vez que cambia un dato.
 
-<Sintaxis lenguaje="planilla" codigo={"=celda1*celda2"} />
+<Sintaxis lenguaje="planilla" codigo={"=celda operador celda"} />
 
-**Empieza con =.** El signo igual le avisa a Excel que lo que sigue es un cálculo y no un texto. Sin él, `B2*C2` queda escrito tal cual.
+**Empieza con =.** El signo igual le avisa a Excel que lo que sigue es un cálculo y no un texto. Sin él, `B2+B3` queda escrito tal cual.
 
-**Los operadores.** `+` suma, `-` resta, `*` multiplica y `/` divide. Se pueden mezclar números y celdas: `=B2*2` o `=B2+C2`.
+**Los operadores.** `+` suma, `-` resta, `*` multiplica y `/` divide. Se pueden mezclar números y celdas: `=B2*2` o `=B2-B3`.
 
-**Usa celdas, no números.** Si una silla cuesta 85000 y se vendieron 4, podrías escribir `=85000*4`, pero si mañana cambia el precio, ese resultado queda mal. Con `=B2*C2`, la fórmula toma lo que haya en esas celdas y el total se actualiza solo.
+**Usa celdas, no números.** Si el sueldo es 900000 y el bono 150000, podrías escribir `=900000+150000`, pero si mañana cambia el sueldo, ese resultado queda mal. Con `=B2+B3`, la fórmula toma lo que haya en esas celdas y el total se actualiza solo.
 
 ```text
-     A        B        C          D
-1    producto precio   cantidad   total
-2    Silla    85000    4          =B2*C2   → muestra 340000
+     A          B
+1    concepto   monto
+2    sueldo     900000
+3    bono       150000
+4    total      =B2+B3   → muestra 1050000
 ```
 
-**Lo que ves y lo que hay.** La celda muestra el resultado (340000), pero guarda la fórmula. Al seleccionarla, la barra de fórmula muestra `=B2*C2`. Así puedes revisar de dónde sale cada número de una planilla.
+**Lo que ves y lo que hay.** La celda muestra el resultado (1050000), pero guarda la fórmula. Al seleccionarla, la barra de fórmula muestra `=B2+B3`. Así puedes revisar de dónde sale cada número de una planilla.
 </Concepto>
 
 <SheetTask
