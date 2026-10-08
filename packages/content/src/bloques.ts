@@ -2,12 +2,14 @@ import { evaluate } from "@mdx-js/mdx";
 import type { MDXContent } from "mdx/types";
 import { isValidElement, type ReactNode } from "react";
 import * as runtime from "react/jsx-runtime";
+import remarkGfm from "remark-gfm";
 import { TIPOS_BLOQUE } from "./esquemas";
 
 export type BloqueCrudo = { tipo: string; props: Record<string, unknown>; texto: string | null };
 
 export async function compilarMision(fuente: string): Promise<MDXContent> {
-  const modulo = await evaluate(fuente, { ...runtime });
+  // remark-gfm: tablas, tachado y listas de tareas de Markdown, que el MDX base no reconoce.
+  const modulo = await evaluate(fuente, { ...runtime, remarkPlugins: [remarkGfm] });
   return modulo.default;
 }
 

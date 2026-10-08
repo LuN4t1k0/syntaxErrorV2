@@ -3,10 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { cargarContenido } from "./cargar";
 import type { Bloque } from "./esquemas";
 import type { Contenido, Mision } from "./tipos";
+import { celdasConFormula } from "./datos";
 import { validarContenido, type RevisorPython } from "./validar";
 
 const FIXTURE = fileURLToPath(new URL("../test/fixtures/valido", import.meta.url));
-const aprueba: RevisorPython = async () => ({ aprobada: true, diagnostico: null });
+// Aprueba la solución y no el código inicial, que el validador también revisa con este revisor.
+const aprueba: RevisorPython = async (tarea) => ({ aprobada: tarea.solucion !== tarea.inicial, diagnostico: null });
 let contenido: Contenido;
 
 beforeEach(async () => {
@@ -43,7 +45,7 @@ describe("validarContenido", () => {
   it("revisa la solución de una tarea de Markdown con sus requisitos", async () => {
     mision("01-filtrar").bloques.push({
       tipo: "MarkdownTask",
-      props: { id: "readme", inicial: "", requisitos: ["titulo", "tabla"], solucion: "# Proyecto", pistas: [] },
+      props: { id: "readme", documento: "README", inicial: "", requisitos: ["titulo", "tabla"], solucion: "# Proyecto", pistas: [] },
       texto: null,
     });
     expect(await validar()).toContain(
@@ -69,7 +71,15 @@ describe("validarContenido", () => {
     filtrar.bloques.push(tarea({ D2: "=B2*C2" }));
     expect(await validar()).toEqual([]);
     filtrar.bloques.push({ ...tarea({ D2: "=B2+C2" }), props: { ...tarea({ D2: "=B2+C2" }).props, id: "otra" } });
-    expect(await validar()).toContain('casos/ventas/misiones/01-filtrar.mdx: la solución de la tarea "otra" no pasa su propio validador: La celda D2 muestra "450003" y se espera "1350000".');
+    expect(await validar()).toContain('casos/ventas/misiones/01-filtrar.mdx: la solución de la tarea "otra" no pasa su propio validador: La celda D2 muestra "450003", que no es el resultado esperado. Revisa la fórmula y las celdas que usa.');
+  });
+
+  it("una celda cuya solución es una fórmula no se aprueba con el número escrito a mano", async () => {
+    expect(celdasConFormula({ celdas: [{ celda: "D2", valor: 3 }, { celda: "D3", valor: 4 }, { celda: "B5", valor: 7 }], solucion: { "D2:D3": "=B2*C2", B5: 7 } })).toEqual([
+      { celda: "D2", valor: 3, formula: true },
+      { celda: "D3", valor: 4, formula: true },
+      { celda: "B5", valor: 7, formula: false },
+    ]);
   });
 
   it("un quiz cuenta como tarea práctica", async () => {
@@ -125,8 +135,19 @@ describe("validarContenido", () => {
   it("rechaza una solución de planilla incorrecta", async () => {
     bloque(mision("02-hoja"), "SheetTask").props.solucion = { F2: "=SUMA(D2:D3)" };
     expect(await validar()).toContain(
-      'casos/ventas/misiones/02-hoja.mdx: la solución de la tarea "total" no pasa su propio validador: La celda F2 muestra "247000" y se espera "487000".'
+      'casos/ventas/misiones/02-hoja.mdx: la solución de la tarea "total" no pasa su propio validador: La celda F2 muestra "247000", que no es el resultado esperado. Revisa la fórmula y las celdas que usa.'
     );
+  });
+
+  it("rechaza una tarea que se aprueba con su código inicial, sin escribir nada", async () => {
+    const sql = bloque(mision("01-filtrar"), "SqlTask");
+    sql.props.inicial = sql.props.solucion;
+    const python = bloque(mision("03-python"), "PythonTask");
+    const revisor = vi.fn<RevisorPython>(async () => ({ aprobada: true, diagnostico: null }));
+    const problemas = await validarContenido(contenido, { revisarPython: revisor });
+    expect(problemas).toContain('casos/ventas/misiones/01-filtrar.mdx: la tarea "fuera-de-santiago" se aprueba con su código inicial, sin escribir nada');
+    expect(problemas).toContain('casos/ventas/misiones/03-python.mdx: la tarea "promedio" se aprueba con su código inicial, sin escribir nada');
+    expect(revisor).toHaveBeenCalledWith(expect.objectContaining({ id: "promedio", solucion: python.props.inicial }), contenido.casos[0]);
   });
 
   it("revisa las tareas de Python con el revisor que recibe", async () => {

@@ -80,6 +80,7 @@ const celdaEsperada = z.object({
   celda: z.string().regex(/^[A-Z]+[1-9][0-9]*$/, "debe ser una celda como F2"),
   valor: z.union([z.string(), z.number(), z.boolean()]),
   funcion: z.string().optional(),
+  referencia: z.string().regex(/^\$?[A-Z]+\$?[1-9][0-9]*$/, "debe ser una referencia como B5 o $B$5").optional(),
 });
 
 export const bloqueSchemas = {
@@ -133,6 +134,8 @@ export const bloqueSchemas = {
   MarkdownTask: z.object({
     id: idTarea,
     enunciado: z.string().optional(),
+    // Qué documento escribe la persona, para el editor: «Tu README», «Tu reporte».
+    documento: z.string().default("README"),
     inicial: z.string().default(""),
     requisitos: z.array(requisitoMarkdown).min(1, "indica al menos un requisito"),
     solucion: texto,

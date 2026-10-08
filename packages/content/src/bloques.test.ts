@@ -1,3 +1,4 @@
+import { isValidElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 import { compilarMision, extraerBloques } from "./bloques";
 
@@ -95,5 +96,20 @@ describe("quiz", () => {
     expect(bloqueSchemas.QuizTask.safeParse({ id: "x", preguntas: [{ ...pregunta, correcta: 2 }] }).success).toBe(false);
     expect(bloqueSchemas.QuizTask.safeParse({ id: "x", preguntas: [{ ...pregunta, opciones: ["Una"] }] }).success).toBe(false);
     expect(bloqueSchemas.QuizTask.safeParse({ id: "x", preguntas: [] }).success).toBe(false);
+  });
+});
+
+describe("compilarMision", () => {
+  // Busca en el árbol de React un elemento del tipo dado, sin renderizar.
+  function contiene(nodo: ReactNode, tipo: unknown): boolean {
+    if (Array.isArray(nodo)) return nodo.some((hijo) => contiene(hijo, tipo));
+    if (!isValidElement(nodo)) return false;
+    return nodo.type === tipo || contiene((nodo.props as { children?: ReactNode }).children, tipo);
+  }
+
+  it("las tablas en Markdown se compilan como tablas, no como texto con barras", async () => {
+    const Contenido = await compilarMision("| tabla | filas |\n| --- | --- |\n| ventas | 12 |");
+    const Tabla = () => null;
+    expect(contiene(Contenido({ components: { table: Tabla } }), Tabla)).toBe(true);
   });
 });

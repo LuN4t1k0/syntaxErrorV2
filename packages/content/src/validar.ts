@@ -3,7 +3,7 @@ import { revisarQuiz } from "@syntaxerror/engines/quiz";
 import { aplicarSolucion, revisarHoja } from "@syntaxerror/engines/sheet";
 import { revisarSql } from "@syntaxerror/engines/sql";
 import type { ResultadoTarea } from "@syntaxerror/engines/tipos";
-import { hojaDeTarea, tablasSql } from "./datos";
+import { celdasConFormula, hojaDeTarea, tablasSql } from "./datos";
 import type { BloqueTarea, PropsBloque } from "./esquemas";
 import { tareasDeMision } from "./publicacion";
 import type { Caso, Contenido } from "./tipos";
@@ -28,20 +28,38 @@ function contarPalabras(texto: string): number {
   return texto.split(/\s+/).filter(Boolean).length;
 }
 
-async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: RevisorPython): Promise<ResultadoTarea> {
+// Lo que escribe la persona en una tarea de código: una consulta, un código de Python o las celdas de una planilla.
+export type CodigoDeTarea = string | Record<string, string | number>;
+
+// Revisa un código en una tarea de SQL, Python o planilla, como si lo hubiera escrito la persona. La usan la solución, el
+// código inicial y los intentos equivocados de content/casos/*/intentos.yaml. Las demás tareas no tienen código: null.
+export async function revisarCodigo(tarea: BloqueTarea, caso: Caso, codigo: CodigoDeTarea, revisarPython: RevisorPython): Promise<ResultadoTarea | null> {
   switch (tarea.tipo) {
     case "SqlTask": {
       const tablas = tablasSql(caso);
       if (Object.keys(tablas).length === 0) return { aprobada: false, diagnostico: "el caso no tiene tablas en datos/" };
-      return revisarSql(tablas, tarea.props, tarea.props.solucion);
+      return revisarSql(tablas, tarea.props, String(codigo));
     }
     case "SheetTask": {
-      if (tarea.props.hoja && tarea.props.otras.includes(tarea.props.hoja)) return { aprobada: false, diagnostico: `la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta` };
+      // Las celdas se escriben sobre la hoja tal como la ve la persona, con sus celdas iniciales.
       const { grilla, opciones } = hojaDeTarea(caso, tarea.props);
-      return revisarHoja(aplicarSolucion(grilla, tarea.props.solucion, opciones), tarea.props);
+      return revisarHoja(aplicarSolucion(grilla, typeof codigo === "string" ? {} : codigo, opciones), { celdas: celdasConFormula(tarea.props) });
     }
     case "PythonTask":
-      return revisarPython(tarea.props, caso);
+      return revisarPython({ ...tarea.props, solucion: String(codigo) }, caso);
+    default:
+      return null;
+  }
+}
+
+async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: RevisorPython): Promise<ResultadoTarea> {
+  switch (tarea.tipo) {
+    case "SqlTask":
+    case "PythonTask":
+      return (await revisarCodigo(tarea, caso, tarea.props.solucion, revisarPython))!;
+    case "SheetTask":
+      if (tarea.props.hoja && tarea.props.otras.includes(tarea.props.hoja)) return { aprobada: false, diagnostico: `la hoja ${tarea.props.hoja} no puede ser también una hoja de consulta` };
+      return (await revisarCodigo(tarea, caso, tarea.props.solucion, revisarPython))!;
     case "MarkdownTask":
       return revisarMarkdown(tarea.props.solucion, tarea.props.requisitos);
     case "GithubTask":
@@ -53,6 +71,20 @@ async function revisarSolucion(tarea: BloqueTarea, caso: Caso, revisarPython: Re
     case "QuizTask":
       // Responder la opción correcta de cada pregunta tiene que aprobar el quiz.
       return revisarQuiz(tarea.props.preguntas, tarea.props.preguntas.map((pregunta) => pregunta.correcta));
+  }
+}
+
+// El código inicial de una tarea de SQL, Python o planilla, revisado como si fuera la respuesta. Si aprueba, la tarea se resuelve
+// sin escribir nada: así venía la lección de while de la v1, con la solución ya escrita en el editor.
+async function apruebaConInicial(tarea: BloqueTarea, caso: Caso, revisarPython: RevisorPython): Promise<boolean> {
+  if (tarea.tipo !== "SqlTask" && tarea.tipo !== "PythonTask" && tarea.tipo !== "SheetTask") return false;
+  // En una planilla, el inicial son celdas que ya vienen en la hoja: se revisa la hoja sin escribir nada más.
+  const inicial = tarea.tipo === "SheetTask" ? {} : tarea.props.inicial;
+  try {
+    return (await revisarCodigo(tarea, caso, inicial, revisarPython))?.aprobada ?? false;
+  } catch {
+    // Si el código inicial ni siquiera corre, no aprueba.
+    return false;
   }
 }
 
@@ -91,6 +123,9 @@ export async function validarContenido(contenido: Contenido, { revisarPython }: 
         }
         if (!resultado.aprobada) {
           problemas.push(`${donde}: la solución de la tarea "${tarea.props.id}" no pasa su propio validador: ${resultado.diagnostico ?? "sin detalle"}`);
+        }
+        if (await apruebaConInicial(tarea, caso, revisarPython)) {
+          problemas.push(`${donde}: la tarea "${tarea.props.id}" se aprueba con su código inicial, sin escribir nada`);
         }
       }
     }

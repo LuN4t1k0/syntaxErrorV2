@@ -10,8 +10,10 @@
     "sh": "docker compose run --rm tools bash",
     "test": "docker compose run --rm tools pnpm -r --if-present test",
     "test:e2e": "sh scripts/e2e.sh",
+    "test:e2e:recorrido": "docker compose --profile e2e run --rm -e RECORRIDO=1 e2e ./node_modules/.bin/playwright test tests/recorrido-clases.spec.ts --workers=1",
     "test:e2e:dev": "docker compose up -d --force-recreate --wait web && docker compose --profile e2e run --rm -e E2E_WORKERS=3 e2e",
     "db:generate": "docker compose run --rm tools pnpm --filter @syntaxerror/db generate",
-    "content:validate": "docker compose run --rm tools pnpm --filter @syntaxerror/content validate"
+    "content:validate": "docker compose run --rm tools pnpm --filter @syntaxerror/content validate",
+    "content:intentos": "docker compose run --rm tools pnpm --filter @syntaxerror/content intentos"
   }
 }
