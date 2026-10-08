@@ -1,31 +1,41 @@
 ---
 titulo: "INDICE y COINCIDIR"
-tiempo: 18
+tiempo: 16
 ---
 
 <Concepto>
-INDICE + COINCIDIR es una forma más flexible de buscar datos. Parece más larga, pero te da más control.
+`INDICE` y `COINCIDIR` son dos funciones que, juntas, hacen lo mismo que `BUSCARV` con más libertad: buscan en cualquier columna y devuelven cualquier otra. Separadas se entienden fácil.
 
-COINCIDIR encuentra la posición; INDICE trae el dato que está en esa posición. Uno es el GPS, el otro abre la caja.
+<Sintaxis lenguaje="planilla" codigo={"=INDICE(columna_a_devolver; COINCIDIR(valor_buscado; columna_donde_buscar; 0))"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=INDICE(rango_resultado;COINCIDIR(valor_buscado;rango_busqueda;0))"} />
+**COINCIDIR dice en qué posición está.** Busca un valor en una columna y devuelve su número de fila dentro de ese rango. El 0 final pide coincidencia exacta.
 
-**Concepto principal.** COINCIDIR("Teclado";B2:B4;0) responde en qué posición está Teclado dentro de la lista de productos. INDICE(C2:C4;posición) usa esa posición para traer el precio desde la columna de precios.
+```text
+B2:B4 = Silla, Escritorio, Estante
+=COINCIDIR("Escritorio";B2:B4;0)   → 2   (es el segundo del rango)
+```
 
-**Cómo pensarlo.** Primero preguntas: ¿dónde está Teclado? La respuesta es posición 3. Después preguntas: ¿qué hay en la posición 3 de los precios? 25000. Separar buscar posición y traer resultado hace que la fórmula sea más fácil de depurar.
+**INDICE trae lo que está en esa posición.** Recibe una columna y un número, y devuelve el valor de esa posición.
 
-**Uso en reportes.** Se usa cuando BUSCARV queda corto, especialmente si necesitas buscar por una columna y traer datos de otra sin depender tanto del orden. Es una herramienta de búsqueda más pro, como cambiar de bicicleta con rueditas a nave con coordenadas.
+```text
+C2:C4 = 85000, 180000, 60000
+=INDICE(C2:C4;2)   → 180000
+```
+
+**Juntas.** `COINCIDIR` encuentra la fila y se la pasa a `INDICE`, que trae el dato de otra columna en esa misma fila: `=INDICE(C2:C4;COINCIDIR("Escritorio";B2:B4;0))` da 180000.
+
+**Los dos rangos deben calzar.** La columna donde buscas y la que devuelves tienen que empezar y terminar en las mismas filas. Si una empieza en la fila 2 y otra en la 1, el resultado sale corrido una fila.
 </Concepto>
 
 <SheetTask
   id="indice-coincidir"
-  enunciado={"Completa D5 con INDICE y COINCIDIR para traer el precio de Teclado."}
-  grilla={[["id","producto","precio","",""],[101,"Notebook",450000,"",""],[102,"Mouse",12000,"",""],[103,"Teclado",25000,"",""],["Buscar producto:","Teclado","Precio:",null,""]]}
-  celdas={[{"celda":"D5","valor":25000}]}
-  solucion={{"D5":"=INDICE(C2:C4;COINCIDIR(B5;B2:B4;0))"}}
-  pistas={["COINCIDIR te dice en qué posición de una lista está un valor.", "INDICE usa esa posición para traer el dato de otra columna."]}
+  enunciado={"Con el catálogo de A1:D9, completa en G2:G4 el stock de los productos escritos en F2:F4, buscándolos por su nombre con INDICE y COINCIDIR. Escribe la fórmula en G2 y rellénala hasta G4."}
+  grilla={[["id","producto","precio","stock","","producto_buscado","stock"],[105,"Webcam",42000,7,"","Teclado",null],[101,"Notebook",450000,3,"","Parlante",null],[108,"Cable HDMI",6000,50,"","Webcam",null],[103,"Teclado",25000,12,"","",""],[102,"Mouse",12000,25,"","",""],[107,"Parlante",35000,30,"","",""],[104,"Monitor",180000,4,"","",""],[106,"Audífonos",24000,15,"","",""]]}
+  celdas={[{"celda":"G2","valor":12,"funcion":"COINCIDIR"},{"celda":"G3","valor":30,"funcion":"COINCIDIR"},{"celda":"G4","valor":7,"funcion":"COINCIDIR"}]}
+  solucion={{"G2:G4":"=INDICE($D$2:$D$9;COINCIDIR(F2;$B$2:$B$9;0))"}}
+  pistas={["Primero escribe solo COINCIDIR(F2;$B$2:$B$9;0) y mira qué número da.","Después envuelve ese número con INDICE sobre la columna de stock.","Las dos columnas deben empezar en la fila 2 y terminar en la 9."]}
 />
 
 <Debrief>
-D5 = INDICE(C2:C4,COINCIDIR(B5,B2:B4,0)) = 25000.
+`=INDICE($D$2:$D$9;COINCIDIR(F2;$B$2:$B$9;0))`: el Teclado está en la posición 4 del rango de productos, y la posición 4 del rango de stock es 12. Si la columna de stock empieza en D1 en vez de D2, cada resultado sale una fila corrido y trae el stock de otro producto.
 </Debrief>

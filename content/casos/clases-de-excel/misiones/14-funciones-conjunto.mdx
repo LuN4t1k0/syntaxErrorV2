@@ -4,28 +4,33 @@ tiempo: 16
 ---
 
 <Concepto>
-Las funciones CONJUNTO sirven cuando una sola condición ya no alcanza. Puedes pedir categoría y región al mismo tiempo.
+`SUMAR.SI` y `CONTAR.SI` aceptan una sola condición. Para preguntas como "¿cuánto vendió tecnología **en el norte**?" se necesitan dos o más a la vez. Las versiones `.CONJUNTO` reciben varias parejas de rango y criterio, y cuentan o suman solo las filas que cumplen todas.
 
-Es como buscar una misión específica: no cualquier tecnologia, sino tecnologia del norte; no cualquier mueble, sino muebles del norte.
+<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI.CONJUNTO(rango_a_sumar; rango1; criterio1; rango2; criterio2)\n=CONTAR.SI.CONJUNTO(rango1; criterio1; rango2; criterio2)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI.CONJUNTO(rango_suma;rango_cond1;criterio1;rango_cond2;criterio2)"} />
+**Ojo con el orden.** En `SUMAR.SI.CONJUNTO`, el rango a sumar va **primero**, al revés que en `SUMAR.SI`, donde va al final. Es el error más común con esta función.
 
-**Concepto principal.** SUMAR.SI.CONJUNTO suma montos que cumplen varias reglas. CONTAR.SI.CONJUNTO cuenta filas que cumplen varias reglas. Cada condición viene como pareja: rango donde mirar y criterio que debe aparecer.
+**Parejas de rango y criterio.** Después del rango a sumar vienen parejas: dónde buscar y qué buscar. Puedes agregar todas las parejas que necesites.
 
-**Cómo pensarlo.** Para tecnologia norte, solo entra Notebook: categoría tecnologia y región norte. Mouse falla porque es sur. Para muebles norte, entran Escritorio y Silla. Por eso el conteo da 2.
+```text
+=SUMAR.SI.CONJUNTO(D2:D50; B2:B50;"oficina"; C2:C50;"marzo")
+     → suma los montos de D donde el área es oficina y el mes es marzo
+=CONTAR.SI.CONJUNTO(B2:B50;"oficina"; D2:D50;">100000")
+     → cuenta los gastos de oficina de más de 100000
+```
 
-**Uso en reportes.** Se usa para reportes por categoría + región, vendedor + mes, producto + canal, o cualquier filtro doble. Es el puente entre una tabla simple y un análisis más cercano a un dashboard.
+**Una tabla de doble entrada.** Con el criterio en una celda y los rangos fijos con `$`, la misma fórmula se rellena para cada región o cada mes, igual que en las lecciones anteriores.
 </Concepto>
 
 <SheetTask
   id="funciones-conjunto"
-  enunciado={"Completa E2 con SUMAR.SI.CONJUNTO y F2 con CONTAR.SI.CONJUNTO."}
-  grilla={[["producto","categoria","region","monto","total_norte_tecnologia","cantidad_muebles_norte"],["Notebook","tecnologia","norte",450000,null,null],["Mouse","tecnologia","sur",12000,"",""],["Escritorio","muebles","norte",180000,"",""],["Silla","muebles","norte",95000,"",""]]}
-  celdas={[{"celda":"E2","valor":450000},{"celda":"F2","valor":2}]}
-  solucion={{"E2":"=SUMAR.SI.CONJUNTO(D2:D5;B2:B5;\"tecnologia\";C2:C5;\"norte\")","F2":"=CONTAR.SI.CONJUNTO(B2:B5;\"muebles\";C2:C5;\"norte\")"}}
-  pistas={["En SUMAR.SI.CONJUNTO el rango que se suma va primero, y después cada pareja de rango y criterio.", "CONTAR.SI.CONJUNTO no tiene rango para sumar: solo parejas de rango y criterio."]}
+  enunciado={"Completa el resumen por región (norte en la fila 2, sur en la fila 3): en G, el total de montos de la categoría tecnologia en esa región, con SUMAR.SI.CONJUNTO; en H, cuántas ventas de muebles hubo en esa región, con CONTAR.SI.CONJUNTO. Escribe las fórmulas en la fila 2, tomando la región de la columna F, y rellénalas a la fila 3."}
+  grilla={[["producto","categoria","region","monto","","region","total_tecnologia","ventas_muebles"],["Escritorio","muebles","norte",180000,"","norte",null,null],["Notebook","tecnologia","norte",450000,"","sur",null,null],["Mouse","tecnologia","sur",12000,"","","",""],["Silla","muebles","norte",95000,"","","",""],["Monitor","tecnologia","sur",180000,"","","",""],["Estante","muebles","sur",60000,"","","",""],["Teclado","tecnologia","norte",25000,"","","",""],["Sofá","muebles","norte",320000,"","","",""]]}
+  celdas={[{"celda":"G2","valor":475000,"funcion":"SUMAR.SI.CONJUNTO"},{"celda":"G3","valor":192000,"funcion":"SUMAR.SI.CONJUNTO"},{"celda":"H2","valor":3,"funcion":"CONTAR.SI.CONJUNTO"},{"celda":"H3","valor":1,"funcion":"CONTAR.SI.CONJUNTO"}]}
+  solucion={{"G2:G3":"=SUMAR.SI.CONJUNTO($D$2:$D$9;$B$2:$B$9;\"tecnologia\";$C$2:$C$9;F2)","H2:H3":"=CONTAR.SI.CONJUNTO($B$2:$B$9;\"muebles\";$C$2:$C$9;F2)"}}
+  pistas={["En SUMAR.SI.CONJUNTO, el rango de montos va primero; después las parejas de rango y criterio.","La categoría es un texto fijo entre comillas; la región se toma de la columna F.","Fija los rangos de datos con $ antes de rellenar."]}
 />
 
 <Debrief>
-E2 = 450000 y F2 = 2.
+Tecnología vendió 475000 en el norte (Notebook y Teclado) y 192000 en el sur (Mouse y Monitor). Hubo 3 ventas de muebles en el norte y 1 en el sur. Sin la condición de región, `SUMAR.SI.CONJUNTO` sumaría toda la tecnología, 667000, en las dos filas.
 </Debrief>

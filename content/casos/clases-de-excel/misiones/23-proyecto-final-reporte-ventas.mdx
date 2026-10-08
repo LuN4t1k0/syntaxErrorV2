@@ -1,35 +1,29 @@
 ---
 titulo: "Proyecto final: reporte de ventas"
-tiempo: 20
+tiempo: 25
 ---
 
 <Concepto>
-Este es el proyecto final: una mini planilla de ventas que mezcla cálculos, texto y condiciones.
+Este proyecto junta lo principal del curso en un reporte real: cálculos por fila, una marca con `SI`, un resumen por categoría con `SUMAR.SI` y `CONTAR.SI`, y un total general. La planilla tiene las ventas de una semana; el reporte tiene que responder qué se vendió, qué ventas destacan y cómo le fue a cada categoría.
 
-La idea es que armes algo que se parece más a trabajo real: no una fórmula aislada, sino varias piezas conversando en la misma hoja.
+**Planifica antes de escribir.** Mira la planilla completa y pregúntate, para cada columna vacía, de qué columnas depende. El total depende del precio y la cantidad; la marca de destacado depende del total; el resumen depende de las categorías y los totales. Ese orden es el orden en que conviene escribir las fórmulas.
 
-**Totales por fila.** Primero calcula cada línea: precio por cantidad. Sin esta columna, el reporte no tiene base. Es la parte caja registradora: cada producto dice cuánto aportó al total.
+**Una fórmula por columna.** Escribe la fórmula en la primera fila de datos, revísala y rellénala hacia abajo. Antes de rellenar, pregúntate qué referencias tienen que moverse y cuáles quedarse fijas con `$`.
 
-<Sintaxis lenguaje="planilla" codigo={"=C2*D2"} />
+**Revisa con un total de control.** Cuando tengas el resumen por categoría, la suma de los totales por categoría tiene que dar lo mismo que el total general de la columna de totales. Si no coinciden, alguna fila quedó fuera de un rango o una categoría está mal escrita. Esta comprobación se usa en cualquier reporte.
 
-**Texto: armar una descripción.** Después arma una descripción legible combinando producto y categoría. MAYUSC deja el producto con presencia de cartel luminoso, y & pega las piezas del texto.
-
-<Sintaxis lenguaje="planilla" codigo={"=MAYUSC(A2)&\" (\"&B2&\")\""} />
-
-**Condicional: total por categoría.** Finalmente, SUMAR.SI suma solo la categoría tecnologia usando los totales ya calculados. Es el cierre del mini reporte: pasas de filas sueltas a una pregunta de negocio.
-
-<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI(B2:B4;\"tecnologia\";E2:E4)"} />
+**Para la vida real.** El mismo reporte, con cientos de filas, se arma igual: las fórmulas no cambian, solo los rangos. Por eso conviene que cada fórmula use referencias y no números escritos a mano.
 </Concepto>
 
 <SheetTask
   id="proyecto-final-reporte-ventas"
-  enunciado={"Completa E2:E4 con el total de cada fila (precio*cantidad), F2 con MAYUSC(producto)&\" (\"&categoria&\")\", y G2 con el total de ventas de la categoría tecnologia usando SUMAR.SI sobre E2:E4."}
-  grilla={[["producto","categoria","precio","cantidad","total","descripcion","total_tecnologia"],["Notebook","tecnologia",450000,2,null,null,null],["Mouse","tecnologia",12000,5,null,null,null],["Escritorio","muebles",180000,1,null,null,null]]}
-  celdas={[{"celda":"E2","valor":900000},{"celda":"E3","valor":60000},{"celda":"E4","valor":180000},{"celda":"F2","valor":"NOTEBOOK (tecnologia)"},{"celda":"G2","valor":960000}]}
-  solucion={{"E2":"=C2*D2","E3":"=C3*D3","E4":"=C4*D4","F2":"=MAYUSC(A2)&\" (\"&B2&\")\"","G2":"=SUMAR.SI(B2:B4;\"tecnologia\";E2:E4)"}}
-  pistas={["Empieza por la columna de totales: precio por cantidad en cada fila.", "Para la categoría usa & y MAYUSC, y para el total de tecnología, SUMAR.SI sobre la columna que acabas de calcular."]}
+  enunciado={"Completa el reporte. En E, el total de cada venta (precio por cantidad). En F, \"Sí\" si el total es de 300000 o más y \"No\" si no. En el resumen, para cada categoría de la columna H: en I, la suma de los totales de esa categoría, y en J, cuántas ventas tuvo. En I6, el total general de la columna E. Usa una fórmula rellenada por columna y comprueba que el total general coincide con la suma del resumen."}
+  grilla={[["producto","categoria","precio","cantidad","total","destacado","","categoria","total","ventas"],["Escritorio","muebles",180000,1,null,null,"","tecnologia",null,null],["Notebook","tecnologia",450000,2,null,null,"","muebles",null,null],["Mouse","tecnologia",12000,5,null,null,"","hogar",null,null],["Silla","muebles",95000,4,null,null,"","","",""],["Monitor","tecnologia",180000,2,null,null,"","Total general",null,""],["Lámpara","hogar",24000,3,null,null,"","","",""],["Estante","muebles",150000,2,null,null,"","","",""],["Teclado","tecnologia",25000,4,null,null,"","","",""]]}
+  celdas={[{"celda":"E2","valor":180000},{"celda":"E3","valor":900000},{"celda":"E4","valor":60000},{"celda":"E5","valor":380000},{"celda":"E6","valor":360000},{"celda":"E7","valor":72000},{"celda":"E8","valor":300000},{"celda":"E9","valor":100000},{"celda":"F2","valor":"No","funcion":"SI"},{"celda":"F3","valor":"Sí","funcion":"SI"},{"celda":"F4","valor":"No","funcion":"SI"},{"celda":"F5","valor":"Sí","funcion":"SI"},{"celda":"F6","valor":"Sí","funcion":"SI"},{"celda":"F8","valor":"Sí","funcion":"SI"},{"celda":"F9","valor":"No","funcion":"SI"},{"celda":"I2","valor":1420000,"funcion":"SUMAR.SI"},{"celda":"I3","valor":860000,"funcion":"SUMAR.SI"},{"celda":"I4","valor":72000,"funcion":"SUMAR.SI"},{"celda":"J2","valor":4,"funcion":"CONTAR.SI"},{"celda":"J3","valor":3,"funcion":"CONTAR.SI"},{"celda":"J4","valor":1,"funcion":"CONTAR.SI"},{"celda":"I6","valor":2352000,"funcion":"SUMA"}]}
+  solucion={{"E2:E9":"=C2*D2","F2:F9":"=SI(E2>=300000;\"Sí\";\"No\")","I2:I4":"=SUMAR.SI($B$2:$B$9;H2;$E$2:$E$9)","J2:J4":"=CONTAR.SI($B$2:$B$9;H2)","I6":"=SUMA(E2:E9)"}}
+  pistas={["Empieza por la columna E: todo lo demás depende de ella.","En el resumen, el criterio es la categoría de la columna H y los rangos de datos van fijos con $.","Si el total general no coincide con la suma de I2:I4, revisa los rangos de tus SUMAR.SI."]}
 />
 
 <Debrief>
-E2=900000, E3=60000, E4=180000 (precio*cantidad de cada fila); F2="NOTEBOOK (tecnologia)"; G2=SUMAR.SI(B2:B4;"tecnologia";E2:E4)=900000+60000=960000, porque Notebook y Mouse son categoría tecnologia.
+Tecnología vendió 1420000 en 4 ventas, muebles 860000 en 3 y hogar 72000 en 1. La suma del resumen, 2352000, coincide con el total general: el reporte cuadra. Cuatro ventas destacan, incluido el Estante, con 300000 justos: "300000 o más" incluye el límite. Con este mismo esquema puedes armar el reporte de un mes completo cambiando solo los rangos.
 </Debrief>

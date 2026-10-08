@@ -4,28 +4,37 @@ tiempo: 12
 ---
 
 <Concepto>
-PROMEDIO responde una pregunta distinta a SUMA: no cuánto vendimos en total, sino cuál fue el valor típico.
-
-Sirve para no dejar que un número gigante o muy chico te haga perder la vista general.
+`PROMEDIO` suma los números de un rango y divide por cuántos son. Responde preguntas como "¿cuánto vende un producto típico?" o "¿cuál es el gasto mensual habitual?".
 
 <Sintaxis lenguaje="planilla" codigo={"=PROMEDIO(rango)"} />
 
-**Concepto principal.** PROMEDIO toma varios números, los suma y divide por la cantidad de datos. Excel hace esa parte aburrida por ti. PROMEDIO(B2:B5) calcula el promedio de las ventas de los cuatro productos.
+**Igual que SUMA, otro cálculo.** Recibe un rango: `=PROMEDIO(B2:B4)`. Es lo mismo que `=SUMA(B2:B4)/3`, pero sin tener que contar las filas a mano.
 
-**Cómo pensarlo.** Si cada producto fuera un jugador del equipo, PROMEDIO te dice el rendimiento medio del equipo, no el golazo individual. Notebook vende mucho más que Mouse, pero el promedio te da una referencia para comparar productos.
+**Las celdas vacías no cuentan.** Una celda en blanco no se toma como cero: simplemente se ignora. Un cero escrito sí cuenta, y baja el promedio.
 
-**Uso en reportes.** Se usa para ticket promedio, ventas promedio por producto, tiempos promedio de respuesta o notas promedio. Es una buena pregunta cuando quieres saber si algo está sobre o bajo lo normal.
+```text
+gastos: 120000, 95000, (vacía), 134000
+=PROMEDIO(B2:B5)   → 116333.33   (divide por 3, no por 4)
+```
+
+**Redondear.** Un promedio suele traer decimales. `REDONDEAR(número; decimales)` lo ajusta: con 0 decimales queda un entero. Una función puede ir dentro de otra; Excel calcula de adentro hacia afuera.
+
+```text
+=REDONDEAR(PROMEDIO(B2:B5);0)   → 116333
+```
+
+**El promedio puede engañar.** Si un producto vende muchísimo más que el resto, el promedio sube y deja de representar al producto típico. Por eso conviene mirarlo junto con el máximo y el mínimo, que verás en la próxima lección.
 </Concepto>
 
 <SheetTask
   id="funcion-promedio"
-  enunciado={"Completa B6 con el promedio de ventas usando PROMEDIO."}
-  grilla={[["producto","total_vendido"],["Notebook",1350000],["Mouse",120000],["Teclado",125000],["Monitor",360000],["Promedio",null]]}
-  celdas={[{"celda":"B6","valor":488750}]}
-  solucion={{"B6":"=PROMEDIO(B2:B5)"}}
-  pistas={["PROMEDIO se escribe igual que SUMA: el nombre de la función y el rango entre paréntesis.", "Usa el mismo rango de ventas de la lección anterior."]}
+  enunciado={"En B8, calcula la venta promedio de los seis productos, redondeada a un número entero. Usa PROMEDIO dentro de REDONDEAR."}
+  grilla={[["producto","total_vendido"],["Notebook",1350000],["Mouse",120000],["Teclado",125000],["Monitor",360000],["Audífonos",96000],["Webcam",84000],["Promedio",null]]}
+  celdas={[{"celda":"B8","valor":355833,"funcion":"PROMEDIO"}]}
+  solucion={{"B8":"=REDONDEAR(PROMEDIO(B2:B7);0)"}}
+  pistas={["PROMEDIO recibe el rango de las seis ventas.","REDONDEAR recibe primero el número (aquí, el promedio) y después cuántos decimales dejar."]}
 />
 
 <Debrief>
-B6 = PROMEDIO(B2:B5) = 488750.
+`=REDONDEAR(PROMEDIO(B2:B7);0)` da 355833. Fíjate que el promedio es más alto que lo que venden cinco de los seis productos: el Notebook, con 1350000, lo tira hacia arriba. Un promedio solo no cuenta toda la historia.
 </Debrief>

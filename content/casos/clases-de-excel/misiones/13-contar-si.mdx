@@ -4,28 +4,34 @@ tiempo: 12
 ---
 
 <Concepto>
-CONTAR.SI cuenta cuántas filas cumplen una condición. No suma dinero: cuenta casos.
+`CONTAR.SI` cuenta cuántas filas cumplen una condición: cuántas ventas hubo de cada categoría, cuántos pedidos llegaron atrasados, cuántas notas están bajo 4. Es la pareja de `SUMAR.SI`: una cuenta filas y la otra suma montos.
 
-Es perfecto cuando quieres saber cuántos productos, clientes o tickets pertenecen a un grupo.
+<Sintaxis lenguaje="planilla" codigo={"=CONTAR.SI(rango; criterio)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=CONTAR.SI(rango;criterio)"} />
+**Dos argumentos.** Dónde buscar y qué buscar. No hay rango a sumar: solo se cuentan las coincidencias.
 
-**Concepto principal.** La estructura es CONTAR.SI(rango; criterio). El rango es donde Excel mira, y el criterio es lo que debe encontrar. Aquí quieres contar cuántas veces aparece muebles en la columna categoría.
+```text
+=CONTAR.SI(B2:B20;"atrasado")    → cuántos pedidos dicen atrasado
+=CONTAR.SI(C2:C20;"<4")          → cuántas notas son menores que 4
+=CONTAR.SI(C2:C20;">="&F1)       → cuántas notas superan el mínimo escrito en F1
+```
 
-**Cómo pensarlo.** Notebook y Mouse son tecnologia, no cuentan. Escritorio y Silla son muebles, sí cuentan. El resultado no depende del monto; solo importa la categoría.
+**Criterios con comparaciones.** El operador va entre comillas junto al número: `"<4"`, `">=100000"`. Si el límite está en una celda, se une con `&`: `">="&F1`.
 
-**Uso en reportes.** Sirve para contar productos por categoría, alumnos aprobados, reclamos abiertos o pedidos atrasados. Si SUMAR.SI responde cuánto, CONTAR.SI responde cuántos.
+**Mayúsculas y espacios.** `CONTAR.SI` no distingue mayúsculas ("Hogar" y "hogar" cuentan igual), pero un espacio de más ("hogar ") sí hace que no coincida. Si un conteo da menos de lo esperado, revisa cómo están escritos los datos.
+
+**Contar y sumar juntos.** Con `CONTAR.SI` y `SUMAR.SI` sobre las mismas categorías tienes cantidad y total por grupo; dividiendo uno por otro, el promedio por grupo.
 </Concepto>
 
 <SheetTask
   id="contar-si"
-  enunciado={"Completa E2 contando productos de categoría muebles."}
-  grilla={[["producto","categoria","monto","",""],["Notebook","tecnologia",450000,"cantidad_muebles",null],["Mouse","tecnologia",12000,"",""],["Escritorio","muebles",180000,"",""],["Silla","muebles",95000,"",""]]}
-  celdas={[{"celda":"E2","valor":2}]}
-  solucion={{"E2":"=CONTAR.SI(B2:B5;\"muebles\")"}}
-  pistas={["CONTAR.SI recibe dos partes: dónde mirar y qué contar.", "El criterio es un texto: va entre comillas, escrito igual que en la tabla."]}
+  enunciado={"En F2:F4, cuenta cuántas ventas hubo de cada categoría de la columna E, con CONTAR.SI rellenado hacia abajo. Después, en F6, cuenta cuántas ventas fueron de más de 100000."}
+  grilla={[["producto","categoria","monto","","categoria","ventas"],["Escritorio","muebles",180000,"","tecnologia",null],["Notebook","tecnologia",450000,"","muebles",null],["Mouse","tecnologia",12000,"","hogar",null],["Silla","muebles",95000,"","",""],["Monitor","tecnologia",180000,"","más de 100000",null],["Estante","muebles",60000,"","",""],["Lámpara","hogar",24000,"","",""],["Teclado","tecnologia",25000,"","",""]]}
+  celdas={[{"celda":"F2","valor":4,"funcion":"CONTAR.SI"},{"celda":"F3","valor":3,"funcion":"CONTAR.SI"},{"celda":"F4","valor":1,"funcion":"CONTAR.SI"},{"celda":"F6","valor":3,"funcion":"CONTAR.SI"}]}
+  solucion={{"F2:F4":"=CONTAR.SI($B$2:$B$9;E2)","F6":"=CONTAR.SI(C2:C9;\">100000\")"}}
+  pistas={["CONTAR.SI recibe dónde buscar y qué buscar; no necesita un rango a sumar.","Para rellenar, fija el rango de categorías con $ y deja que el criterio avance.","Para \"más de 100000\", el criterio es \">100000\", entre comillas."]}
 />
 
 <Debrief>
-E2 = CONTAR.SI(B2:B5,"muebles") = 2.
+Tecnología tiene 4 ventas, muebles 3 y hogar 1: `=CONTAR.SI($B$2:$B$9;E2)` rellenada. `=CONTAR.SI(C2:C9;">100000")` cuenta 3 (el Escritorio, el Notebook y el Monitor). Con la lección anterior ya tienes, para cada categoría, cuántas ventas hubo y cuánto sumaron.
 </Debrief>

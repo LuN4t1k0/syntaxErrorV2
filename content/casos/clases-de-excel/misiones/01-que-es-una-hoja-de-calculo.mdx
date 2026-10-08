@@ -4,28 +4,35 @@ tiempo: 10
 ---
 
 <Concepto>
-Una hoja de cálculo es como un tablero de inventario para datos: cada cuadrito guarda una pieza de información.
+Una hoja de cálculo es una tabla gigante de casillas, llamadas celdas. Cada celda guarda un dato: un nombre, un monto, una fecha o una fórmula. Leer y escribir en la celda correcta es lo primero que hay que dominar.
 
-Si sabes leer filas, columnas y celdas, Excel deja de parecer una nave alienigena y empieza a parecer una libreta ordenada con superpoderes.
+**Filas, columnas y celdas.** Las columnas se nombran con letras (A, B, C…) y las filas con números (1, 2, 3…). Cada celda tiene una dirección que junta las dos: B3 es la columna B, fila 3. Así se ubica cualquier dato, como en el juego de la batalla naval.
 
-**Filas, columnas y celdas.** Las columnas van con letras: A, B, C. Las filas van con números: 1, 2, 3. Cuando juntas ambos, aparece una dirección como B3. En esta tabla, Diego está en la fila 3 y el monto está en la columna B. Por eso el dato que falta vive en B3.
+```text
+     A          B
+1    vendedor   monto
+2    Camila     250000
+3    Diego      310000      ← B3: la venta de Diego
+```
 
-**Seleccionar una celda.** Seleccionar una celda es decirle a Excel: trabaja exactamente aquí. Es como poner el cursor en el chat correcto antes de mandar el mensaje. Si escribes 310000 en B3, completas el monto de Diego. Si lo escribes en B2, le cambias la venta a Camila y armas caos de oficina.
+**La primera fila, los títulos.** Casi siempre la fila 1 lleva el nombre de cada columna y los datos empiezan en la fila 2. Así cualquiera entiende la tabla sin preguntar.
 
-**Texto y números.** Los nombres como Camila o Diego son texto. Los montos como 250000 son números. Excel puede mostrar ambos, pero solo con los números puede calcular. Piensa en texto como etiquetas y números como piezas que Excel puede sumar, comparar o multiplicar.
+**Texto y números.** Excel distingue lo que puede calcular (números) de lo que solo muestra (texto). Los números se escriben solos, sin puntos de miles, sin `$` y con coma o punto decimal según tu configuración: `310000`, no `310.000` ni `$310.000`. Si escribes `310.000`, Excel puede tomarlo como texto o como 310 con decimales, y ya no calcula bien.
 
-**Editar una celda.** Para corregir una celda, la seleccionas, escribes el nuevo valor y presionas Enter. Es el equivalente spreadsheet de editar un mensaje antes de enviarlo. En el desafío no necesitas fórmula todavía: solo ubicar la coordenada correcta y escribir el monto correcto.
+**Escribir y corregir.** Seleccionas la celda, escribes y presionas Enter. Para cambiar un dato, escribes encima. En esta plataforma, haz clic en la celda y escribe en la barra de fórmula de arriba de la hoja.
+
+**Una fila por registro.** Cada fila es una venta, un producto o una persona. No dejes filas en blanco en medio de los datos ni mezcles dos tablas en la misma zona: las fórmulas de las próximas lecciones dependen de ese orden.
 </Concepto>
 
 <SheetTask
   id="que-es-una-hoja-de-calculo"
-  enunciado={"Completa B3 con el monto de venta de Diego: 310000."}
-  grilla={[["vendedor","monto"],["Camila",250000],["Diego",null],["Antonia",180000]]}
-  celdas={[{"celda":"B3","valor":310000}]}
-  solucion={{"B3":310000}}
-  pistas={["La columna monto es la B; busca en qué fila está Diego.", "La dirección de una celda es su letra de columna seguida de su número de fila."]}
+  enunciado={"A la planilla de ventas del mes le faltan datos. Completa el monto de Diego, que vendió 310000, y agrega en la fila 5 a Tomás, que vendió 145000: su nombre en la columna vendedor y su monto en la columna monto."}
+  grilla={[["vendedor","monto"],["Camila",250000],["Diego",null],["Antonia",180000],[null,null]]}
+  celdas={[{"celda":"B3","valor":310000},{"celda":"A5","valor":"Tomás"},{"celda":"B5","valor":145000}]}
+  solucion={{"B3":310000,"A5":"Tomás","B5":145000}}
+  pistas={["La dirección de una celda junta la letra de la columna y el número de la fila.","Escribe los montos sin puntos de miles ni signo $."]}
 />
 
 <Debrief>
-B3 es la fila de Diego y la columna monto; el valor esperado es 310000.
+B3 es la columna monto, fila de Diego; la fila 5 queda con Tomás y su monto. Fíjate que el monto de Camila no cambió: escribir en la celda equivocada reemplaza un dato sin aviso, por eso conviene mirar la dirección antes de escribir.
 </Debrief>

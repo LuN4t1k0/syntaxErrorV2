@@ -4,28 +4,40 @@ tiempo: 16
 ---
 
 <Concepto>
-BUSCARV sirve para buscar un dato por una llave, como cuando escribes un ID y esperas que aparezca el producto correcto.
+Tienes una tabla de pedidos con el código de cada producto, y el nombre y el precio están en otra tabla, el catálogo. `BUSCARV` busca el código en el catálogo y trae el dato que pidas de esa fila. Es la función de búsqueda más usada en oficinas.
 
-Es el equivalente planilla de preguntarle al inventario: oye, quien tiene el código 102?
+<Sintaxis lenguaje="planilla" codigo={"=BUSCARV(valor_buscado; tabla; número_de_columna; FALSO())"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=BUSCARV(valor_buscado;rango;columna;0)"} />
+**Cuatro argumentos.**
+1. Qué buscar: el código, normalmente una celda de la fila.
+2. Dónde: la tabla completa. El valor se busca **siempre en su primera columna**.
+3. Qué columna devolver, contando desde la primera de la tabla: 2 es la segunda, 3 la tercera.
+4. `FALSO()` (o 0): coincidencia exacta.
 
-**Concepto principal.** BUSCARV busca el valor en la primera columna del rango y devuelve un dato desde otra columna de esa misma fila. El último 0 significa coincidencia exacta. Para códigos e IDs casi siempre quieres exactitud, no aproximaciones creativas.
+```text
+Catálogo en A2:C4:   201 | Silla      | 85000
+                     202 | Escritorio | 180000
+                     203 | Estante    | 60000
+=BUSCARV(202;A2:C4;2;FALSO())   → Escritorio
+=BUSCARV(202;A2:C4;3;FALSO())   → 180000
+```
 
-**Cómo pensarlo.** B5 contiene el id 102. Excel lo busca en A2:A4, encuentra la fila del Mouse y devuelve la columna 2 del rango A2:C4. Si el rango es A2:C4, la columna 1 es id, la columna 2 es producto y la columna 3 es precio.
+**Siempre coincidencia exacta.** Si omites el cuarto argumento o pones `VERDADERO()`, Excel busca una coincidencia aproximada y supone que la primera columna está ordenada. Si no lo está, devuelve datos de otra fila sin ningún aviso. Con códigos, nombres o RUT, usa siempre `FALSO()`.
 
-**Uso en reportes.** Se usa para traer nombres, precios, categorías o datos maestros desde una tabla de referencia. Es útil cuando quieres que una persona escriba solo el ID y la planilla complete el resto, como autocompletar pero con celdas.
+**Fijar la tabla.** Al rellenar la fórmula hacia abajo, el valor buscado avanza fila por fila, pero la tabla tiene que quedarse quieta: `$A$2:$C$4`.
+
+**#N/D.** Si el valor no está en la primera columna, aparece `#N/D` (en Excel en inglés, `#N/A`). Suele ser un código mal escrito, un espacio de más o un número guardado como texto.
 </Concepto>
 
 <SheetTask
   id="buscarv"
-  enunciado={"Completa D5 buscando el id de B5 en A2:C4 y devolviendo la columna producto."}
-  grilla={[["id","producto","precio","",""],[101,"Notebook",450000,"",""],[102,"Mouse",12000,"",""],[103,"Teclado",25000,"",""],["Buscar id:",102,"Producto:",null,""]]}
-  celdas={[{"celda":"D5","valor":"Mouse"}]}
-  solucion={{"D5":"=BUSCARV(B5;A2:C4;2;0)"}}
-  pistas={["BUSCARV recibe cuatro partes: qué buscar, dónde, qué columna devolver y si la coincidencia es exacta.", "La columna se cuenta desde la primera columna del rango, no desde la A."]}
+  enunciado={"El catálogo está en A1:D9 y los pedidos en F1:H5. Completa el producto (G) y el precio (H) de cada pedido buscando su id en el catálogo. Escribe las fórmulas en la fila 2 y rellénalas hasta la fila 5."}
+  grilla={[["id","producto","precio","stock","","id_pedido","producto","precio"],[105,"Webcam",42000,7,"",104,null,null],[101,"Notebook",450000,3,"",105,null,null],[108,"Cable HDMI",6000,50,"",108,null,null],[103,"Teclado",25000,12,"",103,null,null],[102,"Mouse",12000,25,"","","",""],[107,"Parlante",35000,30,"","","",""],[104,"Monitor",180000,4,"","","",""],[106,"Audífonos",24000,15,"","","",""]]}
+  celdas={[{"celda":"G2","valor":"Monitor","funcion":"BUSCARV"},{"celda":"G3","valor":"Webcam","funcion":"BUSCARV"},{"celda":"G4","valor":"Cable HDMI","funcion":"BUSCARV"},{"celda":"G5","valor":"Teclado","funcion":"BUSCARV"},{"celda":"H2","valor":180000,"funcion":"BUSCARV"},{"celda":"H3","valor":42000,"funcion":"BUSCARV"},{"celda":"H4","valor":6000,"funcion":"BUSCARV"},{"celda":"H5","valor":25000,"funcion":"BUSCARV"}]}
+  solucion={{"G2:G5":"=BUSCARV(F2;$A$2:$D$9;2;FALSO())","H2:H5":"=BUSCARV(F2;$A$2:$D$9;3;FALSO())"}}
+  pistas={["El valor buscado es el id del pedido de esa fila (F2); la tabla es el catálogo completo.","El producto está en la columna 2 del catálogo y el precio en la 3.","El catálogo no está ordenado: usa FALSO() como último argumento, y fija la tabla con $."]}
 />
 
 <Debrief>
-D5 = BUSCARV(B5,A2:C4,2,0) = Mouse.
+`=BUSCARV(F2;$A$2:$D$9;2;FALSO())` para el producto y la misma con 3 para el precio. El catálogo está desordenado a propósito: con `VERDADERO()`, Excel supone que está ordenado y devuelve productos equivocados sin dar error. Sin los `$`, al rellenar, la tabla se corre hacia abajo: en la fila 3 ya no incluye la Webcam, que está al principio del catálogo, y aparece `#N/D`.
 </Debrief>

@@ -1,24 +1,31 @@
 ---
-titulo: "Excel vs. una base de datos"
-tiempo: 12
+titulo: "Excel frente a una base de datos"
+tiempo: 10
 ---
 
 <Concepto>
-Excel es excelente para explorar, calcular y armar reportes chicos o medianos. Pero no todo problema de datos debería vivir en una planilla.
+Excel es la herramienta de datos más usada del mundo, y por buenas razones. Pero tiene límites, y saber dónde están te dice cuándo conviene pasar a otra herramienta, como la base de datos y SQL que vienen en el siguiente tramo de la ruta.
 
-La clave profesional es saber cuando Excel alcanza y cuando conviene pasarle la posta a una base de datos.
+**Cuando Excel alcanza.** Tablas de cientos o algunos miles de filas, análisis puntuales, presupuestos, reportes que una persona arma y comparte. Es rápido de empezar, todos lo saben abrir y ves los datos mientras trabajas.
 
-**Cuando Excel alcanza.** Excel alcanza cuando el volumen es manejable, pocas personas editan, y necesitas analizar o presentar datos rápido. Para presupuestos, reportes mensuales, listas limpias y análisis exploratorio, Excel es una navaja suiza bastante poderosa.
+**Sus límites.**
+- **Tamaño:** una hoja admite poco más de un millón de filas, y mucho antes de eso se pone lenta.
+- **Varias personas a la vez:** si dos personas editan copias distintas del mismo archivo, aparecen versiones como "ventas_final_v3_REVISADO.xlsx" y nadie sabe cuál es la buena.
+- **Reglas:** nada impide escribir texto en una columna de montos o borrar una fila por error.
+- **Historial:** es difícil saber quién cambió qué y cuándo.
 
-**Los limites de Excel.** Excel empieza a sufrir cuando hay millones de filas, muchas personas editando al mismo tiempo o reglas de seguridad fuertes. También se vuelve fragil cuando una celda editada a mano puede romper un reporte completo sin dejar huella clara.
+**Qué aporta una base de datos.** Guarda millones de filas, permite que muchas personas y sistemas lean y escriban al mismo tiempo, exige reglas (un monto tiene que ser número, cada pedido tiene que apuntar a un cliente que existe) y se consulta con SQL, que trae exactamente lo que pides.
 
-**SQL entra cuando los datos crecen.** Una base de datos está hecha para guardar muchos datos, permitir consultas, controlar accesos y soportar varios usuarios. Si Excel es una mesa de trabajo, SQL es una bodega con inventario, guardias y pasillos etiquetados.
-
-**No son excluyentes.** En la vida real se usan juntos: la base de datos guarda la información confiable y Excel ayuda a analizar, prototipar o presentar. La decisión no es Team Excel vs Team SQL. Es usar la herramienta correcta para el tamaño del monstruo.
+**No son excluyentes.** Lo habitual es que los datos vivan en una base de datos y que una consulta SQL los traiga para analizarlos o presentarlos en Excel o Power BI. En la ruta vas a usar las tres herramientas, cada una donde mejor funciona.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="excel-vs-base-de-datos"
-  pregunta={"Si tuvieras una tabla de 5 millones de filas que actualizan 10 personas al mismo tiempo, ¿usarías Excel o una base de datos?"}
-  respuesta={"Una base de datos: el volumen y la edición simultánea son escenarios donde SQL funciona mejor."}
+  enunciado={"Para cada situación, elige la herramienta que conviene."}
+  preguntas={[{"pregunta":"Tienes una tabla de 5 millones de ventas que diez personas del equipo actualizan durante el día.","opciones":["Una planilla de Excel compartida por correo.","Una base de datos, consultada con SQL.","Un archivo de Excel por persona, que se juntan a fin de mes.","Un documento de texto."],"correcta":1,"explicacion":"El volumen y la edición simultánea son justo los límites de Excel; una base de datos está hecha para eso."},{"pregunta":"Tu jefa necesita hoy un resumen de 300 gastos del mes, separado por área.","opciones":["Montar una base de datos nueva.","Programar un sistema a medida.","Excel, con SUMAR.SI o una tabla dinámica.","Esperar a fin de año."],"correcta":2,"explicacion":"Es un análisis puntual con pocos datos: Excel lo resuelve rápido y el resultado queda en un formato que todos abren."},{"pregunta":"En un Excel compartido aparecieron montos escritos como texto y filas borradas por error. ¿Qué ofrece una base de datos para evitarlo?","opciones":["Colores más llamativos.","Reglas: tipos de dato obligatorios y relaciones que no se pueden romper.","Más filas por hoja.","Nada: los errores son inevitables."],"correcta":1,"explicacion":"Una base de datos rechaza un texto en una columna numérica o un pedido de un cliente que no existe, antes de que el error entre."}]}
+  pistas={["Fíjate en tres cosas: cuántos datos hay, cuántas personas los tocan y si hay que proteger reglas."]}
 />
+
+<Debrief>
+Excel para análisis puntuales y tablas manejables; una base de datos cuando crecen el volumen, la cantidad de personas o la necesidad de reglas. En el trabajo real se combinan: SQL trae los datos y Excel o Power BI los presentan.
+</Debrief>

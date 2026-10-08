@@ -1,31 +1,42 @@
 ---
 titulo: "Funciones de texto"
-tiempo: 12
+tiempo: 14
 ---
 
 <Concepto>
-Excel no solo calcula números: también limpia, corta y arma textos. Eso sirve mucho cuando llegan datos escritos de mil formas distintas.
+Los datos que llegan de otros sistemas o de formularios traen espacios de más, mayúsculas mezcladas y códigos que hay que armar o desarmar. Las funciones de texto limpian y combinan esos datos sin editarlos a mano, fila por fila.
 
-En esta clase vas a crear códigos cortos con nombre y apellido, como tags de usuario estilo gamer.
+<Sintaxis lenguaje="planilla" codigo={"=MAYUSC(IZQUIERDA(texto; 3)) & \"-\" & otra_celda"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=IZQUIERDA(texto;cantidad)"} />
+**Limpiar.** `ESPACIOS` quita los espacios del principio y del final (y deja uno solo entre palabras). `MAYUSC`, `MINUSC` y `NOMPROPIO` cambian mayúsculas y minúsculas.
 
-**Concepto principal.** IZQUIERDA(texto;3) toma las primeras 3 letras. MAYUSC convierte texto a mayúsculas. & une pedazos de texto. Juntas esas piezas para crear códigos como CAMROJ desde Camila Rojas.
+```text
+=ESPACIOS("  Temuco ")   → "Temuco"
+=MAYUSC("temuco")        → "TEMUCO"
+```
 
-**Cómo pensarlo.** Para Camila Rojas, tomas CAM de Camila y ROJ de Rojas. Luego los unes y los dejas en mayúsculas. No estás inventando el código a mano; estás creando una regla que funciona para cualquier fila.
+**Cortar.** `IZQUIERDA(texto; n)` toma los primeros n caracteres y `DERECHA(texto; n)` los últimos. `LARGO` cuenta los caracteres: útil para encontrar un RUT o un teléfono mal escrito.
 
-**Uso en reportes.** Sirve para crear códigos, limpiar nombres, extraer partes de un RUT, armar etiquetas o estandarizar textos. Muchas bases de datos reales llegan desordenadas; las funciones de texto son la escoba y el trapero.
+**Unir con &.** El signo `&` pega textos y celdas. Lo que agregas a mano (un guion, un espacio) va entre comillas dobles.
+
+```text
+=IZQUIERDA("Temuco";3) & "-" & 15   → "Tem-15"
+```
+
+**Funciones dentro de funciones.** Excel calcula de adentro hacia afuera: en `=MAYUSC(IZQUIERDA(B2;3))`, primero corta y después pasa a mayúsculas.
+
+**El resultado es texto nuevo.** La celda original no cambia. Lo habitual es crear una columna limpia al lado y trabajar desde ella.
 </Concepto>
 
 <SheetTask
   id="funciones-de-texto"
-  enunciado={"Completa C2 y C3 con las primeras 3 letras del nombre y apellido en mayúsculas."}
-  grilla={[["nombre","apellido","codigo"],["Camila","Rojas",null],["Diego","Soto",null]]}
-  celdas={[{"celda":"C2","valor":"CAMROJ"},{"celda":"C3","valor":"DIESOT"}]}
-  solucion={{"C2":"=MAYUSC(IZQUIERDA(A2;3)&IZQUIERDA(B2;3))","C3":"=MAYUSC(IZQUIERDA(A3;3)&IZQUIERDA(B3;3))"}}
-  pistas={["IZQUIERDA trae los primeros caracteres de un texto.", "El & une dos textos, y MAYUSC pasa el resultado a mayúsculas."]}
+  enunciado={"Los nombres de producto vienen con espacios de más. En D, escribe el nombre limpio, sin espacios en los bordes. En E, arma el código de cada producto: las 3 primeras letras de la categoría en mayúsculas, un guion y el id (por ejemplo, TEC-101). Escribe las fórmulas en la fila 2 y rellénalas hasta la fila 5."}
+  grilla={[["id","producto","categoria","producto_limpio","codigo"],[101,"  Notebook","tecnologia",null,null],[205,"Silla  ","muebles",null,null],[310," Lámpara ","hogar",null,null],[102,"Mouse","tecnologia",null,null]]}
+  celdas={[{"celda":"D2","valor":"Notebook","funcion":"ESPACIOS"},{"celda":"D3","valor":"Silla","funcion":"ESPACIOS"},{"celda":"D4","valor":"Lámpara","funcion":"ESPACIOS"},{"celda":"D5","valor":"Mouse","funcion":"ESPACIOS"},{"celda":"E2","valor":"TEC-101","funcion":"IZQUIERDA"},{"celda":"E3","valor":"MUE-205","funcion":"IZQUIERDA"},{"celda":"E4","valor":"HOG-310","funcion":"IZQUIERDA"},{"celda":"E5","valor":"TEC-102","funcion":"IZQUIERDA"}]}
+  solucion={{"D2:D5":"=ESPACIOS(B2)","E2:E5":"=MAYUSC(IZQUIERDA(C2;3))&\"-\"&A2"}}
+  pistas={["ESPACIOS recibe la celda con el nombre.","Para el código: IZQUIERDA corta la categoría, MAYUSC la pasa a mayúsculas y & la une con el guion y el id.","El guion va entre comillas dobles: \"-\"."]}
 />
 
 <Debrief>
-C2 = CAMROJ y C3 = DIESOT.
+`=ESPACIOS(B2)` deja "Notebook" sin los espacios del principio, y `=MAYUSC(IZQUIERDA(C2;3))&"-"&A2` arma "TEC-101". Los espacios invisibles son una causa típica de `#N/D` en `BUSCARV`: "Silla  " y "Silla" no son el mismo texto para Excel.
 </Debrief>

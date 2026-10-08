@@ -1,31 +1,40 @@
 ---
 titulo: "SUMAR.SI"
-tiempo: 12
+tiempo: 14
 ---
 
 <Concepto>
-SUMAR.SI suma solo las filas que cumplen una condición. Es como decir: suma el carrito, pero solo los productos de tecnologia.
+`SUMA` suma todo el rango. `SUMAR.SI` suma solo las filas que cumplen una condición: el total de una categoría, de una región o de un vendedor. Es el primer paso para armar resúmenes por grupo, como los que hace una tabla dinámica.
 
-Cuando una tabla mezcla categorías, esta función evita sumar peras con teclados mecánicos.
+<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI(rango_donde_buscar; criterio; rango_a_sumar)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=SUMAR.SI(rango_condicion;criterio;rango_a_sumar)"} />
+**Tres argumentos.** Dónde buscar (la columna de categorías), qué buscar (el criterio) y qué sumar (la columna de montos). Los dos rangos tienen que tener el mismo tamaño y empezar en la misma fila.
 
-**Concepto principal.** SUMAR.SI necesita tres piezas: dónde mirar la condición, qué criterio buscar y qué montos sumar. En esta tabla miras categorías en B2:B5, buscas tecnologia y sumas los montos de C2:C5.
+```text
+     A          B          C
+1    gasto      area       monto
+2    Arriendo   oficina    500000
+3    Pasajes    ventas     120000
+4    Internet   oficina    35000
+=SUMAR.SI(B2:B4;"oficina";C2:C4)   → 535000
+```
 
-**Cómo pensarlo.** Excel revisa fila por fila: Notebook es tecnologia, suma 450000. Mouse es tecnologia, suma 12000. Escritorio y Silla no entran. El resultado es 462000 porque solo entran las filas que tienen la etiqueta correcta.
+**El criterio puede ser una celda.** En vez de escribir `"oficina"` dentro de la fórmula, puedes apuntar a una celda que diga oficina. Así armas una tabla de resumen: una fila por categoría, con la misma fórmula rellenada hacia abajo.
 
-**Uso en reportes.** Se usa para ventas por categoría, gastos por área, horas por proyecto o ingresos por canal. Es una de las funciones más útiles para responder: ¿cuánto corresponde solo a este grupo?
+**Fijar los rangos al copiar.** Si rellenas la fórmula hacia abajo, los rangos de datos tienen que quedarse quietos (`$B$2:$B$4`), mientras el criterio sí avanza a la categoría de la fila siguiente. Es la lección de referencias absolutas aplicada a un caso real.
+
+**Otros criterios.** También acepta comparaciones entre comillas: `">100000"` suma solo los montos mayores a 100000.
 </Concepto>
 
 <SheetTask
   id="sumar-si"
-  enunciado={"Completa E2 sumando los montos de categoría tecnologia."}
-  grilla={[["producto","categoria","monto","",""],["Notebook","tecnologia",450000,"total_tecnologia",null],["Mouse","tecnologia",12000,"",""],["Escritorio","muebles",180000,"",""],["Silla","muebles",95000,"",""]]}
-  celdas={[{"celda":"E2","valor":462000}]}
-  solucion={{"E2":"=SUMAR.SI(B2:B5;\"tecnologia\";C2:C5)"}}
-  pistas={["SUMAR.SI recibe tres partes: dónde mirar la condición, qué buscar y qué sumar.", "El criterio es un texto: va entre comillas, escrito igual que en la tabla."]}
+  enunciado={"Arma el resumen por categoría en la columna F: el total de montos de tecnologia en F2, de muebles en F3 y de hogar en F4. Usa SUMAR.SI tomando la categoría de la columna E, escribe la fórmula en F2 y rellénala hasta F4."}
+  grilla={[["producto","categoria","monto","","categoria","total"],["Escritorio","muebles",180000,"","tecnologia",null],["Notebook","tecnologia",450000,"","muebles",null],["Mouse","tecnologia",12000,"","hogar",null],["Silla","muebles",95000,"","",""],["Monitor","tecnologia",180000,"","",""],["Estante","muebles",60000,"","",""],["Lámpara","hogar",24000,"","",""],["Teclado","tecnologia",25000,"","",""]]}
+  celdas={[{"celda":"F2","valor":667000,"funcion":"SUMAR.SI"},{"celda":"F3","valor":335000,"funcion":"SUMAR.SI"},{"celda":"F4","valor":24000,"funcion":"SUMAR.SI"}]}
+  solucion={{"F2:F4":"=SUMAR.SI($B$2:$B$9;E2;$C$2:$C$9)"}}
+  pistas={["Primero dónde buscar (la categoría de cada venta), después qué buscar (E2) y al final qué sumar (los montos).","Al rellenar, los rangos de datos no deben moverse: fíjalos con $. El criterio E2 sí tiene que avanzar."]}
 />
 
 <Debrief>
-E2 = SUMAR.SI(B2:B5,"tecnologia",C2:C5) = 462000.
+`=SUMAR.SI($B$2:$B$9;E2;$C$2:$C$9)` rellenada hasta F4: tecnología suma 667000, muebles 335000 y hogar 24000. Sin los `$`, al bajar a F3 los rangos se correrían a B3:B10 y dejarían fuera el Escritorio de la fila 2: muebles mostraría 155000 en vez de 335000, sin dar ningún error.
 </Debrief>

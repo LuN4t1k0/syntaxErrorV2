@@ -4,28 +4,34 @@ tiempo: 12
 ---
 
 <Concepto>
-CONTAR, MAX y MIN son el trío de exploración rápida: cuántos datos tengo, cuál es el más grande y cuál es el más chico.
+Antes de analizar una tabla conviene saber cuántos datos tiene y entre qué valores se mueven. `CONTAR`, `MAX` y `MIN` responden eso en tres celdas.
 
-Antes de analizar una tabla enorme, estas funciones son como mirar el minimapa de un videojuego.
+<Sintaxis lenguaje="planilla" codigo={"=CONTAR(rango)\n=MAX(rango)\n=MIN(rango)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=CONTAR(rango)"} />
+**CONTAR cuenta números.** Solo cuenta las celdas con números: las vacías y las que tienen texto no suman. `CONTARA` cuenta todas las celdas que no están vacías, con números o texto.
 
-**Concepto principal.** CONTAR cuenta celdas con números. MAX encuentra el número mayor. MIN encuentra el número menor. Con una sola columna de ventas puedes saber cantidad de productos, mejor venta y venta más baja.
+```text
+B2:B5 → 120000, "pendiente", (vacía), 95000
+=CONTAR(B2:B5)    → 2
+=CONTARA(B2:B5)   → 3
+```
 
-**Cómo pensarlo.** D2 pregunta cuántos valores hay en B2:B5. D3 pregunta quién ganó la carrera. D4 pregunta quién quedó último. No estás cambiando los datos, estás creando un mini resumen al lado de la tabla.
+La diferencia entre las dos es útil: si `CONTARA` da más que `CONTAR`, en esa columna de números hay datos escritos como texto.
 
-**Uso en reportes.** Sirven para detectar extremos: producto estrella, venta más baja, cantidad de registros cargados. Son funciones simples, pero ayudan mucho a revisar si una tabla tiene sentido antes de sacar conclusiones.
+**MAX y MIN.** El valor más grande y el más chico del rango. Sirven para detectar extremos: la mejor venta, el gasto más bajo, o un valor raro que delata un error de tipeo (un monto de 1200000000 donde debería ir 120000).
+
+**Un resumen al lado de la tabla.** Es común armar un bloque de resumen junto a los datos, con una etiqueta en una columna y el cálculo en la de al lado. Así quien abre la planilla ve lo importante sin recorrer todas las filas.
 </Concepto>
 
 <SheetTask
   id="contar-max-min"
-  enunciado={"Completa D2 con CONTAR, D3 con MAX y D4 con MIN sobre B2:B5."}
-  grilla={[["producto","total_vendido","resumen","valor"],["Notebook",1350000,"Cantidad de productos",null],["Mouse",120000,"Venta maxima",null],["Teclado",125000,"Venta minima",null],["Monitor",360000,null,null]]}
-  celdas={[{"celda":"D2","valor":4},{"celda":"D3","valor":1350000},{"celda":"D4","valor":120000}]}
-  solucion={{"D2":"=CONTAR(B2:B5)","D3":"=MAX(B2:B5)","D4":"=MIN(B2:B5)"}}
-  pistas={["Las tres funciones usan el mismo rango: la columna de ventas.", "Cada celda lleva su función: la cantidad, el mayor y el menor."]}
+  enunciado={"Arma el resumen en la columna E: en E2, cuántos productos tienen una venta registrada (con número); en E3, la venta más alta; y en E4, la venta más baja. Ojo: el Teclado todavía no tiene su venta cargada."}
+  grilla={[["producto","total_vendido","","resumen","valor"],["Notebook",1350000,"","Productos con venta",null],["Mouse",120000,"","Venta máxima",null],["Teclado","sin dato","","Venta mínima",null],["Monitor",360000,"","",""],["Audífonos",96000,"","",""],["Webcam",84000,"","",""]]}
+  celdas={[{"celda":"E2","valor":5,"funcion":"CONTAR"},{"celda":"E3","valor":1350000,"funcion":"MAX"},{"celda":"E4","valor":84000,"funcion":"MIN"}]}
+  solucion={{"E2":"=CONTAR(B2:B7)","E3":"=MAX(B2:B7)","E4":"=MIN(B2:B7)"}}
+  pistas={["Las tres funciones reciben el mismo rango: las ventas de B2 a B7.","CONTAR solo cuenta números: el \"sin dato\" del Teclado no entra."]}
 />
 
 <Debrief>
-D2 = 4, D3 = 1350000 y D4 = 120000.
+`=CONTAR(B2:B7)` da 5, porque el "sin dato" del Teclado es texto. `=MAX(B2:B7)` da 1350000 y `=MIN(B2:B7)` da 84000. Con `CONTARA` el conteo daría 6: comparar ambos es una forma rápida de descubrir datos mal cargados.
 </Debrief>

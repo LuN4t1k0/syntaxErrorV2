@@ -4,28 +4,38 @@ tiempo: 12
 ---
 
 <Concepto>
-SUMA junta varios números sin obligarte a escribirlos uno por uno. Es el modo turbo para responder cuánto hay en total.
+Sumar cinco celdas con `=B2+B3+B4+B5+B6` funciona, pero con cien filas es inmanejable y fácil de equivocarse. Las funciones son cálculos ya hechos que reciben un rango de celdas. La más usada es `SUMA`.
 
-La vas a usar para sumar ventas de varios productos y obtener el total general.
+<Sintaxis lenguaje="planilla" codigo={"=SUMA(primera_celda:última_celda)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=SUMA(rango)"} />
+**Un rango.** `B2:B6` significa "de B2 a B6, todas las celdas entre medio". Los dos puntos se leen como "hasta".
 
-**Concepto principal.** Un rango es un grupo de celdas. B2:B5 significa desde B2 hasta B5, todo seguido en la misma columna. SUMA(B2:B5) le dice a Excel: toma todas esas ventas y juntalas en un solo número.
+**La función.** El nombre, los paréntesis y lo que recibe adentro. `=SUMA(B2:B6)` suma las cinco celdas. En esta plataforma, mientras escribes, aparece abajo una ayuda con la forma de la función.
 
-**Cómo pensarlo.** Imagina que cada producto dejó monedas sobre la mesa. SUMA es barrer todas esas monedas y contar el botín final. En vez de escribir B2+B3+B4+B5, usas el rango y dejas la fórmula limpia.
+**Elegir bien el rango.** El rango decide qué entra en la cuenta. Incluir la fila de títulos no rompe la suma (el texto se ignora), pero incluir la celda del propio total crea una referencia circular: el total se sumaría a sí mismo.
 
-**Uso en reportes.** Toda tabla de ventas, gastos, horas o inventario termina preguntando por un total. SUMA suele ser la primera función que convierte una lista de datos en una respuesta de negocio.
+```text
+     A          B
+1    mes        gasto
+2    enero      120000
+3    febrero    95000
+4    marzo      134000
+5    Total      =SUMA(B2:B4)   → 349000
+6    Sin enero  =SUMA(B3:B4)   → 229000
+```
+
+**Separador de argumentos.** En Excel en español, los argumentos de una función se separan con punto y coma: `=SUMA(B2:B4;D2:D4)` suma dos rangos. Esta plataforma también acepta la coma.
 </Concepto>
 
 <SheetTask
   id="funcion-suma"
-  enunciado={"Completa B6 con la suma total de ventas usando SUMA."}
-  grilla={[["producto","total_vendido"],["Notebook",1350000],["Mouse",120000],["Teclado",125000],["Monitor",360000],["Total",null]]}
-  celdas={[{"celda":"B6","valor":1955000}]}
-  solucion={{"B6":"=SUMA(B2:B5)"}}
-  pistas={["SUMA recibe un rango: la primera y la última celda, separadas por dos puntos.", "El rango va desde la primera venta hasta la última, sin incluir la celda donde escribes."]}
+  enunciado={"Completa el resumen de ventas: en B8, el total vendido de los seis productos, y en B9, el total sin contar el Notebook. Usa la función SUMA en las dos."}
+  grilla={[["producto","total_vendido"],["Notebook",1350000],["Mouse",120000],["Teclado",125000],["Monitor",360000],["Audífonos",96000],["Webcam",84000],["Total",null],["Total sin Notebook",null]]}
+  celdas={[{"celda":"B8","valor":2135000,"funcion":"SUMA"},{"celda":"B9","valor":785000,"funcion":"SUMA"}]}
+  solucion={{"B8":"=SUMA(B2:B7)","B9":"=SUMA(B3:B7)"}}
+  pistas={["El rango va desde la primera celda con datos hasta la última, separadas por dos puntos.","Para dejar fuera al Notebook, el rango empieza en la fila siguiente."]}
 />
 
 <Debrief>
-B6 = SUMA(B2:B5) = 1955000.
+`=SUMA(B2:B7)` da 2135000 y `=SUMA(B3:B7)` da 785000. Un rango que se queda corto (por ejemplo, hasta B6) deja fuera la Webcam sin ningún aviso: después de escribir una suma, revisa que el rango cubra todas las filas.
 </Debrief>

@@ -1,31 +1,38 @@
 ---
 titulo: "Referencias absolutas con $"
-tiempo: 12
+tiempo: 14
 ---
 
 <Concepto>
-A veces una fórmula debe moverse por varias filas, pero una celda debe quedarse quieta. Para eso sirve el signo $.
+A veces una fórmula que se copia hacia abajo tiene que mirar siempre la misma celda: la tasa de IVA, el valor del dólar, una meta. Si esa referencia se mueve con la fórmula, en la fila siguiente apunta a una celda vacía. El signo `$` la deja fija.
 
-Piensa en la tasa de IVA como un jefe final: todos los productos la miran, pero ella no se mueve.
+<Sintaxis lenguaje="planilla" codigo={"=B2*(1+$E$2)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=B2*(1+$B$5)"} />
+**Qué fija el $.** `$E$2` fija la columna (E) y la fila (2): al copiar la fórmula, sigue apuntando a E2. Las partes sin `$` se siguen moviendo normalmente.
 
-**Concepto principal.** $B$5 significa: quédate pegado a la celda B5 aunque copie la fórmula a otra fila. Sin los $, al bajar la fórmula Excel intentaría mirar B6, B7 y así. Pero la tasa de IVA esta fija en B5.
+```text
+     B        C                  …   E
+1    neto     total_con_comision     comision
+2    100000   =B2*(1+$E$2)           0.05
+3    80000    =B3*(1+$E$2)       ← B se movió a B3, $E$2 se quedó fija
+```
 
-**Cómo pensarlo.** El precio cambia por producto: B2 para Notebook, B3 para Mouse. La tasa no cambia: siempre B5. La fórmula combina una parte movil y una parte anclada: precio de la fila * (1 + tasa fija).
+**Sin $, el error es silencioso.** Con `=B2*(1+E2)` copiada hacia abajo, la fila 3 queda `=B3*(1+E3)`. E3 está vacía, Excel la toma como 0, y el resultado es el neto sin comisión: un número que no da error y está mal.
 
-**Uso en reportes.** Se usa para IVA, dólar observado, comisiones, descuentos generales o metas que aplican a muchas filas. Cuando algo es una configuración global de la planilla, probablemente merece una referencia absoluta.
+**Un valor en una celda, no dentro de la fórmula.** Podrías escribir `=B2*1.05`, pero si la comisión cambia, tendrías que corregir cada fórmula. Con la tasa en su propia celda, cambias un número y toda la columna se actualiza.
+
+**Atajo en Excel.** Al escribir una referencia, la tecla F4 agrega los `$`. También existen las referencias mixtas, como `E$2`, que fijan solo la fila; las verás cuando trabajes con tablas de doble entrada.
 </Concepto>
 
 <SheetTask
   id="referencias-absolutas"
-  enunciado={"Completa C2 y C3 usando la tasa fija en B5 como referencia absoluta."}
-  grilla={[["producto","precio","precio_con_iva"],["Notebook",450000,null],["Mouse",12000,null],["","",""],["tasa_iva",0.19,""]]}
-  celdas={[{"celda":"C2","valor":535500},{"celda":"C3","valor":14280}]}
-  solucion={{"C2":"=B2*(1+$B$5)","C3":"=B3*(1+$B$5)"}}
-  pistas={["El precio cambia en cada fila, pero la tasa está siempre en la misma celda.", "Para que una referencia no se mueva al copiar la fórmula, pon $ antes de la letra y antes del número."]}
+  enunciado={"La tasa de IVA está en E2. Calcula en la columna C el precio con IVA de los seis productos: escribe la fórmula en C2 usando la tasa de E2 como referencia absoluta y rellénala hasta C7."}
+  grilla={[["producto","precio_neto","precio_con_iva","","tasa_iva"],["Notebook",450000,null,"",0.19],["Mouse",12000,null,"",""],["Teclado",25000,null,"",""],["Monitor",180000,null,"",""],["Audífonos",24000,null,"",""],["Webcam",42000,null,"",""]]}
+  celdas={[{"celda":"C2","valor":535500,"referencia":"$E$2"},{"celda":"C3","valor":14280,"referencia":"$E$2"},{"celda":"C4","valor":29750,"referencia":"$E$2"},{"celda":"C5","valor":214200,"referencia":"$E$2"},{"celda":"C6","valor":28560,"referencia":"$E$2"},{"celda":"C7","valor":49980,"referencia":"$E$2"}]}
+  solucion={{"C2:C7":"=B2*(1+$E$2)"}}
+  pistas={["El precio con IVA es el neto por (1 más la tasa).","La tasa siempre está en E2: agrégale $ antes de la letra y antes del número.","Escribe la fórmula en C2 y rellénala hacia abajo."]}
 />
 
 <Debrief>
-C2 = B2*(1+$B$5) y C3 = B3*(1+$B$5).
+`=B2*(1+$E$2)` rellenada hasta C7: la columna B avanza fila por fila y `$E$2` se queda fija. Sin los `$`, desde C3 la fórmula buscaría la tasa en E3, E4… celdas vacías, y mostraría el precio sin IVA sin dar ningún error.
 </Debrief>

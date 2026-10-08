@@ -1,31 +1,38 @@
 ---
-titulo: "Referencias relativas"
+titulo: "Referencias relativas: una fórmula para toda la columna"
 tiempo: 12
 ---
 
 <Concepto>
-Una referencia relativa cambia cuando copias la fórmula a otra fila. Excel entiende que quieres repetir la misma lógica, no mirar siempre las mismas celdas.
+En una tabla real, la misma cuenta se repite en cada fila: el total de cada venta, el precio con IVA de cada producto. No hace falta escribir la fórmula cien veces: se escribe una vez y se copia hacia abajo.
 
-Es como una receta: en cada fila toma el precio y la cantidad de esa misma fila.
+<Sintaxis lenguaje="planilla" codigo={"=B2*C2   →   copiada a la fila 3   →   =B3*C3"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=B2*C2"} />
+**Las referencias se mueven con la fórmula.** `=B2*C2` en D2 no significa "la celda B2" de forma fija: significa "la celda de la columna B en mi misma fila". Al copiarla a D3, Excel la ajusta sola a `=B3*C3`; a D4, a `=B4*C4`. A esto se le llama referencia relativa.
 
-**Concepto principal.** Si en D2 escribes =B2*C2, Excel mira el precio y la cantidad del Notebook. Cuando haces la misma idea en D3, la referencia baja a B3*C3. No es magia negra, es Excel siguiendo la posición.
+```text
+     B         C          D
+2    85000     4          =B2*C2   → 340000
+3    60000     2          =B3*C3   → 120000   (copiada, se ajustó sola)
+4    24000     5          =B4*C4   → 120000
+```
 
-**Cómo pensarlo.** Cada fila es independiente: Notebook tiene su precio y cantidad; Mouse también. La fórmula debe comportarse como un clon educado: misma estructura, celdas de la fila correspondiente.
+**Rellenar hacia abajo.** En Excel, seleccionas la celda y arrastras el cuadradito de su esquina, o haces doble clic en él. En esta plataforma, selecciona la celda con la fórmula y usa el botón **Rellenar hasta la fila…** que aparece arriba de la hoja.
 
-**Uso en reportes.** Las referencias relativas son clave cuando tienes 10, 100 o 10000 filas y no quieres escribir una fórmula distinta para cada una. Son la base de casi cualquier tabla con totales por fila.
+**Revisar después de copiar.** Selecciona una celda del medio y mira su fórmula: si dice `=B5*C5` en la fila 5, la copia quedó bien. Si todas dicen `=B2*C2`, la fórmula se pegó como valor fijo.
+
+**Por qué importa.** Una fórmula copiada es una sola regla aplicada a toda la tabla: si está bien en la primera fila, está bien en todas. Escribir cada fila a mano multiplica las oportunidades de equivocarse.
 </Concepto>
 
 <SheetTask
   id="referencias-relativas"
-  enunciado={"Completa D2 y D3 con el total de cada fila."}
-  grilla={[["producto","precio","cantidad","total"],["Notebook",450000,3,null],["Mouse",12000,10,null]]}
-  celdas={[{"celda":"D2","valor":1350000},{"celda":"D3","valor":120000}]}
-  solucion={{"D2":"=B2*C2","D3":"=B3*C3"}}
-  pistas={["La fórmula de la fila 3 es la misma de la fila 2, con el número de fila cambiado.", "Si escribes la de D2 y la rellenas hacia abajo, Excel ajusta las filas solo."]}
+  enunciado={"Calcula el total de las ocho ventas en la columna D (precio por cantidad). Escribe la fórmula una vez en D2 y rellénala hacia abajo hasta la última fila."}
+  grilla={[["producto","precio","cantidad","total"],["Notebook",450000,3,null],["Mouse",12000,10,null],["Teclado",25000,5,null],["Monitor",180000,2,null],["Audífonos",24000,4,null],["Webcam",42000,2,null],["Parlante",35000,3,null],["Cable HDMI",6000,12,null]]}
+  celdas={[{"celda":"D2","valor":1350000},{"celda":"D3","valor":120000},{"celda":"D4","valor":125000},{"celda":"D5","valor":360000},{"celda":"D6","valor":96000},{"celda":"D7","valor":84000},{"celda":"D8","valor":105000},{"celda":"D9","valor":72000}]}
+  solucion={{"D2:D9":"=B2*C2"}}
+  pistas={["Escribe en D2 la fórmula con las celdas de su propia fila.","Con D2 seleccionada, usa el botón Rellenar para copiarla hasta la fila 9."]}
 />
 
 <Debrief>
-D2 = B2*C2 y D3 = B3*C3.
+Una sola fórmula, `=B2*C2`, rellenada hacia abajo: en D9 quedó `=B9*C9` sin que la escribieras. Si hubieras fijado las celdas con `$` (`=$B$2*$C$2`), todas las filas repetirían el total del Notebook. En la próxima lección verás cuándo sí conviene fijarlas.
 </Debrief>

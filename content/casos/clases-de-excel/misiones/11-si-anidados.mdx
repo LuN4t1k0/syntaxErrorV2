@@ -1,31 +1,37 @@
 ---
-titulo: "SI anidados"
-tiempo: 12
+titulo: "SI anidados: más de dos categorías"
+tiempo: 14
 ---
 
 <Concepto>
-Un SI anidado sirve cuando tienes más de dos respuestas posibles. No es solo si/no: ahora hay niveles.
+Un `SI` elige entre dos caminos. Para tres o más categorías (alto, medio, bajo), se pone un `SI` dentro de otro: si no se cumple la primera condición, se pregunta la segunda.
 
-Piénsalo como clasificar loot: legendario, raro o común, pero con montos de venta.
+<Sintaxis lenguaje="planilla" codigo={"=SI(condición1; resultado1; SI(condición2; resultado2; resultado3))"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=SI(condicion1;resultado1;SI(condicion2;resultado2;resultado3))"} />
+**Se revisa en orden.** Excel prueba la primera condición; si se cumple, ya tiene la respuesta y no mira el resto. Si no, pasa al `SI` de adentro. Por eso el orden importa: empieza por la condición más exigente.
 
-**Concepto principal.** Un SI puede vivir dentro de otro SI. Primero preguntas por la condición más fuerte; si no se cumple, preguntas la siguiente. Aquí la regla es: mayor a 300000 es Alto; si no, mayor a 50000 es Medio; si no, Bajo.
+```text
+nota 6.5 → =SI(B2>=6;"Destacado";SI(B2>=4;"Aprobado";"Reprobado"))   → Destacado
+nota 5.0 → la primera no se cumple; la segunda sí                     → Aprobado
+nota 3.2 → ninguna se cumple                                          → Reprobado
+```
 
-**Cómo pensarlo.** Ordena las preguntas de mayor a menor. Si Notebook ya es Alto, no necesitas seguir preguntando. Mouse no pasa 300000 ni 50000, cae en Bajo. Monitor no pasa 300000, pero si pasa 50000, entonces es Medio.
+Si el orden fuera al revés (primero `>=4`), un 6.5 se quedaría en "Aprobado", porque esa condición también se cumple y se revisa primero.
 
-**Uso en reportes.** Sirve para segmentar clientes, productos, riesgos, prioridades o tickets de soporte. Cuando un dashboard necesita colores tipo Alto/Medio/Bajo, casi siempre hay una lógica como esta debajo.
+**Contar los paréntesis.** Cada `SI` abre un paréntesis que hay que cerrar al final. Con tres categorías, la fórmula termina en `))`.
+
+**SI.CONJUNTO.** Las versiones nuevas de Excel tienen `SI.CONJUNTO(condición1; resultado1; condición2; resultado2; …)`, que evita anidar. Conviene conocer los dos: en muchas planillas que vas a recibir vas a encontrar `SI` anidados.
 </Concepto>
 
 <SheetTask
   id="si-anidados"
-  enunciado={"Clasifica: >300000 Alto, >50000 Medio, si no Bajo."}
-  grilla={[["producto","monto","categoria"],["Notebook",450000,null],["Mouse",12000,null],["Monitor",180000,null]]}
-  celdas={[{"celda":"C2","valor":"Alto"},{"celda":"C3","valor":"Bajo"},{"celda":"C4","valor":"Medio"}]}
-  solucion={{"C2":"=SI(B2>300000;\"Alto\";SI(B2>50000;\"Medio\";\"Bajo\"))","C3":"=SI(B3>300000;\"Alto\";SI(B3>50000;\"Medio\";\"Bajo\"))","C4":"=SI(B4>300000;\"Alto\";SI(B4>50000;\"Medio\";\"Bajo\"))"}}
-  pistas={["Pregunta primero por el nivel más alto; en el caso «si no», pon otro SI.", "El último SI ya no necesita preguntar nada más: lo que queda es Bajo."]}
+  enunciado={"Clasifica cada venta en la columna C según su monto: \"Alto\" si es mayor que 300000, \"Medio\" si es mayor que 50000 y \"Bajo\" en el resto. Escribe la fórmula en C2 y rellénala hasta C7."}
+  grilla={[["producto","monto","categoria"],["Notebook",450000,null],["Mouse",12000,null],["Monitor",180000,null],["Silla",50000,null],["Escritorio",300000,null],["Estante",95000,null]]}
+  celdas={[{"celda":"C2","valor":"Alto","funcion":"SI"},{"celda":"C3","valor":"Bajo","funcion":"SI"},{"celda":"C4","valor":"Medio","funcion":"SI"},{"celda":"C5","valor":"Bajo","funcion":"SI"},{"celda":"C6","valor":"Medio","funcion":"SI"},{"celda":"C7","valor":"Medio","funcion":"SI"}]}
+  solucion={{"C2:C7":"=SI(B2>300000;\"Alto\";SI(B2>50000;\"Medio\";\"Bajo\"))"}}
+  pistas={["Empieza preguntando por la categoría más alta.","El tercer argumento del primer SI es otro SI completo.","\"Mayor que\" no incluye el límite: revisa la Silla y el Escritorio."]}
 />
 
 <Debrief>
-Notebook es Alto, Mouse Bajo y Monitor Medio.
+`=SI(B2>300000;"Alto";SI(B2>50000;"Medio";"Bajo"))`. Los bordes deciden dos filas: el Escritorio, con 300000 justo, es Medio, y la Silla, con 50000 justo, es Bajo, porque "mayor que" no incluye el límite. Con el orden invertido, el Notebook quedaría como Medio.
 </Debrief>

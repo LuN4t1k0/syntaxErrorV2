@@ -1,31 +1,38 @@
 ---
 titulo: "La función SI"
-tiempo: 12
+tiempo: 14
 ---
 
 <Concepto>
-SI sirve para que Excel tome una decisión simple: si pasa algo, muestra una cosa; si no pasa, muestra otra.
+`SI` toma una decisión en cada fila: si una condición se cumple, muestra una cosa; si no, otra. Con ella una planilla deja de solo calcular y empieza a clasificar: aprobado o reprobado, con stock o sin stock, a tiempo o atrasado.
 
-Es el semáforo de las planillas. Verde si todo bien, rojo si hay que mirar con lupa.
+<Sintaxis lenguaje="planilla" codigo={"=SI(condición; valor_si_verdadero; valor_si_falso)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=SI(condicion;valor_si_verdadero;valor_si_falso)"} />
+**Tres partes separadas por punto y coma.** La condición (una comparación), lo que se muestra si es verdadera y lo que se muestra si es falsa.
 
-**Concepto principal.** La estructura es SI(condición; valor_si_verdadero; valor_si_falso). Primero haces una pregunta, después defines las dos respuestas posibles. Ejemplo humano: si queda stock menor a 5, alerta; si no, todo tranquilo.
+```text
+     A          B       C
+1    alumno     nota    resultado
+2    Camila     5.8     =SI(B2>=4;"Aprobado";"Reprobado")   → Aprobado
+3    Diego      3.5     =SI(B3>=4;"Aprobado";"Reprobado")   → Reprobado
+```
 
-**Cómo pensarlo.** Notebook tiene stock 8, así que no es urgente. Mouse tiene stock 2, así que necesita alerta. Teclado tiene stock 15, todo ok. Cada fila responde la misma pregunta: el stock de este producto es menor a 5?
+**Las comparaciones.** `=` igual, `<>` distinto, `>` mayor, `<` menor, `>=` mayor o igual, `<=` menor o igual. Fíjate en los bordes: con `B2>4`, un 4 justo sería reprobado.
 
-**Uso en reportes.** SI se usa para estados, alertas, aprobaciones, clasificaciones y mensajes automáticos. Es mejor que una persona lea Stock bajo a que tenga que interpretar números a las 6 de la tarde con tres cafés encima.
+**Los textos van entre comillas dobles.** `"Aprobado"` con comillas es un texto. Sin comillas, Excel busca algo llamado Aprobado y da el error `#¿NOMBRE?`. Los números van sin comillas.
+
+**Una fórmula para toda la columna.** Como en la lección de referencias relativas, escribes el `SI` en la primera fila y lo rellenas hacia abajo.
 </Concepto>
 
 <SheetTask
   id="la-funcion-si"
-  enunciado={"Completa C2:C4: si el stock es menor a 5, Stock bajo; si no, Stock ok."}
-  grilla={[["producto","stock","estado"],["Notebook",8,null],["Mouse",2,null],["Teclado",15,null]]}
-  celdas={[{"celda":"C2","valor":"Stock ok"},{"celda":"C3","valor":"Stock bajo"},{"celda":"C4","valor":"Stock ok"}]}
-  solucion={{"C2":"=SI(B2<5;\"Stock bajo\";\"Stock ok\")","C3":"=SI(B3<5;\"Stock bajo\";\"Stock ok\")","C4":"=SI(B4<5;\"Stock bajo\";\"Stock ok\")"}}
-  pistas={["SI recibe tres partes: la condición, lo que muestra si se cumple y lo que muestra si no.", "Los textos van entre comillas, escritos igual que en el enunciado."]}
+  enunciado={"En la columna C, marca \"Reponer\" los productos con menos de 5 unidades en stock y \"OK\" los demás. Usa SI en C2 y rellena hasta C7."}
+  grilla={[["producto","stock","estado"],["Notebook",8,null],["Mouse",2,null],["Teclado",15,null],["Monitor",4,null],["Webcam",0,null],["Parlante",5,null]]}
+  celdas={[{"celda":"C2","valor":"OK","funcion":"SI"},{"celda":"C3","valor":"Reponer","funcion":"SI"},{"celda":"C4","valor":"OK","funcion":"SI"},{"celda":"C5","valor":"Reponer","funcion":"SI"},{"celda":"C6","valor":"Reponer","funcion":"SI"},{"celda":"C7","valor":"OK","funcion":"SI"}]}
+  solucion={{"C2:C7":"=SI(B2<5;\"Reponer\";\"OK\")"}}
+  pistas={["La condición compara el stock de la fila con 5.","Los textos \"Reponer\" y \"OK\" van entre comillas dobles.","\"Menos de 5\" no incluye el 5."]}
 />
 
 <Debrief>
-Solo Mouse tiene stock menor a 5.
+`=SI(B2<5;"Reponer";"OK")` rellenada hasta C7. El Parlante, con 5 unidades justas, queda en OK porque "menos de 5" no incluye el 5; con `<=5` pasaría a Reponer. Cuando escribas una condición, decide primero qué pasa en el borde.
 </Debrief>

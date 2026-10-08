@@ -1,31 +1,33 @@
 ---
-titulo: "BUSCARV frente a INDICE+COINCIDIR"
-tiempo: 16
+titulo: "BUSCARV frente a INDICE y COINCIDIR"
+tiempo: 14
 ---
 
 <Concepto>
-BUSCARV busca hacia la derecha. Si el dato que quieres está a la izquierda, se complica.
+`BUSCARV` tiene una limitación: busca siempre en la **primera** columna de la tabla y solo puede devolver columnas que estén a su derecha. Si tienes el nombre del producto y necesitas su código, que está a la izquierda, `BUSCARV` no sirve. `INDICE` y `COINCIDIR` no tienen esa limitación.
 
-INDICE + COINCIDIR no se asusta: puede buscar por producto y traer el ID aunque el ID este antes en la tabla.
+**Buscar hacia la izquierda.** Con `INDICE` y `COINCIDIR` eliges por separado la columna donde buscar y la columna que devuelves, sin importar el orden:
 
-<Sintaxis lenguaje="planilla" codigo={"=INDICE(rango_a_la_izquierda;COINCIDIR(valor;rango_busqueda;0))"} />
+```text
+=INDICE(A2:A9; COINCIDIR("Mouse"; B2:B9; 0))   → el id del Mouse, que está a la izquierda del nombre
+```
 
-**Concepto principal.** En esta tabla, producto está en C y el ID está en B. BUSCARV no es cómodo porque quiere buscar desde la primera columna del rango hacia la derecha. Con INDICE eliges directamente el rango resultado B2:B4 y con COINCIDIR buscas Teclado en C2:C4.
+**Insertar columnas no las rompe.** `BUSCARV` pide la columna como número (3). Si alguien inserta una columna en medio de la tabla, ese 3 pasa a apuntar a otro dato sin que nada avise. `INDICE` apunta a la columna misma (`C2:C9`), y Excel la ajusta si se insertan columnas.
 
-**Cómo pensarlo.** COINCIDIR busca Teclado en la columna producto y devuelve su posición. INDICE usa esa posición para leer el ID. Es como decir: encuentra al personaje por nombre y luego dame su número de jugador.
+**BUSCARX.** Las versiones recientes de Excel traen `BUSCARX(valor; donde_buscar; que_devolver)`, que también busca en cualquier dirección y es exacta por defecto. Si la tienes disponible, es la más simple. En planillas antiguas o compartidas vas a encontrar `BUSCARV` e `INDICE` con `COINCIDIR`, así que conviene leer las tres.
 
-**Uso en reportes.** Sirve cuando no controlas el orden de las columnas o cuando las tablas cambian con frecuencia. También ayuda a construir planillas menos fragiles, porque no dependes tanto de contar columnas a mano.
+**Cuál usar.** Para una búsqueda simple hacia la derecha en una tabla que no va a cambiar, `BUSCARV` basta. Para buscar hacia la izquierda, o en tablas que otras personas editan, `INDICE` y `COINCIDIR` (o `BUSCARX`).
 </Concepto>
 
 <SheetTask
   id="buscarv-vs-indice"
-  enunciado={"Completa D5 para encontrar el id de Teclado usando INDICE y COINCIDIR."}
-  grilla={[["precio","id","producto","",""],[450000,101,"Notebook","",""],[12000,102,"Mouse","",""],[25000,103,"Teclado","",""],["Buscar producto:","Teclado","id:",null,""]]}
-  celdas={[{"celda":"D5","valor":103}]}
-  solucion={{"D5":"=INDICE(B2:B4;COINCIDIR(B5;C2:C4;0))"}}
-  pistas={["Aquí lo que se busca está a la derecha del dato que quieres traer: BUSCARV no sirve.", "COINCIDIR busca el producto en su columna, e INDICE trae el id desde la otra."]}
+  enunciado={"Bodega te pasó una lista de productos por nombre (F2:F4) y necesita el id de cada uno, que en el catálogo está a la izquierda del nombre. Completa G2:G4 con el id; escribe la fórmula en G2 y rellénala."}
+  grilla={[["id","producto","precio","stock","","producto","id"],[105,"Webcam",42000,7,"","Mouse",null],[101,"Notebook",450000,3,"","Audífonos",null],[108,"Cable HDMI",6000,50,"","Monitor",null],[103,"Teclado",25000,12,"","",""],[102,"Mouse",12000,25,"","",""],[107,"Parlante",35000,30,"","",""],[104,"Monitor",180000,4,"","",""],[106,"Audífonos",24000,15,"","",""]]}
+  celdas={[{"celda":"G2","valor":102},{"celda":"G3","valor":106},{"celda":"G4","valor":104}]}
+  solucion={{"G2:G4":"=INDICE($A$2:$A$9;COINCIDIR(F2;$B$2:$B$9;0))"}}
+  pistas={["BUSCARV busca en la primera columna y aquí la primera es el id: con el nombre no llega.","COINCIDIR busca el nombre en la columna B; INDICE devuelve de la columna A."]}
 />
 
 <Debrief>
-D5 = INDICE(B2:B4,COINCIDIR(B5,C2:C4,0)) = 103.
+`=INDICE($A$2:$A$9;COINCIDIR(F2;$B$2:$B$9;0))` encuentra el Mouse en la posición 5 de la columna de nombres y devuelve la posición 5 de la columna de ids: 102. Con `BUSCARV`, Excel buscaría "Mouse" entre los ids y daría `#N/D`.
 </Debrief>

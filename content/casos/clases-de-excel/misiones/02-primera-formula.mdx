@@ -4,28 +4,34 @@ tiempo: 12
 ---
 
 <Concepto>
-Una fórmula es una instrucción para que Excel calcule por ti. Si una calculadora normal es una linterna, una fórmula es poner sensores automáticos en la planilla.
-
-En esta clase vas a calcular el total de una venta: precio por cantidad. Es lo mismo que preguntarte cuánto cuesta comprar 3 notebooks.
+Una fórmula es una instrucción para que Excel calcule por ti. En vez de hacer la cuenta con la calculadora y escribir el resultado, le dices a Excel qué celdas usar y él calcula, y recalcula solo cada vez que cambia un dato.
 
 <Sintaxis lenguaje="planilla" codigo={"=celda1*celda2"} />
 
-**Concepto principal.** Toda fórmula empieza con =. Ese signo le avisa a Excel que no estás escribiendo texto, estás dando una orden. Para multiplicar se usa *. Entonces precio por cantidad se escribe como B2*C2 si el precio está en B2 y la cantidad en C2.
+**Empieza con =.** El signo igual le avisa a Excel que lo que sigue es un cálculo y no un texto. Sin él, `B2*C2` queda escrito tal cual.
 
-**Cómo pensarlo.** Lee la fila como una boleta: Notebook cuesta 450000 y se vendieron 3. Total = precio * cantidad. No escribas 1350000 a mano si puedes evitarlo. La gracia es que si cambia el precio o la cantidad, la fórmula recalcula sin drama.
+**Los operadores.** `+` suma, `-` resta, `*` multiplica y `/` divide. Se pueden mezclar números y celdas: `=B2*2` o `=B2+C2`.
 
-**Uso en reportes.** Esto aparece en ventas, inventario, presupuestos y cualquier tabla donde una fila tenga partes que juntas forman un resultado. Es la fórmula base para decir: cuánto vendimos realmente por esta línea?
+**Usa celdas, no números.** Si una silla cuesta 85000 y se vendieron 4, podrías escribir `=85000*4`, pero si mañana cambia el precio, ese resultado queda mal. Con `=B2*C2`, la fórmula toma lo que haya en esas celdas y el total se actualiza solo.
+
+```text
+     A        B        C          D
+1    producto precio   cantidad   total
+2    Silla    85000    4          =B2*C2   → muestra 340000
+```
+
+**Lo que ves y lo que hay.** La celda muestra el resultado (340000), pero guarda la fórmula. Al seleccionarla, la barra de fórmula muestra `=B2*C2`. Así puedes revisar de dónde sale cada número de una planilla.
 </Concepto>
 
 <SheetTask
   id="primera-formula"
-  enunciado={"Completa D2 con una fórmula que calcule precio por cantidad para el Notebook."}
+  enunciado={"Calcula el total de cada venta, el precio por la cantidad, en D2 y en D3. Usa fórmulas con las celdas de la planilla, no los números escritos a mano."}
   grilla={[["producto","precio","cantidad","total"],["Notebook",450000,3,null],["Mouse",12000,10,null]]}
-  celdas={[{"celda":"D2","valor":1350000}]}
-  solucion={{"D2":"=B2*C2"}}
-  pistas={["Toda fórmula empieza con =.", "En vez de escribir los números, usa las celdas donde están el precio y la cantidad, unidas por *."]}
+  celdas={[{"celda":"D2","valor":1350000,"referencia":"B2"},{"celda":"D3","valor":120000,"referencia":"B3"}]}
+  solucion={{"D2":"=B2*C2","D3":"=B3*C3"}}
+  pistas={["Toda fórmula empieza con =.","Usa las celdas donde están el precio y la cantidad de esa fila, unidas por *."]}
 />
 
 <Debrief>
-D2 debe ser =B2*C2, que da 1350000.
+D2 lleva `=B2*C2` y D3 lleva `=B3*C3`. Si escribes `=450000*3`, el resultado hoy es el mismo, pero si el precio del Notebook cambia en B2, ese total queda desactualizado sin que nadie lo note. Con referencias a celdas, la planilla se mantiene correcta sola.
 </Debrief>

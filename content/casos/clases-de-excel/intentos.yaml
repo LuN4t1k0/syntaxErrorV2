@@ -1,0 +1,223 @@
+# Intentos equivocados típicos de cada tarea y un trozo del mensaje que deben recibir, por misión y tarea.
+# Los revisa `npm run content:intentos` y la prueba de content/ del repositorio.
+01-que-es-una-hoja-de-calculo:
+  que-es-una-hoja-de-calculo:
+    - codigo:
+        B3: "310.000"
+        A5: Tomás
+        B5: 145000
+      espera: La celda B3 muestra
+    - codigo:
+        B2: 310000
+        A5: Tomás
+        B5: 145000
+      espera: La celda B3
+02-primera-formula:
+  primera-formula:
+    - codigo:
+        D2: 1350000
+        D3: 120000
+      espera: tiene el valor escrito a mano
+    - codigo:
+        D2: B2*C2
+        D3: =B3*C3
+      espera: La celda D2
+    - codigo:
+        D2: =450000*3
+        D3: =B3*C3
+      espera: debe usar la referencia B2
+03-orden-de-operaciones:
+  orden-de-operaciones:
+    - codigo:
+        D2: =B2*1-C2
+        D3: =B3*(1-C3)
+        D4: =B4*(1-C4)
+      espera: La celda D2 muestra
+    - codigo:
+        D2: =B2*C2
+        D3: =B3*(1-C3)
+        D4: =B4*(1-C4)
+      espera: La celda D2 muestra "45000"
+04-funcion-suma:
+  funcion-suma:
+    - codigo:
+        B8: =B2+B3+B4+B5+B6+B7
+        B9: =SUMA(B3:B7)
+      espera: debe calcularse con la función SUMA
+    - codigo:
+        B8: =SUMA(B2:B6)
+        B9: =SUMA(B3:B7)
+      espera: La celda B8 muestra
+05-funcion-promedio:
+  funcion-promedio:
+    - codigo:
+        B8: =PROMEDIO(B2:B7)
+      espera: La celda B8 muestra
+    - codigo:
+        B8: =REDONDEAR(SUMA(B2:B7)/6;0)
+      espera: debe calcularse con la función PROMEDIO
+06-contar-max-min:
+  contar-max-min:
+    - codigo:
+        E2: =CONTARA(B2:B7)
+        E3: =MAX(B2:B7)
+        E4: =MIN(B2:B7)
+      espera: debe calcularse con la función CONTAR
+    - codigo:
+        E2: =CONTAR(B2:B7)
+        E3: =MAX(B2:B7)
+        E4: =MIN(B2:B6)
+      espera: La celda E4 muestra
+07-referencias-relativas:
+  referencias-relativas:
+    - codigo:
+        D2: =B2*C2
+      espera: La celda D3 está vacía
+    - codigo:
+        D2:D9: =$B$2*$C$2
+      espera: La celda D3 muestra
+08-referencias-absolutas:
+  referencias-absolutas:
+    - codigo:
+        C2:C7: =B2*(1+E2)
+      espera: La fórmula de C2 debe usar la referencia $E$2
+    - codigo:
+        C2:C7: =B2*1.19
+      espera: debe usar la referencia $E$2
+09-la-funcion-si:
+  la-funcion-si:
+    - codigo:
+        C2:C7: =SI(B2<=5;"Reponer";"OK")
+      espera: La celda C7 muestra "Reponer"
+    - codigo:
+        C2:C7: =SI(B2<5;"OK";"Reponer")
+      espera: La celda C2 muestra "Reponer"
+10-y-o-condiciones:
+  y-o-condiciones:
+    - codigo:
+        D2:D7: =SI(O(B2<5;C2>100000);"Revisar";"OK")
+        E2:E7: =SI(O(B2>20;C2<15000);"Sí";"No")
+      espera: debe calcularse con la función Y
+    - codigo:
+        D2:D7: =SI(Y(B2<5;C2>100000);"Revisar";"OK")
+        E2:E7: =SI(Y(B2>20;C2<15000);"Sí";"No")
+      espera: debe calcularse con la función O
+11-si-anidados:
+  si-anidados:
+    - codigo:
+        C2:C7: =SI(B2>50000;"Medio";SI(B2>300000;"Alto";"Bajo"))
+      espera: La celda C2 muestra "Medio"
+    - codigo:
+        C2:C7: =SI(B2>=300000;"Alto";SI(B2>=50000;"Medio";"Bajo"))
+      espera: La celda C5 muestra "Medio"
+12-sumar-si:
+  sumar-si:
+    - codigo:
+        F2:F4: =SUMAR.SI(B2:B9;E2;C2:C9)
+      espera: La celda F3 muestra
+    - codigo:
+        F2: =C3+C4+C6+C9
+        F3: =SUMAR.SI($B$2:$B$9;E3;$C$2:$C$9)
+        F4: =SUMAR.SI($B$2:$B$9;E4;$C$2:$C$9)
+      espera: debe calcularse con la función SUMAR.SI
+13-contar-si:
+  contar-si:
+    - codigo:
+        F2:F4: =CONTAR.SI(B2:B9;E2)
+        F6: =CONTAR.SI(C2:C9;">100000")
+      espera: La celda F3 muestra "2"
+    - codigo:
+        F2:F4: =SUMAR.SI($B$2:$B$9;E2;$C$2:$C$9)
+        F6: =CONTAR.SI(C2:C9;">100000")
+      espera: debe calcularse con la función CONTAR.SI
+14-funciones-conjunto:
+  funciones-conjunto:
+    - codigo:
+        G2:G3: =SUMAR.SI($B$2:$B$9;"tecnologia";$D$2:$D$9)
+        H2:H3: =CONTAR.SI.CONJUNTO($B$2:$B$9;"muebles";$C$2:$C$9;F2)
+      espera: debe calcularse con la función SUMAR.SI.CONJUNTO
+    - codigo:
+        G2:G3: =SUMAR.SI.CONJUNTO($D$2:$D$9;$B$2:$B$9;"tecnologia")
+        H2:H3: =CONTAR.SI.CONJUNTO($B$2:$B$9;"muebles";$C$2:$C$9;F2)
+      espera: La celda G2 muestra
+15-buscarv:
+  buscarv:
+    - codigo:
+        G2:G5: =BUSCARV(F2;$A$2:$D$9;2;VERDADERO())
+        H2:H5: =BUSCARV(F2;$A$2:$D$9;3;VERDADERO())
+      espera: La celda G
+    - codigo:
+        G2:G5: =BUSCARV(F2;A2:D9;2;FALSO())
+        H2:H5: =BUSCARV(F2;A2:D9;3;FALSO())
+      espera: La celda G3 tiene el error
+16-indice-coincidir:
+  indice-coincidir:
+    - codigo:
+        G2:G4: =COINCIDIR(F2;$B$2:$B$9;0)
+      espera: La celda G2 muestra "4"
+    - codigo:
+        G2:G4: =INDICE($D$1:$D$9;COINCIDIR(F2;$B$2:$B$9;0))
+      espera: La celda G2 muestra
+17-buscarv-vs-indice:
+  buscarv-vs-indice:
+    - codigo:
+        G2:G4: =BUSCARV(F2;$A$2:$D$9;1;FALSO())
+      espera: La celda G2 tiene el error
+    - codigo:
+        G2:G4: =INDICE($A$2:$A$9;COINCIDIR(F2;$B$1:$B$9;0))
+      espera: La celda G2 muestra
+18-funciones-de-texto:
+  funciones-de-texto:
+    - codigo:
+        D2:D5: =B2
+        E2:E5: =MAYUSC(IZQUIERDA(C2;3))&"-"&A2
+      espera: debe calcularse con la función ESPACIOS
+    - codigo:
+        D2:D5: =ESPACIOS(B2)
+        E2:E5: =MAYUSC(IZQUIERDA(C2;3))&A2
+      espera: La celda E2 muestra "TEC101"
+19-fechas:
+  fechas:
+    - codigo:
+        D2:D5: =B2-C2
+        E2:E5: =MES(B2)
+        F2:F5: =SI(D2>30;"Sí";"No")
+      espera: La celda D2 muestra "-15"
+    - codigo:
+        D2:D5: =C2-B2
+        E2:E5: =MES(C2)
+        F2:F5: =SI(D2>30;"Sí";"No")
+      espera: La celda E3 muestra "3"
+20-descripcion-de-venta:
+  descripcion-de-venta:
+    - codigo:
+        E2:E4: '=A2&": tu pedido de"&C2&B2&" suma $"&(C2*D2)'
+      espera: La celda E2 muestra
+    - codigo:
+        E2:E4: '=A2&": tu pedido de "&C2&" "&B2&" suma $"&D2'
+      espera: La celda E2 muestra
+21-errores-comunes:
+  errores-comunes:
+    - codigo:
+        D4: 0
+        C7: =SUMA(C2:C5)
+      espera: La celda D4 tiene el valor escrito a mano
+    - codigo:
+        D2:D5: =SI.ERROR(C2/B2;0)
+      espera: La celda C7 tiene el error
+23-proyecto-final-reporte-ventas:
+  proyecto-final-reporte-ventas:
+    - codigo:
+        E2:E9: =C2*D2
+        F2:F9: =SI(E2>300000;"Sí";"No")
+        I2:I4: =SUMAR.SI($B$2:$B$9;H2;$E$2:$E$9)
+        J2:J4: =CONTAR.SI($B$2:$B$9;H2)
+        I6: =SUMA(E2:E9)
+      espera: La celda F8 muestra "No"
+    - codigo:
+        E2:E9: =C2*D2
+        F2:F9: =SI(E2>=300000;"Sí";"No")
+        I2:I4: =SUMAR.SI(B2:B9;H2;E2:E9)
+        J2:J4: =CONTAR.SI($B$2:$B$9;H2)
+        I6: =SUMA(E2:E9)
+      espera: La celda I3 muestra

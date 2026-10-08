@@ -4,28 +4,33 @@ tiempo: 12
 ---
 
 <Concepto>
-Excel sigue reglas matemáticas. Si mezclas multiplicaciones, restas y paréntesis, el orden importa.
+Excel no calcula de izquierda a derecha: sigue el mismo orden que en matemáticas. Primero lo que está entre paréntesis, después las potencias (`^`), después multiplicaciones y divisiones, y al final sumas y restas. Si no lo tienes en cuenta, la fórmula da un número que parece razonable y está mal.
 
-Esta clase sirve para descuentos: primero calculas qué porcentaje queda por pagar y después lo multiplicas por el precio.
+<Sintaxis lenguaje="planilla" codigo={"=valor*(1-porcentaje)"} />
 
-<Sintaxis lenguaje="planilla" codigo={"=precio*(1-descuento)"} />
+**El mismo cálculo, dos resultados.** Una silla de 85000 con 20 % de descuento:
 
-**Concepto principal.** Los paréntesis son como decirle a Excel: resuelve esta parte primero. Sin paréntesis, una fórmula puede hacer algo distinto a lo que tenías en la cabeza. Para un descuento de 10%, no multiplicas por 0.1; multiplicas por 1-0.1, porque quieres quedarte con el 90% del precio.
+```text
+=85000*1-0.2      → 84999.8   (multiplica 85000*1 y después resta 0.2)
+=85000*(1-0.2)    → 68000     (primero 1-0.2 = 0.8, después multiplica)
+```
 
-**Cómo pensarlo.** Notebook cuesta 450000 y tiene descuento 0.1. Primero haces 1-0.1 = 0.9. Luego 450000*0.9 = 405000. Es como aplicar un cupón gamer: no guardas el descuento, guardas el precio final que pagara la persona.
+**Un descuento es pagar una parte.** Con 20 % de descuento se paga el 80 % del precio: `precio*(1-descuento)`. Con un recargo es al revés: `precio*(1+recargo)`.
 
-**Uso en reportes.** Se usa para precios finales, impuestos, comisiones, márgenes y cualquier cálculo donde una parte modifica a otra. Los paréntesis evitan errores silenciosos, que son los peores: la planilla no grita, solo te da un número malo con cara seria.
+**Los porcentajes en Excel.** 20 % se guarda como 0.2. Si la celda muestra "20%" es solo el formato: por dentro sigue siendo 0.2, y así se usa en las fórmulas.
+
+**Ante la duda, paréntesis.** Agregar paréntesis que no hacen falta no cambia el resultado y hace la fórmula más fácil de leer. Que falte uno sí lo cambia.
 </Concepto>
 
 <SheetTask
   id="orden-de-operaciones"
-  enunciado={"Completa D2 aplicando el descuento como precio * (1 - descuento)."}
-  grilla={[["producto","precio","descuento","precio_final"],["Notebook",450000,0.1,null],["Mouse",12000,0.05,null]]}
-  celdas={[{"celda":"D2","valor":405000}]}
-  solucion={{"D2":"=B2*(1-C2)"}}
-  pistas={["Primero calcula qué parte del precio queda por pagar: 1 menos el descuento.", "Ese cálculo tiene que ir entre paréntesis para que Excel lo resuelva antes de multiplicar por el precio."]}
+  enunciado={"Calcula en D2, D3 y D4 el precio final de cada producto, con su descuento ya aplicado. Usa las celdas del precio y del descuento de cada fila."}
+  grilla={[["producto","precio","descuento","precio_final"],["Notebook",450000,0.1,null],["Mouse",12000,0.05,null],["Teclado",25000,0.2,null]]}
+  celdas={[{"celda":"D2","valor":405000,"referencia":"C2"},{"celda":"D3","valor":11400,"referencia":"C3"},{"celda":"D4","valor":20000,"referencia":"C4"}]}
+  solucion={{"D2":"=B2*(1-C2)","D3":"=B3*(1-C3)","D4":"=B4*(1-C4)"}}
+  pistas={["Con un 10 % de descuento, ¿qué parte del precio se paga?","La resta 1 menos el descuento tiene que hacerse antes de multiplicar: va entre paréntesis."]}
 />
 
 <Debrief>
-D2 = B2*(1-C2) = 405000.
+`=B2*(1-C2)` primero calcula la parte que se paga (0.9) y después la multiplica por el precio: 405000. Sin paréntesis, `=B2*1-C2` resta 0.1 al precio completo y muestra 449999.9, un número que a primera vista parece casi correcto, y por eso es peligroso.
 </Debrief>
