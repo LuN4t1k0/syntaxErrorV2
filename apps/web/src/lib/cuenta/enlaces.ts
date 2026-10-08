@@ -11,3 +11,4 @@ export const enlacePreguntasDocente = () => absoluteUrl("/profesor/preguntas");
 export const enlaceMisPreguntas = () => absoluteUrl("/dashboard/preguntas");
 export const enlaceMisClases = () => absoluteUrl("/dashboard/clases");
 export const enlaceMensajes = () => absoluteUrl("/dashboard/mensajes");
+export const enlaceAvance = () => absoluteUrl("/dashboard/avance");
