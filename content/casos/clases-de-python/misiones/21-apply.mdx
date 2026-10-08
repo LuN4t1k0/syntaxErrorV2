@@ -1,46 +1,59 @@
 ---
-titulo: "apply"
+titulo: "apply: tu propia función sobre una columna"
 tiempo: 16
 ---
 
 <Concepto>
-Cuando la transformación que necesitas no es una simple operación aritmética o de comparación, apply permite usar una función propia y aplicarla a cada valor de una columna.
+Las operaciones de la lección anterior cubren cálculos y comparaciones simples. Cuando la regla tiene varios casos, como clasificar edades en tramos, escribes una función con `if` y le pides a pandas que la aplique a cada valor de la columna con `apply`.
 
-Primero se define la función (con las lecciones de funciones ya vistas), y después se la pasa a .apply() sin llamarla (sin paréntesis).
+<Sintaxis lenguaje="python" codigo={"df[\"nueva\"] = df[\"columna\"].apply(nombre_funcion)"} />
 
-<Sintaxis lenguaje="python" codigo={"df[\"columna\"].apply(funcion)"} />
-
-**Definir la función a aplicar.** La función recibe un solo valor (el de la celda) y devuelve el valor transformado.
+**1. La función recibe un valor.** Piensa en una sola celda: la función recibe un valor y devuelve el resultado para ese valor. Puedes probarla sola antes de usarla con la tabla.
 
 ```python
-def grupo_edad(e):
-    return "joven" if e < 30 else "adulto"
+def tramo_monto(monto):
+    if monto >= 100000:
+        return "alto"
+    return "bajo"
+
+tramo_monto(150000)   # "alto"
 ```
 
-**Aplicarla con .apply().** df["columna"].apply(función) llama a esa función una vez por cada valor de la columna, y devuelve una Series nueva con los resultados.
+**2. apply la usa en cada fila.** `apply` llama a la función una vez por cada valor y devuelve una Series con los resultados. La función se pasa **sin paréntesis**: le entregas la función para que pandas la llame, no su resultado.
 
 ```python
-encuesta["edad"].apply(grupo_edad)
+ventas["tramo"] = ventas["monto"].apply(tramo_monto)
 ```
 
-**Guardar el resultado como columna nueva.** Igual que con cualquier transformación, el resultado de apply se puede asignar directamente a una columna nueva del DataFrame.
+Si escribes `apply(tramo_monto())`, Python intenta llamar la función en ese momento, sin el monto, y da un `TypeError`.
 
-```python
-encuesta["grupo"] = encuesta["edad"].apply(grupo_edad)
-```
+**Cuándo no hace falta.** Si la regla es una sola comparación o una operación aritmética, la forma directa de la lección anterior es más corta y más rápida. `apply` brilla cuando la regla tiene varios caminos.
 </Concepto>
 
 <PythonTask
   id="apply"
-  enunciado={"Completa grupo_edad para que devuelva 'joven' si la edad es menor a 30, y si no, 'adulto'. Aplícala con apply y asigna a resultado la cantidad de 'joven'."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"def grupo_edad(e):\n    return None  # completa: \"joven\" si e < 30, sino \"adulto\"\n\nencuesta[\"grupo\"] = encuesta[\"edad\"].apply(grupo_edad)\nresultado = None"}
-  solucion={"def grupo_edad(e):\n    if e < 30:\n        return \"joven\"\n    return \"adulto\"\n\nencuesta[\"grupo\"] = encuesta[\"edad\"].apply(grupo_edad)\nresultado = int((encuesta[\"grupo\"] == \"joven\").sum())"}
-  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con encuesta ya cargada, completa la función grupo_edad: debe devolver \"joven\" si la edad es menor que 30, \"adulto\" si es menor que 50, y \"mayor\" en otro caso. Aplícala a la columna edad para crear la columna grupo, y guarda en jovenes cuántas personas quedaron en el grupo joven."}
+  preparacion={"import pandas as pd\nencuesta = pd.read_csv(\"datos/encuesta.csv\")"}
+  inicial={"# encuesta ya está cargada desde datos/encuesta.csv\ndef grupo_edad(edad):\n    # devuelve \"joven\", \"adulto\" o \"mayor\"\n    return None\n\n\njovenes = None"}
+  solucion={"def grupo_edad(edad):\n    if edad < 30:\n        return \"joven\"\n    elif edad < 50:\n        return \"adulto\"\n    else:\n        return \"mayor\"\n\n\nencuesta[\"grupo\"] = encuesta[\"edad\"].apply(grupo_edad)\njovenes = (encuesta[\"grupo\"] == \"joven\").sum()"}
+  pruebas={"for _edad, _esperado in [(18, \"joven\"), (29, \"joven\"), (30, \"adulto\"), (49, \"adulto\"), (50, \"mayor\"), (70, \"mayor\")]:\n    _r = grupo_edad(_edad)\n    assert _r is not None, f\"grupo_edad({_edad}) devuelve None: cada camino del if necesita un return.\"\n    assert _r == _esperado, f\"grupo_edad({_edad}) devuelve \\\"{_r}\\\" y debería ser \\\"{_esperado}\\\". Revisa los límites: menor que 30 y menor que 50.\"\nassert \"grupo\" in encuesta.columns, \"encuesta todavía no tiene la columna grupo.\"\nassert encuesta[\"grupo\"].tolist() == [grupo_edad(e) for e in encuesta[\"edad\"]], \"La columna grupo no tiene el grupo de cada edad.\"\nassert jovenes == (encuesta[\"grupo\"] == \"joven\").sum(), \"jovenes no es la cantidad de personas del grupo joven.\""}
   paquetes={["pandas"]}
-  pistas={["La función recibe una edad y devuelve un texto: usa un if para decidir cuál.", "Después de apply, cuenta las filas cuyo grupo es 'joven'."]}
+  pistas={["Prueba la función sola con un print, por ejemplo print(grupo_edad(35)), antes de usarla con la tabla.","Tres caminos: if, elif y else, cada uno con su return.","En apply, la función va sin paréntesis: apply(grupo_edad)."]}
 />
 
 <Debrief>
-Las edades son 25,34,19,45,31 -- joven (menor a 30): 25 y 19, es decir 2.
+```python
+def grupo_edad(edad):
+    if edad < 30:
+        return "joven"
+    elif edad < 50:
+        return "adulto"
+    else:
+        return "mayor"
+
+encuesta["grupo"] = encuesta["edad"].apply(grupo_edad)
+jovenes = (encuesta["grupo"] == "joven").sum()   # 5
+```
+
+La prueba llamó a `grupo_edad` con 29, 30, 49 y 50: los bordes son donde más se equivoca una regla. Con `elif edad <= 50`, una persona de 50 quedaría como "adulto".
 </Debrief>

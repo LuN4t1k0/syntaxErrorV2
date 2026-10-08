@@ -4,42 +4,53 @@ tiempo: 12
 ---
 
 <Concepto>
-Elegir columnas específicas de un DataFrame es una de las operaciones más comunes -- ya sea para quedarte con una sola (una Series) o con varias (un DataFrame más chico).
+Casi nunca necesitas todas las columnas de una tabla. Elegir las que importan hace que el análisis se lea mejor y que las tablas que muestras se entiendan de un vistazo.
 
-La forma de seleccionar cambia levemente según si queres una columna o varias a la vez.
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"]\ndf[[\"columna1\", \"columna2\"]]"} />
 
-<Sintaxis lenguaje="python" codigo={"df[\"columna\"]"} />
-
-**Una columna: Series.** df["columna"] devuelve esa columna como una Series.
+**Una columna: una Series.** Con el nombre entre corchetes obtienes la columna como Series.
 
 ```python
-encuesta["canal"]
+ventas["producto"]
 ```
 
-**Varias columnas: DataFrame.** Pasando una lista de nombres de columna entre corchetes dobles, df[["col1","col2"]] devuelve un DataFrame más chico con solo esas columnas.
+**Varias columnas: un DataFrame.** Con una **lista** de nombres obtienes un DataFrame más angosto, con las columnas en el orden en que las pediste. Por eso aparecen dos pares de corchetes: los de afuera seleccionan y los de adentro forman la lista.
 
 ```python
-encuesta[["respondent_id", "canal"]]
+ventas[["producto", "monto"]]
 ```
 
-**Convertir una columna a lista.** serie.tolist() convierte una Series en una lista común de Python -- útil para comparar o mostrar los valores sin el índice de pandas.
+**Los valores distintos.** `.unique()` devuelve los valores sin repetir de una columna, en el orden en que aparecen, y `.nunique()` cuenta cuántos son.
 
 ```python
-encuesta["canal"].tolist()
+ventas["region"].unique()    # norte, sur, centro
+ventas["region"].nunique()   # 3
+```
+
+**Pasar a una lista de Python.** `.tolist()` convierte una Series (o lo que devuelve `unique`) en una lista común, sin el índice de pandas.
+
+```python
+ventas["region"].unique().tolist()   # ["norte", "sur", "centro"]
 ```
 </Concepto>
 
 <PythonTask
   id="seleccionar-columnas"
-  enunciado={"Asigna a resultado la columna canal convertida a lista con .tolist()."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = encuesta[\"canal\"].tolist()"}
-  pruebas={"import numbers\nesperado = [\"web\", \"tienda\", \"web\", \"telefono\", \"web\"]\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con la tabla encuesta ya cargada, guarda en canales la columna canal (una Series) y en perfil un DataFrame solo con las columnas edad y canal, en ese orden. Después guarda en canales_distintos la lista de canales sin repetir, como lista de Python."}
+  preparacion={"import pandas as pd\nencuesta = pd.read_csv(\"datos/encuesta.csv\")"}
+  inicial={"# encuesta ya está cargada desde datos/encuesta.csv\ncanales = None\nperfil = None\ncanales_distintos = None"}
+  solucion={"canales = encuesta[\"canal\"]\nperfil = encuesta[[\"edad\", \"canal\"]]\ncanales_distintos = encuesta[\"canal\"].unique().tolist()"}
+  pruebas={"assert isinstance(canales, pd.Series), \"canales debe ser una Series: una sola columna de encuesta.\"\nassert canales.equals(encuesta[\"canal\"]), \"canales no es la columna canal.\"\nassert isinstance(perfil, pd.DataFrame), \"perfil debe ser un DataFrame con varias columnas, no una Series.\"\nassert list(perfil.columns) == [\"edad\", \"canal\"], \"perfil debe tener solo las columnas edad y canal, en ese orden.\"\nassert isinstance(canales_distintos, list), \"canales_distintos debe ser una lista de Python, no una Series ni un arreglo.\"\nassert sorted(canales_distintos) == sorted(encuesta[\"canal\"].unique().tolist()), \"canales_distintos no tiene cada canal una sola vez.\""}
   paquetes={["pandas"]}
-  pistas={["Selecciona la columna canal con corchetes y su nombre entre comillas.", "Una Series se convierte en lista con .tolist()."]}
+  pistas={["Una columna lleva un par de corchetes; varias columnas, una lista dentro de los corchetes.","unique() deja cada valor una vez; tolist() lo convierte en lista."]}
 />
 
 <Debrief>
-resultado = encuesta["canal"].tolist() = ["web","tienda","web","telefono","web"].
+```python
+canales = encuesta["canal"]                                # una Series
+perfil = encuesta[["edad", "canal"]]                       # un DataFrame
+canales_distintos = encuesta["canal"].unique().tolist()    # ["web", "tienda", "telefono", "app"]
+```
+
+La diferencia entre `encuesta["canal"]` y `encuesta[["canal"]]` es el tipo de resultado: lo primero es una Series y lo segundo un DataFrame de una columna. `encuesta["edad", "canal"]`, sin la lista, busca una sola columna con ese nombre doble y da `KeyError`.
 </Debrief>

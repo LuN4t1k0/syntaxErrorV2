@@ -1,41 +1,58 @@
 ---
-titulo: "Listas anidadas y de diccionarios"
+titulo: "Listas de diccionarios"
 tiempo: 14
 ---
 
 <Concepto>
-Una lista puede contener cualquier tipo de valor, incluidos otros diccionarios o listas. Una lista de diccionarios, donde cada diccionario tiene las mismas claves, es la forma más natural de representar una tabla de datos en Python puro -- antes de conocer pandas.
+Una lista puede guardar cualquier valor, incluidos diccionarios. Una lista de diccionarios con las mismas claves es la forma natural de representar una tabla en Python, antes de conocer pandas: cada diccionario es una fila y cada clave es una columna.
 
-Cada elemento de la lista es una fila, y cada clave del diccionario es una columna.
+<Sintaxis lenguaje="python" codigo={"tabla = [{\"columna\": valor}, {\"columna\": valor}]"} />
 
-<Sintaxis lenguaje="python" codigo={"tabla = [{\"col1\": valor, \"col2\": valor}, {...}]"} />
-
-**Una lista de diccionarios.** Cada elemento de la lista es un diccionario independiente -- no hace falta que todos tengan exactamente las mismas claves, aunque para representar una tabla conviene que si.
+**Una tabla de clientes.** Cada cliente es un diccionario. Para que se lea mejor, se suele escribir una fila por línea.
 
 ```python
-ventas = [{"producto": "Notebook", "monto": 450000}, {"producto": "Mouse", "monto": 12000}]
+clientes = [
+    {"nombre": "Ana", "ciudad": "Temuco"},
+    {"nombre": "Luis", "ciudad": "Arica"},
+    {"nombre": "Rosa", "ciudad": "Talca"},
+]
 ```
 
-**Acceder a un elemento y después a una clave.** Primero se accede a la posición de la lista, y después a la clave del diccionario en esa posición: lista[índice]["clave"].
+**Primero la fila, después la columna.** `clientes[0]` es el diccionario completo del primer cliente; `clientes[0]["nombre"]` es el valor de una de sus claves. Se lee de izquierda a derecha.
 
 ```python
-ventas[0]["producto"]
+clientes[0]              # {"nombre": "Ana", "ciudad": "Temuco"}
+clientes[0]["nombre"]    # "Ana"
+clientes[-1]["ciudad"]   # "Talca"
 ```
 
-**Recorrer con un for (adelanto).** La próxima lección muestra cómo recorrer una colección con un for -- con una lista de diccionarios, eso permite procesar cada fila una por una.
+**Agregar una fila.** Como `clientes` es una lista, `append` agrega un diccionario nuevo al final, con las mismas claves que las demás filas.
+
+```python
+clientes.append({"nombre": "Pedro", "ciudad": "Osorno"})
+```
+
+**Lo que viene.** En la lección de `for` vas a recorrer las filas una por una, y con pandas vas a trabajar estas mismas tablas mucho más rápido.
 </Concepto>
 
 <PythonTask
   id="listas-anidadas"
-  enunciado={"Asigna a resultado el producto de la segunda venta de la lista (índice 1)."}
-  preparacion={"ventas = [{\"producto\": \"Notebook\", \"monto\": 450000}, {\"producto\": \"Mouse\", \"monto\": 12000}]"}
-  inicial={"resultado = None"}
-  solucion={"resultado = ventas[1][\"producto\"]"}
-  pruebas={"import numbers\nesperado = \"Mouse\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"La lista ventas ya existe. Guarda en producto_segunda el producto de la segunda venta y en monto_ultima el monto de la última. Después agrega una venta nueva: producto \"Teclado\" con monto 25000."}
+  preparacion={"ventas = [\n    {\"producto\": \"Notebook\", \"monto\": 450000},\n    {\"producto\": \"Mouse\", \"monto\": 12000},\n    {\"producto\": \"Monitor\", \"monto\": 150000},\n]"}
+  inicial={"# ventas ya existe: una lista de diccionarios con producto y monto\nproducto_segunda = None\nmonto_ultima = None\n\n# Agrega la venta del teclado"}
+  solucion={"producto_segunda = ventas[1][\"producto\"]\nmonto_ultima = ventas[-1][\"monto\"]\n\nventas.append({\"producto\": \"Teclado\", \"monto\": 25000})"}
+  pruebas={"assert producto_segunda is not None, \"producto_segunda sigue en None: lee la segunda venta y después su producto.\"\nassert producto_segunda != {\"producto\": \"Mouse\", \"monto\": 12000}, \"producto_segunda tiene la venta completa: falta leer la clave \\\"producto\\\" de esa venta.\"\nassert producto_segunda == \"Mouse\", \"producto_segunda no es el producto de la segunda venta: los índices empiezan en 0.\"\nassert monto_ultima == 150000, \"monto_ultima no es el monto de la última venta original: léela antes de agregar el teclado, o con el índice que corresponde.\"\nassert len(ventas) == 4, \"ventas debe quedar con cuatro filas: agrega una sola venta con append.\"\nassert ventas[-1] == {\"producto\": \"Teclado\", \"monto\": 25000}, \"La última venta debe ser un diccionario con producto \\\"Teclado\\\" y monto 25000, con las mismas claves que las demás.\""}
   paquetes={[]}
-  pistas={["La lista ventas tiene diccionarios: primero eliges uno por su posición.", "Después lees la clave producto de ese diccionario."]}
+  pistas={["Primero eliges la fila por su posición y después la columna por su clave: ventas[posición][\"clave\"].","La segunda venta está en la posición 1; la última, en la posición -1.","La venta nueva es un diccionario con las mismas claves que las otras, y se agrega con append."]}
 />
 
 <Debrief>
-resultado = ventas[1]["producto"] = "Mouse".
+```python
+producto_segunda = ventas[1]["producto"]   # "Mouse"
+monto_ultima = ventas[-1]["monto"]         # 150000
+
+ventas.append({"producto": "Teclado", "monto": 25000})
+```
+
+Fila y después columna: `ventas[1]` es una venta completa y `["producto"]` elige uno de sus datos. Si una fila tiene una clave escrita distinto (`"Producto"` en vez de `"producto"`), deja de calzar con el resto de la tabla.
 </Debrief>

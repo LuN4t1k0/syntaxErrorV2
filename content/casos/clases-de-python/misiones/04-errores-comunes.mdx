@@ -1,38 +1,61 @@
 ---
-titulo: "Errores comunes y como leerlos"
-tiempo: 10
+titulo: "Errores comunes y cómo leerlos"
+tiempo: 12
 ---
 
 <Concepto>
-Un error en Python no significa que rompiste algo para siempre -- es el intérprete diciéndote en qué línea y por qué no pudo seguir. Aprender a leer un error es más útil que evitarlos por completo.
+Un error no significa que rompiste algo: es Python diciéndote en qué línea se detuvo y por qué. Leer bien el mensaje ahorra más tiempo que tratar de no equivocarse nunca.
 
-Los tres errores más comunes al empezar son SyntaxError (la sintaxis está mal escrita), NameError (usaste un nombre que no existe) e IndentationError (la sangría no coincide).
+**Cómo leer un error.** Empieza por la última línea: dice el tipo de error y un mensaje corto. Arriba aparece el número de línea donde ocurrió. En el editor de esta página, además, verás una explicación en español debajo del código.
 
-**Cómo leer un traceback.** Python muestra el error de abajo hacia arriba: la última línea dice que tipo de error es y un mensaje corto; las líneas de arriba muestran en que parte del código ocurrió.
+```text
+Traceback (most recent call last):
+  File "<exec>", line 2, in <module>
+NameError: name 'precio_total' is not defined
+```
 
-**NameError: un nombre que no existe.** Aparece cuando usas una variable que nunca fue asignada, casi siempre por un error de tipeo.
+**SyntaxError: algo está mal escrito.** Falta un paréntesis, unas comillas o los dos puntos al final de un `if`. Python lo detecta antes de ejecutar cualquier línea, así que no se ejecuta nada hasta corregirlo.
+
+```python
+if cantidad > 2      # faltan los dos puntos
+    descuento = 0.1
+```
+
+**IndentationError: la sangría no calza.** Python usa la sangría (los espacios al inicio de la línea) para saber qué líneas forman un bloque. Una línea con espacios de más o de menos rompe esa estructura.
 
 ```python
 precio = 1000
-print(precio_total)
+  cantidad = 3       # sangría que no corresponde
 ```
 
-**IndentationError: la sangría no coincide.** Python usa la sangría (los espacios al inicio de la línea) para saber qué código pertenece a un bloque. Una línea con más o menos espacios de los que corresponde rompe el bloque.
+**NameError: un nombre que no existe.** Usaste una variable que nunca se creó, casi siempre por un error de tipeo. El mensaje dice el nombre exacto que Python no encontró: compáralo letra por letra con el que creaste.
 
-**SyntaxError: falta algo en la escritura.** Un paréntesis sin cerrar, dos puntos faltantes después de un if, o una comilla sin cerrar generan este error antes de que el código llegue a ejecutarse.
+**Uno a la vez.** Python se detiene en el primer error que encuentra. Al corregirlo puede aparecer el siguiente: es avance, no retroceso.
 </Concepto>
 
 <PythonTask
   id="errores-comunes"
-  enunciado={"El código tiene un error de tipeo que genera un NameError. Corrígelo para que resultado sea precio multiplicado por cantidad."}
+  enunciado={"Este código tiene tres errores: uno de sintaxis, uno de sangría y uno de nombre. Ejecútalo, lee cada mensaje y corrígelos de a uno hasta que total quede calculado (precio por cantidad, con el descuento aplicado)."}
   preparacion={""}
-  inicial={"precio = 1000\ncantidad = 3\nresultado = precio * cantida"}
-  solucion={"precio = 1000\ncantidad = 3\nresultado = precio * cantidad"}
-  pruebas={"import numbers\nesperado = 3000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  inicial={"precio = 1000\ncantidad = 3\nif cantidad > 2\n    descuento = 0.1\nelse:\n    descuento = 0\n  total = precio * cantida * (1 - descuento)\nprint(f\"Total: ${total}\")"}
+  solucion={"precio = 1000\ncantidad = 3\nif cantidad > 2:\n    descuento = 0.1\nelse:\n    descuento = 0\ntotal = precio * cantidad * (1 - descuento)\nprint(f\"Total: ${total}\")"}
+  pruebas={"assert precio == 1000 and cantidad == 3, \"No cambies los valores de precio ni de cantidad: solo corrige los errores.\"\nassert abs(total - 2700) < 0.01, \"total no da lo esperado: debe ser precio por cantidad, con el descuento aplicado.\""}
   paquetes={[]}
-  pistas={["Lee el nombre que el error dice que no existe.", "Compáralo letra por letra con el nombre de la variable que definiste arriba."]}
+  pistas={["Ejecuta el código y lee la última línea del error: dice qué tipo de error es y en qué línea.","El if necesita algo al final de su línea; la línea de total no pertenece al else.","Compara letra por letra el nombre que usa el cálculo con el de la variable creada arriba."]}
 />
 
 <Debrief>
-La variable se llama cantidad, no cantida -- el error de tipeo genera un NameError porque Python busca un nombre que no existe.
+Los tres errores, en el orden en que aparecen:
+
+1. **SyntaxError**: al `if cantidad > 2` le faltaban los dos puntos.
+2. **IndentationError**: la línea de `total` tenía dos espacios; no pertenece al `else`, así que va sin sangría.
+3. **NameError**: el cálculo decía `cantida` en vez de `cantidad`.
+
+```python
+if cantidad > 2:
+    descuento = 0.1
+else:
+    descuento = 0
+total = precio * cantidad * (1 - descuento)   # 2700.0
+```
 </Debrief>

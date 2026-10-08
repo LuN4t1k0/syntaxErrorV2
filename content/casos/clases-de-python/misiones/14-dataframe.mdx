@@ -4,38 +4,60 @@ tiempo: 14
 ---
 
 <Concepto>
-Un DataFrame es una tabla completa: filas y columnas, donde cada columna es una Series. Es la estructura que vas a usar la gran mayoría del tiempo en pandas.
+Un DataFrame es una tabla completa: filas y columnas, como una hoja de Excel. Cada columna es una Series, así que todo lo que aprendiste en la lección anterior se aplica a cada columna. Es la estructura con la que vas a trabajar casi siempre.
 
-Se puede crear a partir de un diccionario donde cada clave es el nombre de una columna y cada valor es una lista con los datos de esa columna.
+<Sintaxis lenguaje="python" codigo={"df = pd.DataFrame({\"columna1\": [valores], \"columna2\": [valores]})"} />
 
-<Sintaxis lenguaje="python" codigo={"df = pd.DataFrame({\"columna\": [valores]})"} />
-
-**Crear un DataFrame desde un diccionario.** Cada clave del diccionario se convierte en el nombre de una columna, y su lista de valores en los datos de esa columna -- todas las listas deben tener la misma cantidad de elementos.
+**Crear un DataFrame desde un diccionario.** Cada clave es el nombre de una columna y su lista son los valores de esa columna, de arriba hacia abajo. Todas las listas deben tener el mismo largo: cada posición es una fila.
 
 ```python
-encuesta = pd.DataFrame({"respondent_id":[1,2,3],"calificacion":[5,3,4]})
+clientes = pd.DataFrame({
+    "nombre": ["Ana", "Luis", "Rosa"],
+    "compras": [4, 1, 7],
+})
 ```
 
-**Acceder a una columna.** df["columna"] devuelve esa columna como una Series -- se le pueden aplicar las mismas funciones que a cualquier Series (.sum(), .mean(), etc.).
+En el panel de abajo del editor, al ejecutar, verás la tabla con sus filas numeradas desde 0.
+
+**Leer una columna.** `df["columna"]` devuelve esa columna como una Series, con todos sus métodos.
 
 ```python
-encuesta["calificacion"]
+clientes["compras"]          # la columna completa
+clientes["compras"].mean()   # 4.0
 ```
 
-**Un DataFrame combina varias Series.** Internamente, cada columna de un DataFrame es una Series -- por eso todo lo aprendido sobre Series se aplica directo a las columnas de un DataFrame.
+**Las columnas y el largo.** `df.columns` lista los nombres de las columnas y `len(df)` dice cuántas filas tiene.
+
+```python
+list(clientes.columns)   # ["nombre", "compras"]
+len(clientes)            # 3
+```
+
+En la práctica casi nunca vas a escribir una tabla a mano: la vas a cargar desde un archivo. Pero armar una pequeña ayuda a entender qué es un DataFrame por dentro.
 </Concepto>
 
 <PythonTask
   id="dataframe"
-  enunciado={"Asigna a resultado la suma de la columna calificacion del DataFrame encuesta, convertida a int."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(encuesta[\"calificacion\"].sum())"}
-  pruebas={"import numbers\nesperado = 18\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Crea el DataFrame inventario con tres columnas, en este orden: producto (\"Notebook\", \"Mouse\", \"Monitor\"), precio (450000, 12000, 150000) y stock (3, 25, 6). Después guarda en precios la columna precio y en stock_total la suma de la columna stock."}
+  preparacion={"import pandas as pd"}
+  inicial={"# pandas ya está importado como pd\ninventario = None\n\nprecios = None\nstock_total = None"}
+  solucion={"inventario = pd.DataFrame({\n    \"producto\": [\"Notebook\", \"Mouse\", \"Monitor\"],\n    \"precio\": [450000, 12000, 150000],\n    \"stock\": [3, 25, 6],\n})\n\nprecios = inventario[\"precio\"]\nstock_total = inventario[\"stock\"].sum()"}
+  pruebas={"assert isinstance(inventario, pd.DataFrame), \"inventario debe ser un DataFrame de pandas.\"\nassert list(inventario.columns) == [\"producto\", \"precio\", \"stock\"], \"Las columnas de inventario deben llamarse producto, precio y stock, en ese orden.\"\nassert len(inventario) == 3, \"inventario debe tener 3 filas, una por producto.\"\nassert inventario[\"producto\"].tolist() == [\"Notebook\", \"Mouse\", \"Monitor\"], \"La columna producto no tiene los productos del enunciado en orden.\"\nassert inventario[\"precio\"].tolist() == [450000, 12000, 150000], \"La columna precio no tiene los precios del enunciado en orden.\"\nassert inventario[\"stock\"].tolist() == [3, 25, 6], \"La columna stock no tiene los stocks del enunciado en orden.\"\nassert isinstance(precios, pd.Series), \"precios debe ser la columna precio de inventario, como Series.\"\nassert precios.tolist() == [450000, 12000, 150000], \"precios no es la columna precio.\"\nassert stock_total == 34, \"stock_total no es la suma de la columna stock.\""}
   paquetes={["pandas"]}
-  pistas={["Primero selecciona la columna calificacion con corchetes.", "Después súmala y conviértela con int(...)."]}
+  pistas={["El diccionario tiene una clave por columna, y cada clave lleva una lista con sus tres valores.","Una columna se lee con el nombre entre corchetes: inventario[\"stock\"].","Las columnas son Series: tienen .sum(), .mean() y los demás métodos."]}
 />
 
 <Debrief>
-resultado = int(encuesta["calificacion"].sum()) = 5+3+4+2+4 = 18.
+```python
+inventario = pd.DataFrame({
+    "producto": ["Notebook", "Mouse", "Monitor"],
+    "precio": [450000, 12000, 150000],
+    "stock": [3, 25, 6],
+})
+
+precios = inventario["precio"]           # una Series
+stock_total = inventario["stock"].sum()  # 34
+```
+
+Cada clave del diccionario se convirtió en una columna, y cada posición de las listas en una fila. Al leer una columna obtienes una Series, por eso `.sum()` funciona igual que en la lección anterior.
 </Debrief>

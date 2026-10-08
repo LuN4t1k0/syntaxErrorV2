@@ -4,45 +4,52 @@ tiempo: 12
 ---
 
 <Concepto>
-Los operadores combinan valores para producir un resultado nuevo -- los aritméticos calculan números, los de comparación dan verdadero o falso, y los lógicos combinan condiciones.
+Los operadores combinan valores para producir uno nuevo. Hay tres familias: los aritméticos calculan números, los de comparación responden una pregunta con `True` o `False`, y los lógicos combinan varias de esas respuestas.
 
-Son la base de cualquier cálculo o decisión que vas a escribir en Python, y funcionan igual sobre números sueltos que sobre valores guardados en variables.
+<Sintaxis lenguaje="python" codigo={"resultado = valor1 operador valor2"} />
 
-<Sintaxis lenguaje="python" codigo={"resultado = a + b"} />
-
-**Operadores aritméticos.** + suma, - resta, * multiplica, / divide (con decimales), // divide y descarta el resto (división entera), % da el resto de una división, ** eleva a una potencia.
+**Aritméticos.** `+` suma, `-` resta, `*` multiplica, `/` divide (siempre da un `float`), `//` divide y descarta los decimales, `%` da el resto de la división y `**` eleva a una potencia. Igual que en matemáticas, la multiplicación va antes que la suma: usa paréntesis cuando quieras otro orden.
 
 ```python
-precio = 450000
-descuento = 0.1
-precio_final = precio*(1-descuento)
+precio = 25000
+descuento = 0.2
+precio_final = precio * (1 - descuento)   # 20000.0
+cajas = 17 // 5                           # 3 cajas completas
+sueltas = 17 % 5                          # sobran 2
 ```
 
-**Operadores de comparación.** == compara si son iguales, != si son distintos, >, &lt;, >=, &lt;= comparan magnitud -- todos devuelven True o False.
+**De comparación.** `==` pregunta si dos valores son iguales (uno solo, `=`, es para asignar), `!=` si son distintos, y `<`, `>`, `<=`, `>=` comparan magnitudes. El resultado es siempre un `bool`, y se puede guardar en una variable.
 
 ```python
-stock = 3
-stock < 5
+stock = 8
+hay_poco = stock < 10       # True
+agotado = stock == 0        # False
 ```
 
-**Operadores lógicos.** and exige que ambas condiciones sean verdaderas, or alcanza con que una lo sea, not invierte una condición.
+**Lógicos.** `and` es `True` solo si las dos condiciones lo son, `or` basta con que una lo sea, y `not` invierte una condición.
 
 ```python
-stock < 5 and precio > 100000
+oferta = precio < 30000 or descuento >= 0.5   # barato o con gran descuento
 ```
 </Concepto>
 
 <PythonTask
   id="operadores"
-  enunciado={"Asigna a resultado el precio con el descuento aplicado: precio * (1 - descuento)."}
-  preparacion={"precio = 450000\ndescuento = 0.1"}
-  inicial={"resultado = None"}
-  solucion={"resultado = precio*(1-descuento)"}
-  pruebas={"import numbers\nesperado = 405000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con las variables precio, descuento y stock ya creadas, calcula tres cosas: precio_final, el precio con el descuento aplicado; poco_stock, que sea True si stock es menor que 5; y reponer_urgente, que sea True si hay poco stock y además el precio es mayor que 100000."}
+  preparacion={"precio = 450000\ndescuento = 0.1\nstock = 3"}
+  inicial={"# precio = 450000, descuento = 0.1 y stock = 3 ya existen\nprecio_final = None\npoco_stock = None\nreponer_urgente = None"}
+  solucion={"precio_final = precio * (1 - descuento)\npoco_stock = stock < 5\nreponer_urgente = poco_stock and precio > 100000"}
+  pruebas={"assert precio_final is not None, \"precio_final sigue en None: reemplázalo por el cálculo.\"\nassert isinstance(precio_final, (int, float)), \"precio_final debe ser un número: el resultado de un cálculo, sin comillas.\"\nassert abs(precio_final - 405000) < 0.01, \"precio_final no da lo esperado: revisa qué parte del precio se paga y en qué orden se hacen las operaciones.\"\nassert isinstance(poco_stock, bool), \"poco_stock debe ser True o False: el resultado de una comparación, no un texto ni un número.\"\nassert poco_stock == (stock < 5), \"poco_stock no es correcto: compara stock con 5.\"\nassert isinstance(reponer_urgente, bool), \"reponer_urgente debe ser True o False: el resultado de combinar las dos condiciones.\"\nassert reponer_urgente == (stock < 5 and precio > 100000), \"reponer_urgente no es correcto: deben cumplirse las dos condiciones a la vez.\""}
   paquetes={[]}
-  pistas={["Primero calcula qué parte del precio se paga: 1 menos el descuento.", "Usa paréntesis para que esa resta se haga antes de multiplicar."]}
+  pistas={["El cliente paga 1 menos el descuento: con 0.1 de descuento, paga 0.9 del precio.","Una comparación como stock < 5 ya da True o False; guárdala directo en la variable.","and une dos condiciones y solo da True si las dos se cumplen."]}
 />
 
 <Debrief>
-resultado = precio*(1-descuento) = 450000*0.9 = 405000.
+```python
+precio_final = precio * (1 - descuento)            # 405000.0
+poco_stock = stock < 5                             # True
+reponer_urgente = poco_stock and precio > 100000   # True
+```
+
+Fíjate en que `reponer_urgente` reutiliza `poco_stock`: una condición guardada en una variable con buen nombre se lee casi como una frase.
 </Debrief>

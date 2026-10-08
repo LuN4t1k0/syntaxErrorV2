@@ -1,33 +1,52 @@
 ---
 titulo: "Proyecto final: limpieza y análisis de ventas"
-tiempo: 25
+tiempo: 30
 ---
 
 <Concepto>
-Este es el proyecto final del curso: un archivo de ventas exportado de un sistema real, con filas duplicadas, una categoria sin dato, texto inconsistente y fechas en distintos meses.
+Este proyecto junta todo el curso en un solo análisis. El archivo `datos/ventas_crudo.csv` es una exportación de ventas con los problemas de siempre: filas repetidas, una venta sin categoría, la misma categoría escrita de varias formas y ventas de dos meses distintos. La pregunta es simple: **¿cuánto vendió cada categoría en enero de 2026?**
 
-El ejercicio combina todo lo visto: cargar el CSV, quitar duplicados y nulos, normalizar texto, convertir fechas, resumir con groupby, exportar el resultado y volver a leerlo -- el ciclo completo de un análisis con pandas.
+<Sintaxis lenguaje="python" codigo={"cargar → mirar → limpiar → filtrar → agrupar → exportar → revisar"} />
 
-<Sintaxis lenguaje="python" codigo={"cargar -> limpiar -> transformar -> agrupar -> exportar"} />
+**1. Cargar y mirar.** Antes de limpiar, ejecuta `head()`, `info()` y `unique()` sobre las columnas sospechosas. Limpiar sin mirar es adivinar.
 
-**El dataset viene sucio a propósito.** Una fila duplicada exacta, una categoria vacía, la misma categoria escrita de tres formas distintas, y ventas de dos meses distintos -- son los problemas más comunes en datos reales, todos juntos en un solo archivo.
+**2. El orden de la limpieza importa.** Primero normaliza el texto y después quita duplicados. Dos filas pueden ser la misma venta aunque una diga `"hogar "` y la otra `"Hogar"`: solo son idénticas después de normalizar. Si quitas duplicados antes, esa copia sobrevive y el total de esa categoría queda inflado.
 
-**El orden de limpieza importa.** Primero se quitan duplicados y filas sin categoria (así no se arrastran errores al resto del proceso), después se convierte la fecha y se normaliza el texto, y recien al final se agrupa.
+**3. Decidir sobre los vacíos.** Una venta sin categoría no se puede asignar a ningún grupo. Aquí la quitamos con `dropna`, pero en un informe real lo dirías: "se excluyó una venta de 25000 sin categoría".
 
-**Cerrar el ciclo con to_csv y read_csv.** Exportar el resumen con to_csv(index=False) y volver a leerlo con read_csv(io.StringIO(...)) prueba que el archivo exportado es válido -- es el mismo paso que harías antes de compartirlo con otra persona.
+**4. Filtrar el período.** Convierte la fecha con `pd.to_datetime` y quédate con el rango de enero: desde el 1 de enero y antes del 1 de febrero.
+
+**5. Resumir, exportar y revisar.** Agrupa por categoría con `as_index=False`, exporta con `index=False` y vuelve a leer el archivo para confirmar cómo quedó.
+
+**Un consejo de trabajo.** Escribe un paso, ejecuta, mira el resultado y recién después escribe el siguiente. `len(ventas)` después de cada paso te dice cuántas filas eliminó cada decisión.
 </Concepto>
 
 <PythonTask
   id="proyecto-final-pandas"
-  enunciado={"A partir de ventas_crudo: quita filas duplicadas y filas sin categoria, convierte fecha a datetime y quédate solo con enero de 2026, normaliza categoria (sin espacios, en minúsculas), agrupa por categoria sumando monto, exporta ese resumen con to_csv(index=False) y vuelve a leerlo con pd.read_csv(io.StringIO(...)). Asigna a resultado el monto total de la categoria tecnologia en ese resumen final."}
-  preparacion={"import pandas as pd\nimport io"}
-  inicial={"texto_csv = \"fecha,categoria,monto\\n2026-01-05, Tecnologia,50000\\n2026-01-05, Tecnologia,50000\\n2026-01-12,HOGAR,8000\\n2026-01-20,hogar ,12000\\n2026-02-02,Tecnologia,30000\\n2026-02-10,,9000\"\nventas_crudo = pd.read_csv(io.StringIO(texto_csv))\nresultado = None"}
-  solucion={"texto_csv = \"fecha,categoria,monto\\n2026-01-05, Tecnologia,50000\\n2026-01-05, Tecnologia,50000\\n2026-01-12,HOGAR,8000\\n2026-01-20,hogar ,12000\\n2026-02-02,Tecnologia,30000\\n2026-02-10,,9000\"\nventas_crudo = pd.read_csv(io.StringIO(texto_csv))\nventas = ventas_crudo.drop_duplicates().dropna(subset=[\"categoria\"]).copy()\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nventas = ventas[(ventas[\"fecha\"] >= \"2026-01-01\") & (ventas[\"fecha\"] < \"2026-02-01\")].copy()\nventas[\"categoria\"] = ventas[\"categoria\"].str.strip().str.lower()\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nfinal = pd.read_csv(io.StringIO(resumen.to_csv(index=False)))\nresultado = int(final.loc[final[\"categoria\"] == \"tecnologia\", \"monto\"].iloc[0])"}
-  pruebas={"import numbers\nesperado = 50000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Carga datos/ventas_crudo.csv en ventas. Normaliza la categoría (sin espacios en los bordes y en minúsculas), quita las filas duplicadas y las que no tienen categoría, convierte fecha a fecha y quédate solo con las ventas de enero de 2026. Guarda en resumen el monto total por categoría, con la categoría como columna, exporta resumen a resumen_enero.csv sin el índice y vuelve a leer ese archivo en final."}
+  preparacion={"import os\nimport pandas as pd\nif os.path.exists(\"resumen_enero.csv\"):\n    os.remove(\"resumen_enero.csv\")"}
+  inicial={"# pandas ya está importado como pd\n# 1. Carga datos/ventas_crudo.csv y mira cómo viene\nventas = None\n\n# 2. Normaliza la categoría y después quita duplicados\n\n\n# 3. Quita las ventas sin categoría\n\n\n# 4. Convierte la fecha y quédate con enero de 2026\n\n\n# 5. Resume por categoría, exporta y vuelve a leer\nresumen = None\n\nfinal = None"}
+  solucion={"ventas = pd.read_csv(\"datos/ventas_crudo.csv\")\n\nventas[\"categoria\"] = ventas[\"categoria\"].str.strip().str.lower()\nventas = ventas.drop_duplicates()\n\nventas = ventas.dropna(subset=[\"categoria\"])\n\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nventas = ventas[(ventas[\"fecha\"] >= \"2026-01-01\") & (ventas[\"fecha\"] < \"2026-02-01\")]\n\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nresumen.to_csv(\"resumen_enero.csv\", index=False)\n\nfinal = pd.read_csv(\"resumen_enero.csv\")"}
+  pruebas={"import os\n_c = pd.read_csv(\"datos/ventas_crudo.csv\")\n_c[\"categoria\"] = _c[\"categoria\"].str.strip().str.lower()\n_c = _c.drop_duplicates().dropna(subset=[\"categoria\"])\n_c[\"fecha\"] = pd.to_datetime(_c[\"fecha\"])\n_c = _c[(_c[\"fecha\"] >= \"2026-01-01\") & (_c[\"fecha\"] < \"2026-02-01\")]\n_r = _c.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nassert isinstance(ventas, pd.DataFrame), \"ventas debe ser un DataFrame cargado desde datos/ventas_crudo.csv.\"\nassert ventas[\"categoria\"].isna().sum() == 0, \"ventas todavía tiene filas sin categoría.\"\nassert all(c == c.strip() and c == c.lower() for c in ventas[\"categoria\"]), \"La categoría no quedó normalizada: quita los espacios de los bordes y pásala a minúsculas.\"\nassert ventas.duplicated().sum() == 0, \"ventas todavía tiene filas duplicadas.\"\nassert pd.api.types.is_datetime64_any_dtype(ventas[\"fecha\"]), \"La columna fecha sigue siendo texto.\"\nassert ventas[\"fecha\"].min() >= pd.Timestamp(\"2026-01-01\") and ventas[\"fecha\"].max() < pd.Timestamp(\"2026-02-01\"), \"ventas tiene fechas fuera de enero de 2026.\"\nassert len(ventas) == len(_c), \"ventas no tiene las filas esperadas: si quitaste duplicados antes de normalizar, una venta repetida con distinta escritura sigue ahí.\"\nassert isinstance(resumen, pd.DataFrame) and list(resumen.columns) == [\"categoria\", \"monto\"], \"resumen debe tener las columnas categoria y monto, con la categoría como columna.\"\nassert resumen.set_index(\"categoria\")[\"monto\"].to_dict() == _r.set_index(\"categoria\")[\"monto\"].to_dict(), \"resumen no tiene el total de enero de cada categoría.\"\nassert os.path.exists(\"resumen_enero.csv\"), \"No se creó el archivo resumen_enero.csv.\"\n_leido = pd.read_csv(\"resumen_enero.csv\")\nassert list(_leido.columns) == [\"categoria\", \"monto\"], \"El archivo resumen_enero.csv debe tener solo las columnas categoria y monto: se guardó también el índice de la tabla.\"\nassert isinstance(final, pd.DataFrame) and final.equals(_leido), \"final debe ser el archivo resumen_enero.csv vuelto a leer.\""}
   paquetes={["pandas"]}
-  pistas={["Avanza paso a paso y revisa la tabla después de cada uno: duplicados, filas sin categoría, fechas de enero.", "Antes de agrupar, deja la categoría sin espacios y en minúsculas, para que HOGAR y hogar sean el mismo grupo."]}
+  pistas={["Ejecuta después de cada paso y mira len(ventas): cada decisión debería quitar las filas que esperas.","Normaliza la categoría antes de quitar duplicados: ejecuta ventas[\"categoria\"].unique() para ver por qué.","Si el total de hogar te da 133000, hay una venta repetida que solo se ve igual después de normalizar."]}
 />
 
 <Debrief>
-Tras quitar el duplicado (fila 2, idéntica a la 1) y la fila sin categoria (monto 9000), y filtrar solo enero, quedan: 2026-01-05 Tecnologia 50000, 2026-01-12 HOGAR 8000, 2026-01-20 hogar 12000 (la venta de Tecnologia del 02-02 queda fuera por ser de febrero). Al normalizar categoria, HOGAR y hogar se unen en hogar (20000) y tecnologia queda con 50000 -- ese es el resultado.
+```python
+ventas = pd.read_csv("datos/ventas_crudo.csv")
+
+ventas["categoria"] = ventas["categoria"].str.strip().str.lower()
+ventas = ventas.drop_duplicates()
+ventas = ventas.dropna(subset=["categoria"])
+
+ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+ventas = ventas[(ventas["fecha"] >= "2026-01-01") & (ventas["fecha"] < "2026-02-01")]
+
+resumen = ventas.groupby("categoria", as_index=False)["monto"].sum()
+resumen.to_csv("resumen_enero.csv", index=False)
+final = pd.read_csv("resumen_enero.csv")
+```
+
+En enero, hogar vendió 121000 y tecnología 474000. De las 10 filas del archivo quedaron 6: se fueron dos copias (una de ellas solo visible después de normalizar), la venta sin categoría y las dos de febrero. En un informe, esas decisiones se cuentan: son parte del resultado.
 </Debrief>

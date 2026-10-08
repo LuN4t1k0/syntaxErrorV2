@@ -1,24 +1,41 @@
 ---
 titulo: "Visualización de datos"
-tiempo: 12
+tiempo: 14
 ---
 
 <Concepto>
-Una tabla de números es difícil de interpretar de un vistazo -- un gráfico bien elegido comunica un patrón mucho más rápido. Esta lección es conceptual: graficar con matplotlib u otra librería queda fuera de esta primera versión del laboratorio, pero vale la pena saber que herramienta usar para que pregunta.
+Una tabla con doce números se lee; una con mil, no. Un gráfico bien elegido muestra en un segundo el patrón que la tabla esconde. La elección no depende de qué gráfico se ve más lindo, sino de **qué pregunta** quieres responder.
 
-La elección del tipo de gráfico depende de la pregunta que quieres responder, no de qué gráfico te parece más lindo.
+**Barras: comparar categorías.** ¿Qué región vendió más? ¿Qué canal trae más respuestas? Cada barra es una categoría y su largo es el valor. Ordena las barras de mayor a menor y empieza el eje en 0: si el eje parte en 600000, una diferencia de 8 % parece el doble.
 
-**Gráfico de barras: comparar categorias.** Sirve para comparar un valor entre categorias distintas -- por ejemplo, el total de ventas por region. Es el equivalente visual de un groupby con sum().
+**Líneas: cambio en el tiempo.** ¿Cómo evolucionaron las ventas mes a mes? El eje horizontal es el tiempo y la línea une puntos consecutivos, así que se lee como una tendencia. Si el eje horizontal no es tiempo (por ejemplo, regiones), una línea sugiere una continuidad que no existe.
 
-**Gráfico de líneas: evolución en el tiempo.** Sirve para mostrar cómo cambia un valor a lo largo del tiempo -- por ejemplo, ventas diarias durante un mes. El eje horizontal casi siempre es una fecha.
+**Histograma: cómo se reparten los valores.** ¿Las ventas son casi todas chicas, con unas pocas muy grandes? Agrupa los valores en tramos y muestra cuántos caen en cada uno. Sirve para ver la forma de los datos y detectar valores raros.
 
-**Histograma: distribución de un valor.** Sirve para ver cómo se reparten los valores de una columna numérica -- por ejemplo, cuántas respuestas de una encuesta cayeron en cada rango de calificacion.
+**Dispersión: relación entre dos números.** ¿Las personas mayores ponen mejores notas? Cada punto es una fila, con un valor en cada eje. Muestra si dos variables se mueven juntas, aunque eso no prueba que una cause la otra.
 
-**matplotlib y seaborn.** matplotlib es la librería base de gráficos en Python; seaborn se construye sobre ella y ofrece gráficos más prolijos con menos código. Ambas funcionan sobre DataFrames y Series de pandas directamente.
+**Torta: con cuidado.** Solo funciona para mostrar partes de un todo con pocas categorías (dos o tres). Con más, comparar ángulos es difícil y un gráfico de barras lo comunica mejor.
+
+**Con pandas y matplotlib.** En tu computadora o en Google Colab, pandas grafica directo desde un resultado. Este editor todavía no muestra gráficos, pero el código es así:
+
+```python
+import matplotlib.pyplot as plt
+
+por_region = ventas.groupby("region")["monto"].sum().sort_values(ascending=False)
+por_region.plot(kind="bar", title="Ventas por región")
+plt.show()
+```
+
+`kind` puede ser `"bar"`, `"line"`, `"hist"`, `"scatter"` o `"pie"`. En el curso de Power BI vas a construir estos mismos gráficos de forma interactiva.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="visualizacion-datos"
-  pregunta={"Si quisieras mostrar cómo cambió la calificación promedio de una encuesta mes a mes durante un año, ¿qué tipo de gráfico usarías?"}
-  respuesta={"Un gráfico de líneas: la pregunta es sobre la evolución de un valor a lo largo del tiempo, que es exactamente el caso de uso de un gráfico de líneas."}
+  enunciado={"Para cada pregunta de negocio, elige el gráfico que mejor la responde."}
+  preguntas={[{"pregunta":"Quieres mostrar cómo cambió la calificación promedio de la encuesta mes a mes durante un año.","opciones":["Un gráfico de barras con una barra por canal.","Un gráfico de líneas con los meses en el eje horizontal.","Un gráfico de torta con los doce meses.","Un histograma de las calificaciones."],"correcta":1,"explicacion":"La pregunta es sobre la evolución en el tiempo, y eso es lo que muestra una línea que une meses consecutivos."},{"pregunta":"La gerencia quiere comparar el total vendido por cada región en el trimestre.","opciones":["Un gráfico de dispersión de monto contra cantidad.","Un gráfico de líneas con una región tras otra.","Un gráfico de barras ordenado de mayor a menor, con el eje desde 0.","Un histograma de los montos."],"correcta":2,"explicacion":"Comparar categorías es el caso típico de las barras; ordenarlas facilita la lectura y el eje desde 0 evita exagerar las diferencias."},{"pregunta":"Sospechas que casi todas las ventas son chicas y que unas pocas muy grandes inflan el promedio. ¿Cómo lo verías?","opciones":["Con un histograma de los montos.","Con un gráfico de torta por categoría.","Con un gráfico de líneas de las ventas por fecha.","Con un gráfico de barras del total por región."],"correcta":0,"explicacion":"El histograma muestra cómo se reparten los valores: verías muchas ventas en los tramos bajos y unas pocas lejos, a la derecha."},{"pregunta":"Un gráfico de barras de ventas por región tiene el eje vertical empezando en 600000. ¿Cuál es el problema?","opciones":["Ninguno: así se ven mejor las diferencias.","Las barras deberían ser horizontales.","Exagera las diferencias: una región puede parecer el doble que otra aunque venda apenas un poco más.","Debería ser un gráfico de líneas."],"correcta":2,"explicacion":"En las barras, el largo representa el valor. Si el eje no parte en 0, el largo deja de ser proporcional y la comparación engaña."}]}
+  pistas={["Antes de elegir, pregúntate: ¿comparo categorías, miro el tiempo, veo cómo se reparten los valores o relaciono dos números?"]}
 />
+
+<Debrief>
+Barras para comparar categorías, líneas para el tiempo, histograma para la distribución y dispersión para la relación entre dos números. La pregunta decide el gráfico; el eje desde 0 en las barras es lo que hace que la comparación sea honesta.
+</Debrief>

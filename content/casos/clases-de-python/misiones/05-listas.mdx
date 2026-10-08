@@ -4,43 +4,57 @@ tiempo: 14
 ---
 
 <Concepto>
-Una lista guarda varios valores en un orden específico, escritos entre corchetes y separados por comas. Es una de las estructuras que más vas a usar en Python.
-
-A diferencia de una variable común, una lista se puede modificar después de creada: agregar elementos, quitarlos o cambiar uno en particular.
+Una lista guarda varios valores en orden, dentro de una sola variable. En vez de `precio1`, `precio2` y `precio3`, tienes `precios` con los tres adentro. Es la estructura que más vas a usar en Python.
 
 <Sintaxis lenguaje="python" codigo={"lista = [valor1, valor2, valor3]"} />
 
-**Crear una lista.** Se escriben los valores entre corchetes, separados por comas. Una lista puede tener cualquier cantidad de elementos, incluida ninguna.
+**Crear una lista.** Los valores van entre corchetes, separados por comas. Puede tener cualquier cantidad de elementos, incluso ninguno: `[]`.
 
 ```python
 precios = [450000, 12000, 25000]
 ```
 
-**Acceder por índice.** Cada elemento tiene una posición (índice), empezando en 0. precios[0] es el primer elemento, precios[1] el segundo, y así.
+**Leer por posición.** Cada elemento tiene un índice que empieza en 0: `precios[0]` es el primero y `precios[1]` el segundo. Los índices negativos cuentan desde el final: `precios[-1]` es el último, sin importar cuántos haya.
 
 ```python
-precios[0]
+precios[0]    # 450000
+precios[-1]   # 25000
 ```
 
-**len() y append().** len(lista) devuelve la cantidad de elementos. lista.append(valor) agrega un elemento nuevo al final.
+**Cambiar la lista.** A diferencia de un número o un texto, una lista se modifica después de creada. `append` agrega un elemento al final, y asignar a una posición reemplaza ese elemento.
 
 ```python
-precios.append(180000)
-len(precios)
+precios.append(180000)   # [450000, 12000, 25000, 180000]
+precios[1] = 13000       # [450000, 13000, 25000, 180000]
+```
+
+**Contar y resumir.** `len(lista)` dice cuántos elementos tiene; `sum`, `max` y `min` calculan sobre todos los números de la lista.
+
+```python
+len(precios)   # 4
+sum(precios)   # 668000
 ```
 </Concepto>
 
 <PythonTask
   id="listas"
-  enunciado={"Agrega 95000 a la lista precios con append, y asigna a resultado la cantidad total de elementos con len()."}
+  enunciado={"La lista precios ya existe. Agrégale el precio 95000 al final con append. Después guarda en primero el primer precio y en ultimo el último (usando índices), y en cantidad cuántos precios quedaron en la lista."}
   preparacion={"precios = [450000, 12000, 25000, 180000]"}
-  inicial={"precios.append(95000)\nresultado = None"}
-  solucion={"precios.append(95000)\nresultado = len(precios)"}
-  pruebas={"import numbers\nesperado = 5\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  inicial={"# precios = [450000, 12000, 25000, 180000] ya existe\n# 1. Agrega 95000 al final\n\n\n# 2. Lee el primero, el último y cuenta los elementos\nprimero = None\nultimo = None\ncantidad = None"}
+  solucion={"precios.append(95000)\n\nprimero = precios[0]\nultimo = precios[-1]\ncantidad = len(precios)"}
+  pruebas={"assert 95000 in precios, \"precios todavía no tiene el 95000.\"\nassert precios.count(95000) == 1, \"El 95000 quedó más de una vez en la lista: agrégalo con un solo append.\"\nassert precios[-1] == 95000, \"El 95000 debe quedar al final de la lista: append siempre agrega al final.\"\nassert primero == 450000, \"primero no es el primer precio: los índices empiezan en 0.\"\nassert ultimo == 95000, \"ultimo no es el último precio: después de agregar el 95000, el último es el que agregaste.\"\nassert cantidad == len(precios), \"cantidad no coincide con la cantidad de elementos de precios.\""}
   paquetes={[]}
-  pistas={["append agrega un elemento al final de la lista.", "len devuelve cuántos elementos tiene una lista."]}
+  pistas={["append se escribe pegado a la lista con un punto: precios.append(...).","El primer elemento está en la posición 0; el último, en la posición -1.","len(...) recibe la lista y devuelve cuántos elementos tiene."]}
 />
 
 <Debrief>
-Después de precios.append(95000), la lista tiene 5 elementos: resultado = len(precios) = 5.
+```python
+precios.append(95000)
+
+primero = precios[0]       # 450000
+ultimo = precios[-1]       # 95000
+cantidad = len(precios)    # 5
+```
+
+El orden importa: si lees `precios[-1]` antes del `append`, obtienes 180000, porque en ese momento todavía era el último. Python ejecuta las líneas de arriba hacia abajo.
 </Debrief>

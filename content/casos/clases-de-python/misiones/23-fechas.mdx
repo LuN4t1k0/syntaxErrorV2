@@ -1,45 +1,54 @@
 ---
 titulo: "Fechas con to_datetime"
-tiempo: 14
+tiempo: 16
 ---
 
 <Concepto>
-Una fecha guardada como texto ("2026-03-15") no se puede comparar ni ordenar como fecha real hasta que pandas la convierte con pd.to_datetime().
+Al leer un CSV, las fechas llegan como texto: `"2026-03-09"` son solo caracteres. Para preguntar por el mes, ordenar en el tiempo o filtrar un período, primero hay que convertirlas en fechas de verdad.
 
-Una vez convertida, se puede extraer el año o el mes de cada fecha, y filtrar un rango completo con comparaciones normales.
+<Sintaxis lenguaje="python" codigo={"df[\"fecha\"] = pd.to_datetime(df[\"fecha\"])"} />
 
-<Sintaxis lenguaje="python" codigo={"df[\"columna\"] = pd.to_datetime(df[\"columna\"])"} />
-
-**Convertir texto a fecha.** pd.to_datetime() reconoce formatos comunes de fecha y los convierte a un tipo datetime que pandas sabe ordenar y comparar.
+**Convertir.** `pd.to_datetime` recibe la columna de texto y devuelve una columna de fechas. Después de convertir, `info()` muestra el tipo `datetime64` en vez de `object`.
 
 ```python
-ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+pedidos["fecha_pedido"] = pd.to_datetime(pedidos["fecha_pedido"])
 ```
 
-**Extraer año y mes con .dt.** .dt da acceso a partes de la fecha: .dt.year, .dt.month, .dt.day.
+Si las fechas vienen como día/mes/año, por ejemplo `"09/03/2026"`, agrega `dayfirst=True`. Sin eso, pandas puede leer el 9 de marzo como 3 de septiembre.
+
+**Extraer partes con .dt.** Igual que `.str` para textos, `.dt` da acceso a las partes de una fecha: `.dt.year`, `.dt.month`, `.dt.day` y `.dt.day_name()` para el día de la semana.
 
 ```python
-ventas["fecha"].dt.month
+pedidos["anio"] = pedidos["fecha_pedido"].dt.year
+pedidos["dia"] = pedidos["fecha_pedido"].dt.day_name()   # "Monday", "Tuesday", …
 ```
 
-**Filtrar por rango de fechas.** Una vez que la columna es datetime, se puede filtrar igual que con números: mayor o igual que una fecha y menor que otra.
+**Filtrar un período.** Con la columna convertida, se compara contra una fecha escrita como texto, igual que con números. Para un mes completo, la forma más segura es "desde el primer día, y antes del primer día del mes siguiente": así no importa cuántos días tenga el mes.
 
 ```python
-ventas[(ventas["fecha"] >= "2026-03-01") & (ventas["fecha"] < "2026-04-01")]
+pedidos[(pedidos["fecha_pedido"] >= "2025-12-01") & (pedidos["fecha_pedido"] < "2026-01-01")]   # diciembre de 2025
 ```
 </Concepto>
 
 <PythonTask
   id="fechas"
-  enunciado={"Filtra ventas para quedarte solo con las fechas de marzo de 2026 y asigna a resultado la suma de monto de esas filas."}
-  preparacion={"import pandas as pd"}
-  inicial={"ventas = pd.DataFrame({\"fecha\": [\"2026-02-20\", \"2026-03-05\", \"2026-03-18\", \"2026-04-02\"], \"monto\": [10000, 20000, 15000, 30000]})\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nresultado = None"}
-  solucion={"ventas = pd.DataFrame({\"fecha\": [\"2026-02-20\", \"2026-03-05\", \"2026-03-18\", \"2026-04-02\"], \"monto\": [10000, 20000, 15000, 30000]})\nventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nresultado = int(ventas[(ventas[\"fecha\"] >= \"2026-03-01\") & (ventas[\"fecha\"] < \"2026-04-01\")][\"monto\"].sum())"}
-  pruebas={"import numbers\nesperado = 35000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con ventas ya cargada: convierte la columna fecha a fecha con pd.to_datetime y crea la columna mes con el número de mes de cada venta. Después guarda en ventas_marzo las ventas de marzo de 2026, filtrando por rango de fechas, y en total_marzo la suma de sus montos."}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")"}
+  inicial={"# ventas ya está cargada desde datos/ventas.csv (fecha viene como texto)\n\n\nventas_marzo = None\ntotal_marzo = None"}
+  solucion={"ventas[\"fecha\"] = pd.to_datetime(ventas[\"fecha\"])\nventas[\"mes\"] = ventas[\"fecha\"].dt.month\n\nventas_marzo = ventas[(ventas[\"fecha\"] >= \"2026-03-01\") & (ventas[\"fecha\"] < \"2026-04-01\")]\ntotal_marzo = ventas_marzo[\"monto\"].sum()"}
+  pruebas={"_v = pd.read_csv(\"datos/ventas.csv\")\n_v[\"fecha\"] = pd.to_datetime(_v[\"fecha\"])\nassert pd.api.types.is_datetime64_any_dtype(ventas[\"fecha\"]), \"La columna fecha sigue siendo texto: hay que convertirla a fecha y guardar el resultado en la tabla.\"\nassert \"mes\" in ventas.columns, \"ventas todavía no tiene la columna mes.\"\nassert ventas[\"mes\"].tolist() == _v[\"fecha\"].dt.month.tolist(), \"La columna mes no tiene el número de mes de cada fecha.\"\nassert isinstance(ventas_marzo, pd.DataFrame), \"ventas_marzo debe ser un DataFrame filtrado.\"\n_marzo = _v[(_v[\"fecha\"] >= \"2026-03-01\") & (_v[\"fecha\"] < \"2026-04-01\")]\nassert sorted(ventas_marzo[\"venta_id\"].tolist()) == sorted(_marzo[\"venta_id\"].tolist()), \"ventas_marzo no tiene las ventas de marzo: desde el 1 de marzo (incluido) hasta antes del 1 de abril.\"\nassert total_marzo == _marzo[\"monto\"].sum(), \"total_marzo no es la suma de los montos de ventas_marzo.\""}
   paquetes={["pandas"]}
-  pistas={["La columna fecha ya es de tipo fecha: se puede comparar con un texto como \"2026-03-01\".", "Filtra las filas desde el 1 de marzo y antes del 1 de abril, y suma el monto."]}
+  pistas={["La conversión se asigna de vuelta a la misma columna: ventas[\"fecha\"] = pd.to_datetime(...).","Las partes de una fecha se leen con .dt: .dt.month da el número de mes.","El rango de marzo va desde \"2026-03-01\" (con >=) hasta antes de \"2026-04-01\" (con <)."]}
 />
 
 <Debrief>
-resultado = int(ventas[(ventas["fecha"] >= "2026-03-01") & (ventas["fecha"] &lt; "2026-04-01")]["monto"].sum()) = 35000 (20000 + 15000), las dos ventas de marzo.
+```python
+ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+ventas["mes"] = ventas["fecha"].dt.month
+
+ventas_marzo = ventas[(ventas["fecha"] >= "2026-03-01") & (ventas["fecha"] < "2026-04-01")]
+total_marzo = ventas_marzo["monto"].sum()   # 830000
+```
+
+Con la columna `mes` también podías filtrar con `ventas[ventas["mes"] == 3]`. Funciona aquí porque todas las ventas son de 2026; con datos de varios años, marzo de 2025 y marzo de 2026 quedarían juntos. El rango de fechas no tiene ese problema.
 </Debrief>

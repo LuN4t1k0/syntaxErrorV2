@@ -1,0 +1,558 @@
+# Intentos equivocados típicos de cada tarea y un trozo del mensaje que deben recibir, por misión y tarea.
+# Los revisa `npm run content:intentos` y la prueba de content/ del repositorio.
+01-variables-y-tipos:
+  variables-y-tipos:
+    - codigo: |-
+        producto = "Notebook"
+        precio = "450000"
+        stock = 3
+        disponible = True
+        valor_inventario = 1350000
+      espera: precio debe ser un número entero
+    - codigo: |-
+        producto = "Notebook"
+        precio = 450000
+        stock = 3
+        disponible = "True"
+        valor_inventario = precio * stock
+      espera: disponible debe ser el bool True
+    - codigo: |-
+        producto = "Notebook"
+        precio = 450000
+        stock = 3
+        valor_inventario = precio * stock
+      espera: Falta crear «disponible»
+02-operadores:
+  operadores:
+    - codigo: |-
+        precio_final = precio * 1 - descuento
+        poco_stock = stock < 5
+        reponer_urgente = poco_stock and precio > 100000
+      espera: en qué orden se hacen las operaciones
+    - codigo: |-
+        precio_final = precio * (1 - descuento)
+        poco_stock = "True"
+        reponer_urgente = True
+      espera: poco_stock debe ser True o False
+    - codigo: |-
+        precio_final = precio * (1 - descuento)
+        poco_stock = stock < 5
+        reponer_urgente = poco_stock and precio > 1000000
+      espera: deben cumplirse las dos condiciones
+03-print-fstrings:
+  print-fstrings:
+    - codigo: 'resultado = print(f"{producto}: ${precio}")'
+      espera: print muestra el valor en la salida, pero no lo guarda
+    - codigo: |-
+        print("{producto}: ${precio}")
+        print("Por 2 unidades: ${precio * 2}")
+      espera: falta la f
+    - codigo: |-
+        print(f"{producto}: ${precio}")
+        print(f"Por 2 unidades: ${precio}")
+      espera: La segunda línea no coincide
+    - codigo: |-
+        print(f"{producto}:${precio}")
+        print(f"Por 2 unidades: ${precio * 2}")
+      espera: La primera línea no coincide
+04-errores-comunes:
+  errores-comunes:
+    - codigo: |-
+        precio = 1000
+        cantidad = 3
+        if cantidad > 2:
+            descuento = 0.1
+        else:
+            descuento = 0
+        total = precio * cantida * (1 - descuento)
+      espera: cantida
+    - codigo: |-
+        precio = 1000
+        cantidad = 3
+        if cantidad > 2:
+            descuento = 0.1
+        else:
+            descuento = 0
+            total = precio * cantidad * (1 - descuento)
+      espera: total
+05-listas:
+  listas:
+    - codigo: |-
+        primero = precios[0]
+        ultimo = precios[-1]
+        cantidad = len(precios)
+      espera: precios todavía no tiene el 95000
+    - codigo: |-
+        precios.append(95000)
+        primero = precios[1]
+        ultimo = precios[-1]
+        cantidad = len(precios)
+      espera: los índices empiezan en 0
+    - codigo: |-
+        ultimo = precios[-1]
+        precios.append(95000)
+        primero = precios[0]
+        cantidad = len(precios)
+      espera: después de agregar el 95000
+06-diccionarios:
+  diccionarios:
+    - codigo: |-
+        producto["Categoria"] = "tecnologia"
+        producto["stock"] = 5
+        valor_inventario = producto["precio"] * producto["stock"]
+      espera: todavía no tiene la clave
+    - codigo: |-
+        producto["categoria"] = "tecnologia"
+        valor_inventario = producto["precio"] * producto["stock"]
+        producto["stock"] = 5
+      espera: calcúlalo después de actualizar el stock
+    - codigo: |-
+        producto["categoria"] = "tecnologia"
+        producto["stock"] = 5
+        valor_inventario = 450000 * 3
+      espera: valor_inventario no coincide
+07-tuplas:
+  tuplas:
+    - codigo: |-
+        caja = [40, 30, 20]
+        largo, ancho, alto = caja
+        volumen = largo * ancho * alto
+      espera: no entre corchetes
+    - codigo: |-
+        caja = (40, 30, 20)
+        volumen = 24000
+      espera: Falta crear «largo»
+08-listas-anidadas:
+  listas-anidadas:
+    - codigo: |-
+        producto_segunda = ventas[1]
+        monto_ultima = ventas[-1]["monto"]
+        ventas.append({"producto": "Teclado", "monto": 25000})
+      espera: falta leer la clave
+    - codigo: |-
+        producto_segunda = ventas[1]["producto"]
+        ventas.append({"producto": "Teclado", "monto": 25000})
+        monto_ultima = ventas[-1]["monto"]
+      espera: léela antes de agregar el teclado
+    - codigo: |-
+        producto_segunda = ventas[1]["producto"]
+        monto_ultima = ventas[-1]["monto"]
+        ventas.append({"Producto": "Teclado", "monto": 25000})
+      espera: con las mismas claves que las demás
+09-if-else:
+  if-else:
+    - codigo: estado = "Reponer"
+      espera: Con stock = 0, estado debería ser "Agotado"
+    - codigo: |-
+        if stock < 5:
+            estado = "Reponer"
+        elif stock == 0:
+            estado = "Agotado"
+        else:
+            estado = "OK"
+      espera: Revisa la condición y el orden
+    - codigo: |-
+        if stock == 0:
+            estado = "Agotado"
+        elif stock <= 5:
+            estado = "Reponer"
+        else:
+            estado = "OK"
+      espera: Con stock = 5
+10-for:
+  for:
+    - codigo: |-
+        total = sum(montos)
+        ventas_grandes = 2
+      espera: recorre montos con un for
+    - codigo: |-
+        for monto in montos:
+            total = 0
+            total = total + monto
+        ventas_grandes = 0
+      espera: total no es la suma
+    - codigo: |-
+        total = 0
+        ventas_grandes = 0
+        for monto in montos:
+            total = total + monto
+            if monto >= 100000:
+                ventas_grandes = ventas_grandes + 1
+      espera: Con montos = [100000, 100001], ventas_grandes
+11-while:
+  while:
+    - codigo: |-
+        pedidos = 6
+        stock = 2
+      espera: usa un while
+    - codigo: |-
+        pedidos = 0
+        while stock > 3:
+            stock = stock - 3
+            pedidos = pedidos + 1
+      espera: Con stock = 3, pedidos
+    - codigo: |-
+        pedidos = 0
+        while stock >= 0:
+            stock = stock - 3
+            pedidos = pedidos + 1
+      espera: pedidos no da la cantidad
+12-funciones:
+  funciones:
+    - codigo: |-
+        def calcular_total(precio, cantidad, descuento=0):
+            print(precio * cantidad * (1 - descuento))
+
+        total_notebooks = calcular_total(450000, 3, 0.1)
+        total_mouse = calcular_total(12000, 2)
+      espera: falta el return
+    - codigo: |-
+        def calcular_total(precio, cantidad, descuento=0):
+            return precio * cantidad * 1 - descuento
+
+        total_notebooks = calcular_total(450000, 3, 0.1)
+        total_mouse = calcular_total(12000, 2)
+      espera: revisa cómo aplicas el descuento
+    - codigo: |-
+        def calcular_total(precio, cantidad, descuento=0):
+            return precio * cantidad * (1 - descuento)
+
+        total_notebooks = 1215000
+        total_mouse = calcular_total(12000, 2, 0.1)
+      espera: total_mouse no es correcto
+13-series:
+  series:
+    - codigo: |-
+        notas = [5, 3, 4, 2, 4, 5]
+        promedio = sum(notas) / len(notas)
+        mejor = max(notas)
+        notas_100 = [n * 20 for n in notas]
+      espera: notas debe ser una Series
+    - codigo: |-
+        notas = pd.Series([5, 3, 4, 2, 4, 5])
+        promedio = notas.sum()
+        mejor = notas.max()
+        notas_100 = notas * 20
+      espera: promedio no es el promedio de las notas
+    - codigo: |-
+        notas = pd.Series([5, 3, 4, 2, 4, 5])
+        promedio = notas.mean()
+        mejor = notas.max()
+        notas_100 = [n * 20 for n in notas]
+      espera: sin un for
+14-dataframe:
+  dataframe:
+    - codigo: |-
+        inventario = pd.DataFrame({
+            "producto": ["Notebook", "Mouse", "Monitor"],
+            "stock": [3, 25, 6],
+            "precio": [450000, 12000, 150000],
+        })
+        precios = inventario["precio"]
+        stock_total = inventario["stock"].sum()
+      espera: en ese orden
+    - codigo: |-
+        inventario = pd.DataFrame({
+            "producto": ["Notebook", "Mouse", "Monitor"],
+            "precio": [450000, 12000, 150000],
+            "stock": [3, 25, 6],
+        })
+        precios = inventario["precio"]
+        stock_total = len(inventario["stock"])
+      espera: stock_total no es la suma de la columna stock
+15-explorar-dataframe:
+  explorar-dataframe:
+    - codigo: |-
+        filas, columnas = encuesta.shape
+        primeras = encuesta.head()
+        encuesta.info()
+        tipo_canal = "object"
+      espera: no son las 3 primeras filas
+    - codigo: |-
+        filas, columnas = encuesta.shape
+        primeras = encuesta.head(3)
+        tipo_canal = "object"
+      espera: No se ve el resumen de info()
+    - codigo: |-
+        filas, columnas = encuesta.shape
+        primeras = encuesta.head(3)
+        encuesta.info()
+        tipo_canal = "str"
+      espera: mira la columna Dtype
+16-cargar-csv-excel:
+  cargar-csv-excel:
+    - codigo: |-
+        ventas = pd.read_csv("datos/ventas.csv")
+        cantidad_ventas = len(ventas)
+        proveedores = pd.read_csv("datos/proveedores.csv")
+      espera: una sola columna
+    - codigo: |-
+        ventas = pd.read_csv("ventas.csv")
+        cantidad_ventas = len(ventas)
+        proveedores = pd.read_csv("datos/proveedores.csv", sep=";")
+      espera: ventas.csv
+17-seleccionar-columnas:
+  seleccionar-columnas:
+    - codigo: |-
+        canales = encuesta["canal"]
+        perfil = encuesta["edad", "canal"]
+        canales_distintos = encuesta["canal"].unique().tolist()
+      espera: No existe la columna o clave
+    - codigo: |-
+        canales = encuesta["canal"]
+        perfil = encuesta[["canal", "edad"]]
+        canales_distintos = encuesta["canal"].unique().tolist()
+      espera: en ese orden
+    - codigo: |-
+        canales = encuesta["canal"]
+        perfil = encuesta[["edad", "canal"]]
+        canales_distintos = encuesta["canal"].tolist()
+      espera: una sola vez
+18-loc-iloc:
+  loc-iloc:
+    - codigo: |-
+        ultimas = encuesta.iloc[-3]
+        por_id = encuesta.set_index("respondent_id")
+        edad_10 = por_id.loc[10, "edad"]
+        canal_7 = por_id.loc[7, "canal"]
+      espera: no una sola fila
+    - codigo: |-
+        ultimas = encuesta.iloc[-3:]
+        por_id = encuesta.set_index("respondent_id")
+        edad_10 = encuesta.iloc[10]["edad"]
+        canal_7 = por_id.loc[7, "canal"]
+      espera: no es la fila en posición 10
+19-filtros-booleanos:
+  filtros-booleanos:
+    - codigo: |-
+        satisfechos = encuesta["calificacion"] >= 4
+        web_satisfechos = encuesta[(encuesta["calificacion"] >= 4) & (encuesta["canal"] == "web")]
+        cantidad_web_satisfechos = len(web_satisfechos)
+        presenciales = encuesta[encuesta["canal"].isin(["tienda", "telefono"])]
+      espera: La condición sola es una Series
+    - codigo: |-
+        satisfechos = encuesta[encuesta["calificacion"] > 4]
+        web_satisfechos = encuesta[(encuesta["calificacion"] >= 4) & (encuesta["canal"] == "web")]
+        cantidad_web_satisfechos = len(web_satisfechos)
+        presenciales = encuesta[encuesta["canal"].isin(["tienda", "telefono"])]
+      espera: incluye el 4
+    - codigo: |-
+        satisfechos = encuesta[encuesta["calificacion"] >= 4]
+        web_satisfechos = encuesta[(encuesta["calificacion"] >= 4) | (encuesta["canal"] == "web")]
+        cantidad_web_satisfechos = len(web_satisfechos)
+        presenciales = encuesta[encuesta["canal"].isin(["tienda", "telefono"])]
+      espera: deben cumplirse las dos condiciones
+    - codigo: |-
+        satisfechos = encuesta[encuesta["calificacion"] >= 4]
+        web_satisfechos = encuesta[encuesta["calificacion"] >= 4 and encuesta["canal"] == "web"]
+        cantidad_web_satisfechos = len(web_satisfechos)
+        presenciales = encuesta[encuesta["canal"].isin(["tienda", "telefono"])]
+      espera: Tu código tiene un error
+20-crear-columnas:
+  crear-columnas:
+    - codigo: |-
+        precio_unitario = ventas["monto"] / ventas["cantidad"]
+        ventas["venta_grande"] = ventas["monto"] >= 100000
+        cantidad_grandes = ventas["venta_grande"].sum()
+      espera: todavía no tiene la columna precio_unitario
+    - codigo: |-
+        ventas["precio_unitario"] = ventas["monto"] / ventas["cantidad"]
+        ventas["venta_grande"] = ventas["monto"] >= 100000
+        cantidad_grandes = len(ventas["venta_grande"])
+      espera: cantidad_grandes no es la cantidad de ventas grandes
+21-apply:
+  apply:
+    - codigo: |-
+        def grupo_edad(edad):
+            if edad < 30:
+                return "joven"
+            elif edad <= 50:
+                return "adulto"
+            else:
+                return "mayor"
+        encuesta["grupo"] = encuesta["edad"].apply(grupo_edad)
+        jovenes = (encuesta["grupo"] == "joven").sum()
+      espera: grupo_edad(50)
+    - codigo: |-
+        def grupo_edad(edad):
+            if edad < 30:
+                return "joven"
+            elif edad < 50:
+                return "adulto"
+            else:
+                return "mayor"
+        encuesta["grupo"] = encuesta["edad"].apply(grupo_edad())
+        jovenes = (encuesta["grupo"] == "joven").sum()
+      espera: sin el valor de «edad»
+22-limpieza-texto:
+  limpieza-texto:
+    - codigo: |-
+        categorias_antes = ventas_crudo["categoria"].nunique()
+        ventas_crudo["categoria"].str.strip().str.lower()
+        categorias_despues = ventas_crudo["categoria"].nunique()
+      espera: no modifican la tabla solos
+    - codigo: |-
+        categorias_antes = ventas_crudo["categoria"].nunique()
+        ventas_crudo["categoria"] = ventas_crudo["categoria"].str.lower()
+        categorias_despues = ventas_crudo["categoria"].nunique()
+      espera: Todavía quedan categorías con espacios en los bordes
+    - codigo: |-
+        ventas_crudo["categoria"] = ventas_crudo["categoria"].str.strip().str.lower()
+        categorias_antes = ventas_crudo["categoria"].nunique()
+        categorias_despues = ventas_crudo["categoria"].nunique()
+      espera: antes de normalizar
+23-fechas:
+  fechas:
+    - codigo: |-
+        ventas["mes"] = 3
+        ventas_marzo = ventas[(ventas["fecha"] >= "2026-03-01") & (ventas["fecha"] < "2026-04-01")]
+        total_marzo = ventas_marzo["monto"].sum()
+      espera: sigue siendo texto
+    - codigo: |-
+        ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+        ventas["mes"] = ventas["fecha"].dt.month
+        ventas_marzo = ventas[(ventas["fecha"] > "2026-03-02") & (ventas["fecha"] < "2026-04-01")]
+        total_marzo = ventas_marzo["monto"].sum()
+      espera: desde el 1 de marzo (incluido)
+24-ordenar:
+  ordenar:
+    - codigo: |-
+        ranking = ventas.sort_values("monto")
+        top3 = ranking.head(3)
+        por_region = ventas.sort_values(["region", "monto"], ascending=[True, False])
+      espera: ranking no está de mayor a menor monto
+    - codigo: |-
+        ranking = ventas.sort_values("monto", ascending=False)
+        top3 = ventas.head(3)
+        por_region = ventas.sort_values(["region", "monto"], ascending=[True, False])
+      espera: aplica head sobre ranking
+    - codigo: |-
+        ranking = ventas.sort_values("monto", ascending=False)
+        top3 = ranking.head(3)
+        por_region = ventas.sort_values(["region", "monto"])
+      espera: Dentro de cada región, los montos deben ir de mayor a menor
+25-groupby:
+  groupby:
+    - codigo: |-
+        por_region = ventas.groupby("region")["monto"].count()
+        total_norte = por_region["norte"]
+        region_top = por_region.idxmax()
+      espera: revisa que sumes la columna monto
+    - codigo: |-
+        por_region = ventas.groupby("region")["monto"].sum()
+        total_norte = por_region["norte"]
+        region_top = por_region.max()
+      espera: region_top no es la región con el total más alto
+26-agg:
+  agg:
+    - codigo: |-
+        resumen_categoria = ventas.groupby("categoria")["monto"].agg(["sum", "mean", "count"])
+        promedio_hogar = resumen_categoria.loc["hogar", "sum"]
+        informe_region = ventas.groupby("region").agg(total=("monto", "sum"), unidades=("cantidad", "sum"))
+      espera: promedio_hogar no es el promedio
+    - codigo: |-
+        resumen_categoria = ventas.groupby("categoria")["monto"].agg(["sum", "mean", "count"])
+        promedio_hogar = resumen_categoria.loc["hogar", "mean"]
+        informe_region = ventas.groupby("region").agg(total=("monto", "sum"), unidades=("monto", "sum"))
+      espera: unidades no es la suma de cantidad
+27-value-counts:
+  value-counts:
+    - codigo: |-
+        por_canal = encuesta["canal"].value_counts()
+        canal_top = por_canal[0]
+        porcentaje_web = encuesta["canal"].value_counts(normalize=True)["web"] * 100
+      espera: canal_top no es el canal
+    - codigo: |-
+        por_canal = encuesta["canal"].value_counts()
+        canal_top = por_canal.index[0]
+        porcentaje_web = encuesta["canal"].value_counts(normalize=True)["web"]
+      espera: de 0 a 100
+28-merge:
+  merge:
+    - codigo: |-
+        ventas_con_ciudad = ventas.merge(regiones, on="region")
+        cobertura = regiones.merge(ventas, on="region")
+        filas_cobertura = len(cobertura)
+      espera: también las que no tienen ventas
+    - codigo: |-
+        ventas_con_ciudad = ventas.merge(regiones, on="region")
+        cobertura = ventas.merge(regiones, on="region", how="left")
+        filas_cobertura = len(cobertura)
+      espera: también las que no tienen ventas
+29-valores-nulos:
+  valores-nulos:
+    - codigo: |-
+        nulos = sensor["temperatura"].isna().sum()
+        sin_nulos = sensor.dropna(subset=["temperatura"])
+        sensor["temperatura_rellena"] = sensor["temperatura"].fillna(sensor["temperatura"].mean())
+      espera: no repite la última lectura conocida
+    - codigo: |-
+        nulos = sensor["temperatura"].isna().sum()
+        sensor = sensor.dropna(subset=["temperatura"])
+        sin_nulos = sensor
+        sensor["temperatura_rellena"] = sensor["temperatura"].ffill()
+      espera: sensor perdió filas
+30-duplicados:
+  duplicados:
+    - codigo: |-
+        copias_sobrantes = sensor.duplicated().sum()
+        repetidas = sensor[sensor.duplicated()]
+        sensor_limpio = sensor.drop_duplicates()
+        filas_limpias = len(sensor_limpio)
+      espera: no solo las copias
+    - codigo: |-
+        copias_sobrantes = sensor.duplicated().sum()
+        repetidas = sensor[sensor.duplicated(keep=False)]
+        sensor_limpio = sensor.drop_duplicates(keep=False)
+        filas_limpias = len(sensor_limpio)
+      espera: no elimines las originales
+31-exportar-resultados:
+  exportar-resultados:
+    - codigo: |-
+        resumen = ventas.groupby("region", as_index=False)["monto"].sum()
+        resumen.to_csv("resumen_regiones.csv")
+        revisado = pd.read_csv("resumen_regiones.csv")
+      espera: se guardó también el índice
+    - codigo: |-
+        resumen = ventas.groupby("region")["monto"].sum()
+        resumen.to_csv("resumen_regiones.csv", index=False)
+        revisado = pd.read_csv("resumen_regiones.csv")
+      espera: con la región como columna, no como índice
+    - codigo: |-
+        resumen = ventas.groupby("region", as_index=False)["monto"].sum()
+        revisado = resumen
+      espera: No se creó el archivo
+34-proyecto-final-pandas:
+  proyecto-final-pandas:
+    - codigo: |-
+        ventas = pd.read_csv("datos/ventas_crudo.csv")
+        ventas = ventas.drop_duplicates()
+        ventas["categoria"] = ventas["categoria"].str.strip().str.lower()
+        ventas = ventas.dropna(subset=["categoria"])
+        ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+        ventas = ventas[(ventas["fecha"] >= "2026-01-01") & (ventas["fecha"] < "2026-02-01")]
+        resumen = ventas.groupby("categoria", as_index=False)["monto"].sum()
+        resumen.to_csv("resumen_enero.csv", index=False)
+        final = pd.read_csv("resumen_enero.csv")
+      espera: ventas todavía tiene filas duplicadas
+    - codigo: |-
+        ventas = pd.read_csv("datos/ventas_crudo.csv")
+        ventas["categoria"] = ventas["categoria"].str.strip().str.lower()
+        ventas = ventas.drop_duplicates()
+        ventas = ventas.dropna(subset=["categoria"])
+        ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+        resumen = ventas.groupby("categoria", as_index=False)["monto"].sum()
+        resumen.to_csv("resumen_enero.csv", index=False)
+        final = pd.read_csv("resumen_enero.csv")
+      espera: fechas fuera de enero
+    - codigo: |-
+        ventas = pd.read_csv("datos/ventas_crudo.csv")
+        ventas["categoria"] = ventas["categoria"].str.strip().str.lower()
+        ventas = ventas.drop_duplicates()
+        ventas = ventas.dropna(subset=["categoria"])
+        ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+        ventas = ventas[(ventas["fecha"] >= "2026-01-01") & (ventas["fecha"] < "2026-02-01")]
+        resumen = ventas.groupby("categoria")["monto"].sum()
+        resumen.to_csv("resumen_enero.csv", index=False)
+        final = pd.read_csv("resumen_enero.csv")
+      espera: con la categoría como columna

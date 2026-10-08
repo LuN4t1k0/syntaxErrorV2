@@ -4,34 +4,46 @@ tiempo: 12
 ---
 
 <Concepto>
-Después de limpiar y resumir datos, el último paso es guardarlos para que otra persona (o otra herramienta, como Excel o Power BI) los pueda usar.
+Un análisis termina cuando su resultado sale de Python: un archivo que otra persona abre en Excel, carga en Power BI o adjunta a un informe. `to_csv` guarda un DataFrame como archivo CSV.
 
-to_csv() escribe un DataFrame como texto CSV; en este curso se usa sin escribir a disco, revisando directamente el texto que genera.
+<Sintaxis lenguaje="python" codigo={"df.to_csv(\"archivo.csv\", index=False)"} />
 
-<Sintaxis lenguaje="python" codigo={"df.to_csv(index=False)"} />
-
-**to_csv() genera texto CSV.** Sin especificar una ruta de archivo, to_csv() devuelve el CSV completo como un string -- útil para revisar el resultado antes de guardarlo.
+**Guardar.** `to_csv` recibe el nombre del archivo y lo escribe en la carpeta donde corre tu código.
 
 ```python
-resumen.to_csv(index=False)
+resumen.to_csv("resumen.csv", index=False)
 ```
 
-**index=False evita una columna extra.** Por defecto pandas agrega el índice como primera columna del CSV. index=False lo omite, dejando solo las columnas de datos.
+**index=False.** Por defecto, pandas también guarda el índice como primera columna. Con el índice 0, 1, 2… eso agrega una columna sin nombre que, al volver a leer el archivo, aparece como `Unnamed: 0`. Si los grupos quedaron en el índice (después de un `groupby`), usa `as_index=False` al agrupar o `reset_index()` antes de exportar, para que pasen a ser una columna normal.
 
-**to_excel() para hojas de cálculo.** to_excel("archivo.xlsx", index=False) guarda el resultado como un archivo de Excel real en disco -- funciona igual en tu propia computadora.
+**Revisar lo que guardaste.** Vuelve a leer el archivo con `read_csv` y mira sus columnas: es la forma de confirmar que quien lo reciba verá lo mismo que tú.
+
+```python
+pd.read_csv("resumen.csv").head()
+```
+
+**Para Excel.** `to_excel("resumen.xlsx", index=False)` escribe una planilla. En tu computadora necesita `openpyxl`. Si el archivo CSV lo va a abrir alguien con Excel en español, `sep=";"` evita que todo quede en una sola columna.
 </Concepto>
 
 <PythonTask
   id="exportar-resultados"
-  enunciado={"Genera el CSV de resumen con to_csv(index=False) y asigna a resultado la cantidad de líneas que tiene ese texto (encabezado + una línea por categoria)."}
-  preparacion={"import pandas as pd"}
-  inicial={"ventas = pd.DataFrame({\"categoria\": [\"Hogar\", \"Hogar\", \"Tecnologia\"], \"monto\": [10000, 5000, 20000]})\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nresultado = None"}
-  solucion={"ventas = pd.DataFrame({\"categoria\": [\"Hogar\", \"Hogar\", \"Tecnologia\"], \"monto\": [10000, 5000, 20000]})\nresumen = ventas.groupby(\"categoria\", as_index=False)[\"monto\"].sum()\nresultado = len(resumen.to_csv(index=False).strip().split(\"\\n\"))"}
-  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con ventas ya cargada: guarda en resumen el monto total por región, con la región como columna normal (no como índice). Exporta resumen al archivo resumen_regiones.csv sin el índice. Después vuelve a leer ese archivo en revisado para confirmar cómo quedó."}
+  preparacion={"import os\nimport pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")\nif os.path.exists(\"resumen_regiones.csv\"):\n    os.remove(\"resumen_regiones.csv\")"}
+  inicial={"# ventas ya está cargada desde datos/ventas.csv\nresumen = None\n\n# Exporta resumen a resumen_regiones.csv\n\n\nrevisado = None"}
+  solucion={"resumen = ventas.groupby(\"region\", as_index=False)[\"monto\"].sum()\n\nresumen.to_csv(\"resumen_regiones.csv\", index=False)\n\nrevisado = pd.read_csv(\"resumen_regiones.csv\")"}
+  pruebas={"import os\n_esperado = pd.read_csv(\"datos/ventas.csv\").groupby(\"region\", as_index=False)[\"monto\"].sum()\nassert isinstance(resumen, pd.DataFrame), \"resumen debe ser un DataFrame con la región como columna, no como índice.\"\nassert list(resumen.columns) == [\"region\", \"monto\"], \"resumen debe tener las columnas region y monto: la región tiene que quedar como columna, no como índice.\"\nassert resumen[\"monto\"].tolist() == _esperado[\"monto\"].tolist(), \"resumen no tiene el monto total de cada región.\"\nassert os.path.exists(\"resumen_regiones.csv\"), \"No se creó el archivo resumen_regiones.csv.\"\n_leido = pd.read_csv(\"resumen_regiones.csv\")\nassert not any(str(c).startswith(\"Unnamed\") for c in _leido.columns), \"El archivo trae una columna Unnamed: 0: se guardó también el índice de la tabla.\"\nassert list(_leido.columns) == [\"region\", \"monto\"], \"El archivo debe tener las columnas region y monto.\"\nassert isinstance(revisado, pd.DataFrame) and revisado.equals(_leido), \"revisado debe ser el archivo resumen_regiones.csv vuelto a leer.\""}
   paquetes={["pandas"]}
-  pistas={["to_csv(index=False) devuelve el CSV como un texto.", "Separa ese texto en líneas y cuéntalas; quita antes el salto de línea final."]}
+  pistas={["groupby(\"region\", as_index=False) deja la región como columna.","to_csv recibe el nombre del archivo y index=False.","Para revisar, lee el archivo con pd.read_csv y mira sus columnas."]}
 />
 
 <Debrief>
-resultado = len(resumen.to_csv(index=False).strip().split("\n")) = 3: una línea de encabezado (categoria,monto) más dos categorias (Hogar y Tecnologia).
+```python
+resumen = ventas.groupby("region", as_index=False)["monto"].sum()
+
+resumen.to_csv("resumen_regiones.csv", index=False)
+
+revisado = pd.read_csv("resumen_regiones.csv")   # columnas: region, monto
+```
+
+Fíjate en lo que pasa con el segundo error típico: si la región queda en el índice y exportas con `index=False`, el archivo sale sin la columna de regiones, solo con números. Leer el archivo de vuelta es la forma de verlo antes de enviarlo.
 </Debrief>

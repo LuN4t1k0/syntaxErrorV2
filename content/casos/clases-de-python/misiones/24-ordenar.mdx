@@ -1,41 +1,60 @@
 ---
 titulo: "Ordenar datos"
-tiempo: 10
+tiempo: 12
 ---
 
 <Concepto>
-sort_values ordena un DataFrame según el valor de una o más columnas -- ascendente por defecto, o descendente si se lo indica.
-
-Igual que la mayoría de las funciones de pandas, sort_values no modifica el DataFrame original: devuelve uno nuevo, que hay que guardar en una variable si se lo quiere conservar.
+Ordenar responde preguntas de ranking: las ventas más grandes, los productos más baratos, las respuestas más recientes. `sort_values` ordena las filas según una o más columnas.
 
 <Sintaxis lenguaje="python" codigo={"df.sort_values(\"columna\", ascending=False)"} />
 
-**Ordenar ascendente.** df.sort_values("columna") ordena de menor a mayor por esa columna -- es el comportamiento por defecto.
+**De menor a mayor.** Es el orden por defecto. Los textos se ordenan alfabéticamente y las fechas, de la más antigua a la más reciente.
 
 ```python
-encuesta.sort_values("calificacion")
+encuesta.sort_values("edad")
 ```
 
-**Ordenar descendente.** Pasando ascending=False, el orden queda de mayor a menor.
+**De mayor a menor.** `ascending=False` invierte el orden.
 
 ```python
-encuesta.sort_values("calificacion", ascending=False)
+encuesta.sort_values("edad", ascending=False)
 ```
 
-**Combinar con iloc.** Después de ordenar, iloc[0] sobre el resultado da la fila con el valor más alto (o más bajo, según el orden elegido) de esa columna.
+**El original no cambia.** `sort_values` devuelve una tabla nueva y deja `encuesta` como estaba. Si quieres conservar el orden, guarda el resultado en una variable.
+
+**Los primeros del ranking.** Ordena y después toma las primeras filas con `head`. Con `iloc[0]` obtienes solo la primera.
+
+```python
+mayores = encuesta.sort_values("edad", ascending=False)
+mayores.head(2)
+mayores.iloc[0]["canal"]
+```
+
+**Varias columnas.** Con una lista de columnas, pandas ordena por la primera y usa la segunda para desempatar. `ascending` puede llevar una lista con el sentido de cada columna.
+
+```python
+encuesta.sort_values(["canal", "calificacion"], ascending=[True, False])
+```
 </Concepto>
 
 <PythonTask
   id="ordenar"
-  enunciado={"Ordena encuesta por calificacion de forma descendente, y asigna a resultado el respondent_id de la primera fila de ese resultado."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(encuesta.sort_values(\"calificacion\", ascending=False).iloc[0][\"respondent_id\"])"}
-  pruebas={"import numbers\nesperado = 1\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con ventas ya cargada: guarda en ranking las ventas ordenadas de mayor a menor monto, y en top3 las tres primeras de ese ranking. Después guarda en por_region las ventas ordenadas por región (alfabéticamente) y, dentro de cada región, de mayor a menor monto."}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")"}
+  inicial={"# ventas ya está cargada desde datos/ventas.csv\nranking = None\ntop3 = None\n\npor_region = None"}
+  solucion={"ranking = ventas.sort_values(\"monto\", ascending=False)\ntop3 = ranking.head(3)\n\npor_region = ventas.sort_values([\"region\", \"monto\"], ascending=[True, False])"}
+  pruebas={"_v = pd.read_csv(\"datos/ventas.csv\")\nassert isinstance(ranking, pd.DataFrame) and len(ranking) == len(_v), \"ranking debe ser la tabla ventas completa, ordenada.\"\nassert ranking[\"monto\"].tolist() == sorted(_v[\"monto\"].tolist(), reverse=True), \"ranking no está de mayor a menor monto.\"\nassert isinstance(top3, pd.DataFrame) and len(top3) == 3, \"top3 debe tener 3 filas.\"\nassert top3[\"monto\"].tolist() == ranking[\"monto\"].tolist()[:3], \"top3 no son las tres primeras filas del ranking: aplica head sobre ranking, no sobre ventas.\"\nassert isinstance(por_region, pd.DataFrame), \"por_region debe ser la tabla ventas ordenada.\"\n_esperado = _v.sort_values([\"region\", \"monto\"], ascending=[True, False])\nassert por_region[\"region\"].tolist() == _esperado[\"region\"].tolist(), \"por_region no está ordenada por región: la región va primero en la lista de columnas, en orden alfabético.\"\nassert por_region[\"monto\"].tolist() == _esperado[\"monto\"].tolist(), \"Dentro de cada región, los montos deben ir de mayor a menor.\""}
   paquetes={["pandas"]}
-  pistas={["sort_values ordena por una columna; ascending=False ordena de mayor a menor.", "De la primera fila del resultado, lee respondent_id."]}
+  pistas={["sort_values recibe el nombre de la columna; para invertir el orden, ascending=False.","head se aplica sobre ranking, que ya está ordenado.","Para dos columnas, pasa una lista de columnas y una lista en ascending, en el mismo orden."]}
 />
 
 <Debrief>
-resultado = int(encuesta.sort_values("calificacion", ascending=False).iloc[0]["respondent_id"]) = 1 (la calificacion más alta, 5, es única y corresponde al respondent_id 1).
+```python
+ranking = ventas.sort_values("monto", ascending=False)
+top3 = ranking.head(3)   # Notebook, Notebook y las sillas del sur
+
+por_region = ventas.sort_values(["region", "monto"], ascending=[True, False])
+```
+
+El orden de las operaciones importa: `ventas.head(3)` son las tres primeras filas del archivo, no las tres ventas más grandes. Primero se ordena y después se toman las primeras.
 </Debrief>

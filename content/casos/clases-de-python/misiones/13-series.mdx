@@ -1,46 +1,56 @@
 ---
-titulo: "Series"
-tiempo: 12
+titulo: "pandas y las Series"
+tiempo: 14
 ---
 
 <Concepto>
-pandas es la librería más usada para trabajar con datos tabulares en Python. Su estructura más simple es la Series: una columna de datos, cada uno con una posición (índice).
+pandas es la librería de Python para trabajar con tablas de datos. Se importa una vez al principio, siempre con el mismo apodo: `pd`. Su pieza más simple es la Series: una columna de datos con un índice que numera cada valor.
 
-Se parece a una lista, pero trae funciones ya construidas para operar sobre todos sus valores a la vez, sin necesidad de escribir un for.
+<Sintaxis lenguaje="python" codigo={"import pandas as pd\nserie = pd.Series([valor1, valor2, valor3])"} />
 
-<Sintaxis lenguaje="python" codigo={"serie = pd.Series([valor1, valor2, valor3])"} />
-
-**Crear una Series.** pd.Series(lista) convierte una lista común en una Series de pandas.
+**Crear una Series.** `pd.Series` recibe una lista. A la izquierda de cada valor, pandas muestra su índice (0, 1, 2…).
 
 ```python
 import pandas as pd
-calificaciones = pd.Series([5,3,4,2,4])
+precios = pd.Series([12000, 25000, 150000, 8000])
 ```
 
-**Operaciones sobre toda la Series.** Funciones como .sum(), .mean(), .max() y .min() operan sobre todos los valores a la vez, sin necesidad de un for.
+**Resumir sin un for.** Lo que en la lección de `for` hacías con un ciclo, una Series lo trae listo: `.sum()`, `.mean()` (promedio), `.max()`, `.min()` y `.count()` calculan sobre todos los valores de una vez.
 
 ```python
-calificaciones.sum()
+precios.mean()   # 48750.0
+precios.min()    # 8000
 ```
 
-**Escalares de pandas y conversión explicita.** El resultado de .sum() (y de otras funciones similares) es un número especial de pandas, no un int común de Python -- conviene envolverlo en int(...) o float(...) antes de usarlo como respuesta final.
+**Operar con toda la columna.** Una operación aritmética con una Series se aplica a cada valor y devuelve otra Series del mismo largo. Es como un `for` que no tienes que escribir.
 
 ```python
-int(calificaciones.sum())
+precios * 1.19       # cada precio con IVA
+precios >= 20000     # una Series de True y False
 ```
+
+**Los números de pandas.** Si imprimes `precios.sum()`, quizás veas `np.int64(195000)`. Es un número de numpy, la librería sobre la que se construye pandas, y funciona igual que un `int`: puedes sumarlo, compararlo o guardarlo en una variable sin convertirlo.
 </Concepto>
 
 <PythonTask
   id="series"
-  enunciado={"Asigna a resultado la suma de calificaciones, convertida a int con int(...)."}
-  preparacion={"import pandas as pd\ncalificaciones = pd.Series([5,3,4,2,4])"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(calificaciones.sum())"}
-  pruebas={"import numbers\nesperado = 18\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"pandas ya está importado como pd. Crea la Series notas con las calificaciones 5, 3, 4, 2, 4 y 5. Guarda en promedio su promedio y en mejor la nota más alta, usando métodos de la Series. Por último, crea notas_100 con todas las notas pasadas a escala de 0 a 100 (multiplicadas por 20), en una sola operación."}
+  preparacion={"import pandas as pd"}
+  inicial={"# pandas ya está importado como pd\nnotas = None\n\npromedio = None\nmejor = None\nnotas_100 = None"}
+  solucion={"notas = pd.Series([5, 3, 4, 2, 4, 5])\n\npromedio = notas.mean()\nmejor = notas.max()\nnotas_100 = notas * 20"}
+  pruebas={"assert isinstance(notas, pd.Series), \"notas debe ser una Series de pandas, no una lista.\"\nassert notas.tolist() == [5, 3, 4, 2, 4, 5], \"notas no tiene las calificaciones del enunciado, en ese orden.\"\nassert promedio is not None and abs(promedio - notas.mean()) < 0.001, \"promedio no es el promedio de las notas.\"\nassert mejor == 5, \"mejor no es la nota más alta.\"\nassert isinstance(notas_100, pd.Series), \"notas_100 debe ser una Series: multiplica la Series completa, sin un for.\"\nassert notas_100.tolist() == [n * 20 for n in [5, 3, 4, 2, 4, 5]], \"notas_100 no tiene cada nota multiplicada por 20.\""}
   paquetes={["pandas"]}
-  pistas={["Una Series tiene métodos para resumir sus valores, como .sum().", "Convierte el resultado con int(...) para que sea un número de Python."]}
+  pistas={["pd.Series recibe una lista entre corchetes.","Los métodos se escriben con un punto después de la Series: notas.mean().","Multiplicar la Series por un número multiplica cada uno de sus valores."]}
 />
 
 <Debrief>
-resultado = int(calificaciones.sum()) = 5+3+4+2+4 = 18.
+```python
+notas = pd.Series([5, 3, 4, 2, 4, 5])
+
+promedio = notas.mean()   # 3.83…
+mejor = notas.max()       # 5
+notas_100 = notas * 20    # 100, 60, 80, 40, 80, 100
+```
+
+Ninguna línea necesitó un `for`: la Series aplica la operación a todos sus valores. Esa es la idea central de pandas, y la vas a usar en todas las lecciones que siguen.
 </Debrief>

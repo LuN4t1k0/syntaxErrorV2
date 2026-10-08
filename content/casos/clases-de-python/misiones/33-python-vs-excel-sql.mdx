@@ -4,21 +4,32 @@ tiempo: 12
 ---
 
 <Concepto>
-Si ya viste SQL Aula y Excel Aula, llegaste al tercer vertice de un mismo triangulo: tres formas distintas de trabajar con datos, cada una mejor para un tipo de tarea distinto.
+Ya trabajaste con las tres herramientas de la ruta: Excel, SQL y Python con pandas. No compiten entre sí: cada una es la más cómoda para un tipo de trabajo, y en un equipo de datos real se usan juntas.
 
-Esta última lección conecta los tres cursos: no se trata de elegir uno para siempre, sino de saber cuál conviene según el problema.
+**Excel: explorar y compartir.** Para mirar un archivo por primera vez, hacer un cálculo puntual o entregar un reporte a alguien que no programa, una planilla es lo más rápido. Se complica cuando el archivo crece a cientos de miles de filas, cuando varias personas editan a la vez o cuando hay que repetir los mismos pasos a mano cada semana.
 
-**Excel: rápido para explorar y reportar.** Para un análisis puntual, un reporte chico, o mirar datos por primera vez, una hoja de cálculo sigue siendo lo más rápido de armar -- sin escribir una línea de código.
+**SQL: preguntarle a una base de datos.** Cuando los datos viven en una base de datos (el sistema de ventas, el ERP, la plataforma web), SQL trae exactamente lo que necesitas, filtrado y resumido, sin descargar todo. Funciona igual con mil filas que con cien millones.
 
-**SQL: cuando los datos viven en una base de datos.** Si los datos ya estan en una base de datos (o crecen a millones de filas, o los consultan muchas personas a la vez), SQL es la herramienta correcta para traer exactamente lo que necesitas.
+**Python y pandas: procesos con muchos pasos.** Cuando el análisis combina fuentes distintas (una consulta, un CSV, una planilla de otro equipo), tiene muchos pasos de limpieza o hay que repetirlo, un script de Python lo deja escrito de punta a punta. La próxima vez solo lo vuelves a correr, y cualquiera puede revisar qué se hizo.
 
-**Python y pandas: cuando el análisis se vuelve complejo o repetitivo.** Cuando un análisis tiene muchos pasos, se repite seguido, o combina datos de varias fuentes (una base de datos, un archivo, una API), Python y pandas permiten automatizar todo ese proceso de punta a punta -- algo que ni Excel ni SQL solos pueden hacer.
+**Lo mismo en las tres.** El total vendido por región se escribe así en cada herramienta:
 
-**Las tres se combinan en el trabajo real.** Es común traer datos de una base con SQL, procesarlos con pandas, y exportar el resultado final a una hoja de cálculo para compartirlo con alguien que no usa Python -- ninguna de las tres reemplaza del todo a las otras dos.
+```text
+Excel:   =SUMAR.SI(C:C; "norte"; G:G)     (una fórmula por región, o una tabla dinámica)
+SQL:     SELECT region, SUM(monto) FROM ventas GROUP BY region;
+pandas:  ventas.groupby("region")["monto"].sum()
+```
+
+**Juntas en el trabajo real.** Un flujo común: SQL trae los datos de la base, pandas los limpia y los cruza con otras fuentes, y el resultado se exporta a un CSV o a una planilla para quien lo necesita, o alimenta un tablero de Power BI.
 </Concepto>
 
-<LecturaTask
+<QuizTask
   id="python-vs-excel-sql"
-  pregunta={"Te piden un análisis que combina datos de una base de datos con un archivo Excel que te mandó otro equipo, y el proceso hay que repetirlo cada semana. ¿Qué herramienta usarías como base, y por qué?"}
-  respuesta={"Python y pandas: es el único de los tres que permite automatizar de punta a punta un proceso que combina múltiples fuentes y se repite -- se puede leer de la base con SQL desde Python, cargar el archivo Excel, combinarlos, y dejar todo el proceso listo para correr de nuevo la semana siguiente sin rehacer nada a mano."}
+  enunciado={"Para cada situación, elige la herramienta que conviene usar como base."}
+  preguntas={[{"pregunta":"Tu jefa te manda una planilla de 200 filas y quiere, para hoy, el total por vendedor.","opciones":["Un script de Python que se pueda programar para que corra solo.","Excel: una tabla dinámica o SUMAR.SI resuelve en minutos.","Montar una base de datos y consultarla con SQL.","Ninguna: hay que hacerlo a mano con calculadora."],"correcta":1,"explicacion":"Para un cálculo puntual sobre un archivo chico, Excel es lo más rápido y el resultado ya queda en un formato que tu jefa puede abrir."},{"pregunta":"Necesitas las ventas de ayer del sistema de la empresa, que guarda millones de transacciones en una base de datos.","opciones":["SQL: una consulta con WHERE trae solo las ventas de ayer.","Descargar toda la base a Excel y filtrar ahí.","Copiar las filas a mano en un CSV.","Un gráfico de Power BI sin consultar los datos."],"correcta":0,"explicacion":"Los datos viven en la base: SQL filtra en el servidor y trae solo lo necesario, sin mover millones de filas."},{"pregunta":"Cada lunes debes cruzar una exportación del sistema con la planilla que manda otro equipo, limpiar las categorías y enviar un resumen.","opciones":["Excel, repitiendo los pasos a mano cada lunes.","SQL, porque la planilla del otro equipo está en una base de datos.","Python con pandas: un script que lea, limpie, combine y exporte, listo para correr cada semana.","Pedirle al otro equipo que haga el análisis."],"correcta":2,"explicacion":"Varias fuentes, varios pasos y repetición semanal: un script deja el proceso escrito y lo repite sin errores de copia."},{"pregunta":"¿Cuál de estas frases describe mejor el trabajo real?","opciones":["Hay que elegir una herramienta y usar solo esa.","Python reemplaza a Excel y SQL.","Excel sirve solo para principiantes.","Se combinan: SQL trae, pandas procesa y Excel o Power BI muestran."],"correcta":3,"explicacion":"Cada herramienta es mejor en una parte del proceso, y lo habitual es encadenarlas."}]}
+  pistas={["Pregúntate dónde están los datos, cuántos pasos tiene el trabajo y si hay que repetirlo."]}
 />
+
+<Debrief>
+Excel para lo puntual y para compartir, SQL para traer datos desde una base y Python con pandas para procesos de muchos pasos que se repiten. La mejor herramienta depende de dónde están los datos y de cuántas veces vas a repetir el trabajo.
+</Debrief>

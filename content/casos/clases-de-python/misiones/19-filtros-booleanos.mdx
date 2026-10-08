@@ -4,42 +4,58 @@ tiempo: 16
 ---
 
 <Concepto>
-Una condición sobre una columna (como encuesta["calificacion"] >= 4) no devuelve un solo valor, sino una Series de True/False -- una por cada fila. Esa máscara booleana se puede usar para filtrar el DataFrame.
-
-Es la forma más común de responder preguntas como «¿cuántas filas cumplen tal condición?» o «muéstrame solo las filas que...».
+Filtrar es quedarse solo con las filas que cumplen una condición: las ventas de marzo, las respuestas con nota baja, los clientes de una región. En pandas se hace en dos pasos, aunque casi siempre se escriben en una línea.
 
 <Sintaxis lenguaje="python" codigo={"df[df[\"columna\"] > valor]"} />
 
-**Crear una máscara booleana.** encuesta["calificacion"] >= 4 devuelve una Series de True/False, una por fila, según si esa fila cumple la condición.
+**1. La máscara.** Una comparación sobre una columna no da un solo `True` o `False`: da una Series con un `True` o `False` por fila. A eso se le llama máscara booleana.
 
 ```python
-encuesta["calificacion"] >= 4
+ventas["monto"] > 100000   # True, False, False, …
 ```
 
-**Filtrar con la máscara.** Pasando esa máscara entre corchetes al DataFrame, df[máscara] devuelve solo las filas donde la máscara es True.
+**2. Filtrar con la máscara.** Si pones la máscara entre corchetes, el DataFrame devuelve solo las filas donde la máscara es `True`. El resultado es otro DataFrame: la tabla original no cambia.
 
 ```python
-encuesta[encuesta["calificacion"] >= 4]
+ventas_grandes = ventas[ventas["monto"] > 100000]
 ```
 
-**Combinar condiciones con & y |.** Para combinar más de una condición sobre un DataFrame se usan & (y) y | (o) en vez de and/or, con cada condición entre paréntesis.
+**Combinar condiciones: & y |.** Para dos condiciones a la vez se usa `&` (y) y para una u otra, `|` (o). Cada condición va **entre paréntesis**. Con `and` u `or`, pandas da un error, porque esas palabras esperan un solo `True` o `False`, no una columna entera.
 
 ```python
-(encuesta["calificacion"] >= 4) & (encuesta["canal"] == "web")
+ventas[(ventas["region"] == "sur") & (ventas["monto"] > 40000)]
+ventas[(ventas["region"] == "norte") | (ventas["region"] == "centro")]
 ```
+
+**isin: varios valores permitidos.** Cuando la condición es "que sea uno de estos", `isin` es más corto que encadenar `|`.
+
+```python
+ventas[ventas["region"].isin(["norte", "centro"])]
+```
+
+**Contar lo filtrado.** `len(filtrado)` dice cuántas filas cumplieron la condición.
 </Concepto>
 
 <PythonTask
   id="filtros-booleanos"
-  enunciado={"Asigna a resultado la cantidad de respuestas con calificacion mayor o igual a 4."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(encuesta[encuesta[\"calificacion\"] >= 4].shape[0])"}
-  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con encuesta ya cargada: guarda en satisfechos las respuestas con calificación 4 o más. Guarda en web_satisfechos las que, además de tener calificación 4 o más, llegaron por el canal web, y en cantidad_web_satisfechos cuántas son. Por último, guarda en presenciales las respuestas de los canales tienda o telefono."}
+  preparacion={"import pandas as pd\nencuesta = pd.read_csv(\"datos/encuesta.csv\")"}
+  inicial={"# encuesta ya está cargada desde datos/encuesta.csv\nsatisfechos = None\n\nweb_satisfechos = None\ncantidad_web_satisfechos = None\n\npresenciales = None"}
+  solucion={"satisfechos = encuesta[encuesta[\"calificacion\"] >= 4]\n\nweb_satisfechos = encuesta[(encuesta[\"calificacion\"] >= 4) & (encuesta[\"canal\"] == \"web\")]\ncantidad_web_satisfechos = len(web_satisfechos)\n\npresenciales = encuesta[encuesta[\"canal\"].isin([\"tienda\", \"telefono\"])]"}
+  pruebas={"_ids = lambda df: sorted(df[\"respondent_id\"].tolist())\nassert isinstance(satisfechos, pd.DataFrame), \"satisfechos debe ser un DataFrame con las filas que cumplen la condición. La condición sola es una Series de True y False.\"\nassert _ids(satisfechos) == _ids(encuesta[encuesta[\"calificacion\"] >= 4]), \"satisfechos no tiene las filas correctas: calificación 4 o más incluye el 4.\"\nassert isinstance(web_satisfechos, pd.DataFrame), \"web_satisfechos debe ser un DataFrame filtrado.\"\nassert _ids(web_satisfechos) == _ids(encuesta[(encuesta[\"calificacion\"] >= 4) & (encuesta[\"canal\"] == \"web\")]), \"web_satisfechos no tiene las filas correctas: deben cumplirse las dos condiciones a la vez.\"\nassert cantidad_web_satisfechos == len(web_satisfechos), \"cantidad_web_satisfechos no es la cantidad de filas de web_satisfechos.\"\nassert isinstance(presenciales, pd.DataFrame), \"presenciales debe ser un DataFrame filtrado.\"\nassert _ids(presenciales) == _ids(encuesta[encuesta[\"canal\"].isin([\"tienda\", \"telefono\"])]), \"presenciales no tiene las filas correctas: deben ser las del canal tienda o las del canal telefono.\""}
   paquetes={["pandas"]}
-  pistas={["Una comparación sobre una columna devuelve True o False por fila.", "Usa esa comparación entre corchetes para filtrar, y cuenta las filas que quedan."]}
+  pistas={["Primero escribe la condición sola y ejecútala para ver la máscara; después ponla dentro de encuesta[...].","Con dos condiciones, cada una va entre paréntesis y se unen con &.","Para \"uno u otro canal\" sirve | entre dos condiciones, o isin con una lista."]}
 />
 
 <Debrief>
-resultado = int(encuesta[encuesta["calificacion"] >= 4].shape[0]) = 3 (las calificaciones 5, 4 y 4).
+```python
+satisfechos = encuesta[encuesta["calificacion"] >= 4]   # 7 respuestas
+
+web_satisfechos = encuesta[(encuesta["calificacion"] >= 4) & (encuesta["canal"] == "web")]
+cantidad_web_satisfechos = len(web_satisfechos)          # 4
+
+presenciales = encuesta[encuesta["canal"].isin(["tienda", "telefono"])]
+```
+
+Si escribes `and` en vez de `&`, pandas reclama que el valor de verdad de una Series es ambiguo: no sabe si quieres que todas las filas, o alguna, sean `True`. `&` compara fila por fila, que es lo que necesitas para filtrar.
 </Debrief>

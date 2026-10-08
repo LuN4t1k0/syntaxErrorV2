@@ -4,42 +4,54 @@ tiempo: 14
 ---
 
 <Concepto>
-Un diccionario guarda pares clave-valor: en vez de acceder a un elemento por su posición (como en una lista), se accede por un nombre (la clave).
-
-Es una forma natural de representar un registro con varios campos -- por ejemplo, un producto con su nombre, precio y stock.
+Un diccionario guarda pares clave-valor. En una lista buscas por posición (`precios[0]`); en un diccionario buscas por nombre (`producto["precio"]`). Es la forma natural de representar un registro con varios campos, como una fila de una planilla.
 
 <Sintaxis lenguaje="python" codigo={"diccionario = {\"clave\": valor}"} />
 
-**Crear un diccionario.** Se escribe entre llaves, con cada clave entre comillas seguida de : y su valor, separando los pares con comas.
+**Crear un diccionario.** Va entre llaves. Cada par se escribe como clave, dos puntos y valor, y los pares se separan con comas. Las claves suelen ser textos.
 
 ```python
-producto = {"nombre": "Notebook", "precio": 450000}
+cliente = {"nombre": "Ana", "ciudad": "Temuco", "compras": 4, "total_gastado": 180000}
 ```
 
-**Acceder a un valor por su clave.** diccionario["clave"] devuelve el valor asociado a esa clave. Si la clave no existe, da un error.
+**Leer un valor.** El nombre de la clave va entre corchetes. Si la clave no existe, Python da un `KeyError`: revisa que esté escrita igual, con las mismas mayúsculas y tildes.
 
 ```python
-producto["precio"]
+cliente["ciudad"]   # "Temuco"
 ```
 
-**Agregar o modificar una clave.** Asignar un valor a diccionario["clave"] agrega esa clave si no existía, o actualiza su valor si ya existía.
+**Agregar o modificar.** La misma escritura sirve para las dos cosas: si la clave no existe, se agrega; si ya existe, se reemplaza su valor.
 
 ```python
-producto["stock"] = 3
+cliente["email"] = "ana@correo.cl"   # agrega una clave nueva
+cliente["compras"] = 5               # cambia el valor de una que ya existía
+```
+
+**Usar los valores en cálculos.** Lo que lees de un diccionario es un valor como cualquier otro: puedes guardarlo en una variable o usarlo en una operación.
+
+```python
+promedio = cliente["total_gastado"] / cliente["compras"]
 ```
 </Concepto>
 
 <PythonTask
   id="diccionarios"
-  enunciado={"Agrega la clave 'categoria' con el valor 'tecnologia', y asigna a resultado el precio del producto."}
+  enunciado={"El diccionario producto ya existe. Agrégale la clave \"categoria\" con el valor \"tecnologia\", y actualiza su \"stock\" a 5 porque llegó mercadería. Después calcula valor_inventario como el precio por el stock, leyendo ambos valores desde el diccionario."}
   preparacion={"producto = {\"nombre\": \"Notebook\", \"precio\": 450000, \"stock\": 3}"}
-  inicial={"producto[\"categoria\"] = \"tecnologia\"\nresultado = None"}
-  solucion={"producto[\"categoria\"] = \"tecnologia\"\nresultado = producto[\"precio\"]"}
-  pruebas={"import numbers\nesperado = 450000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  inicial={"# producto = {\"nombre\": \"Notebook\", \"precio\": 450000, \"stock\": 3} ya existe\n# 1. Agrega la categoría y actualiza el stock\n\n\n# 2. Calcula el valor del inventario con los valores del diccionario\nvalor_inventario = None"}
+  solucion={"producto[\"categoria\"] = \"tecnologia\"\nproducto[\"stock\"] = 5\n\nvalor_inventario = producto[\"precio\"] * producto[\"stock\"]"}
+  pruebas={"assert \"categoria\" in producto, \"producto todavía no tiene la clave \\\"categoria\\\".\"\nassert producto[\"categoria\"] == \"tecnologia\", \"La categoría no tiene el valor pedido: debe ser el texto \\\"tecnologia\\\", en minúsculas.\"\nassert producto[\"stock\"] == 5, \"El stock del producto no quedó en 5.\"\nassert len(producto) == 4, \"producto debe quedar con cuatro claves: nombre, precio, stock y categoria. Revisa que no hayas agregado una clave con otro nombre.\"\nassert valor_inventario is not None, \"valor_inventario sigue en None: reemplázalo por el cálculo.\"\nassert valor_inventario == producto[\"precio\"] * producto[\"stock\"], \"valor_inventario no coincide: calcúlalo después de actualizar el stock, con el precio y el stock del diccionario.\""}
   paquetes={[]}
-  pistas={["Para agregar una clave, asígnale un valor con corchetes: diccionario[\"clave\"] = valor.", "Para leer un valor, usa el nombre de su clave entre corchetes."]}
+  pistas={["Para agregar o cambiar un valor, se asigna con la clave entre corchetes: producto[\"clave\"] = valor.","El stock ya existe, así que asignarle 5 reemplaza el 3.","Lee los valores con producto[\"precio\"] y producto[\"stock\"], y multiplícalos."]}
 />
 
 <Debrief>
-resultado = producto["precio"] = 450000. Agregar la clave categoria no cambia el precio ya guardado.
+```python
+producto["categoria"] = "tecnologia"   # clave nueva: se agrega
+producto["stock"] = 5                  # clave existente: se reemplaza
+
+valor_inventario = producto["precio"] * producto["stock"]   # 2250000
+```
+
+Al final, `producto` tiene cuatro claves. La misma escritura `producto["clave"] = valor` agrega o modifica según si la clave ya existía.
 </Debrief>

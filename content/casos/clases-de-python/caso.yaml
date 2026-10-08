@@ -1,7 +1,7 @@
 slug: clases-de-python
 tipo: clases
 titulo: "Clases de Python: de las variables a pandas"
-dataset: "pequeñas tablas de ventas, encuestas y sensores, preparadas en cada lección"
+dataset: "archivos CSV pequeños de una tienda: una encuesta de satisfacción, ventas del primer trimestre de 2026, regiones, proveedores y lecturas de un sensor de temperatura"
 misiones:
   - 01-variables-y-tipos
   - 02-operadores

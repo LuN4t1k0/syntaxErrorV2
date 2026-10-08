@@ -4,43 +4,56 @@ tiempo: 16
 ---
 
 <Concepto>
-Una función agrupa un bloque de código reutilizable bajo un nombre, para no repetir la misma lógica varias veces. Se define con def y puede recibir parametros.
+Una función le pone nombre a un cálculo para reutilizarlo. En vez de copiar la misma fórmula cada vez que la necesitas, la escribes una vez y después la llamas con distintos valores. Si mañana cambia la fórmula, la corriges en un solo lugar.
 
-return indica que valor devuelve la función cuando se la llama -- sin return, la función no devuelve nada útil para usar después.
+<Sintaxis lenguaje="python" codigo={"def nombre_funcion(parametro1, parametro2):\n    return valor"} />
 
-<Sintaxis lenguaje="python" codigo={"def nombre_funcion(parametro1, parametro2):\n    return resultado"} />
-
-**Definir una función.** def, el nombre de la función, y sus parametros entre paréntesis. El bloque indentado debajo es el cuerpo de la función.
+**Definir.** `def`, el nombre, los parámetros entre paréntesis y dos puntos. El cuerpo va con sangría. Los parámetros son los nombres que tendrán, dentro de la función, los valores que le pasen.
 
 ```python
 def calcular_total(precio, cantidad):
-    return precio*cantidad
+    return precio * cantidad
 ```
 
-**Llamar una función.** Se escribe el nombre de la función seguido de los valores entre paréntesis, en el mismo orden que los parametros definidos.
+**return devuelve el resultado.** `return` entrega un valor a quien llamó la función, y la función termina ahí. Sin `return`, la función devuelve `None`. Ojo: `print` dentro de la función muestra el valor, pero no lo devuelve; para usar el resultado después, necesitas `return`.
+
+**Llamar.** Se escribe el nombre con los valores entre paréntesis, en el mismo orden que los parámetros. Lo que devuelve se puede guardar en una variable o usar en otro cálculo.
 
 ```python
-calcular_total(450000, 3)
+total = calcular_total(450000, 3)          # 1350000
+doble = calcular_total(12000, 2) * 2       # 48000
 ```
 
-**Guardar el resultado en una variable.** El valor que devuelve return se puede asignar a una variable, igual que el resultado de cualquier otra expresión.
+**Valores por defecto.** Un parámetro puede tener un valor que se usa si no lo pasan. Así la función sirve para el caso común y para el especial.
 
 ```python
-total = calcular_total(450000, 3)
+def precio_con_iva(neto, iva=0.19):
+    return neto * (1 + iva)
+
+precio_con_iva(10000)         # 11900.0
+precio_con_iva(10000, 0)      # 10000: un producto exento
 ```
 </Concepto>
 
 <PythonTask
   id="funciones"
-  enunciado={"Completa la función calcular_total para que devuelva precio multiplicado por cantidad."}
-  preparacion={"precio = 450000\ncantidad = 3"}
-  inicial={"def calcular_total(precio, cantidad):\n    return None  # completa\n\nresultado = calcular_total(precio, cantidad)"}
-  solucion={"def calcular_total(precio, cantidad):\n    return precio * cantidad\n\nresultado = calcular_total(precio, cantidad)"}
-  pruebas={"import numbers\nesperado = 1350000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Completa la función calcular_total(precio, cantidad, descuento=0) para que devuelva el precio por la cantidad, con el descuento aplicado (0.1 es un 10 %). Después úsala para guardar en total_notebooks el total de 3 notebooks de 450000 con 10 % de descuento, y en total_mouse el de 2 mouse de 12000 sin descuento."}
+  preparacion={""}
+  inicial={"def calcular_total(precio, cantidad, descuento=0):\n    # devuelve el total con el descuento aplicado\n    return None\n\n\ntotal_notebooks = None\ntotal_mouse = None"}
+  solucion={"def calcular_total(precio, cantidad, descuento=0):\n    return precio * cantidad * (1 - descuento)\n\n\ntotal_notebooks = calcular_total(450000, 3, 0.1)\ntotal_mouse = calcular_total(12000, 2)"}
+  pruebas={"assert callable(calcular_total), \"calcular_total debe seguir siendo una función definida con def.\"\n_r = calcular_total(1000, 2)\nassert _r is not None, \"calcular_total devuelve None: falta el return con el cálculo (print muestra el valor, pero no lo devuelve).\"\nassert abs(_r - 2000) < 0.01, \"Sin descuento, calcular_total(1000, 2) debería ser 2000: revisa que multipliques el precio por la cantidad.\"\nassert abs(calcular_total(1000, 2, 0.5) - 1000) < 0.01, \"Con descuento, el total no es correcto: revisa cómo aplicas el descuento y en qué orden se calcula.\"\nassert abs(calcular_total(200, 5, 0.1) - 900) < 0.01, \"calcular_total no funciona con otros valores: usa los parámetros, no números fijos.\"\nassert total_notebooks is not None and abs(total_notebooks - calcular_total(450000, 3, 0.1)) < 0.01, \"total_notebooks no es correcto: llama a calcular_total con el precio, la cantidad y el descuento de los notebooks.\"\nassert total_mouse is not None and abs(total_mouse - 24000) < 0.01, \"total_mouse no es correcto: llama a calcular_total con el precio y la cantidad de los mouse, sin descuento.\""}
   paquetes={[]}
-  pistas={["return es lo que la función devuelve a quien la llama.", "Cambia el None del return por el cálculo con los dos parámetros."]}
+  pistas={["Dentro de la función, usa los nombres de los parámetros: precio, cantidad y descuento.","El total con descuento es precio por cantidad por (1 menos el descuento).","Para llamar la función, pasa los valores en el orden de los parámetros; si no hay descuento, puedes omitirlo."]}
 />
 
 <Debrief>
-calcular_total debe hacer return precio*cantidad; llamada con 450000 y 3, devuelve 1350000.
+```python
+def calcular_total(precio, cantidad, descuento=0):
+    return precio * cantidad * (1 - descuento)
+
+total_notebooks = calcular_total(450000, 3, 0.1)   # 1215000.0
+total_mouse = calcular_total(12000, 2)             # 24000
+```
+
+La prueba llamó tu función con otros valores para comprobar que usa sus parámetros. Y como `descuento` tiene valor por defecto, la misma función sirve para ventas con y sin descuento.
 </Debrief>

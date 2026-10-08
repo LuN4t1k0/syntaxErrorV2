@@ -1,0 +1,13 @@
+venta_id,fecha,region,categoria,producto,cantidad,monto
+1,2026-01-08,norte,tecnologia,Notebook,1,450000
+2,2026-01-15,sur,hogar,Lámpara,2,24000
+3,2026-01-22,centro,tecnologia,Mouse,3,36000
+4,2026-02-03,norte,hogar,Silla,1,85000
+5,2026-02-10,centro,tecnologia,Monitor,1,150000
+6,2026-02-17,sur,tecnologia,Teclado,2,50000
+7,2026-02-24,norte,tecnologia,Mouse,1,12000
+8,2026-03-02,centro,hogar,Lámpara,1,12000
+9,2026-03-09,sur,hogar,Silla,2,170000
+10,2026-03-16,norte,tecnologia,Monitor,1,150000
+11,2026-03-23,centro,tecnologia,Notebook,1,450000
+12,2026-03-30,sur,tecnologia,Mouse,4,48000

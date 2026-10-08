@@ -1,39 +1,61 @@
 ---
 titulo: "while"
-tiempo: 12
+tiempo: 14
 ---
 
 <Concepto>
-while repite un bloque de código mientras una condición siga siendo verdadera -- a diferencia de for, no sabe de antemano cuántas veces va a repetir.
-
-Es útil cuando la cantidad de repeticiones depende de un cálculo que va cambiando, no de recorrer una colección de tamaño fijo.
+`while` repite un bloque mientras una condición siga siendo verdadera. A diferencia de `for`, no recorre una colección: no sabe de antemano cuántas vueltas va a dar. Sirve cuando la cantidad de repeticiones depende de algo que va cambiando.
 
 <Sintaxis lenguaje="python" codigo={"while condicion:\n    # se repite mientras sea verdadera"} />
 
-**while básico.** Antes de cada vuelta, Python revisa la condición -- si es verdadera, ejecuta el bloque y vuelve a revisar; si es falsa, sigue con lo que viene después del while.
+**Cómo avanza.** Antes de cada vuelta, Python revisa la condición. Si es verdadera, ejecuta el bloque y vuelve a revisar; si es falsa, sigue con lo que viene después del `while`. Si la condición es falsa desde el principio, el bloque no se ejecuta ni una vez.
 
 ```python
 contador = 0
 while contador < 3:
     contador = contador + 1
+# aquí contador vale 3
 ```
 
-**Cuidado con los loops infinitos.** Si la condición nunca se vuelve falsa (por ejemplo, si te olvidas de actualizar la variable dentro del bloque), el while se repite para siempre y el programa se queda colgado.
+**Cuidado con los ciclos infinitos.** Algo dentro del bloque tiene que acercar la condición a ser falsa. Si olvidas actualizar la variable, el `while` se repite para siempre. En esta plataforma, tu código se detiene a los 10 segundos y te avisa.
 
-**Contar repeticiones dentro de un while.** Igual que con for, se puede usar una variable adicional para contar cuántas vueltas se hicieron.
+```python
+# ciclo infinito: saldo nunca cambia
+while saldo > 0:
+    pagos = pagos + 1
+```
+
+**Contar vueltas.** Igual que en un `for`, una variable creada antes del ciclo puede contar cuántas veces se repitió.
+
+```python
+saldo = 100000
+meses = 0
+while saldo > 0:
+    saldo = saldo - 30000
+    meses = meses + 1
+# meses = 4: el último pago deja el saldo en -20000
+```
 </Concepto>
 
 <PythonTask
   id="while"
-  enunciado={"El código ya reduce el stock de a 3 unidades por venta mientras alcance. Ejecútalo y asigna a resultado la cantidad de ventas realizadas."}
+  enunciado={"Hay stock unidades en bodega y cada pedido se lleva 3. Con un while, despacha pedidos mientras alcance para uno completo: cuenta en pedidos cuántos se despacharon y deja en stock lo que sobra. Tu código se probará con distintos stocks."}
   preparacion={"stock = 20"}
-  inicial={"ventas = 0\nwhile stock >= 3:\n    stock = stock - 3\n    ventas = ventas + 1\nresultado = ventas"}
-  solucion={"ventas = 0\nwhile stock >= 3:\n    stock = stock - 3\n    ventas = ventas + 1\nresultado = ventas"}
-  pruebas={"import numbers\nesperado = 6\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  inicial={"# stock ya existe (ahora vale 20, pero se probará con otros valores)\npedidos = 0\n\n# Despacha pedidos de 3 unidades mientras alcance para uno completo"}
+  solucion={"pedidos = 0\n\nwhile stock >= 3:\n    stock = stock - 3\n    pedidos = pedidos + 1"}
+  pruebas={"import ast as _ast\nassert any(isinstance(_n, _ast.While) for _n in _ast.walk(_ast.parse(_codigo))), \"Esta lección es sobre while: usa un while para despachar los pedidos.\"\nfor _stock in [20, 7, 3, 2, 0]:\n    _espacio = {\"stock\": _stock}\n    exec(_codigo, _espacio)\n    assert _espacio.get(\"pedidos\") == _stock // 3, f\"Con stock = {_stock}, pedidos no da la cantidad de pedidos completos. Revisa la condición del while: ¿cuándo alcanza para un pedido completo?\"\n    assert _espacio.get(\"stock\") == _stock % 3, f\"Con stock = {_stock}, el stock que sobra no es correcto: en cada vuelta hay que restarle 3.\""}
   paquetes={[]}
-  pistas={["El while ya está completo: ejecútalo y mira cuántas veces se repite.", "Cada vuelta suma una venta y resta 3 unidades al stock."]}
+  pistas={["La condición pregunta si alcanza para un pedido completo: ¿cuántas unidades se necesitan?","Dentro del while pasan dos cosas: el stock baja en 3 y pedidos sube en 1.","Si el stock es exactamente 3, todavía alcanza para un pedido."]}
 />
 
 <Debrief>
-Con stock inicial de 20, se pueden hacer 6 ventas de 3 unidades (18 en total), quedando 2 unidades -- menos que 3, así que el while se detiene ahí. resultado = 6.
+```python
+pedidos = 0
+
+while stock >= 3:
+    stock = stock - 3
+    pedidos = pedidos + 1
+```
+
+Con 20 unidades salen 6 pedidos y sobran 2. La condición `>= 3` es la clave: con `> 3`, un stock de exactamente 3 no despacharía nada, y con `>= 0` se despacharía un pedido de más y el stock quedaría negativo.
 </Debrief>

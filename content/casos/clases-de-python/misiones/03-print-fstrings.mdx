@@ -4,44 +4,52 @@ tiempo: 10
 ---
 
 <Concepto>
-print muestra un valor en la salida -- es la forma más básica de ver qué está pasando dentro de un programa mientras se ejecuta.
+`print` muestra un valor en la salida. Es la forma más simple de ver qué está pasando dentro de un programa: qué vale una variable, por qué camino pasó, cuál fue el resultado.
 
-Los f-strings (textos con una f antes de las comillas) permiten insertar el valor de una variable directamente dentro de un texto, sin concatenar a mano con +.
+`print` solo muestra: no guarda nada. Si escribes `total = print(precio)`, el precio aparece en pantalla, pero `total` queda en `None` (vacío). Para guardar un valor se asigna directo, sin `print`.
 
-<Sintaxis lenguaje="python" codigo={"f\"texto {variable} mas texto\""} />
+<Sintaxis lenguaje="python" codigo={"print(f\"texto {variable} más texto\")"} />
 
-**print básico.** print(valor) muestra ese valor en la consola. Se le puede pasar texto, un número, o el resultado de una expresión.
+**print básico.** Recibe un texto, un número o el resultado de una expresión. Cada `print` escribe una línea nueva.
 
 ```python
 print("hola")
+print(450000 * 3)
 ```
 
-**f-strings.** Escribiendo una f antes de las comillas, cualquier cosa entre llaves &#123; &#125; dentro del texto se reemplaza por su valor.
+**f-strings.** Una `f` antes de las comillas convierte el texto en una plantilla: lo que pongas entre llaves `{}` se reemplaza por su valor. Todo lo demás (espacios, dos puntos, el signo `$`) se escribe tal cual.
 
 ```python
-producto = "Mouse"
-precio = 12000
-print(f"{producto}: ${precio}")
+producto = "Teclado"
+precio = 25000
+print(f"Producto: {producto}, precio ${precio}")   # Producto: Teclado, precio $25000
 ```
 
-**Expresiones dentro de las llaves.** Dentro de las llaves de un f-string se puede escribir cualquier expresión, no solo el nombre de una variable -- por ejemplo, un cálculo.
+Sin la `f`, Python imprime las llaves literalmente: `print("{producto}")` muestra `{producto}`.
+
+**Expresiones dentro de las llaves.** Entre las llaves cabe cualquier expresión, no solo un nombre: un cálculo, una comparación o una llamada a una función.
 
 ```python
-print(f"total: {precio*2}")
+print(f"Tres unidades: ${precio * 3}")   # Tres unidades: $75000
 ```
 </Concepto>
 
 <PythonTask
   id="print-fstrings"
-  enunciado={"Asigna a resultado el texto \"Mouse: $12000\" usando un f-string con las variables producto y precio."}
+  enunciado={"Las variables producto y precio ya existen. Con dos print y f-strings, imprime exactamente estas dos líneas: «Mouse: $12000» y «Por 2 unidades: $24000». En la segunda, calcula el total dentro de las llaves."}
   preparacion={"producto = \"Mouse\"\nprecio = 12000"}
-  inicial={"resultado = None"}
-  solucion={"resultado = f\"{producto}: ${precio}\""}
-  pruebas={"import numbers\nesperado = \"Mouse: $12000\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  inicial={"# producto = \"Mouse\" y precio = 12000 ya existen\n# Imprime aquí las dos líneas"}
+  solucion={"print(f\"{producto}: ${precio}\")\nprint(f\"Por 2 unidades: ${precio * 2}\")"}
+  pruebas={"lineas = _salida.strip().splitlines()\nassert lineas, \"No se imprimió nada: usa print(...) para mostrar cada línea.\"\nassert \"{\" not in _salida, \"Se imprimieron las llaves tal cual: falta la f antes de las comillas.\"\nassert len(lineas) == 2, \"Deben quedar exactamente dos líneas impresas: una por cada print.\"\nassert lineas[0] == \"Mouse: $12000\", \"La primera línea no coincide: revisa los dos puntos, el espacio y el signo $.\"\nassert lineas[1] == \"Por 2 unidades: $24000\", \"La segunda línea no coincide: revisa el texto y el total, que va calculado dentro de las llaves.\""}
   paquetes={[]}
-  pistas={["Un f-string empieza con f antes de las comillas.", "Dentro del texto, cada variable va entre llaves; el signo $ se escribe tal cual."]}
+  pistas={["Escribe la f justo antes de las comillas de apertura: f\"...\".","Cada variable va entre llaves dentro del texto; el $ se escribe tal cual, fuera de las llaves.","Dentro de las llaves puedes multiplicar: {precio * 2}."]}
 />
 
 <Debrief>
-resultado = f"&#123;producto&#125;: $&#123;precio&#125;" produce el texto "Mouse: $12000".
+```python
+print(f"{producto}: ${precio}")
+print(f"Por 2 unidades: ${precio * 2}")
+```
+
+La salida muestra `Mouse: $12000` y `Por 2 unidades: $24000`. `print` sirve para mirar; cuando necesites usar el valor después, guárdalo en una variable: `linea = f"{producto}: ${precio}"`.
 </Debrief>

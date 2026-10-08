@@ -4,42 +4,54 @@ tiempo: 14
 ---
 
 <Concepto>
-Agregar una columna calculada a partir de otras es una de las transformaciones más frecuentes -- por ejemplo, marcar qué respuestas fueron de clientes satisfechos.
+Muchas preguntas se responden con una columna que todavía no existe: el precio unitario, el monto con IVA, si una venta fue grande. En pandas, una columna nueva se crea asignándole una operación sobre otras columnas, y se calcula para todas las filas a la vez.
 
-Asignar a df["columna_nueva"] crea la columna si no existía, aplicando la operación a cada fila automáticamente.
+<Sintaxis lenguaje="python" codigo={"df[\"nueva\"] = expresión con otras columnas"} />
 
-<Sintaxis lenguaje="python" codigo={"df[\"nueva\"] = df[\"col1\"] operador df[\"col2\"]"} />
-
-**Asignar una columna nueva.** df["nueva"] = expresión crea la columna nueva -- la expresión se calcula fila por fila, sin necesidad de un for.
+**Asignar una columna.** Se escribe como si leyeras una columna, pero a la izquierda del `=`. Si la columna no existe, se crea al final; si existe, se reemplaza.
 
 ```python
-encuesta["satisfecho"] = encuesta["calificacion"] >= 4
+ventas["monto_con_iva"] = ventas["monto"] * 1.19
 ```
 
-**Operaciones entre columnas.** Se pueden combinar dos o más columnas con operadores aritméticos o de comparación, igual que con Series sueltas.
+**Operar entre columnas.** Dos columnas se combinan fila por fila: el precio de la fila 0 con el stock de la fila 0, y así con cada fila.
 
 ```python
-encuesta["calificacion"] * 2
+inventario["valor"] = inventario["precio"] * inventario["stock"]
 ```
 
-**Sumar una columna booleana.** Al sumar una columna de True/False, pandas cuenta cada True como 1 y cada False como 0 -- una forma rápida de contar cuántas filas cumplen una condición.
+**Una columna de True y False.** Una comparación también se puede guardar como columna. Sirve para marcar filas sin eliminarlas.
 
 ```python
-int(encuesta["satisfecho"].sum())
+ventas["es_norte"] = ventas["region"] == "norte"
+```
+
+**Contar con una columna booleana.** Al sumar `True` y `False`, pandas cuenta cada `True` como 1 y cada `False` como 0. Entonces `.sum()` de una columna booleana dice cuántas filas cumplen la condición, y `.mean()` qué proporción.
+
+```python
+ventas["es_norte"].sum()    # cuántas ventas son del norte
+ventas["es_norte"].mean()   # qué fracción del total
 ```
 </Concepto>
 
 <PythonTask
   id="crear-columnas"
-  enunciado={"Crea la columna satisfecho (calificacion >= 4) y asigna a resultado la cantidad de respuestas satisfechas, sumando esa columna."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"encuesta[\"satisfecho\"] = encuesta[\"calificacion\"] >= 4\nresultado = None"}
-  solucion={"encuesta[\"satisfecho\"] = encuesta[\"calificacion\"] >= 4\nresultado = int(encuesta[\"satisfecho\"].sum())"}
-  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con la tabla ventas ya cargada: crea la columna precio_unitario, el monto dividido por la cantidad. Crea la columna venta_grande, que sea True cuando el monto es 100000 o más. Después guarda en cantidad_grandes cuántas ventas grandes hay, sumando esa columna."}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")"}
+  inicial={"# ventas ya está cargada desde datos/ventas.csv\n\n\ncantidad_grandes = None"}
+  solucion={"ventas[\"precio_unitario\"] = ventas[\"monto\"] / ventas[\"cantidad\"]\nventas[\"venta_grande\"] = ventas[\"monto\"] >= 100000\n\ncantidad_grandes = ventas[\"venta_grande\"].sum()"}
+  pruebas={"_original = pd.read_csv(\"datos/ventas.csv\")\nassert \"precio_unitario\" in ventas.columns, \"ventas todavía no tiene la columna precio_unitario.\"\nassert ((ventas[\"precio_unitario\"] - _original[\"monto\"] / _original[\"cantidad\"]).abs() < 0.01).all(), \"precio_unitario no es el monto dividido por la cantidad de cada fila.\"\nassert \"venta_grande\" in ventas.columns, \"ventas todavía no tiene la columna venta_grande.\"\nassert ventas[\"venta_grande\"].dtype == bool, \"venta_grande debe ser True o False en cada fila.\"\nassert ventas[\"venta_grande\"].tolist() == (_original[\"monto\"] >= 100000).tolist(), \"venta_grande no marca bien las ventas: 100000 o más incluye el 100000.\"\nassert cantidad_grandes == ventas[\"venta_grande\"].sum(), \"cantidad_grandes no es la cantidad de ventas grandes.\""}
   paquetes={["pandas"]}
-  pistas={["La columna satisfecho ya tiene True o False por respuesta.", "Al sumar una columna de True y False, cada True cuenta como 1."]}
+  pistas={["La columna nueva va a la izquierda del =: ventas[\"precio_unitario\"] = ...","Dividir una columna por otra divide fila por fila.","Sumar una columna de True y False cuenta los True."]}
 />
 
 <Debrief>
-resultado = int(encuesta["satisfecho"].sum()) = 3.
+```python
+ventas["precio_unitario"] = ventas["monto"] / ventas["cantidad"]
+ventas["venta_grande"] = ventas["monto"] >= 100000
+
+cantidad_grandes = ventas["venta_grande"].sum()   # 5
+```
+
+Fíjate en la diferencia con el primer intento típico: `precio_unitario = ventas["monto"] / ventas["cantidad"]` calcula bien, pero guarda el resultado en una variable suelta. Para que quede en la tabla, el destino tiene que ser `ventas["precio_unitario"]`.
 </Debrief>

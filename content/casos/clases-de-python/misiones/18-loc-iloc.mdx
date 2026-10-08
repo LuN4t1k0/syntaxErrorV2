@@ -1,41 +1,56 @@
 ---
 titulo: "loc e iloc"
-tiempo: 14
+tiempo: 16
 ---
 
 <Concepto>
-loc e iloc seleccionan filas (y opcionalmente columnas) de un DataFrame. La diferencia está en cómo se indica la posición: loc usa etiquetas, iloc usa posiciones numéricas.
+Para elegir filas, pandas tiene dos herramientas: `iloc` busca por **posición** (la primera fila, la tercera, las últimas cinco) y `loc` busca por **etiqueta**, es decir, por el valor del índice. Las dos aceptan también la columna, separada por una coma.
 
-Mientras el DataFrame no tenga un índice personalizado, iloc[0] y loc[0] suelen coincidir -- pero conceptualmente son cosas distintas, y vale la pena distinguirlas desde el principio.
+<Sintaxis lenguaje="python" codigo={"df.iloc[posicion_fila, posicion_columna]\ndf.loc[etiqueta_fila, \"columna\"]"} />
 
-<Sintaxis lenguaje="python" codigo={"df.iloc[posicion]"} />
-
-**iloc: por posición.** df.iloc[0] devuelve la primera fila del DataFrame, sin importar cómo se llame su índice -- funciona igual que acceder a una lista por posición.
+**iloc: por posición.** Funciona como los índices de una lista: empieza en 0, acepta negativos y rebanadas. `iloc[1:4]` toma las posiciones 1, 2 y 3: el final no se incluye.
 
 ```python
-encuesta.iloc[0]
+ventas.iloc[0]       # la primera fila
+ventas.iloc[-1]      # la última fila
+ventas.iloc[1:4]     # las filas en posición 1, 2 y 3
 ```
 
-**Combinar con una columna.** df.iloc[posición]["columna"] devuelve el valor de esa columna en esa fila específica.
+**Un índice con significado.** Por defecto, el índice de un DataFrame es 0, 1, 2… Con `set_index` puedes usar una columna como índice, por ejemplo el número de cada venta.
 
 ```python
-encuesta.iloc[3]["canal"]
+por_venta = ventas.set_index("venta_id")
 ```
 
-**loc: por etiqueta.** df.loc[etiqueta] busca la fila cuyo índice sea exactamente esa etiqueta -- si el índice son los números por defecto (0, 1, 2...), loc y iloc coinciden, pero loc también funciona con indices con nombres.
+**loc: por etiqueta.** Ahora `loc[5]` busca la fila cuyo índice es 5, sin importar en qué posición esté. Con una coma eliges además la columna por su nombre.
+
+```python
+por_venta.loc[5]                # la venta número 5
+por_venta.loc[5, "producto"]    # su producto
+```
+
+**Cuál usar.** `iloc` cuando te importa el lugar ("las tres primeras", "la última"); `loc` cuando te importa la identidad ("la persona 10", "la región norte"). Si el orden de la tabla cambia, `loc` sigue apuntando al mismo registro y `iloc` no.
 </Concepto>
 
 <PythonTask
   id="loc-iloc"
-  enunciado={"Asigna a resultado el canal de la cuarta fila (posición 3, empezando en 0) usando iloc."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = encuesta.iloc[3][\"canal\"]"}
-  pruebas={"import numbers\nesperado = \"telefono\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con encuesta ya cargada: guarda en ultimas las 3 últimas filas usando iloc. Después crea por_id usando respondent_id como índice, y guarda en edad_10 la edad de la persona con id 10 y en canal_7 el canal de la persona con id 7, usando loc."}
+  preparacion={"import pandas as pd\nencuesta = pd.read_csv(\"datos/encuesta.csv\")"}
+  inicial={"# encuesta ya está cargada desde datos/encuesta.csv\nultimas = None\n\npor_id = None\nedad_10 = None\ncanal_7 = None"}
+  solucion={"ultimas = encuesta.iloc[-3:]\n\npor_id = encuesta.set_index(\"respondent_id\")\nedad_10 = por_id.loc[10, \"edad\"]\ncanal_7 = por_id.loc[7, \"canal\"]"}
+  pruebas={"assert isinstance(ultimas, pd.DataFrame), \"ultimas debe ser un DataFrame con varias filas, no una sola fila.\"\nassert ultimas.equals(encuesta.tail(3)), \"ultimas no son las 3 últimas filas de encuesta.\"\nassert isinstance(por_id, pd.DataFrame) and por_id.index.name == \"respondent_id\", \"por_id debe tener respondent_id como índice.\"\n_por_id = encuesta.set_index(\"respondent_id\")\nassert edad_10 == _por_id.loc[10, \"edad\"], \"edad_10 no es la edad de la persona con id 10. Ojo: no es la fila en posición 10.\"\nassert canal_7 == _por_id.loc[7, \"canal\"], \"canal_7 no es el canal de la persona con id 7.\""}
   paquetes={["pandas"]}
-  pistas={["iloc selecciona por posición, empezando en 0.", "La cuarta fila es la posición 3; de esa fila, lee la columna canal."]}
+  pistas={["Una rebanada que empieza en -3 y no tiene final llega hasta la última fila: [-3:].","set_index recibe el nombre de la columna que quieres usar como índice.","En loc, primero va la etiqueta de la fila y después, separado por una coma, el nombre de la columna."]}
 />
 
 <Debrief>
-resultado = encuesta.iloc[3]["canal"] = "telefono".
+```python
+ultimas = encuesta.iloc[-3:]
+
+por_id = encuesta.set_index("respondent_id")
+edad_10 = por_id.loc[10, "edad"]    # 61
+canal_7 = por_id.loc[7, "canal"]    # "app"
+```
+
+`encuesta.iloc[10]` es la fila en la posición 10, que corresponde a la persona con id 11, porque las posiciones empiezan en 0. Con el id como índice, `loc[10]` encuentra a la persona correcta aunque la tabla se ordene o se filtre.
 </Debrief>

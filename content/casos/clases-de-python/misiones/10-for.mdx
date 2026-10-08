@@ -4,41 +4,60 @@ tiempo: 14
 ---
 
 <Concepto>
-for recorre una colección (una lista, por ejemplo) y ejecuta un bloque de código una vez por cada elemento, sin tener que escribir manualmente cada acceso por índice.
-
-Es la forma más común de procesar todos los elementos de una lista uno por uno -- por ejemplo, para acumular un total.
+`for` recorre una colección y ejecuta un bloque una vez por cada elemento. En vez de escribir `montos[0]`, `montos[1]`, `montos[2]`…, escribes el bloque una sola vez y Python lo repite por ti, sin importar cuántos elementos haya.
 
 <Sintaxis lenguaje="python" codigo={"for elemento in coleccion:\n    # se ejecuta una vez por elemento"} />
 
-**for básico.** En cada vuelta, la variable después de for toma el valor del siguiente elemento de la colección, hasta recorrerla completa.
+**for básico.** En cada vuelta, la variable que escribes después de `for` toma el siguiente elemento. El nombre lo eliges tú: en singular, lo que es cada elemento (`nota` para una lista de `notas`).
 
 ```python
-for monto in [450000, 12000, 25000]:
-    print(monto)
+notas = [5.5, 3.8, 6.2]
+for nota in notas:
+    print(nota)
 ```
 
-**Acumular un total dentro de un for.** Una variable creada antes del for (por ejemplo, en 0) se puede ir actualizando en cada vuelta para acumular una suma.
+**Acumular.** Para sumar dentro de un `for`, crea la variable **antes** del ciclo (en 0) y actualízala en cada vuelta. Si la creas dentro, vuelve a 0 en cada vuelta y pierdes lo acumulado.
 
 ```python
-total = 0
-for monto in montos:
-    total = total + monto
+unidades = [4, 10, 2]
+total_unidades = 0
+for cantidad in unidades:
+    total_unidades = total_unidades + cantidad
 ```
 
-**Recorrer una lista de diccionarios.** Si la colección es una lista de diccionarios, en cada vuelta se puede acceder a las claves del diccionario actual.
+**Contar lo que cumple una condición.** Un `if` dentro del `for` decide qué elementos cuentan. Fíjate en la sangría: el `if` está dentro del `for`, y lo que hace el `if` va un nivel más adentro.
+
+```python
+reprobados = 0
+for nota in notas:
+    if nota < 4:
+        reprobados = reprobados + 1
+```
+
+**Recorrer una tabla.** Si la colección es una lista de diccionarios, cada vuelta te entrega una fila completa y lees sus columnas por clave: `for venta in ventas: print(venta["producto"])`.
 </Concepto>
 
 <PythonTask
   id="for"
-  enunciado={"Completa el for para que sume cada monto a total (reemplaza pass por total = total + monto), y asigna el total final a resultado."}
-  preparacion={"montos = [450000, 12000, 25000]"}
-  inicial={"total = 0\nfor monto in montos:\n    pass  # suma monto a total\nresultado = total"}
-  solucion={"total = 0\nfor monto in montos:\n    total = total + monto\nresultado = total"}
-  pruebas={"import numbers\nesperado = 487000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"La lista montos ya existe. Con un solo for, calcula total, la suma de todos los montos, y ventas_grandes, cuántos montos son mayores que 100000. Tu código se probará también con otras listas."}
+  preparacion={"montos = [450000, 12000, 25000, 180000, 8000]"}
+  inicial={"# montos ya existe (se probará también con otras listas)\ntotal = 0\nventas_grandes = 0\n\n# Recorre montos con un for"}
+  solucion={"total = 0\nventas_grandes = 0\n\nfor monto in montos:\n    total = total + monto\n    if monto > 100000:\n        ventas_grandes = ventas_grandes + 1"}
+  pruebas={"import ast as _ast\nassert any(isinstance(_n, _ast.For) for _n in _ast.walk(_ast.parse(_codigo))), \"Esta lección es sobre for: recorre montos con un for, aunque exista sum().\"\nfor _montos in [[450000, 12000, 25000, 180000, 8000], [5000, 200000], [], [100000, 100001]]:\n    _espacio = {\"montos\": _montos}\n    exec(_codigo, _espacio)\n    assert _espacio.get(\"total\") == sum(_montos), f\"Con montos = {_montos}, total no es la suma de todos. Revisa que total empiece en 0 antes del for y que sumes cada monto dentro del for.\"\n    _grandes = len([m for m in _montos if m > 100000])\n    assert _espacio.get(\"ventas_grandes\") == _grandes, f\"Con montos = {_montos}, ventas_grandes no cuenta bien los montos mayores que 100000. Revisa la condición y que el contador suba de a 1.\""}
   paquetes={[]}
-  pistas={["Dentro del for, cada vuelta tiene un monto distinto.", "Reemplaza pass por una línea que sume ese monto a total."]}
+  pistas={["total y ventas_grandes se crean en 0 antes del for; dentro del for solo se actualizan.","En cada vuelta, suma el monto de esa vuelta a total.","Dentro del for, un if decide si esa venta es grande; si lo es, ventas_grandes sube en 1."]}
 />
 
 <Debrief>
-resultado = 450000+12000+25000 = 487000.
+```python
+total = 0
+ventas_grandes = 0
+
+for monto in montos:
+    total = total + monto
+    if monto > 100000:
+        ventas_grandes = ventas_grandes + 1
+```
+
+Con la lista de la tarea, `total` es 675000 y `ventas_grandes` es 2. Un solo recorrido resolvió las dos preguntas: el patrón "crear antes, actualizar dentro" sirve para sumar, contar o buscar el máximo.
 </Debrief>

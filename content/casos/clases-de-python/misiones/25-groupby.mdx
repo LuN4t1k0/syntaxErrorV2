@@ -1,41 +1,61 @@
 ---
-titulo: "groupby"
+titulo: "groupby: resumir por grupo"
 tiempo: 16
 ---
 
 <Concepto>
-groupby agrupa las filas de un DataFrame según el valor de una columna, para calcular resúmenes por grupo en vez de sobre toda la tabla -- por ejemplo, el total de ventas por region.
+"¿Cuánto vendió cada región?" es una pregunta por grupo: separar las filas según una columna, calcular algo en cada grupo y juntar los resultados. Es lo que en Excel haces con una tabla dinámica y en SQL con `GROUP BY`. En pandas, `groupby`.
 
-Después de agrupar, se elige una columna a resumir y una función de agregación (como sum) para obtener un resultado por grupo.
+<Sintaxis lenguaje="python" codigo={"df.groupby(\"columna_grupo\")[\"columna_valor\"].sum()"} />
 
-<Sintaxis lenguaje="python" codigo={"df.groupby(\"columna\")[\"otra_columna\"].sum()"} />
-
-**Agrupar y sumar.** df.groupby("region")["monto"].sum() agrupa las filas por region y suma el monto de cada grupo, devolviendo una Series indexada por region.
+**Se lee en tres partes.** Agrupa por categoría, toma la columna cantidad y suma en cada grupo.
 
 ```python
-ventas.groupby("region")["monto"].sum()
+ventas.groupby("categoria")["cantidad"].sum()
 ```
 
-**Acceder a un grupo específico.** Sobre el resultado agrupado, .loc["etiqueta"] devuelve el valor de ese grupo en particular.
+El resultado es una Series: el índice son las categorías (ordenadas alfabéticamente) y los valores son los totales.
+
+**Otras funciones.** En lugar de `sum` puedes usar `mean`, `count`, `max` o `min`. `count` cuenta filas con dato en esa columna: cuántas respuestas tuvo cada canal.
 
 ```python
-ventas.groupby("region")["monto"].sum().loc["norte"]
+encuesta.groupby("canal")["calificacion"].mean()
+encuesta.groupby("canal")["respondent_id"].count()
 ```
 
-**Otras funciones de agregación.** Además de sum(), se pueden usar mean(), count(), max(), min() de la misma forma, sobre el resultado de groupby.
+**Leer un grupo.** Como los canales quedaron en el índice, un grupo se lee por su etiqueta.
+
+```python
+nota_por_canal = encuesta.groupby("canal")["calificacion"].mean()
+nota_por_canal["app"]
+```
+
+**El grupo ganador.** `idxmax()` devuelve la etiqueta del valor más alto (y `idxmin()`, la del más bajo). `max()` daría la nota; `idxmax()` dice de qué canal es.
+
+```python
+nota_por_canal.idxmin()   # el canal con la nota promedio más baja
+```
 </Concepto>
 
 <PythonTask
   id="groupby"
-  enunciado={"Agrupa ventas por region, suma el monto de cada grupo, y asigna a resultado el total de la region 'norte'."}
-  preparacion={"import pandas as pd\nventas = pd.DataFrame({\"fecha\":[\"01/03/2026\",\"02/03/2026\",\"01/03/2026\",\"02/03/2026\"],\"region\":[\"norte\",\"norte\",\"sur\",\"sur\"],\"monto\":[100000,150000,80000,120000]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(ventas.groupby(\"region\")[\"monto\"].sum().loc[\"norte\"])"}
-  pruebas={"import numbers\nesperado = 250000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con ventas ya cargada: guarda en por_region el monto total vendido por cada región. Después guarda en total_norte el total de la región norte y en region_top el nombre de la región que más vendió, sin escribirlo a mano."}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")"}
+  inicial={"# ventas ya está cargada desde datos/ventas.csv\npor_region = None\n\ntotal_norte = None\nregion_top = None"}
+  solucion={"por_region = ventas.groupby(\"region\")[\"monto\"].sum()\n\ntotal_norte = por_region[\"norte\"]\nregion_top = por_region.idxmax()"}
+  pruebas={"_esperado = pd.read_csv(\"datos/ventas.csv\").groupby(\"region\")[\"monto\"].sum()\nassert isinstance(por_region, pd.Series), \"por_region debe ser una Series con un total por región.\"\nassert sorted(por_region.index.tolist()) == sorted(_esperado.index.tolist()), \"por_region debe tener una fila por región: agrupa por la columna region.\"\nassert por_region.to_dict() == _esperado.to_dict(), \"por_region no tiene el total de monto de cada región: revisa que sumes la columna monto.\"\nassert total_norte == _esperado[\"norte\"], \"total_norte no es el total de la región norte.\"\nassert region_top == _esperado.idxmax(), \"region_top no es la región con el total más alto: búscala en por_region, sin escribirla a mano.\""}
   paquetes={["pandas"]}
-  pistas={["groupby agrupa las filas; después eliges la columna monto y la sumas.", "El resultado tiene un valor por región: lee el de norte con .loc."]}
+  pistas={["groupby recibe la columna que define los grupos; después, entre corchetes, la columna que quieres sumar.","Las regiones quedan en el índice de por_region: se leen como por_region[\"norte\"].","max() da el valor más alto; idxmax() da la etiqueta de ese valor."]}
 />
 
 <Debrief>
-resultado = int(ventas.groupby("region")["monto"].sum().loc["norte"]) = 100000+150000 = 250000.
+```python
+por_region = ventas.groupby("region")["monto"].sum()
+# centro 648000, norte 697000, sur 292000
+
+total_norte = por_region["norte"]   # 697000
+region_top = por_region.idxmax()    # "norte"
+```
+
+`region_top` sale del cálculo y no de mirar la tabla: si mañana llegan las ventas de abril, el mismo código responde de nuevo sin cambiar nada.
 </Debrief>

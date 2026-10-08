@@ -1,45 +1,63 @@
 ---
-titulo: "if / else"
+titulo: "if, elif y else"
 tiempo: 14
 ---
 
 <Concepto>
-if permite que un programa tome decisiones: ejecuta un bloque de código solo si una condición es verdadera.
+`if` permite que un programa tome decisiones: ejecuta un bloque de código solo si una condición es verdadera. Con `elif` y `else` se agregan otros caminos, y Python sigue exactamente uno de ellos.
 
-else agrega una alternativa para cuando la condición es falsa -- entre los dos cubren los dos caminos posibles de una decisión simple.
+<Sintaxis lenguaje="python" codigo={"if condicion:\n    # si la condición es verdadera\nelif otra_condicion:\n    # si la primera no se cumplió y esta sí\nelse:\n    # si ninguna se cumplió"} />
 
-<Sintaxis lenguaje="python" codigo={"if condicion:\n    # se ejecuta si es verdadera\nelse:\n    # se ejecuta si es falsa"} />
-
-**if simple.** El bloque debajo de if (con sangría, indentado) solo se ejecuta si la condición es verdadera. Si es falsa, se lo salta por completo.
+**if simple.** La línea del `if` termina en dos puntos, y el bloque de abajo va con sangría (cuatro espacios). Si la condición es falsa, Python se salta el bloque completo.
 
 ```python
-if stock < 5:
-    print("Reponer")
+if nota < 4:
+    print("Reprobado")
 ```
 
-**if / else.** Agregando else, se define que hacer cuando la condición NO se cumple -- siempre se ejecuta uno de los dos bloques, nunca ninguno ni los dos.
+**if / else.** `else` cubre todo lo que no cumplió la condición. Siempre se ejecuta uno de los dos bloques: nunca ninguno, nunca los dos.
 
 ```python
-if stock < 5:
+if nota >= 4:
+    resultado = "Aprobado"
+else:
+    resultado = "Reprobado"
+```
+
+**elif para más de dos caminos.** Python revisa las condiciones de arriba hacia abajo y entra en la **primera** que se cumple; las demás ya no se revisan. Por eso el orden importa: la condición más específica va primero.
+
+```python
+if nota >= 6:
+    resultado = "Destacado"
+elif nota >= 4:
+    resultado = "Aprobado"
+else:
+    resultado = "Reprobado"
+```
+
+Con `nota = 6.5`, las dos primeras condiciones son verdaderas, pero Python entra solo en la primera. Si invirtieras el orden, un 6.5 quedaría como "Aprobado".
+</Concepto>
+
+<PythonTask
+  id="if-else"
+  enunciado={"Con la variable stock ya creada, asigna a estado el texto \"Agotado\" si el stock es 0, \"Reponer\" si es menor que 5, y \"OK\" en cualquier otro caso. Tu código se probará con distintos valores de stock, así que debe funcionar para todos."}
+  preparacion={"stock = 3"}
+  inicial={"# stock ya existe (ahora vale 3, pero se probará con otros valores)\nestado = None"}
+  solucion={"if stock == 0:\n    estado = \"Agotado\"\nelif stock < 5:\n    estado = \"Reponer\"\nelse:\n    estado = \"OK\""}
+  pruebas={"for _stock, _esperado in [(3, \"Reponer\"), (0, \"Agotado\"), (12, \"OK\"), (5, \"OK\"), (4, \"Reponer\")]:\n    _espacio = {\"stock\": _stock}\n    exec(_codigo, _espacio)\n    _estado = _espacio.get(\"estado\")\n    assert _estado is not None, f\"Con stock = {_stock}, estado queda en None: cada camino del if debe asignar un texto a estado.\"\n    assert _estado == _esperado, f\"Con stock = {_stock}, estado debería ser \\\"{_esperado}\\\" y es \\\"{_estado}\\\". Revisa la condición y el orden de los caminos.\""}
+  paquetes={[]}
+  pistas={["Necesitas tres caminos: if, elif y else, cada uno asignando su texto a estado.","Para preguntar si algo es igual se usa ==; un solo = es para asignar.","Python entra en la primera condición que se cumple: piensa cuál de las dos debe ir arriba."]}
+/>
+
+<Debrief>
+```python
+if stock == 0:
+    estado = "Agotado"
+elif stock < 5:
     estado = "Reponer"
 else:
     estado = "OK"
 ```
 
-**elif para más de dos casos.** Cuando hacen falta más de dos caminos, elif (contracción de else if) agrega condiciones adicionales antes del else final.
-</Concepto>
-
-<PythonTask
-  id="if-else"
-  enunciado={"Asigna a resultado el texto 'Reponer' si stock es menor a 5, y 'OK' si no, usando if/else."}
-  preparacion={"stock = 3"}
-  inicial={"resultado = None"}
-  solucion={"if stock < 5:\n    resultado = \"Reponer\"\nelse:\n    resultado = \"OK\""}
-  pruebas={"import numbers\nesperado = \"Reponer\"\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
-  paquetes={[]}
-  pistas={["La condición compara stock con 5.", "Cada camino del if y del else asigna su propio texto a resultado."]}
-/>
-
-<Debrief>
-Cómo stock (3) es menor a 5, resultado debe ser "Reponer".
+La prueba corrió tu código con stock 3, 0, 12, 5 y 4. Un código que funciona solo con el valor que ves ahora no es una decisión: es un resultado escrito a mano. Fíjate también en los bordes: con `stock = 5`, `< 5` es falso y el producto queda "OK".
 </Debrief>

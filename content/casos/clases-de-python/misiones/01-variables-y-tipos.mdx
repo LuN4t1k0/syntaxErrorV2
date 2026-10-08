@@ -4,47 +4,59 @@ tiempo: 12
 ---
 
 <Concepto>
-Una variable es un nombre que guarda un valor para poder usarlo después. En Python no hace falta declarar de antemano qué tipo de dato va a tener -- se define solo con asignarle un valor.
-
-Los tipos de datos básicos son int (números enteros), float (números con decimales), str (texto) y bool (verdadero o falso). Python los distingue automáticamente por cómo se escribe el valor.
+Una variable es un nombre que guarda un valor para usarlo después. En Python no se declara el tipo de antemano: la variable nace cuando le asignas un valor, y Python deduce el tipo por cómo lo escribiste.
 
 <Sintaxis lenguaje="python" codigo={"nombre_variable = valor"} />
 
-**Asignar una variable.** El signo = asigna un valor a un nombre de variable. A la izquierda va el nombre, a la derecha el valor.
+**Asignar una variable.** El signo `=` guarda el valor de la derecha en el nombre de la izquierda. No es una igualdad matemática: se lee "guarda 450000 en precio".
 
 ```python
 precio = 450000
 ```
 
-**Tipos básicos.** int para números enteros (450000), float para números con decimales (0.1), str para texto entre comillas ("Notebook"), y bool para True o False.
+**Los cuatro tipos básicos.** `int` para enteros, `float` para números con decimales (con punto, no coma), `str` para texto entre comillas y `bool` para `True` o `False`, con mayúscula inicial y sin comillas.
 
 ```python
-precio = 450000
-descuento = 0.1
-producto = "Notebook"
-disponible = True
+precio = 450000        # int
+descuento = 0.1        # float
+producto = "Notebook"  # str
+disponible = True      # bool
 ```
 
-**Cambiar el valor de una variable.** Una variable no queda fija: se le puede asignar un valor nuevo en cualquier momento, y el valor anterior se pierde.
+Las comillas cambian el tipo: `450000` es un número con el que se puede calcular, y `"450000"` es un texto que solo se ve igual. Lo mismo pasa con `True` y `"True"`.
 
-**Comentarios con #.** Cualquier texto después de # en una línea es un comentario -- Python lo ignora por completo. Sirve para explicar el código a quien lo lea después (incluyéndote a vos mismo).
+**Nombres que se entienden.** Un buen nombre dice qué guarda: `precio_unitario` se entiende solo, `x` no. Se escriben en minúsculas, con `_` entre palabras, sin tildes ni espacios.
+
+**Cambiar el valor.** Una variable se puede volver a asignar en cualquier momento; el valor anterior se pierde. Y el lado derecho puede usar otras variables:
 
 ```python
-# esto es un comentario, no se ejecuta
+stock = 3
+stock = stock + 2   # ahora stock vale 5
 ```
+
+**Comentarios con #.** Todo lo que viene después de `#` en una línea es un comentario: Python lo ignora. Sirve para explicarle el código a quien lo lea después, incluso a ti dentro de un mes.
 </Concepto>
 
 <PythonTask
   id="variables-y-tipos"
-  enunciado={"Completa el código para que resultado sea el precio multiplicado por el stock."}
+  enunciado={"Crea las variables de un producto: producto con el texto \"Notebook\", precio con el entero 450000, stock con el entero 3 y disponible con True. Después calcula valor_inventario como precio por stock, usando las variables (no el número escrito a mano)."}
   preparacion={""}
-  inicial={"producto = \"Notebook\"\nprecio = 450000\nstock = 3\nresultado = None"}
-  solucion={"producto = \"Notebook\"\nprecio = 450000\nstock = 3\nresultado = precio*stock"}
-  pruebas={"import numbers\nesperado = 1350000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  inicial={"# Crea aquí las variables producto, precio, stock y disponible\n\n\n# El valor del inventario es el precio por el stock\nvalor_inventario = None"}
+  solucion={"producto = \"Notebook\"\nprecio = 450000\nstock = 3\ndisponible = True\n\nvalor_inventario = precio * stock"}
+  pruebas={"assert isinstance(producto, str), \"producto debe ser un texto (str): escríbelo entre comillas.\"\nassert producto == \"Notebook\", \"producto debe tener el texto Notebook, con N mayúscula.\"\nassert type(precio) is int, \"precio debe ser un número entero (int): sin comillas y sin decimales.\"\nassert precio == 450000, \"precio no tiene el valor del enunciado.\"\nassert type(stock) is int, \"stock debe ser un número entero (int): sin comillas y sin decimales.\"\nassert stock == 3, \"stock no tiene el valor del enunciado.\"\nassert disponible is True, \"disponible debe ser el bool True: con T mayúscula y sin comillas.\"\nassert valor_inventario is not None, \"valor_inventario sigue en None: reemplaza None por el cálculo.\"\nassert valor_inventario == precio * stock, \"valor_inventario debe ser el precio multiplicado por el stock.\""}
   paquetes={[]}
-  pistas={["Las variables precio y stock ya tienen sus valores: úsalas por su nombre.", "En Python, la multiplicación se escribe con *."]}
+  pistas={["Cada variable va en su propia línea: nombre, signo = y valor.","Los textos van entre comillas; los números y True, sin comillas.","Para multiplicar se usa *, y puedes usar los nombres de las variables en vez de los números."]}
 />
 
 <Debrief>
-resultado = precio*stock = 450000*3 = 1350000.
+```python
+producto = "Notebook"
+precio = 450000
+stock = 3
+disponible = True
+
+valor_inventario = precio * stock   # 1350000
+```
+
+Escribir `precio * stock` en vez de `1350000` hace que el cálculo siga siendo correcto si mañana cambia el precio o el stock: solo cambias el valor de la variable y todo lo que depende de ella se actualiza.
 </Debrief>

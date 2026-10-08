@@ -4,38 +4,54 @@ tiempo: 12
 ---
 
 <Concepto>
-Una fila duplicada (idéntica a otra en todas sus columnas) suele ser un error de carga de datos -- por ejemplo, una misma lectura de sensor registrada dos veces.
-
-pandas trae funciones específicas para detectarlas y eliminarlas sin tener que compararlas a mano.
+Una fila duplicada es un registro que aparece dos veces: una exportación que se corrió dos veces o un sensor que envió la misma lectura repetida. Si no los quitas, cada duplicado se suma dos veces y los totales quedan inflados.
 
 <Sintaxis lenguaje="python" codigo={"df.drop_duplicates()"} />
 
-**Detectar duplicados con duplicated().** df.duplicated() devuelve True en cada fila que sea idéntica a una fila anterior -- la primera aparición siempre da False.
+**Detectarlos.** `duplicated()` marca con `True` cada fila que es copia exacta de una anterior. La primera aparición queda en `False`, porque es la original. Sumado, cuenta cuántas copias sobran.
 
 ```python
-sensor.duplicated()
+pedidos.duplicated().sum()
 ```
 
-**Eliminar duplicados.** df.drop_duplicates() devuelve un DataFrame nuevo sin las filas duplicadas, conservando la primera aparición de cada una.
+**Mirarlos antes de borrar.** Con `keep=False` se marcan todas las apariciones, incluida la original, para ver juntos los registros repetidos y confirmar que de verdad son copias.
 
 ```python
-sensor.drop_duplicates()
+pedidos[pedidos.duplicated(keep=False)]
 ```
 
-**Contar cuántas quedan.** Sobre el resultado de drop_duplicates(), .shape[0] da la cantidad de filas que quedaron después de la limpieza.
+**Eliminarlos.** `drop_duplicates()` devuelve la tabla con una sola aparición de cada fila repetida. Como casi todo en pandas, no cambia la tabla original: guarda el resultado.
+
+```python
+pedidos_limpios = pedidos.drop_duplicates()
+```
+
+**Duplicados por algunas columnas.** A veces dos filas no son idénticas, pero no deberían existir las dos: un mismo número de pedido no debería aparecer dos veces, aunque cambie otra columna. `subset` revisa solo las columnas que definen un registro único.
+
+```python
+pedidos.duplicated(subset=["pedido_id"])
+```
 </Concepto>
 
 <PythonTask
   id="duplicados"
-  enunciado={"Ya se eliminaron los duplicados en la variable limpio. Asigna a resultado la cantidad de filas que quedaron."}
-  preparacion={"import pandas as pd\nsensor = pd.DataFrame({\"timestamp\":[1,2,2,3],\"temperatura\":[22.5, 21.0, 21.0, 20.0]})"}
-  inicial={"limpio = sensor.drop_duplicates()\nresultado = None"}
-  solucion={"limpio = sensor.drop_duplicates()\nresultado = len(limpio)"}
-  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con sensor ya cargada: guarda en copias_sobrantes cuántas filas son copia de una anterior. Guarda en repetidas todas las apariciones de las filas repetidas (originales y copias), para revisarlas. Después guarda en sensor_limpio la tabla sin duplicados, y en filas_limpias cuántas filas le quedaron."}
+  preparacion={"import pandas as pd\nsensor = pd.read_csv(\"datos/sensor.csv\")"}
+  inicial={"# sensor ya está cargada desde datos/sensor.csv\ncopias_sobrantes = None\nrepetidas = None\n\nsensor_limpio = None\nfilas_limpias = None"}
+  solucion={"copias_sobrantes = sensor.duplicated().sum()\nrepetidas = sensor[sensor.duplicated(keep=False)]\n\nsensor_limpio = sensor.drop_duplicates()\nfilas_limpias = len(sensor_limpio)"}
+  pruebas={"_s = pd.read_csv(\"datos/sensor.csv\")\nassert copias_sobrantes == _s.duplicated().sum(), \"copias_sobrantes no es la cantidad de filas que son copia de una anterior.\"\nassert isinstance(repetidas, pd.DataFrame), \"repetidas debe ser un DataFrame con filas de sensor.\"\nassert len(repetidas) == _s.duplicated(keep=False).sum(), \"repetidas debe incluir las originales y sus copias, no solo las copias.\"\nassert isinstance(sensor_limpio, pd.DataFrame), \"sensor_limpio debe ser la tabla sensor sin duplicados.\"\nassert sensor_limpio.duplicated().sum() == 0, \"sensor_limpio todavía tiene filas duplicadas.\"\nassert len(sensor_limpio) == len(_s.drop_duplicates()), \"sensor_limpio debe conservar una aparición de cada fila: no elimines las originales.\"\nassert filas_limpias == len(sensor_limpio), \"filas_limpias no es la cantidad de filas de sensor_limpio.\""}
   paquetes={["pandas"]}
-  pistas={["La tabla limpio ya no tiene filas repetidas.", "Cuenta sus filas con len o con shape."]}
+  pistas={["duplicated() devuelve True en cada copia; sumarlo cuenta las copias.","Para ver todas las apariciones, pasa keep=False y usa el resultado para filtrar sensor.","drop_duplicates() deja una aparición de cada fila."]}
 />
 
 <Debrief>
-La fila con timestamp 2 y temperatura 21.0 aparece dos veces idéntica -- drop_duplicates() deja solo la primera, quedando 3 filas en total.
+```python
+copias_sobrantes = sensor.duplicated().sum()          # 2
+repetidas = sensor[sensor.duplicated(keep=False)]     # 4 filas: dos pares
+
+sensor_limpio = sensor.drop_duplicates()
+filas_limpias = len(sensor_limpio)                    # 9
+```
+
+`drop_duplicates(keep=False)` también existe, pero borra todas las apariciones, incluidas las originales, y perderías lecturas válidas. Por defecto se conserva la primera.
 </Debrief>

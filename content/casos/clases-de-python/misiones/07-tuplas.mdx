@@ -1,41 +1,52 @@
 ---
 titulo: "Tuplas"
-tiempo: 10
+tiempo: 12
 ---
 
 <Concepto>
-Una tupla es una colección ordenada, como una lista, pero no se puede modificar después de creada -- ni agregar, ni quitar, ni cambiar un elemento.
+Una tupla es una colección ordenada, como una lista, pero que no se puede modificar después de creada: no se agregan, quitan ni cambian elementos. Se usa para valores que van juntos y no deberían cambiar por separado, como las coordenadas de un punto o las medidas de una caja.
 
-Se usan para representar valores que van juntos y no deberían cambiar por separado, como las coordenadas de un punto o un par de valores fijos.
+<Sintaxis lenguaje="python" codigo={"tupla = (valor1, valor2, valor3)"} />
 
-<Sintaxis lenguaje="python" codigo={"tupla = (valor1, valor2)"} />
-
-**Crear una tupla.** Se escriben los valores entre paréntesis, separados por comas -- muy parecido a una lista, pero con paréntesis en vez de corchetes.
+**Crear una tupla.** Los valores van entre paréntesis, separados por comas.
 
 ```python
-punto = (10, 20)
+ubicacion = (-33.45, -70.66)   # latitud y longitud de Santiago
 ```
 
-**Acceder por índice.** Igual que en una lista, cada posición se accede con un índice que empieza en 0.
+**Leer por posición.** Igual que en una lista: el índice empieza en 0.
 
 ```python
-punto[0]
+ubicacion[0]   # -33.45
 ```
 
-**Por que son inmutables.** Intentar hacer punto[0] = 5 da un error -- una tupla no permite cambiar sus elementos una vez creada, a diferencia de una lista.
+**Desempaquetar.** Puedes repartir los valores de una tupla en varias variables en una sola línea. Debe haber tantas variables como elementos.
+
+```python
+latitud, longitud = ubicacion
+```
+
+**Por qué no se pueden cambiar.** `ubicacion[0] = 0` da un `TypeError`. Esa rigidez es una ventaja: si un valor no debe cambiar, la tupla te protege de modificarlo por error. Si necesitas cambiarla, creas una tupla nueva.
 </Concepto>
 
 <PythonTask
   id="tuplas"
-  enunciado={"Asigna a resultado la suma de los dos elementos de la tupla punto."}
-  preparacion={"punto = (10, 20)"}
-  inicial={"resultado = None"}
-  solucion={"resultado = punto[0]+punto[1]"}
-  pruebas={"import numbers\nesperado = 30\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Crea la tupla caja con las medidas de una caja en centímetros: 40 de largo, 30 de ancho y 20 de alto, en ese orden. Desempaquétala en las variables largo, ancho y alto, y calcula volumen multiplicando las tres."}
+  preparacion={""}
+  inicial={"# 1. Crea la tupla caja con largo, ancho y alto\ncaja = None\n\n# 2. Desempaquétala y calcula el volumen\nvolumen = None"}
+  solucion={"caja = (40, 30, 20)\n\nlargo, ancho, alto = caja\nvolumen = largo * ancho * alto"}
+  pruebas={"assert caja is not None, \"caja sigue en None: crea la tupla con las tres medidas.\"\nassert isinstance(caja, tuple), \"caja debe ser una tupla: los valores van entre paréntesis, no entre corchetes.\"\nassert caja == (40, 30, 20), \"caja no tiene las medidas pedidas en el orden largo, ancho, alto.\"\nassert (largo, ancho, alto) == caja, \"largo, ancho y alto deben salir de desempaquetar caja, en ese orden.\"\nassert volumen == largo * ancho * alto, \"volumen debe ser el largo por el ancho por el alto.\""}
   paquetes={[]}
-  pistas={["Los elementos de una tupla se leen por posición, empezando en 0.", "Suma el elemento de la posición 0 con el de la posición 1."]}
+  pistas={["Una tupla se escribe con paréntesis: (valor1, valor2, valor3).","Para desempaquetar, escribe las tres variables separadas por comas a la izquierda del = y la tupla a la derecha."]}
 />
 
 <Debrief>
-resultado = punto[0]+punto[1] = 10+20 = 30.
+```python
+caja = (40, 30, 20)
+
+largo, ancho, alto = caja
+volumen = largo * ancho * alto   # 24000
+```
+
+Desempaquetar le pone nombre a cada posición: `largo * ancho * alto` se entiende mucho mejor que `caja[0] * caja[1] * caja[2]`.
 </Debrief>

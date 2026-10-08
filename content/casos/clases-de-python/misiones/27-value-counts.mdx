@@ -1,41 +1,51 @@
 ---
-titulo: "value_counts"
-tiempo: 10
+titulo: "value_counts: contar categorías"
+tiempo: 12
 ---
 
 <Concepto>
-value_counts cuenta cuántas veces aparece cada valor distinto de una columna -- una forma rápida de responder «¿cuántas filas hay de cada categoría?», sin necesidad de un groupby completo.
-
-Es especialmente útil para columnas categóricas, como una region, un canal o un estado.
+"¿Por qué canal llegan más respuestas?" se responde contando cuántas veces aparece cada valor de una columna. `value_counts` lo hace en una línea y ordena el resultado de mayor a menor.
 
 <Sintaxis lenguaje="python" codigo={"df[\"columna\"].value_counts()"} />
 
-**Contar valores distintos.** df["columna"].value_counts() devuelve una Series con cada valor distinto como índice, y la cantidad de veces que aparece como valor -- ordenada de más a menos frecuente.
+**Contar.** El resultado es una Series: el índice son los valores distintos y los números, cuántas veces aparece cada uno. El más frecuente queda primero.
 
 ```python
-ventas["region"].value_counts()
+ventas["producto"].value_counts()
 ```
 
-**Acceder a un valor específico.** Igual que con groupby, .loc["etiqueta"] sobre el resultado devuelve la cantidad de esa categoria en particular.
+**El más frecuente.** Como viene ordenado, el primer elemento del índice es el valor más común.
 
 ```python
-ventas["region"].value_counts().loc["norte"]
+ventas["producto"].value_counts().index[0]   # "Mouse"
 ```
 
-**value_counts frente a groupby.** value_counts es un atajo para cuando solo necesitas contar filas por categoria -- si necesitas sumar o promediar otra columna por grupo, hace falta groupby.
+**Proporciones.** Con `normalize=True`, en vez de cantidades da la fracción de cada valor sobre el total: 0.25 es un cuarto de las filas. Multiplicada por 100, es un porcentaje.
+
+```python
+ventas["categoria"].value_counts(normalize=True)
+```
+
+**value_counts o groupby.** `value_counts` responde una sola pregunta: cuántas filas hay de cada valor. Si necesitas sumar o promediar otra columna por grupo, usa `groupby`.
 </Concepto>
 
 <PythonTask
   id="value-counts"
-  enunciado={"Asigna a resultado la cantidad de filas con region 'norte', usando value_counts sobre la columna region."}
-  preparacion={"import pandas as pd\nventas = pd.DataFrame({\"fecha\":[\"01/03/2026\",\"02/03/2026\",\"01/03/2026\",\"02/03/2026\"],\"region\":[\"norte\",\"norte\",\"sur\",\"sur\"],\"monto\":[100000,150000,80000,120000]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(ventas[\"region\"].value_counts().loc[\"norte\"])"}
-  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con encuesta ya cargada: guarda en por_canal cuántas respuestas llegaron por cada canal, con value_counts. Guarda en canal_top el canal con más respuestas, leyéndolo del resultado, y en porcentaje_web el porcentaje de respuestas que llegaron por web (de 0 a 100), usando normalize=True."}
+  preparacion={"import pandas as pd\nencuesta = pd.read_csv(\"datos/encuesta.csv\")"}
+  inicial={"# encuesta ya está cargada desde datos/encuesta.csv\npor_canal = None\ncanal_top = None\nporcentaje_web = None"}
+  solucion={"por_canal = encuesta[\"canal\"].value_counts()\ncanal_top = por_canal.index[0]\nporcentaje_web = encuesta[\"canal\"].value_counts(normalize=True)[\"web\"] * 100"}
+  pruebas={"_conteo = pd.read_csv(\"datos/encuesta.csv\")[\"canal\"].value_counts()\nassert isinstance(por_canal, pd.Series), \"por_canal debe ser una Series con la cantidad de respuestas de cada canal.\"\nassert por_canal.to_dict() == _conteo.to_dict(), \"por_canal no cuenta las respuestas de cada canal.\"\nassert canal_top == _conteo.index[0], \"canal_top no es el canal con más respuestas: léelo de por_canal, sin escribirlo a mano.\"\nassert porcentaje_web is not None and abs(porcentaje_web - _conteo[\"web\"] / _conteo.sum() * 100) < 0.01, \"porcentaje_web no es el porcentaje de respuestas web, de 0 a 100.\""}
   paquetes={["pandas"]}
-  pistas={["value_counts devuelve cuántas veces aparece cada valor de la columna.", "Lee el conteo de norte con .loc."]}
+  pistas={["value_counts se aplica a una columna: encuesta[\"canal\"].value_counts().","El índice de por_canal tiene los canales ordenados de más a menos respuestas.","Con normalize=True obtienes fracciones; lee la de \"web\" y multiplícala por 100."]}
 />
 
 <Debrief>
-resultado = int(ventas["region"].value_counts().loc["norte"]) = 2.
+```python
+por_canal = encuesta["canal"].value_counts()    # web 5, tienda 3, telefono 2, app 2
+canal_top = por_canal.index[0]                   # "web"
+porcentaje_web = encuesta["canal"].value_counts(normalize=True)["web"] * 100   # 41.7
+```
+
+`por_canal.index[0]` es la etiqueta ("web") y `por_canal.iloc[0]` es la cantidad (5). Confundirlos es uno de los errores más comunes al leer resultados de pandas.
 </Debrief>

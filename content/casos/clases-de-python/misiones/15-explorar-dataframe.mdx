@@ -4,38 +4,53 @@ tiempo: 12
 ---
 
 <Concepto>
-Antes de trabajar con un DataFrame que no conoces, conviene explorarlo: cuántas filas y columnas tiene, qué tipo de dato guarda cada columna, y cómo se ven las primeras filas.
+Antes de calcular nada con una tabla que no conoces, mírala: cuántas filas y columnas tiene, cómo se ven los primeros registros y qué tipo de dato guarda cada columna. Esa primera mirada evita errores que después cuestan mucho encontrar.
 
-head(), shape e info() son las tres herramientas más usadas para esa primera mirada.
+Los ejemplos usan una tabla `ventas`; en la tarea vas a explorar `encuesta`, que ya viene cargada desde el archivo `datos/encuesta.csv`. En la próxima lección vas a cargar los archivos tú.
 
-<Sintaxis lenguaje="python" codigo={"df.shape"} />
+<Sintaxis lenguaje="python" codigo={"df.head()\ndf.shape\ndf.info()"} />
 
-**head(): las primeras filas.** df.head() devuelve las primeras 5 filas por defecto -- df.head(3) devuelve las primeras 3. Sirve para dar un vistazo rápido sin imprimir la tabla completa.
-
-```python
-encuesta.head(3)
-```
-
-**shape: filas y columnas.** df.shape devuelve una tupla (cantidad_de_filas, cantidad_de_columnas). df.shape[0] da solo la cantidad de filas.
+**head(): las primeras filas.** `df.head()` muestra las 5 primeras filas; `df.head(3)`, las 3 primeras. `df.tail()` hace lo mismo con las últimas. Sirve para ver la forma de los datos sin imprimir la tabla entera.
 
 ```python
-encuesta.shape
+ventas.head(2)
 ```
 
-**info(): tipos de dato.** df.info() muestra un resumen de cada columna: su nombre, cuantos valores no nulos tiene, y su tipo de dato -- muy útil para detectar columnas con datos faltantes antes de trabajar con ellas.
+**shape: el tamaño.** `df.shape` es una tupla con (filas, columnas). Como toda tupla, se puede desempaquetar.
+
+```python
+ventas.shape            # (1200, 7): 1200 filas y 7 columnas
+n_filas, n_columnas = ventas.shape
+```
+
+**info(): las columnas por dentro.** `df.info()` imprime, por cada columna, su nombre, cuántos valores no vacíos tiene (Non-Null Count) y su tipo (Dtype). `int64` y `float64` son números; `object` suele ser texto. Si una columna que debería ser número aparece como `object`, algún valor tiene texto mezclado. Si el conteo de no vacíos es menor que el total de filas, hay datos faltantes.
+
+```python
+ventas.info()
+```
+
+**describe(): un resumen numérico.** `df.describe()` calcula, para cada columna numérica, el conteo, el promedio, el mínimo, el máximo y los cuartiles. Es una forma rápida de detectar valores raros, como una edad de 250.
 </Concepto>
 
 <PythonTask
   id="explorar-dataframe"
-  enunciado={"Asigna a resultado la cantidad de filas del DataFrame encuesta, usando shape."}
-  preparacion={"import pandas as pd\nencuesta = pd.DataFrame({\"respondent_id\":[1,2,3,4,5],\"edad\":[25,34,19,45,31],\"calificacion\":[5,3,4,2,4],\"canal\":[\"web\",\"tienda\",\"web\",\"telefono\",\"web\"]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = encuesta.shape[0]"}
-  pruebas={"import numbers\nesperado = 5\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"La tabla encuesta ya está cargada. Guarda en filas y columnas su tamaño desempaquetando shape, y en primeras sus 3 primeras filas con head. Después llama a encuesta.info() para revisar sus columnas, y guarda en tipo_canal el tipo de dato que info muestra para la columna canal, como texto (por ejemplo \"int64\")."}
+  preparacion={"import pandas as pd\nencuesta = pd.read_csv(\"datos/encuesta.csv\")"}
+  inicial={"# encuesta ya está cargada desde datos/encuesta.csv\nfilas = None\ncolumnas = None\nprimeras = None\n\n# Revisa las columnas con info() y anota el tipo de canal\ntipo_canal = None"}
+  solucion={"filas, columnas = encuesta.shape\nprimeras = encuesta.head(3)\n\nencuesta.info()\ntipo_canal = \"object\""}
+  pruebas={"assert filas == len(encuesta), \"filas no es la cantidad de filas de encuesta.\"\nassert columnas == len(encuesta.columns), \"columnas no es la cantidad de columnas de encuesta.\"\nassert isinstance(primeras, pd.DataFrame), \"primeras debe ser un DataFrame con filas de encuesta.\"\nassert primeras.equals(encuesta.head(3)), \"primeras no son las 3 primeras filas de encuesta.\"\nassert \"Non-Null\" in _salida, \"No se ve el resumen de info() en la salida.\"\nassert isinstance(tipo_canal, str), \"tipo_canal debe ser un texto entre comillas, con el tipo que muestra info.\"\nassert tipo_canal.strip() == str(encuesta[\"canal\"].dtype), \"tipo_canal no es el tipo que info() muestra para canal: mira la columna Dtype en la fila de canal.\""}
   paquetes={["pandas"]}
-  pistas={["shape devuelve una tupla: (filas, columnas).", "La cantidad de filas es el primer elemento de esa tupla."]}
+  pistas={["shape tiene dos valores; escribe dos variables a la izquierda del = para desempaquetarlo.","head recibe cuántas filas quieres ver: head(3).","En la salida de info(), busca la fila de canal y mira la última columna, Dtype."]}
 />
 
 <Debrief>
-resultado = encuesta.shape[0] = 5.
+```python
+filas, columnas = encuesta.shape   # 12 filas, 4 columnas
+primeras = encuesta.head(3)
+
+encuesta.info()
+tipo_canal = "object"
+```
+
+`info()` muestra que las cuatro columnas tienen sus 12 valores (no hay faltantes), que `respondent_id`, `edad` y `calificacion` son números (`int64`) y que `canal` es texto (`object`). Con esa revisión ya sabes qué columnas puedes sumar o promediar y cuáles agrupar.
 </Debrief>

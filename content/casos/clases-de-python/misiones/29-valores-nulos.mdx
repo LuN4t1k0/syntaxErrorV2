@@ -1,45 +1,56 @@
 ---
 titulo: "Valores nulos"
-tiempo: 14
+tiempo: 16
 ---
 
 <Concepto>
-Los datos reales casi siempre tienen huecos: una lectura de sensor que fallo, una encuesta sin responder. pandas representa esos valores faltantes como None (en Python) o NaN (Not a Number, dentro de una columna numérica).
+Un valor nulo es un dato que falta: una lectura que el sensor no envió o una celda que nadie llenó. pandas lo muestra como `NaN`. Antes de calcular, hay que saber cuántos hay y decidir qué hacer con ellos, porque esa decisión cambia los resultados.
 
-Antes de calcular cualquier resumen, conviene saber cuantos valores nulos hay y en que columnas, para decidir si conviene eliminarlos o reemplazarlos.
+<Sintaxis lenguaje="python" codigo={"df[\"columna\"].isna().sum()"} />
 
-<Sintaxis lenguaje="python" codigo={"df[\"columna\"].isna()"} />
-
-**Detectar valores nulos con isna().** df["columna"].isna() devuelve una Series de True/False -- True donde el valor es nulo. Sumar esa Series cuenta cuantos nulos hay.
+**Encontrarlos.** `isna()` da `True` donde falta el dato. Sumado, cuenta los faltantes. Sobre la tabla completa, `clientes.isna().sum()` cuenta los de cada columna.
 
 ```python
-sensor["temperatura"].isna()
+clientes["email"].isna().sum()
 ```
 
-**Eliminar filas con nulos: dropna().** df.dropna() elimina todas las filas que tengan al menos un valor nulo en cualquier columna.
+**Lo que hace pandas solo.** `sum()`, `mean()` y casi todos los resúmenes ignoran los `NaN`. Es cómodo, pero puede engañar: un promedio calculado con la mitad de los datos se ve igual que uno calculado con todos.
+
+**Opción 1: quitar las filas.** `dropna()` elimina las filas con algún dato faltante; con `subset` miras solo las columnas que importan. Es razonable cuando son pocas filas y no siguen un patrón.
 
 ```python
-sensor.dropna()
+clientes.dropna(subset=["email"])
 ```
 
-**Reemplazar nulos: fillna().** df["columna"].fillna(valor) reemplaza los nulos de esa columna por un valor específico -- por ejemplo, el promedio de la columna.
+**Opción 2: rellenar.** `fillna(valor)` pone un valor fijo donde falta, por ejemplo 0 en una columna de descuentos, donde vacío significa "sin descuento". En mediciones que cambian de a poco, como una temperatura, `ffill()` repite la última lectura conocida.
 
 ```python
-sensor["temperatura"].fillna(sensor["temperatura"].mean())
+ventas["descuento"] = ventas["descuento"].fillna(0)
+stock_diario["unidades"].ffill()
 ```
+
+Ojo con `ffill` cuando la tabla mezcla grupos: si la primera lectura de un sensor faltara, se rellenaría con la última del sensor anterior. Rellenar es inventar un dato; cuando lo hagas, déjalo escrito en tu análisis.
 </Concepto>
 
 <PythonTask
   id="valores-nulos"
-  enunciado={"Asigna a resultado la cantidad de valores nulos en la columna temperatura, usando isna().sum()."}
-  preparacion={"import pandas as pd\nsensor = pd.DataFrame({\"timestamp\":[1,2,3,4],\"temperatura\":[22.5, None, 21.0, None]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(sensor[\"temperatura\"].isna().sum())"}
-  pruebas={"import numbers\nesperado = 2\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"La tabla sensor ya está cargada, con lecturas de temperatura de dos sensores. Guarda en nulos cuántas temperaturas faltan. Guarda en sin_nulos la tabla sin las filas que no tienen temperatura. Después crea en sensor la columna temperatura_rellena, con cada temperatura faltante reemplazada por la última lectura conocida."}
+  preparacion={"import pandas as pd\nsensor = pd.read_csv(\"datos/sensor.csv\")"}
+  inicial={"# sensor ya está cargada desde datos/sensor.csv\nnulos = None\n\nsin_nulos = None\n\n# Crea la columna temperatura_rellena"}
+  solucion={"nulos = sensor[\"temperatura\"].isna().sum()\n\nsin_nulos = sensor.dropna(subset=[\"temperatura\"])\n\nsensor[\"temperatura_rellena\"] = sensor[\"temperatura\"].ffill()"}
+  pruebas={"_s = pd.read_csv(\"datos/sensor.csv\")\nassert nulos == _s[\"temperatura\"].isna().sum(), \"nulos no es la cantidad de temperaturas faltantes.\"\nassert isinstance(sin_nulos, pd.DataFrame), \"sin_nulos debe ser la tabla sensor sin las filas que no tienen temperatura.\"\nassert len(sin_nulos) == len(_s) - _s[\"temperatura\"].isna().sum(), \"sin_nulos no tiene las filas esperadas: quita solo las filas a las que les falta la temperatura.\"\nassert sin_nulos[\"temperatura\"].isna().sum() == 0, \"sin_nulos todavía tiene temperaturas faltantes.\"\nassert len(sensor) == len(_s), \"sensor perdió filas: guarda la tabla sin nulos en sin_nulos y deja sensor completa.\"\nassert \"temperatura_rellena\" in sensor.columns, \"sensor todavía no tiene la columna temperatura_rellena.\"\nassert sensor[\"temperatura_rellena\"].isna().sum() == 0, \"temperatura_rellena todavía tiene valores faltantes.\"\nassert sensor[\"temperatura_rellena\"].tolist() == _s[\"temperatura\"].ffill().tolist(), \"temperatura_rellena no repite la última lectura conocida en cada faltante.\""}
   paquetes={["pandas"]}
-  pistas={["isna devuelve True donde falta el valor.", "Sumar esos True cuenta los valores faltantes."]}
+  pistas={["isna() marca los faltantes con True; sumarlos los cuenta.","dropna con subset=[\"temperatura\"] mira solo esa columna.","ffill() rellena cada faltante con el valor de la fila anterior."]}
 />
 
 <Debrief>
-resultado = int(sensor["temperatura"].isna().sum()) = 2.
+```python
+nulos = sensor["temperatura"].isna().sum()             # 3
+
+sin_nulos = sensor.dropna(subset=["temperatura"])      # 8 filas
+
+sensor["temperatura_rellena"] = sensor["temperatura"].ffill()
+```
+
+¿Por qué no rellenar con el promedio? La tabla mezcla una bodega a unos 4 °C y una cámara de frío a unos -18 °C. El promedio general, cerca de -8 °C, no corresponde a ninguno de los dos sensores. Antes de rellenar, pregúntate qué significa el dato que falta.
 </Debrief>

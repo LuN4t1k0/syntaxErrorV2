@@ -1,41 +1,59 @@
 ---
-titulo: "agg"
+titulo: "agg: varios resúmenes a la vez"
 tiempo: 16
 ---
 
 <Concepto>
-Cuando hacen falta varias funciones de resumen a la vez (por ejemplo, suma y promedio juntos), agg permite pedirlas todas en una sola línea, en vez de escribir un groupby por cada una.
+Un informe rara vez pide un solo número por grupo: quiere el total, el promedio y la cantidad de ventas de cada categoría, juntos en una tabla. `agg` calcula varios resúmenes en un solo paso.
 
-Se le pasa una lista con los nombres de las funciones a calcular, y devuelve una tabla con una columna por cada una.
+<Sintaxis lenguaje="python" codigo={"df.groupby(\"grupo\")[\"columna\"].agg([\"sum\", \"mean\", \"count\"])"} />
 
-<Sintaxis lenguaje="python" codigo={"df.groupby(\"columna\")[\"otra\"].agg([\"sum\",\"mean\"])"} />
-
-**Varias funciones de resumen a la vez.** agg(["sum","mean"]) calcula la suma y el promedio de cada grupo, devolviendo un DataFrame con esas dos columnas.
+**Varias funciones sobre una columna.** Con una lista de nombres de funciones, `agg` devuelve un DataFrame: una fila por grupo y una columna por función.
 
 ```python
-ventas.groupby("region")["monto"].agg(["sum","mean"])
+notas = encuesta.groupby("canal")["calificacion"].agg(["mean", "min", "count"])
 ```
 
-**Acceder a un valor específico del resultado.** Sobre el resultado de agg, .loc["grupo","columna"] permite acceder al valor de una función en particular para un grupo en particular.
+**Leer un valor.** Con `loc`, la etiqueta del grupo y el nombre de la columna.
 
 ```python
-resumen.loc["sur","mean"]
+notas.loc["web", "min"]
 ```
 
-**agg también acepta un diccionario.** Para aplicar funciones distintas a columnas distintas, agg también acepta un diccionario (&#123;"columna": "función"&#125;) -- por ahora alcanza con la lista de funciones sobre una sola columna.
+**Columnas con nombre propio.** Cuando resumes columnas distintas, o quieres nombres claros para el informe, escribe cada columna nueva como `nombre=("columna", "función")`. Es la forma más legible y la que más se usa en el trabajo real.
+
+```python
+encuesta.groupby("canal").agg(
+    respuestas=("respondent_id", "count"),
+    nota_promedio=("calificacion", "mean"),
+    edad_promedio=("edad", "mean"),
+)
+```
+
+**Los grupos como columna.** Por defecto, los grupos quedan en el índice. Con `groupby(..., as_index=False)` quedan como una columna normal, lo que sirve cuando después vas a exportar la tabla o combinarla con otra.
 </Concepto>
 
 <PythonTask
   id="agg"
-  enunciado={"Usa agg([\"sum\",\"mean\"]) para calcular la suma y el promedio de monto por region, y asigna a resultado el promedio de la region 'sur'."}
-  preparacion={"import pandas as pd\nventas = pd.DataFrame({\"fecha\":[\"01/03/2026\",\"02/03/2026\",\"01/03/2026\",\"02/03/2026\"],\"region\":[\"norte\",\"norte\",\"sur\",\"sur\"],\"monto\":[100000,150000,80000,120000]})"}
-  inicial={"resumen = ventas.groupby(\"region\")[\"monto\"].agg([\"sum\",\"mean\"])\nresultado = None"}
-  solucion={"resumen = ventas.groupby(\"region\")[\"monto\"].agg([\"sum\",\"mean\"])\nresultado = float(resumen.loc[\"sur\",\"mean\"])"}
-  pruebas={"import numbers\nesperado = 100000\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Con ventas ya cargada: guarda en resumen_categoria la suma, el promedio y la cantidad de montos de cada categoría, usando agg con la lista [\"sum\", \"mean\", \"count\"]. Guarda en promedio_hogar el promedio de la categoría hogar. Después crea informe_region, agrupado por región, con dos columnas con nombre: total (la suma de monto) y unidades (la suma de cantidad)."}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")"}
+  inicial={"# ventas ya está cargada desde datos/ventas.csv\nresumen_categoria = None\npromedio_hogar = None\n\ninforme_region = None"}
+  solucion={"resumen_categoria = ventas.groupby(\"categoria\")[\"monto\"].agg([\"sum\", \"mean\", \"count\"])\npromedio_hogar = resumen_categoria.loc[\"hogar\", \"mean\"]\n\ninforme_region = ventas.groupby(\"region\").agg(\n    total=(\"monto\", \"sum\"),\n    unidades=(\"cantidad\", \"sum\"),\n)"}
+  pruebas={"_v = pd.read_csv(\"datos/ventas.csv\")\nassert isinstance(resumen_categoria, pd.DataFrame), \"resumen_categoria debe ser un DataFrame con varios resúmenes por categoría.\"\nassert list(resumen_categoria.columns) == [\"sum\", \"mean\", \"count\"], \"resumen_categoria debe tener las columnas sum, mean y count, en ese orden.\"\n_esperado = _v.groupby(\"categoria\")[\"monto\"].agg([\"sum\", \"mean\", \"count\"])\nassert sorted(resumen_categoria.index.tolist()) == sorted(_esperado.index.tolist()), \"resumen_categoria debe tener una fila por categoría: agrupa por categoria.\"\nassert resumen_categoria[\"sum\"].to_dict() == _esperado[\"sum\"].to_dict(), \"Los valores de resumen_categoria no corresponden a la columna monto.\"\nassert abs(promedio_hogar - _esperado.loc[\"hogar\", \"mean\"]) < 0.01, \"promedio_hogar no es el promedio de la categoría hogar.\"\nassert isinstance(informe_region, pd.DataFrame), \"informe_region debe ser un DataFrame agrupado por región.\"\nassert sorted(informe_region.columns.tolist()) == [\"total\", \"unidades\"], \"informe_region debe tener solo las columnas total y unidades.\"\n_r = _v.groupby(\"region\").agg(total=(\"monto\", \"sum\"), unidades=(\"cantidad\", \"sum\"))\nassert informe_region[\"total\"].to_dict() == _r[\"total\"].to_dict(), \"La columna total no es la suma de monto por región.\"\nassert informe_region[\"unidades\"].to_dict() == _r[\"unidades\"].to_dict(), \"La columna unidades no es la suma de cantidad por región.\""}
   paquetes={["pandas"]}
-  pistas={["La tabla resumen ya tiene una fila por región y las columnas sum y mean.", "Con .loc se lee una celda indicando la fila y la columna."]}
+  pistas={["agg recibe una lista con los nombres de las funciones, entre comillas.","Para leer un valor del resumen: resumen_categoria.loc[fila, columna].","Con nombres propios, agg recibe argumentos como total=(\"monto\", \"sum\"): la columna y la función."]}
 />
 
 <Debrief>
-resultado = float(resumen.loc["sur","mean"]) = (80000+120000)/2 = 100000.
+```python
+resumen_categoria = ventas.groupby("categoria")["monto"].agg(["sum", "mean", "count"])
+promedio_hogar = resumen_categoria.loc["hogar", "mean"]   # 72750
+
+informe_region = ventas.groupby("region").agg(
+    total=("monto", "sum"),
+    unidades=("cantidad", "sum"),
+)
+```
+
+Hogar tiene 4 ventas con un promedio de 72750 y tecnología, 8 con un promedio de 168250. Con el promedio y la cantidad juntos se ve algo que el total solo no muestra: tecnología vende más porque vende más veces y además más caro.
 </Debrief>

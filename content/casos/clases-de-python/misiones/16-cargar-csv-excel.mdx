@@ -4,40 +4,53 @@ tiempo: 14
 ---
 
 <Concepto>
-Hasta ahora los DataFrames se armaron a mano con pd.DataFrame(...). En la practica, los datos casi siempre llegan desde un archivo -- un CSV exportado de un sistema, o una planilla de Excel.
+En el trabajo real los datos llegan en archivos: un CSV exportado de un sistema o una planilla de Excel. pandas los lee y los convierte en un DataFrame con una sola línea.
 
-pd.read_csv() lee un archivo CSV y lo convierte directamente en un DataFrame. Cuando el archivo no viene de disco sino de texto en memoria, io.StringIO lo envuelve para que read_csv lo pueda leer igual.
+<Sintaxis lenguaje="python" codigo={"df = pd.read_csv(\"carpeta/archivo.csv\")"} />
 
-<Sintaxis lenguaje="python" codigo={"pd.read_csv(ruta_o_buffer)"} />
+**Un CSV es texto.** Cada línea es una fila y un separador divide las columnas. La primera línea suele traer los nombres de las columnas. Así se ve por dentro `datos/ventas.csv`:
 
-**Un CSV es texto con comas.** Cada línea es una fila y cada valor separado por coma es una columna. La primera línea suele ser el encabezado con los nombres de columna.
-
-**Leer un CSV en memoria con io.StringIO.** io.StringIO envuelve un string para que se comporte como un archivo -- así read_csv puede leerlo sin que exista un archivo real en disco.
-
-```python
-import pandas as pd
-import io
-
-texto_csv = "producto,precio\nMouse,12000\nTeclado,25000"
-ventas = pd.read_csv(io.StringIO(texto_csv))
+```text
+venta_id,fecha,region,categoria,producto,cantidad,monto
+1,2026-01-08,norte,tecnologia,Notebook,1,450000
+2,2026-01-15,sur,hogar,Lámpara,2,24000
 ```
 
-**read_excel para archivos de Excel.** pd.read_excel("archivo.xlsx") funciona igual que read_csv pero para hojas de cálculo -- requiere el archivo real en disco, algo que este curso no puede simular en el navegador, pero se usa exactamente así en tu propia computadora.
+**read_csv.** Recibe la ruta del archivo, relativa a donde corre tu código. En esta plataforma, los archivos del curso están en la carpeta `datos/`.
 
-**Primeras filas con head().** Después de cargar cualquier archivo conviene mirar las primeras filas con head() antes de seguir trabajando.
+```python
+encuesta = pd.read_csv("datos/encuesta.csv")
+```
+
+**Cuando el separador es punto y coma.** En Chile y otros países que usan la coma para los decimales, muchos sistemas exportan CSV separados por `;`. Si lo lees sin avisar, pandas encuentra una sola columna con todo el texto adentro. El parámetro `sep` le dice cuál es el separador.
+
+```python
+pd.read_csv("archivo.csv", sep=";")
+```
+
+**Revisar al cargar.** Después de cargar, mira el resultado antes de seguir: `head()` para ver las filas y `columns` para confirmar que las columnas se separaron bien.
+
+**read_excel.** `pd.read_excel("archivo.xlsx", sheet_name="Hoja1")` funciona igual para planillas de Excel. En tu computadora necesita la librería `openpyxl` instalada. En el navegador de este curso trabajamos con CSV, que es el formato más común para intercambiar datos.
 </Concepto>
 
 <PythonTask
   id="cargar-csv-excel"
-  enunciado={"Carga texto_csv con pd.read_csv(io.StringIO(...)) y asigna a resultado la cantidad de filas del DataFrame resultante."}
-  preparacion={"import pandas as pd\nimport io"}
-  inicial={"texto_csv = \"producto,precio,stock\\nMouse,12000,10\\nTeclado,25000,4\\nMonitor,150000,2\"\nresultado = None"}
-  solucion={"texto_csv = \"producto,precio,stock\\nMouse,12000,10\\nTeclado,25000,4\\nMonitor,150000,2\"\nresultado = pd.read_csv(io.StringIO(texto_csv)).shape[0]"}
-  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Carga datos/ventas.csv en la variable ventas y guarda en cantidad_ventas cuántas filas tiene. Después carga datos/proveedores.csv en proveedores: revisa sus columnas, porque ese archivo viene de otro sistema."}
+  preparacion={"import pandas as pd"}
+  inicial={"# pandas ya está importado como pd\nventas = None\ncantidad_ventas = None\n\nproveedores = None"}
+  solucion={"ventas = pd.read_csv(\"datos/ventas.csv\")\ncantidad_ventas = len(ventas)\n\nproveedores = pd.read_csv(\"datos/proveedores.csv\", sep=\";\")"}
+  pruebas={"assert isinstance(ventas, pd.DataFrame), \"ventas debe ser un DataFrame cargado desde datos/ventas.csv.\"\nassert ventas.equals(pd.read_csv(\"datos/ventas.csv\")), \"ventas no tiene el contenido de datos/ventas.csv: revisa la ruta del archivo.\"\nassert cantidad_ventas == len(ventas), \"cantidad_ventas no es la cantidad de filas de ventas.\"\nassert isinstance(proveedores, pd.DataFrame), \"proveedores debe ser un DataFrame cargado desde datos/proveedores.csv.\"\nassert len(proveedores.columns) > 1, \"proveedores quedó con una sola columna: mira con qué carácter se separan las columnas en ese archivo.\"\nassert list(proveedores.columns) == [\"proveedor\", \"rut\", \"ciudad\", \"plazo_dias\"], \"Las columnas de proveedores no quedaron bien separadas: revisa el separador.\""}
   paquetes={["pandas"]}
-  pistas={["io.StringIO envuelve el texto para que read_csv lo lea como un archivo.", "Después de cargarlo, la cantidad de filas está en shape."]}
+  pistas={["La ruta va entre comillas e incluye la carpeta: \"datos/ventas.csv\".","len(df) cuenta las filas de datos, sin contar el encabezado.","Ejecuta proveedores.head() y mira cómo quedaron las columnas; read_csv acepta sep=\";\"."]}
 />
 
 <Debrief>
-resultado = pd.read_csv(io.StringIO(texto_csv)).shape[0] = 3, porque el CSV tiene 3 filas de datos además del encabezado.
+```python
+ventas = pd.read_csv("datos/ventas.csv")
+cantidad_ventas = len(ventas)   # 12
+
+proveedores = pd.read_csv("datos/proveedores.csv", sep=";")
+```
+
+Sin `sep=";"`, `proveedores` queda con una sola columna llamada `proveedor;rut;ciudad;plazo_dias`. No es un error de Python, así que nada te avisa: por eso conviene mirar las columnas cada vez que cargas un archivo.
 </Debrief>

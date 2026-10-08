@@ -1,41 +1,48 @@
 ---
-titulo: "merge"
-tiempo: 16
+titulo: "merge: combinar tablas"
+tiempo: 18
 ---
 
 <Concepto>
-merge combina dos DataFrames en uno solo, cruzando filas según el valor de una columna en común -- por ejemplo, agregar el nombre del encargado de cada region a una tabla de ventas.
+Los datos útiles suelen estar repartidos: las ventas dicen la región, pero la ciudad y la meta de cada región están en otra tabla. `merge` une dos tablas usando una columna que tienen en común, como `BUSCARV` en Excel o `JOIN` en SQL.
 
-Es el equivalente en pandas a un JOIN de SQL: conecta datos que viven en tablas separadas a traves de una clave compartida.
+<Sintaxis lenguaje="python" codigo={"izquierda.merge(derecha, on=\"columna_comun\", how=\"inner\")"} />
 
-<Sintaxis lenguaje="python" codigo={"df1.merge(df2, on=\"columna_en_comun\")"} />
-
-**Dos tablas relacionadas por una columna.** En este ejemplo, ventas tiene una columna region, y regiones tiene esa misma columna region junto con el nombre del encargado.
+**La columna en común.** Imagina una tabla `pedidos` con la columna `cliente_id` y una tabla `clientes` con `cliente_id`, nombre y comuna. `merge` busca, para cada pedido, la fila de `clientes` con el mismo id y pega sus columnas al lado.
 
 ```python
-regiones = pd.DataFrame({"region":["norte","sur"],"encargado":["Camila","Diego"]})
+pedidos.merge(clientes, on="cliente_id")
 ```
 
-**merge con on.** df1.merge(df2, on="columna") cruza ambas tablas por esa columna, agregando a cada fila de df1 los datos de df2 que correspondan según ese valor.
+**inner: solo lo que calza.** Es el tipo por defecto: quedan las filas cuyo `cliente_id` aparece en las dos tablas. Un cliente sin pedidos no aparece en el resultado.
+
+**left: todo lo de la izquierda.** Con `how="left"` quedan todas las filas de la tabla de la izquierda, aunque no encuentren pareja. Donde no hay pareja, las columnas de la otra tabla quedan vacías (`NaN`). Sirve para preguntas como "¿qué clientes no han comprado?".
 
 ```python
-ventas.merge(regiones, on="region")
+clientes.merge(pedidos, on="cliente_id", how="left")
 ```
 
-**Cantidad de filas del resultado.** Si cada valor de la columna de cruce aparece una sola vez en la segunda tabla (como region en regiones), el resultado tiene la misma cantidad de filas que la primera tabla.
+**Revisa la cantidad de filas.** Antes y después de un `merge`, cuenta las filas. Si una tabla que debía tener un valor por clave tiene la clave repetida, cada coincidencia multiplica filas, y los totales que calcules después quedan inflados sin ningún aviso.
 </Concepto>
 
 <PythonTask
   id="merge"
-  enunciado={"Combina ventas con regiones usando merge por la columna region, y asigna a resultado la cantidad de filas del resultado."}
-  preparacion={"import pandas as pd\nregiones = pd.DataFrame({\"region\":[\"norte\",\"sur\"],\"encargado\":[\"Camila\",\"Diego\"]})\nventas = pd.DataFrame({\"region\":[\"norte\",\"sur\",\"norte\"],\"monto\":[100000,80000,150000]})"}
-  inicial={"resultado = None"}
-  solucion={"resultado = int(ventas.merge(regiones, on=\"region\").shape[0])"}
-  pruebas={"import numbers\nesperado = 3\nif isinstance(esperado, numbers.Number) and isinstance(resultado, numbers.Number):\n    assert abs(resultado - esperado) < 0.0001, \"resultado no tiene el valor esperado: revisa el cálculo.\"\nelse:\n    assert resultado == esperado, \"resultado no tiene el valor esperado: revisa el cálculo.\""}
+  enunciado={"Las tablas ventas y regiones ya están cargadas. Guarda en ventas_con_ciudad el resultado de combinar ventas con regiones por la columna region (solo las filas que calzan). Después guarda en cobertura todas las regiones, tengan o no ventas, combinando regiones con ventas con how=\"left\", y en filas_cobertura cuántas filas quedaron."}
+  preparacion={"import pandas as pd\nventas = pd.read_csv(\"datos/ventas.csv\")\nregiones = pd.read_csv(\"datos/regiones.csv\")"}
+  inicial={"# ventas y regiones ya están cargadas desde datos/\nventas_con_ciudad = None\n\ncobertura = None\nfilas_cobertura = None"}
+  solucion={"ventas_con_ciudad = ventas.merge(regiones, on=\"region\")\n\ncobertura = regiones.merge(ventas, on=\"region\", how=\"left\")\nfilas_cobertura = len(cobertura)"}
+  pruebas={"_v = pd.read_csv(\"datos/ventas.csv\")\n_r = pd.read_csv(\"datos/regiones.csv\")\nassert isinstance(ventas_con_ciudad, pd.DataFrame), \"ventas_con_ciudad debe ser un DataFrame con ventas y regiones combinadas.\"\nassert \"ciudad\" in ventas_con_ciudad.columns and \"monto\" in ventas_con_ciudad.columns, \"ventas_con_ciudad debe tener las columnas de las dos tablas, como monto y ciudad.\"\nassert len(ventas_con_ciudad) == len(_v.merge(_r, on=\"region\")), \"ventas_con_ciudad no tiene las filas esperadas: debe quedar una fila por venta.\"\nassert isinstance(cobertura, pd.DataFrame), \"cobertura debe ser un DataFrame: combina regiones con ventas.\"\n_esperada = _r.merge(_v, on=\"region\", how=\"left\")\nassert sorted(cobertura[\"region\"].unique().tolist()) == sorted(_r[\"region\"].tolist()), \"cobertura debe incluir todas las regiones, también las que no tienen ventas.\"\nassert len(cobertura) == len(_esperada), \"cobertura no tiene las filas esperadas: revisa qué tabla va a la izquierda y qué tipo de combinación usas.\"\nassert filas_cobertura == len(cobertura), \"filas_cobertura no es la cantidad de filas de cobertura.\""}
   paquetes={["pandas"]}
-  pistas={["merge une dos tablas por una columna que tienen en común: on=\"region\".", "Después cuenta las filas del resultado."]}
+  pistas={["merge se llama desde la tabla de la izquierda: izquierda.merge(derecha, on=\"region\").","Con how=\"left\" se conservan todas las filas de la tabla que escribes primero.","Ejecuta y mira la fila de austral en cobertura: ¿qué tienen sus columnas de ventas?"]}
 />
 
 <Debrief>
-resultado = int(ventas.merge(regiones, on="region").shape[0]) = 3, porque cada una de las 3 filas de ventas encuentra su region correspondiente en regiones.
+```python
+ventas_con_ciudad = ventas.merge(regiones, on="region")   # 12 filas: cada venta con su ciudad
+
+cobertura = regiones.merge(ventas, on="region", how="left")
+filas_cobertura = len(cobertura)                           # 13
+```
+
+`cobertura` tiene 13 filas: las 12 ventas más una fila para austral, que no tuvo ventas y queda con `NaN` en `venta_id`, `monto` y el resto de las columnas de ventas. Con un `merge` inner, austral desaparece sin aviso; con `left`, se ve que falta.
 </Debrief>
