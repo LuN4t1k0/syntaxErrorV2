@@ -1,6 +1,6 @@
 # Ficha del alumno y avance enviado: diseño
 
-**Fecha:** 2026-10-08. **Estado:** diseño aprobado en la conversación, pendiente de plan.
+**Fecha:** 2026-10-08. **Estado:** implementado.
 
 ## 1. Problema
 
@@ -42,7 +42,7 @@ Devuelve:
 
   Cada evento trae la fecha, el tipo, un texto corto y un enlace.
 
-Los títulos de casos y lecciones salen del contenido compilado. Si una lección guardada ya no existe en el contenido, se omite.
+Los títulos de casos y lecciones salen de `casos.misiones`, sincronizado desde el contenido. Si una lección guardada ya no existe ahí, se omite. **(al implementar)**
 
 ## 4. Trabas: `trabasDelAlumno`
 
@@ -57,7 +57,7 @@ Las reglas y sus umbrales son constantes exportadas:
 | `entrega` | Una entrega con estado `observado` | `entrega observada · <caso>` | Tu entrega de *<caso>* tiene observaciones: revísalas y vuelve a enviarla. |
 | `pregunta` | Una pregunta a un docente `pendiente` | `pregunta sin responder hace N días · <caso>` | Tu pregunta en *<caso>* todavía espera respuesta: te avisaremos por email. |
 
-**Siguiente paso:** si no hay trabas, el alumno ve el siguiente paso de `siguientePaso` (`lib/progreso/continuar`), que es el mismo del botón "Continuar" del panel.
+**Siguiente paso:** si no hay trabas, el alumno ve el siguiente paso calculado por `siguienteDelAvance(avance)`, con la misma regla del botón "Continuar" del panel pero usando el avance ya armado. **(al implementar)**
 
 ## 5. La ficha del admin: `/admin/usuarios/[id]`
 
@@ -127,7 +127,7 @@ El nuevo tipo de `TrabajoEmail` es:
 - **El asunto:** "Tu avance en syntaxError.cl".
 - **El cuerpo usa la plantilla actual del worker:**
   1. el saludo;
-  2. la nota, si la hay, en un bloque destacado con la firma "El equipo de syntaxError.cl";
+  2. la nota, si la hay, como un párrafo que empieza con "Nota del equipo:";
   3. el avance de cada ruta en una línea ("Data Analyst: 3 de 9 casos");
   4. dónde va;
   5. los siguientes pasos;
