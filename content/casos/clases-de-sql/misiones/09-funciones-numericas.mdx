@@ -4,38 +4,40 @@ tiempo: 12
 ---
 
 <Concepto>
-ROUND redondea números al consultar.
+Las operaciones con números dan resultados con muchos decimales que nadie quiere leer en un reporte. `ROUND` y sus parientes ajustan esos números para presentarlos, sin cambiar los datos guardados.
 
-Es útil para promedios y calculos con muchos decimales.
+<Sintaxis lenguaje="sql" codigo={"ROUND(número, decimales)"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT ROUND(columna, decimales) FROM tabla;"} />
+**ROUND con decimales.** El segundo argumento dice cuántos decimales dejar. Sin él, redondea a entero.
 
-**Para qué sirve en la vida real.** ROUND evita reportes con decimales eternos. Nadie quiere leer una nota como si fuera coordenada espacial.
+<SqlEjemplo consulta={"SELECT titulo, horas, horas / 7.0 AS horas_diarias, ROUND(horas / 7.0, 1) AS horas_diarias_redondeadas FROM cursos;"} />
 
-**Cómo pensarlo sin sufrir.** La nota exacta queda igual; la columna redondeada aparece solo en el resultado.
+**CEIL y FLOOR.** `CEIL` redondea siempre hacia arriba y `FLOOR` siempre hacia abajo. Si un curso de 18 horas se dicta en bloques de 4 horas, se necesitan `CEIL(18 / 4.0)` = 5 bloques: con 4 no alcanza.
 
-**ROUND con decimales.** El segundo argumento indica cuantos decimales conservar.
+<SqlEjemplo consulta={"SELECT titulo, horas, CEIL(horas / 4.0) AS bloques_de_4_horas FROM cursos;"} />
 
-<SqlEjemplo consulta={"SELECT nota, ROUND(nota, 1) AS nota_un_decimal FROM inscripciones;"} />
+**Calcular antes de redondear.** Puedes redondear el resultado de una expresión completa: `ROUND(nota * 100 / 7)` primero convierte y después redondea. Redondea al final; si redondeas en pasos intermedios, el error se acumula.
 
-**ROUND a entero.** Sin segundo argumento redondea al entero más cercano.
-
-<SqlEjemplo consulta={"SELECT e.nombre, i.nota, ROUND(i.nota) AS nota_entera FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"} />
-
-**No cambia datos.** La tabla conserva el valor original.
-
-**Usarlo con AVG.** ROUND suele combinarse con promedios.
+**Con NULL, el resultado es NULL.** Cualquier operación con un dato que falta da `NULL`: no hay forma de redondear una nota que todavía no existe.
 </Concepto>
 
 <SqlTask
   id="funciones-numericas"
-  enunciado={"Muestra el nombre, la nota exacta y la nota redondeada a entero (como nota_entera) de cada inscripción."}
+  enunciado={"La plataforma muestra las notas también como porcentaje de logro. Para cada inscripción, muestra el nombre del estudiante, la nota y una columna porcentaje con la nota convertida a escala de 0 a 100 (nota por 100, dividido por 7), redondeada a entero."}
   inicial={"SELECT e.nombre, i.nota FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
-  solucion={"SELECT e.nombre, i.nota, ROUND(i.nota) AS nota_entera FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
-  comparar="filas-sin-orden"
-  pistas={["La nota está en inscripciones y el nombre en estudiantes: necesitas un JOIN.", "ROUND sin segundo argumento redondea a número entero."]}
+  solucion={"SELECT e.nombre, i.nota, ROUND(i.nota * 100 / 7) AS porcentaje FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
+  comparar={"filas-sin-orden"}
+  pistas={["El porcentaje es una expresión: nota por 100, dividido por 7.","ROUND sin segundo argumento redondea a entero; envuelve con él la expresión completa."]}
 />
 
 <Debrief>
-ROUND(i.nota) sin segundo argumento redondea al entero más cercano.
+```sql
+SELECT e.nombre,
+       i.nota,
+       ROUND(i.nota * 100 / 7) AS porcentaje
+FROM inscripciones AS i
+JOIN estudiantes AS e ON e.id = i.estudiante_id;
+```
+
+Un 6.2 equivale a un 89 %. Si redondeas la nota antes de convertirla, `ROUND(i.nota) * 100 / 7`, un 6.2 pasa a ser 6 y termina en 86 %. Valentina Castro aparece con la nota y el porcentaje vacíos: su curso todavía no tiene nota.
 </Debrief>

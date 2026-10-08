@@ -4,28 +4,51 @@ tiempo: 25
 ---
 
 <Concepto>
-Este es el proyecto final del curso: combinar WITH, JOIN y CASE WHEN en una sola consulta para responder una pregunta real de negocio.
+Este proyecto junta lo principal del curso en una sola consulta: resumir, unir, clasificar y ordenar. La coordinación quiere saber cómo va cada estudiante para decidir a quién reconocer y a quién apoyar.
 
-No hay conceptos nuevos -- es integrar en una consulta lo que ya practicaste lección por lección.
+<Sintaxis lenguaje="sql" codigo={"WITH resumen AS (... GROUP BY ...)\nSELECT ..., CASE ... END AS segmento\nFROM resumen\nJOIN ...\nORDER BY ...;"} />
 
-**Para qué sirve en la vida real.** El proyecto final une lo importante: resumir, unir y clasificar. Ya no es sintaxis suelta, es una pregunta de negocio completa.
+**El plan antes que la consulta.** Una consulta larga sale mejor si la piensas en pasos:
 
-**Cómo pensarlo sin sufrir.** CTE calcula el resumen; JOIN trae nombres; CASE WHEN convierte promedios en segmentos.
+1. **Resumir:** por cada estudiante, cuántas inscripciones tiene y su nota promedio. Es un `GROUP BY` sobre `inscripciones`.
+2. **Nombrar:** el resumen tiene ids; un `JOIN` con `estudiantes` trae el nombre.
+3. **Clasificar:** un `CASE` convierte el promedio en un segmento.
+4. **Ordenar:** de mayor a menor promedio, con un desempate.
 
-**El plan de la consulta.** Primero un CTE resumen calcula cantidad de inscripciones y promedio de nota por estudiante. Después la consulta externa hace JOIN con estudiantes y clasifica cada uno con CASE WHEN.
+**Un CTE para el paso 1.** Deja el resumen con nombre arriba, y la consulta principal se lee como el resto del plan.
 
-**Por que un CTE primero.** Calcular el promedio antes, en su propio bloque con nombre, hace que la consulta final sea mucho más fácil de leer que anidar todo en un solo SELECT.
+**Probar cada paso.** Ejecuta el `WITH` solo con un `SELECT * FROM resumen` antes de escribir lo demás. Si el resumen está mal, todo lo que viene después también.
+
+**Los casos borde del CASE.** Piensa qué pasa con un estudiante cuya única inscripción todavía no tiene nota: su promedio es `NULL`, y `NULL >= 6.5` no es verdadero. Si no lo consideras, el `ELSE` lo clasificaría como "en riesgo" sin tener ninguna nota. En un `CASE`, revisa primero el caso especial.
 </Concepto>
 
 <SqlTask
   id="proyecto-final-sql"
-  enunciado={"Calcula, por estudiante, nombre, cantidad, promedio y segmento usando un CTE. Clasifica como 'alto rendimiento' si promedio >= 6.5, 'regular' si promedio >= 5.5 y 'en riesgo' en el resto. Ordena de mayor a menor promedio."}
+  enunciado={"Con un CTE, calcula por estudiante su cantidad de inscripciones (cantidad) y su nota promedio redondeada a 2 decimales (promedio). Muestra nombre, cantidad, promedio y segmento: 'sin notas' si todavía no tiene notas, 'alto rendimiento' si el promedio es 6.5 o más, 'regular' si es 5.5 o más y 'en riesgo' en el resto. Ordena del promedio más alto al más bajo y, si empatan, por nombre."}
   inicial={"SELECT e.nombre, i.nota FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;"}
-  solucion={"WITH resumen AS (SELECT estudiante_id, COUNT(*) AS cantidad, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY estudiante_id) SELECT e.nombre, r.cantidad, r.promedio, CASE WHEN r.promedio >= 6.5 THEN 'alto rendimiento' WHEN r.promedio >= 5.5 THEN 'regular' ELSE 'en riesgo' END AS segmento FROM resumen AS r JOIN estudiantes AS e ON e.id = r.estudiante_id ORDER BY r.promedio DESC;"}
-  comparar="filas-en-orden"
-  pistas={["Empieza por el resumen: agrupa inscripciones por estudiante_id, con la cantidad y el promedio redondeado a 2 decimales.", "Después une ese resumen con estudiantes para el nombre, y clasifica el promedio con CASE en el orden que pide el enunciado."]}
+  solucion={"WITH resumen AS (\n  SELECT estudiante_id, COUNT(*) AS cantidad, ROUND(AVG(nota), 2) AS promedio\n  FROM inscripciones\n  GROUP BY estudiante_id\n)\nSELECT e.nombre, r.cantidad, r.promedio,\n       CASE\n         WHEN r.promedio IS NULL THEN 'sin notas'\n         WHEN r.promedio >= 6.5 THEN 'alto rendimiento'\n         WHEN r.promedio >= 5.5 THEN 'regular'\n         ELSE 'en riesgo'\n       END AS segmento\nFROM resumen AS r\nJOIN estudiantes AS e ON e.id = r.estudiante_id\nORDER BY r.promedio DESC, e.nombre;"}
+  comparar={"filas-en-orden"}
+  pistas={["Empieza por el resumen: agrupa inscripciones por estudiante_id, con COUNT y el promedio redondeado.","Une el resumen con estudiantes para traer el nombre, y clasifica el promedio con CASE.","Revisa a Valentina Castro: ¿qué segmento le toca a alguien sin notas?"]}
 />
 
 <Debrief>
-El CTE resumen agrupa por estudiante_id antes de unir con estudiantes; CASE WHEN clasifica el promedio ya calculado en 3 segmentos, evaluando las condiciones en orden.
+```sql
+WITH resumen AS (
+  SELECT estudiante_id, COUNT(*) AS cantidad, ROUND(AVG(nota), 2) AS promedio
+  FROM inscripciones
+  GROUP BY estudiante_id
+)
+SELECT e.nombre, r.cantidad, r.promedio,
+       CASE
+         WHEN r.promedio IS NULL THEN 'sin notas'
+         WHEN r.promedio >= 6.5 THEN 'alto rendimiento'
+         WHEN r.promedio >= 5.5 THEN 'regular'
+         ELSE 'en riesgo'
+       END AS segmento
+FROM resumen AS r
+JOIN estudiantes AS e ON e.id = r.estudiante_id
+ORDER BY r.promedio DESC, e.nombre;
+```
+
+Antonia Pérez y Nicolás Fuentes quedan en alto rendimiento; Martín Silva y Sofía Araya, en riesgo. Valentina Castro, sin notas todavía, no queda marcada como en riesgo: el caso especial va primero en el `CASE`. Los estudiantes sin inscripciones no aparecen porque el resumen parte de `inscripciones`; para incluirlos, la consulta partiría de `estudiantes` con un `LEFT JOIN`.
 </Debrief>

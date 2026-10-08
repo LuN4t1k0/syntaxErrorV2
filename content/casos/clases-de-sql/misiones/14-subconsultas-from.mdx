@@ -1,43 +1,48 @@
 ---
 titulo: "Subconsultas en FROM"
-tiempo: 18
+tiempo: 16
 ---
 
 <Concepto>
-Una subconsulta en FROM funciona como una tabla temporal.
+A veces necesitas trabajar sobre un resumen, no sobre la tabla original: primero calcular algo por grupo y después filtrar, unir u ordenar ese resultado. Una subconsulta en `FROM` funciona como una tabla temporal hecha con otra consulta.
 
-Es útil para filtrar un resultado ya agrupado.
+<Sintaxis lenguaje="sql" codigo={"SELECT r.columna\nFROM (SELECT ... GROUP BY ...) AS r\nWHERE r.columna > valor;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM (SELECT ... FROM tabla GROUP BY columna) AS alias\nWHERE condicion;"} />
+**1. El resumen.** Escribe y ejecuta primero la consulta que agrupa.
 
-**Para qué sirve en la vida real.** Una subconsulta en FROM crea una mini tabla temporal. Es como preparar ingredientes antes de cocinar el plato final.
+<SqlEjemplo consulta={"SELECT estudiante_id, COUNT(*) AS cursos_tomados FROM inscripciones GROUP BY estudiante_id;"} />
 
-**Cómo pensarlo sin sufrir.** El resumen calcula promedios por curso; la consulta externa filtra ese resumen.
+**2. Usarlo como tabla.** Entre paréntesis, en el `FROM`, con un alias obligatorio. Desde afuera, sus columnas se leen como las de cualquier tabla: `r.cursos_tomados`.
 
-**Resumen primero.** Calcula un promedio por curso como resultado intermedio.
+<SqlEjemplo consulta={"SELECT r.estudiante_id, r.cursos_tomados\nFROM (SELECT estudiante_id, COUNT(*) AS cursos_tomados FROM inscripciones GROUP BY estudiante_id) AS r\nWHERE r.cursos_tomados >= 2;"} />
 
-<SqlEjemplo consulta={"SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id;"} />
+**3. Unirlo con otra tabla.** El resumen tiene ids; para mostrar nombres, se une con un `JOIN` como cualquier tabla.
 
-**Alias obligatorio.** El resultado entre parentesis necesita un alias.
+<SqlEjemplo consulta={"SELECT e.nombre, r.cursos_tomados\nFROM (SELECT estudiante_id, COUNT(*) AS cursos_tomados FROM inscripciones GROUP BY estudiante_id) AS r\nJOIN estudiantes AS e ON e.id = r.estudiante_id\nWHERE r.cursos_tomados >= 2;"} />
 
-<SqlEjemplo consulta={"SELECT resumen.curso_id, resumen.promedio\nFROM (SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id) AS resumen;"} />
-
-**Filtrar después.** WHERE puede filtrar columnas calculadas por la subconsulta.
-
-<SqlEjemplo consulta={"SELECT resumen.curso_id, resumen.promedio\nFROM (SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id) AS resumen\nWHERE resumen.promedio >= 5.5;"} />
-
-**Claridad.** Separar el resumen del filtro ayuda cuando la consulta crece.
+**Otra forma de lo mismo.** Este filtro también se puede escribir con `GROUP BY` y `HAVING`. La subconsulta brilla cuando el resumen se vuelve a usar: unirlo con otra tabla, filtrarlo varias veces o resumirlo de nuevo. En la próxima lección verás `WITH`, que hace lo mismo y se lee mejor.
 </Concepto>
 
 <SqlTask
   id="subconsultas-from"
-  enunciado={"Usa una subconsulta en FROM para calcular el promedio por curso. Muestra curso_id y promedio solo para cursos con promedio 5.5 o más."}
-  inicial={"SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id;"}
-  solucion={"SELECT resumen.curso_id, resumen.promedio FROM (SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id) AS resumen WHERE resumen.promedio >= 5.5;"}
-  comparar="filas-sin-orden"
-  pistas={["La subconsulta agrupa inscripciones por curso_id y calcula el promedio; dale un alias como si fuera una tabla.", "El filtro por promedio va en el WHERE de la consulta de afuera."]}
+  enunciado={"Lista los cursos con un promedio de 5.5 o más, con el título del curso y su promedio redondeado a 2 decimales. Calcula el promedio por curso en una subconsulta dentro de FROM y únela con cursos para obtener el título."}
+  inicial={"SELECT curso_id, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY curso_id;"}
+  solucion={"SELECT c.titulo, r.promedio\nFROM (SELECT curso_id, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY curso_id) AS r\nJOIN cursos AS c ON c.id = r.curso_id\nWHERE r.promedio >= 5.5;"}
+  comparar={"filas-sin-orden"}
+  pistas={["El código inicial es tu subconsulta: va entre paréntesis en el FROM, con un alias.","Une ese resumen con cursos: el curso_id del resumen apunta al id de cursos.","El filtro por promedio va en el WHERE de afuera."]}
 />
 
 <Debrief>
-La tabla derivada 'resumen' ya trae el promedio calculado; la consulta externa solo filtra sobre ese resultado.
+```sql
+SELECT c.titulo, r.promedio
+FROM (
+  SELECT curso_id, ROUND(AVG(nota), 2) AS promedio
+  FROM inscripciones
+  GROUP BY curso_id
+) AS r
+JOIN cursos AS c ON c.id = r.curso_id
+WHERE r.promedio >= 5.5;
+```
+
+Tres cursos llegan a 5.5: SQL inicial, Consultas avanzadas y Reportes con SQL, este último con 5.55 justo sobre el límite. Visualización de datos no aparece: su única inscripción todavía no tiene nota, y un promedio vacío no es mayor ni igual a nada.
 </Debrief>

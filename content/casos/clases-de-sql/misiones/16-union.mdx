@@ -1,41 +1,46 @@
 ---
 titulo: "UNION y UNION ALL"
-tiempo: 16
+tiempo: 12
 ---
 
 <Concepto>
-UNION apila filas de dos SELECT compatibles.
+`JOIN` pone tablas lado a lado; `UNION` las apila, una debajo de otra. Sirve para juntar en una sola lista los resultados de dos consultas distintas, como "los cursos intermedios y los cursos largos".
 
-JOIN combina columnas lado a lado; UNION combina resultados uno debajo del otro.
+<Sintaxis lenguaje="sql" codigo={"SELECT columna FROM tabla WHERE condición_1\nUNION\nSELECT columna FROM tabla WHERE condición_2;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columna FROM tabla_a\nUNION\nSELECT columna FROM tabla_b;"} />
+**UNION quita los repetidos.** Si una fila aparece en las dos consultas, queda una sola vez.
 
-**Para qué sirve en la vida real.** UNION apila resultados de dos preguntas distintas. No une columnas, une listas.
+<SqlEjemplo consulta={"SELECT titulo FROM cursos WHERE nivel = 'Intermedio'\nUNION\nSELECT titulo FROM cursos WHERE horas >= 30;"} />
 
-**Cómo pensarlo sin sufrir.** JOIN pega información lado a lado; UNION pone una consulta debajo de la otra.
+**UNION ALL los conserva.** Es más rápido, y sirve cuando los repetidos importan, por ejemplo para contar cuántas veces aparece algo.
 
-**UNION elimina duplicados.** El mismo valor aparece una sola vez en el resultado final.
+<SqlEjemplo consulta={"SELECT titulo FROM cursos WHERE nivel = 'Intermedio'\nUNION ALL\nSELECT titulo FROM cursos WHERE horas >= 30;"} />
 
-<SqlEjemplo consulta={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'\nUNION\nSELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"} />
+Compara los dos resultados: "Reportes con SQL" y "Python para análisis" son intermedios y largos, y con `UNION ALL` aparecen dos veces.
 
-**UNION ALL conserva duplicados.** UNION ALL no revisa repetidos.
+**Las columnas tienen que calzar.** Las dos consultas deben devolver la misma cantidad de columnas, en el mismo orden y con tipos compatibles. El nombre de las columnas del resultado sale de la primera consulta.
 
-<SqlEjemplo consulta={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'\nUNION ALL\nSELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"} />
-
-**Columnas compatibles.** Ambos SELECT deben devolver la misma cantidad de columnas.
-
-**Cuando usarlo.** Es claro cuando las dos fuentes tienen logicas distintas.
+**UNION o WHERE con OR.** Si las dos partes leen de la misma tabla, un `WHERE ... OR ...` suele bastar. `UNION` se vuelve necesario cuando cada parte necesita su propio `FROM` o sus propios `JOIN`.
 </Concepto>
 
 <SqlTask
   id="union"
-  enunciado={"Combina, sin duplicados, los estudiantes de Santiago con los que tienen nota igual o mayor a 6.5. Devuelve una sola columna: nombre."}
+  enunciado={"La escuela invita a un conversatorio a dos grupos: quienes viven en Santiago y quienes tienen alguna nota de 6.5 o más. Arma la lista de invitados sin nombres repetidos, con una sola columna: nombre."}
   inicial={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago';"}
-  solucion={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago' UNION SELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"}
-  comparar="filas-sin-orden"
-  pistas={["Son dos consultas separadas que devuelven la misma columna: nombre.", "UNION entre las dos quita los repetidos. La segunda necesita un JOIN para llegar a la nota."]}
+  solucion={"SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'\nUNION\nSELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;"}
+  comparar={"filas-sin-orden"}
+  pistas={["Son dos consultas que devuelven la misma columna: nombre.","La segunda necesita un JOIN para llegar a la nota.","Hay una persona que cumple las dos condiciones: ¿cuál de las dos uniones la deja una sola vez?"]}
 />
 
 <Debrief>
-UNION descarta los nombres que aparecen en ambas consultas, dejando cada estudiante una sola vez.
+```sql
+SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'
+UNION
+SELECT e.nombre
+FROM estudiantes AS e
+JOIN inscripciones AS i ON i.estudiante_id = e.id
+WHERE i.nota >= 6.5;
+```
+
+Cinco invitados. Nicolás Fuentes vive en Santiago y tiene un 6.5: está en las dos consultas, y `UNION` lo deja una sola vez. Con `UNION ALL` recibiría dos invitaciones.
 </Debrief>

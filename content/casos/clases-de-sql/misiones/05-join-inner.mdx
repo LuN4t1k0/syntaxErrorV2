@@ -1,41 +1,42 @@
 ---
 titulo: "Relaciones y JOIN"
-tiempo: 22
+tiempo: 16
 ---
 
 <Concepto>
-En una base relacional los datos se separan en tablas para evitar repetición.
+La tabla `inscripciones` dice que el estudiante 4 tomó el curso 102 y sacó un 4.9, pero no dice cómo se llama el estudiante ni el curso. Esos datos están en otras tablas, y se conectan por sus identificadores. `JOIN` junta las tablas usando esas conexiones.
 
-JOIN reconecta esas tablas al consultar, usando una condición ON.
+<Sintaxis lenguaje="sql" codigo={"SELECT a.columna, b.columna\nFROM tabla_a AS a\nJOIN tabla_b AS b ON b.id = a.tabla_b_id;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla_a AS a\nJOIN tabla_b AS b ON a.columna = b.columna;"} />
+**Por qué los datos están separados.** Si cada inscripción repitiera el nombre y el correo del estudiante, un cambio de correo habría que hacerlo en muchas filas. Separados, cada dato vive en un solo lugar, y las tablas se apuntan por id: `inscripciones.estudiante_id` apunta a `estudiantes.id`, y `inscripciones.curso_id` a `cursos.id`.
 
-**Para qué sirve en la vida real.** JOIN conecta tablas que guardan piezas distintas de la historia. Estudiantes, cursos e inscripciones son como personajes, misiones y resultados.
+**JOIN con ON.** `ON` dice qué columna de una tabla calza con cuál de la otra. Los alias de tabla (`AS i`, `AS c`) acortan la escritura, y con `alias.columna` queda claro de qué tabla sale cada dato.
 
-**Cómo pensarlo sin sufrir.** Inscripciones es la mesa puente: tiene estudiante_id para llegar a estudiantes y curso_id para llegar a cursos.
+<SqlEjemplo consulta={"SELECT c.titulo, i.estado\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id;"} />
 
-**Datos separados.** Inscripciones conecta estudiantes con cursos sin repetir todos los datos en una sola tabla.
+**Cada fila busca su pareja.** Para cada inscripción, la base busca el curso cuyo `id` es igual a su `curso_id` y pega sus columnas. Si escribes mal el `ON`, por ejemplo `c.id = i.estudiante_id`, la consulta corre igual, pero junta filas que no tienen nada que ver.
 
-**ON conecta claves.** La condición ON indica que columnas deben coincidir.
+**Encadenar JOIN.** Para traer datos de una tercera tabla, agregas otro `JOIN` con su propio `ON`. `inscripciones` queda al centro, porque apunta a las otras dos.
 
-<SqlEjemplo consulta={"SELECT e.nombre, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id;"} />
-
-**Encadenar JOIN.** Puedes unir una tercera tabla agregando otro JOIN.
-
-<SqlEjemplo consulta={"SELECT e.nombre, c.titulo, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nJOIN cursos AS c ON c.id = i.curso_id;"} />
-
-**Alias de tabla.** AS e, AS c y AS i hacen la consulta más corta y legible.
+**JOIN deja fuera lo que no calza.** Una inscripción sin curso, o un estudiante sin inscripciones, no aparece en el resultado. En la próxima lección verás cómo conservarlos.
 </Concepto>
 
 <SqlTask
   id="join-inner"
-  enunciado={"Lista cada inscripción con estas columnas: nombre del estudiante, titulo del curso y nota."}
-  inicial={"SELECT e.nombre, c.titulo, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nJOIN cursos AS c ON c.id = i.curso_id;"}
+  enunciado={"Arma el listado de notas que la escuela envía a fin de semestre: por cada inscripción, el nombre del estudiante, el título del curso y la nota, en ese orden."}
+  inicial={"SELECT i.nota\nFROM inscripciones AS i;"}
   solucion={"SELECT e.nombre, c.titulo, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nJOIN cursos AS c ON c.id = i.curso_id;"}
-  comparar="filas-sin-orden"
-  pistas={["Parte desde la tabla que conecta a las otras dos: inscripciones.", "Cada JOIN necesita su ON: la columna de inscripciones que apunta al id de la otra tabla."]}
+  comparar={"filas-sin-orden"}
+  pistas={["Parte desde inscripciones: es la tabla que apunta a las otras dos.","Cada JOIN necesita su ON: la columna de inscripciones que apunta al id de la otra tabla.","estudiante_id apunta a estudiantes y curso_id apunta a cursos."]}
 />
 
 <Debrief>
-Inscripciones conecta estudiantes y cursos mediante estudiante_id y curso_id.
+```sql
+SELECT e.nombre, c.titulo, i.nota
+FROM inscripciones AS i
+JOIN estudiantes AS e ON e.id = i.estudiante_id
+JOIN cursos AS c ON c.id = i.curso_id;
+```
+
+Doce inscripciones, doce filas: cada una encontró a su estudiante y su curso. Si el `ON` une columnas que no se corresponden (el id del estudiante con el del curso), la consulta no da error, pero el resultado no tiene sentido. Revisa siempre que cada `ON` una un id con la columna que apunta a él.
 </Debrief>

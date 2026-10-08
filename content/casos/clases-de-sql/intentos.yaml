@@ -1,0 +1,198 @@
+# Intentos equivocados típicos de cada tarea y un trozo del mensaje que deben recibir, por misión y tarea.
+# Los revisa `npm run content:intentos` y la prueba de content/ del repositorio.
+01-select-basico:
+  select-basico:
+    - codigo: SELECT * FROM estudiantes;
+      espera: Pide solo esas
+    - codigo: SELECT nombre FROM estudiantes;
+      espera: debe devolver 2 columnas
+    - codigo: SELECT nombre, email FROM estudiantes;
+      espera: No existe la columna «email»
+02-alias-expresiones:
+  alias-expresiones:
+    - codigo: SELECT nombre, edad AS edad_actual FROM estudiantes;
+      espera: debe devolver 3 columnas
+    - codigo: SELECT nombre, edad AS edad_actual, edad AS edad_proximo_anio FROM estudiantes;
+      espera: no coincide
+03-where-filtros:
+  where-filtros:
+    - codigo: SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = 'Santiago' AND edad > 21;
+      espera: Tu consulta trae 2 filas, se esperan 3
+    - codigo: SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = 'Santiago' OR edad >= 21;
+      espera: se esperan 3
+    - codigo: SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = Santiago AND edad >= 21;
+      espera: Tu consulta
+04-busqueda-orden-limite:
+  busqueda-orden-limite:
+    - codigo: SELECT nombre, ciudad FROM estudiantes WHERE ciudad IN ('Santiago', 'Concepción') ORDER BY nombre ASC;
+      espera: se esperan 5
+    - codigo: SELECT nombre, ciudad FROM estudiantes WHERE ciudad IN ('Santiago', 'Concepción') LIMIT 5;
+      espera: no coincide
+    - codigo: SELECT nombre, ciudad FROM estudiantes WHERE ciudad IN ('Santiago', 'Concepcion') ORDER BY nombre ASC LIMIT 5;
+      espera: trae 4 filas
+05-join-inner:
+  join-inner:
+    - codigo: |-
+        SELECT e.nombre, i.nota
+        FROM inscripciones AS i
+        JOIN estudiantes AS e ON e.id = i.estudiante_id;
+      espera: debe devolver 3 columnas
+    - codigo: |-
+        SELECT e.nombre, c.titulo, i.nota
+        FROM inscripciones AS i
+        JOIN estudiantes AS e ON e.id = i.curso_id
+        JOIN cursos AS c ON c.id = i.curso_id;
+      espera: Tu consulta trae 0 filas
+06-join-multiple-left:
+  join-multiple-left:
+    - codigo: |-
+        SELECT e.nombre, c.titulo
+        FROM estudiantes AS e
+        LEFT JOIN inscripciones AS i ON i.estudiante_id = e.id
+        JOIN cursos AS c ON c.id = i.curso_id
+        ORDER BY e.nombre, c.titulo;
+      espera: Tu consulta trae 12 filas, se esperan 14
+    - codigo: |-
+        SELECT e.nombre, c.titulo
+        FROM estudiantes AS e
+        LEFT JOIN inscripciones AS i ON i.estudiante_id = e.id
+        LEFT JOIN cursos AS c ON c.id = i.curso_id;
+      espera: orden
+07-null-coalesce:
+  null-coalesce:
+    - codigo: SELECT nombre, COALESCE(correo, 'Sin correo') AS correo FROM estudiantes;
+      espera: no coincide
+    - codigo: SELECT nombre, correo FROM estudiantes WHERE correo IS NOT NULL;
+      espera: Tu consulta trae 10 filas, se esperan 11
+08-funciones-texto:
+  funciones-texto:
+    - codigo: SELECT nombre, UPPER(nombre) || '(' || ciudad || ')' AS credencial FROM estudiantes;
+      espera: no coincide
+    - codigo: SELECT nombre, UPPER(nombre || ' (' || ciudad || ')') AS credencial FROM estudiantes;
+      espera: no coincide
+09-funciones-numericas:
+  funciones-numericas:
+    - codigo: SELECT e.nombre, i.nota, i.nota * 100 / 7 AS porcentaje FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;
+      espera: no coincide
+    - codigo: SELECT e.nombre, i.nota, ROUND(i.nota) * 100 / 7 AS porcentaje FROM inscripciones AS i JOIN estudiantes AS e ON e.id = i.estudiante_id;
+      espera: no coincide
+10-funciones-agregacion:
+  funciones-agregacion:
+    - codigo: SELECT COUNT(*) AS total_inscripciones, COUNT(*) AS con_nota, ROUND(AVG(nota), 2) AS promedio_general, MIN(nota) AS nota_minima, MAX(nota) AS nota_maxima FROM inscripciones;
+      espera: con_nota
+    - codigo: SELECT COUNT(*) AS total_inscripciones, COUNT(nota) AS con_nota, AVG(nota) AS promedio_general, MIN(nota) AS nota_minima, MAX(nota) AS nota_maxima FROM inscripciones;
+      espera: promedio_general
+11-group-by-having:
+  group-by-having:
+    - codigo: SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo ORDER BY promedio ASC;
+      espera: Tu consulta trae 6 filas, se esperan 4
+    - codigo: SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo HAVING COUNT(*) > 1 ORDER BY promedio DESC;
+      espera: el orden no coincide
+12-case-when:
+  case-when:
+    - codigo: SELECT nombre, edad, CASE WHEN edad < 21 THEN 'junior' WHEN edad < 23 THEN 'intermedio' ELSE 'senior' END AS grupo_edad FROM estudiantes ORDER BY edad, nombre;
+      espera: grupo_edad
+    - codigo: SELECT nombre, edad, CASE WHEN edad < 21 THEN 'junior' WHEN edad <= 23 THEN 'intermedio' ELSE 'senior' END AS grupo_edad FROM estudiantes ORDER BY edad;
+      espera: no coincide
+13-subconsultas-where:
+  subconsultas-where:
+    - codigo: |-
+        SELECT e.nombre, i.nota
+        FROM inscripciones AS i
+        JOIN estudiantes AS e ON e.id = i.estudiante_id
+        WHERE i.nota > (SELECT AVG(nota) FROM inscripciones);
+      espera: Tu consulta trae 6 filas, se esperan 5
+    - codigo: |-
+        SELECT e.nombre, i.nota
+        FROM inscripciones AS i
+        JOIN estudiantes AS e ON e.id = i.estudiante_id
+        WHERE i.nota < 5.5;
+      espera: Tu consulta trae 4 filas, se esperan 5
+14-subconsultas-from:
+  subconsultas-from:
+    - codigo: |-
+        SELECT r.curso_id, r.promedio
+        FROM (SELECT curso_id, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY curso_id) AS r
+        WHERE r.promedio >= 5.5;
+      espera: no coincide
+15-cte-with:
+  cte-with:
+    - codigo: |-
+        WITH por_ciudad AS (
+          SELECT ciudad, COUNT(*) AS estudiantes, ROUND(AVG(edad), 1) AS edad_promedio
+          FROM estudiantes
+          GROUP BY ciudad
+        )
+        SELECT ciudad, estudiantes, edad_promedio
+        FROM por_ciudad
+        WHERE estudiantes > 2
+        ORDER BY edad_promedio DESC;
+      espera: Tu consulta trae 1 fila, se esperan 4
+    - codigo: |-
+        WITH por_ciudad AS (
+          SELECT ciudad, COUNT(*) AS estudiantes, ROUND(AVG(edad), 1) AS edad_promedio
+          FROM estudiantes
+          GROUP BY ciudad
+        )
+        SELECT ciudad, estudiantes, edad_promedio
+        FROM por_ciudad
+        WHERE estudiantes >= 2;
+      espera: orden
+16-union:
+  union:
+    - codigo: |-
+        SELECT nombre FROM estudiantes WHERE ciudad = 'Santiago'
+        UNION ALL
+        SELECT e.nombre FROM estudiantes AS e JOIN inscripciones AS i ON i.estudiante_id = e.id WHERE i.nota >= 6.5;
+      espera: Tu consulta trae 6 filas, se esperan 5
+17-exists:
+  exists:
+    - codigo: |-
+        SELECT c.titulo
+        FROM cursos AS c
+        WHERE EXISTS (
+          SELECT 1 FROM inscripciones AS i
+          WHERE i.curso_id = c.id AND i.estado = 'riesgo'
+        );
+      espera: Tu consulta trae 2 filas, se esperan 5
+    - codigo: |-
+        SELECT c.titulo
+        FROM cursos AS c
+        JOIN inscripciones AS i ON i.curso_id = c.id
+        WHERE i.estado <> 'riesgo';
+      espera: se esperan 5
+18-proyecto-final-sql:
+  proyecto-final-sql:
+    - codigo: |-
+        WITH resumen AS (
+          SELECT estudiante_id, COUNT(*) AS cantidad, ROUND(AVG(nota), 2) AS promedio
+          FROM inscripciones
+          GROUP BY estudiante_id
+        )
+        SELECT e.nombre, r.cantidad, r.promedio,
+               CASE
+                 WHEN r.promedio >= 6.5 THEN 'alto rendimiento'
+                 WHEN r.promedio >= 5.5 THEN 'regular'
+                 ELSE 'en riesgo'
+               END AS segmento
+        FROM resumen AS r
+        JOIN estudiantes AS e ON e.id = r.estudiante_id
+        ORDER BY r.promedio DESC, e.nombre;
+      espera: segmento
+    - codigo: |-
+        WITH resumen AS (
+          SELECT estudiante_id, COUNT(*) AS cantidad, ROUND(AVG(nota), 2) AS promedio
+          FROM inscripciones
+          GROUP BY estudiante_id
+        )
+        SELECT e.nombre, r.cantidad, r.promedio,
+               CASE
+                 WHEN r.promedio IS NULL THEN 'sin notas'
+                 WHEN r.promedio >= 5.5 THEN 'regular'
+                 WHEN r.promedio >= 6.5 THEN 'alto rendimiento'
+                 ELSE 'en riesgo'
+               END AS segmento
+        FROM resumen AS r
+        JOIN estudiantes AS e ON e.id = r.estudiante_id
+        ORDER BY r.promedio DESC, e.nombre;
+      espera: segmento

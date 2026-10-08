@@ -1,41 +1,44 @@
 ---
 titulo: "EXISTS y NOT EXISTS"
-tiempo: 18
+tiempo: 14
 ---
 
 <Concepto>
-EXISTS pregunta si una subconsulta devuelve al menos una fila.
+Algunas preguntas son de sí o no: "¿este estudiante tiene alguna inscripción en observación?", "¿este curso tiene inscritos?". `EXISTS` responde eso para cada fila: es verdadero si la subconsulta devuelve al menos una fila.
 
-Sirve para responder preguntas de existencia sin contar ni traer datos.
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla_a AS a\nWHERE EXISTS (\n  SELECT 1 FROM tabla_b AS b WHERE b.a_id = a.id\n);"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columnas FROM tabla_a AS a\nWHERE EXISTS (SELECT 1 FROM tabla_b AS b WHERE b.columna = a.columna);"} />
+**Una subconsulta que mira la fila de afuera.** Dentro del `EXISTS`, la condición `i.estudiante_id = e.id` usa la fila de `estudiantes` que se está revisando. Por eso la subconsulta se evalúa una vez por cada estudiante. A esto se le llama subconsulta correlacionada.
 
-**Para qué sirve en la vida real.** EXISTS responde si algo existe, sin traerlo todo. Es como preguntar: hay algun incendio en este curso?
+<SqlEjemplo consulta={"SELECT e.nombre\nFROM estudiantes AS e\nWHERE EXISTS (\n  SELECT 1 FROM inscripciones AS i\n  WHERE i.estudiante_id = e.id AND i.estado = 'observacion'\n);"} />
 
-**Cómo pensarlo sin sufrir.** Para cada curso, la subconsulta busca al menos una inscripción en riesgo.
+**No importa qué devuelve.** `EXISTS` solo pregunta si hay alguna fila. Por eso se escribe `SELECT 1`: el valor da igual.
 
-**Subconsulta correlacionada.** La subconsulta usa una columna de la consulta externa.
+**NOT EXISTS: los que no tienen.** Es la forma más clara de encontrar lo que falta: estudiantes sin inscripciones, cursos sin inscritos, clientes sin compras.
 
-<SqlEjemplo consulta={"SELECT c.titulo\nFROM cursos AS c\nWHERE EXISTS (SELECT 1 FROM inscripciones AS i WHERE i.curso_id = c.id AND i.estado = 'riesgo');"} />
+<SqlEjemplo consulta={"SELECT e.nombre\nFROM estudiantes AS e\nWHERE NOT EXISTS (\n  SELECT 1 FROM inscripciones AS i WHERE i.estudiante_id = e.id\n);"} />
 
-**No cuenta filas.** EXISTS solo necesita encontrar una coincidencia.
-
-**NOT EXISTS.** Invierte la pregunta: filas donde no existe coincidencia.
-
-<SqlEjemplo consulta={"SELECT c.titulo\nFROM cursos AS c\nWHERE NOT EXISTS (SELECT 1 FROM inscripciones AS i WHERE i.curso_id = c.id AND i.estado = 'riesgo');"} />
-
-**Frente a IN.** EXISTS suele ser más claro con condiciones correlacionadas.
+**Frente a un JOIN.** Un `JOIN` repite al estudiante una vez por cada inscripción que cumple; `EXISTS` lo muestra una sola vez, porque solo pregunta si existe.
 </Concepto>
 
 <SqlTask
   id="exists"
-  enunciado={"Lista los cursos que tienen al menos un estudiante en estado 'riesgo'. Devuelve una sola columna: titulo."}
+  enunciado={"Para destacar los cursos sin alertas, lista los cursos que no tienen ninguna inscripción en estado 'riesgo'. Devuelve una sola columna: titulo."}
   inicial={"SELECT titulo FROM cursos;"}
-  solucion={"SELECT c.titulo FROM cursos AS c WHERE EXISTS (SELECT 1 FROM inscripciones AS i WHERE i.curso_id = c.id AND i.estado = 'riesgo');"}
-  comparar="filas-sin-orden"
-  pistas={["EXISTS pregunta si una subconsulta devuelve al menos una fila.", "La subconsulta busca en inscripciones del mismo curso (compara con c.id) y con estado 'riesgo'."]}
+  solucion={"SELECT c.titulo\nFROM cursos AS c\nWHERE NOT EXISTS (\n  SELECT 1 FROM inscripciones AS i\n  WHERE i.curso_id = c.id AND i.estado = 'riesgo'\n);"}
+  comparar={"filas-sin-orden"}
+  pistas={["NOT EXISTS es verdadero cuando la subconsulta no encuentra ninguna fila.","La subconsulta busca inscripciones del mismo curso (compara con c.id) y con estado 'riesgo'."]}
 />
 
 <Debrief>
-La subconsulta busca inscripciones en riesgo para cada curso; EXISTS solo necesita que encuentre una.
+```sql
+SELECT c.titulo
+FROM cursos AS c
+WHERE NOT EXISTS (
+  SELECT 1 FROM inscripciones AS i
+  WHERE i.curso_id = c.id AND i.estado = 'riesgo'
+);
+```
+
+Cinco cursos, incluido Python para análisis, que no tiene inscritos y por lo tanto tampoco riesgo. El intento con `JOIN ... WHERE estado <> 'riesgo'` responde otra pregunta: lista cursos con alguna inscripción que no está en riesgo, aunque tengan otras que sí.
 </Debrief>

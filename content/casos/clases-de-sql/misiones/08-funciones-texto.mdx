@@ -1,43 +1,45 @@
 ---
 titulo: "Funciones de texto"
-tiempo: 14
+tiempo: 12
 ---
 
 <Concepto>
-SQL puede transformar texto al consultar.
+Las funciones de texto transforman lo que muestra una columna: pasar a mayúsculas, medir el largo, juntar varias columnas en una. Se aplican a cada fila y, como todo en un `SELECT`, no cambian los datos guardados.
 
-UPPER y LOWER son útiles para presentar y comparar valores de forma consistente.
+<Sintaxis lenguaje="sql" codigo={"SELECT FUNCION(columna) AS alias FROM tabla;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT UPPER(columna), LOWER(columna) FROM tabla;"} />
+**UPPER y LOWER.** Pasan el texto a mayúsculas o minúsculas. Además de presentar, sirven para comparar sin que importen las mayúsculas: `WHERE LOWER(nivel) = 'intermedio'`.
 
-**Para qué sirve en la vida real.** Las funciones de texto limpian presentaciones sin tocar el dato original. Es maquillaje para reportes, no cirugía a la tabla.
+<SqlEjemplo consulta={"SELECT UPPER(titulo) AS titulo_mayus, LOWER(nivel) AS nivel_minus FROM cursos;"} />
 
-**Cómo pensarlo sin sufrir.** UPPER y LOWER transforman cada fila al vuelo dentro del SELECT.
+**LENGTH.** Cuenta los caracteres, espacios incluidos. Sirve para revisar datos: un RUT o un teléfono con un largo raro suele estar mal escrito.
 
-**UPPER.** Convierte texto a mayúsculas solo en el resultado.
+<SqlEjemplo consulta={"SELECT titulo, LENGTH(titulo) AS largo FROM cursos;"} />
 
-<SqlEjemplo consulta={"SELECT UPPER(nombre) AS nombre_mayus FROM estudiantes;"} />
+**Unir textos con ||.** Dos barras verticales concatenan textos y columnas. Los espacios y signos que quieras agregar van entre comillas simples.
 
-**LOWER.** Convierte texto a minúsculas.
+<SqlEjemplo consulta={"SELECT titulo || ' - ' || nivel AS descripcion FROM cursos;"} />
 
-<SqlEjemplo consulta={"SELECT LOWER(ciudad) AS ciudad_minus FROM estudiantes;"} />
+**Combinar funciones.** Una función puede ir dentro de otra o dentro de una concatenación: `UPPER(titulo) || ' (' || horas || ' h)'`.
 
-**Varias funciones.** Puedes transformar varias columnas en el mismo SELECT.
-
-<SqlEjemplo consulta={"SELECT UPPER(nombre) AS nombre_mayus, LOWER(ciudad) AS ciudad_minus FROM estudiantes;"} />
-
-**No filtra filas.** Para filtrar siguen haciendo falta WHERE, LIKE o IN.
+**TRIM, REPLACE y SUBSTRING.** `TRIM` quita espacios de los bordes, `REPLACE(texto, 'a', 'b')` reemplaza un trozo y `SUBSTRING(texto, inicio, largo)` corta una parte. Son las herramientas típicas para limpiar texto.
 </Concepto>
 
 <SqlTask
   id="funciones-texto"
-  enunciado={"Muestra el nombre en mayúsculas (como nombre_mayus) y la ciudad en minúsculas (como ciudad_minus)."}
+  enunciado={"Para las credenciales del encuentro anual, muestra el nombre de cada estudiante y una columna credencial con su nombre en mayúsculas seguido de su ciudad entre paréntesis, por ejemplo «CAMILA ROJAS (Santiago)»."}
   inicial={"SELECT nombre, ciudad FROM estudiantes;"}
-  solucion={"SELECT UPPER(nombre) AS nombre_mayus, LOWER(ciudad) AS ciudad_minus FROM estudiantes;"}
-  comparar="filas-sin-orden"
-  pistas={["Hay una función para pasar a mayúsculas y otra para minúsculas; reciben la columna entre paréntesis.", "Cada resultado necesita su propio alias con AS."]}
+  solucion={"SELECT nombre, UPPER(nombre) || ' (' || ciudad || ')' AS credencial FROM estudiantes;"}
+  comparar={"filas-sin-orden"}
+  pistas={["UPPER recibe el nombre entre paréntesis.","Con || unes el nombre en mayúsculas, el texto ' (', la ciudad y el texto ')'.","Revisa los espacios: entre el nombre y el paréntesis hay uno."]}
 />
 
 <Debrief>
-UPPER(nombre) y LOWER(ciudad) transforman el texto columna por columna.
+```sql
+SELECT nombre,
+       UPPER(nombre) || ' (' || ciudad || ')' AS credencial
+FROM estudiantes;
+```
+
+El orden importa: `UPPER(nombre || ' (' || ciudad || ')')` pasaría también la ciudad a mayúsculas. La función se aplica solo a lo que va dentro de sus paréntesis.
 </Debrief>

@@ -1,39 +1,44 @@
 ---
 titulo: "Subconsultas en WHERE"
-tiempo: 18
+tiempo: 14
 ---
 
 <Concepto>
-Una subconsulta es un SELECT dentro de otro SELECT.
+"¿Qué cursos duran más que el promedio?" tiene dos pasos: calcular el promedio y después comparar cada curso con él. Una subconsulta hace los dos en una sola consulta: una consulta entre paréntesis dentro de otra.
 
-En WHERE puede usarse como umbral calculado desde los datos actuales.
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla\nWHERE columna > (SELECT AVG(columna) FROM tabla);"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columnas FROM tabla\nWHERE columna > (SELECT AVG(columna) FROM tabla);"} />
+**Primero, la consulta de adentro.** Escríbela y ejecútala sola para ver qué devuelve.
 
-**Para qué sirve en la vida real.** Una subconsulta permite comparar contra un valor que sale de la misma base. El promedio ya no lo inventas: lo calcula SQL.
+<SqlEjemplo consulta={"SELECT AVG(horas) AS promedio_horas FROM cursos;"} />
 
-**Cómo pensarlo sin sufrir.** Primero se calcula AVG(edad); después cada estudiante compite contra ese umbral.
+**Después, úsala como valor.** Entre paréntesis, ocupa el lugar donde escribirías un número. La base la calcula primero y después compara cada fila con el resultado.
 
-**Umbral dinámico.** La subconsulta calcula un valor y la consulta principal lo usa para filtrar.
+<SqlEjemplo consulta={"SELECT titulo, horas FROM cursos WHERE horas > (SELECT AVG(horas) FROM cursos);"} />
 
-<SqlEjemplo consulta={"SELECT nombre, edad FROM estudiantes WHERE edad > (SELECT AVG(edad) FROM estudiantes);"} />
+**Un umbral que se actualiza solo.** Si escribieras el promedio a mano (`WHERE horas > 26.57`), la consulta quedaría mal apenas se agregue un curso. Con la subconsulta, el umbral se recalcula cada vez.
 
-**Se ejecuta primero.** El promedio se calcula antes de comparar cada fila.
+**Un solo valor.** Al lado de `>`, `<` o `=`, la subconsulta tiene que devolver una sola fila con una sola columna. Para comparar contra una lista de valores se usa `IN (SELECT ...)`.
 
-**Un solo valor.** Una subconsulta escalar debe devolver una fila y una columna.
-
-**Otros usos.** También puede aparecer en SELECT, aunque WHERE es el caso más común al inicio.
+<SqlEjemplo consulta={"SELECT nombre FROM estudiantes WHERE id IN (SELECT estudiante_id FROM inscripciones WHERE estado = 'riesgo');"} />
 </Concepto>
 
 <SqlTask
   id="subconsultas-where"
-  enunciado={"Encuentra estudiantes con edad mayor al promedio general de edad. Muestra nombre y edad."}
-  inicial={"SELECT nombre, edad FROM estudiantes;"}
-  solucion={"SELECT nombre, edad FROM estudiantes WHERE edad > (SELECT AVG(edad) FROM estudiantes);"}
-  comparar="filas-sin-orden"
-  pistas={["Piensa primero cómo calcularías el promedio de edad con una consulta aparte.", "Esa consulta, entre paréntesis, puede ir al lado derecho de la comparación en WHERE."]}
+  enunciado={"La coordinación quiere ofrecer tutorías a quienes rindieron bajo el promedio. Lista las inscripciones con una nota menor al promedio general de todas las notas, con el nombre del estudiante y la nota."}
+  inicial={"SELECT AVG(nota) AS promedio_general FROM inscripciones;"}
+  solucion={"SELECT e.nombre, i.nota\nFROM inscripciones AS i\nJOIN estudiantes AS e ON e.id = i.estudiante_id\nWHERE i.nota < (SELECT AVG(nota) FROM inscripciones);"}
+  comparar={"filas-sin-orden"}
+  pistas={["El código inicial ya calcula el promedio general: esa es tu subconsulta.","El nombre está en estudiantes y la nota en inscripciones: necesitas un JOIN.","La subconsulta va entre paréntesis, al lado derecho de la comparación en WHERE."]}
 />
 
 <Debrief>
-La subconsulta (SELECT AVG(edad) FROM estudiantes) calcula el promedio; la consulta externa lo usa como umbral.
+```sql
+SELECT e.nombre, i.nota
+FROM inscripciones AS i
+JOIN estudiantes AS e ON e.id = i.estudiante_id
+WHERE i.nota < (SELECT AVG(nota) FROM inscripciones);
+```
+
+El promedio general es 5.72, así que también entra el 5.7 de Camila Rojas. Un umbral redondo escrito a mano, como 5.5, la habría dejado fuera. La inscripción sin nota no aparece: `NULL < 5.72` no es verdadero.
 </Debrief>

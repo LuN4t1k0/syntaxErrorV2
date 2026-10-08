@@ -1,45 +1,46 @@
 ---
 titulo: "Funciones de agregación"
-tiempo: 16
+tiempo: 14
 ---
 
 <Concepto>
-Las funciones de agregación resumen muchas filas en un valor.
+Hasta ahora cada fila del resultado correspondía a una fila de la tabla. Las funciones de agregación hacen lo contrario: resumen muchas filas en un solo valor, como el total, el promedio o el máximo.
 
-COUNT, AVG, MIN y MAX responden preguntas distintas sobre un conjunto.
+<Sintaxis lenguaje="sql" codigo={"SELECT COUNT(*), AVG(columna), MIN(columna), MAX(columna), SUM(columna)\nFROM tabla;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT COUNT(*), AVG(columna), MIN(columna), MAX(columna) FROM tabla;"} />
+**Una tabla entera, una fila.** Sin `GROUP BY` (la próxima lección), una consulta con agregaciones devuelve exactamente una fila con el resumen de toda la tabla.
 
-**Para qué sirve en la vida real.** Las agregaciones convierten muchas filas en una respuesta ejecutiva: cuántos, promedio, mínimo y máximo.
+<SqlEjemplo consulta={"SELECT COUNT(*) AS cursos, SUM(horas) AS horas_totales FROM cursos;"} />
 
-**Cómo pensarlo sin sufrir.** Sin GROUP BY, toda la tabla se resume en una sola fila.
+**AVG, MIN y MAX.** El promedio, el menor y el mayor valor de una columna. El promedio suele llevar `ROUND`.
 
-**COUNT.** COUNT(*) cuenta filas.
+<SqlEjemplo consulta={"SELECT ROUND(AVG(horas), 1) AS horas_promedio, MIN(horas) AS curso_mas_corto, MAX(horas) AS curso_mas_largo FROM cursos;"} />
 
-<SqlEjemplo consulta={"SELECT COUNT(*) AS total_inscritos FROM inscripciones;"} />
+**COUNT(\*) o COUNT(columna).** `COUNT(*)` cuenta filas. `COUNT(columna)` cuenta solo las filas donde esa columna tiene dato: los `NULL` no se cuentan. La diferencia entre los dos es la cantidad de datos faltantes.
 
-**AVG.** AVG calcula promedio y ROUND lo hace más legible.
+<SqlEjemplo consulta={"SELECT COUNT(*) AS estudiantes, COUNT(correo) AS con_correo FROM estudiantes;"} />
 
-<SqlEjemplo consulta={"SELECT ROUND(AVG(nota), 2) AS promedio_general FROM inscripciones;"} />
-
-**MIN y MAX.** Encuentran los extremos de una columna.
-
-<SqlEjemplo consulta={"SELECT MIN(nota) AS nota_minima, MAX(nota) AS nota_maxima FROM inscripciones;"} />
-
-**Combinar agregaciones.** Varias funciones pueden resumir la misma tabla en una fila.
-
-<SqlEjemplo consulta={"SELECT COUNT(*) AS total_inscritos, ROUND(AVG(nota), 2) AS promedio_general, MIN(nota) AS nota_minima, MAX(nota) AS nota_maxima FROM inscripciones;"} />
+**Las agregaciones ignoran los NULL.** `AVG`, `MIN`, `MAX` y `SUM` trabajan solo con los valores que existen. Es lo que normalmente quieres, pero conviene saberlo: un promedio sobre 11 notas no es un promedio sobre 12 inscripciones.
 </Concepto>
 
 <SqlTask
   id="funciones-agregacion"
-  enunciado={"Calcula una sola fila con estas columnas: total_inscritos, promedio_general, nota_minima y nota_maxima."}
+  enunciado={"Prepara el resumen del semestre en una sola fila, con estas columnas: total_inscripciones (todas las inscripciones), con_nota (las que ya tienen nota), promedio_general (el promedio de las notas, redondeado a 2 decimales), nota_minima y nota_maxima."}
   inicial={"SELECT * FROM inscripciones;"}
-  solucion={"SELECT COUNT(*) AS total_inscritos, ROUND(AVG(nota), 2) AS promedio_general, MIN(nota) AS nota_minima, MAX(nota) AS nota_maxima FROM inscripciones;"}
-  comparar="filas-sin-orden"
-  pistas={["Sin GROUP BY, las funciones de agregación resumen toda la tabla en una sola fila.", "Contar filas se hace con COUNT(*), y el promedio va redondeado a 2 decimales."]}
+  solucion={"SELECT COUNT(*) AS total_inscripciones, COUNT(nota) AS con_nota, ROUND(AVG(nota), 2) AS promedio_general, MIN(nota) AS nota_minima, MAX(nota) AS nota_maxima FROM inscripciones;"}
+  comparar={"filas-sin-orden"}
+  pistas={["Sin GROUP BY, todas las funciones resumen la tabla completa en una fila.","COUNT(*) cuenta filas; COUNT(nota) cuenta solo las que tienen nota.","Cada columna lleva su alias, en el orden que pide el enunciado."]}
 />
 
 <Debrief>
-Sin GROUP BY, cada función de agregación resume toda la tabla en una sola fila.
+```sql
+SELECT COUNT(*) AS total_inscripciones,
+       COUNT(nota) AS con_nota,
+       ROUND(AVG(nota), 2) AS promedio_general,
+       MIN(nota) AS nota_minima,
+       MAX(nota) AS nota_maxima
+FROM inscripciones;
+```
+
+Hay 12 inscripciones y 11 con nota: una está en curso. El promedio, 5.72, se calcula sobre las 11 notas que existen. Mostrar las dos cuentas juntas deja claro sobre cuántos datos se calculó el resumen.
 </Debrief>

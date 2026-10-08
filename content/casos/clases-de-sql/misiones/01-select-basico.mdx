@@ -4,40 +4,38 @@ tiempo: 12
 ---
 
 <Concepto>
-Una base de datos es un lugar organizado para guardar información. Los datos viven en tablas, cada tabla tiene columnas y cada fila representa un registro.
+Una base de datos guarda la información en tablas: cada tabla tiene columnas con nombre y cada fila es un registro. En estas clases trabajas con la base de una escuela de cursos en línea, con tres tablas: `estudiantes`, `cursos` e `inscripciones`.
 
-SELECT es la sentencia que usamos para hacer preguntas sobre esos datos. Casi todo lo demas que aprendas en SQL termina apoyandose en un SELECT.
+`SELECT` es la instrucción para preguntarle cosas a esa base. Solo lee: por más que te equivoques, no cambia ni borra nada. Por eso es el mejor lugar para empezar.
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla;"} />
+<Sintaxis lenguaje="sql" codigo={"SELECT columna1, columna2\nFROM tabla;"} />
 
-**Para qué sirve en la vida real.** SELECT es preguntar sin romper nada. Es como abrir una base de datos con modo espectador: miras la información, pero no la modificas.
+**Se lee en dos partes.** `SELECT` dice qué columnas quieres ver y `FROM` dice de qué tabla salen. El punto y coma marca el final de la consulta.
 
-**Cómo pensarlo sin sufrir.** Piensa en SELECT como pedir columnas de una planilla gigante. FROM dice de que tabla sale la información.
+**Todas las columnas con \*.** El asterisco trae todas las columnas de la tabla. Sirve para explorar una tabla que no conoces. Ejecuta este ejemplo para ver la tabla de cursos:
 
-**Tu primera consulta.** Antes de escribir una consulta conviene mirar la estructura de la tabla. En esta lección trabajas con estudiantes.
+<SqlEjemplo consulta={"SELECT * FROM cursos;"} />
 
-**Seleccionar todas las columnas.** El asterisco trae todas las columnas. Es útil para explorar, pero en reportes reales conviene pedir solo lo necesario.
+**Solo las columnas que necesitas.** En un reporte, cada columna de más es ruido. Escribe los nombres separados por comas, y el resultado los muestra en ese mismo orden.
 
-<SqlEjemplo consulta={"SELECT * FROM estudiantes;"} />
+<SqlEjemplo consulta={"SELECT titulo, horas FROM cursos;"} />
 
-**Seleccionar columnas específicas.** Escribe los nombres de columna separados por comas después de SELECT para controlar exactamente que devuelve la consulta.
-
-<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes;"} />
-
-**El orden del resultado.** El orden en que escribes las columnas es el orden en que aparecen en el resultado. No cambia la tabla original.
-
-<SqlEjemplo consulta={"SELECT ciudad, nombre FROM estudiantes;"} />
+**Los nombres tienen que existir.** Si escribes una columna que la tabla no tiene, por ejemplo `nombre` en `cursos`, la consulta da error. Por eso conviene mirar la tabla con `*` antes de elegir columnas.
 </Concepto>
 
 <SqlTask
   id="select-basico"
-  enunciado={"Muestra todos los estudiantes con estas columnas: nombre y ciudad."}
+  enunciado={"La escuela quiere escribirle a todo su estudiantado. Muestra el nombre y el correo de cada estudiante, en ese orden, sin otras columnas."}
   inicial={"SELECT * FROM estudiantes;"}
-  solucion={"SELECT nombre, ciudad FROM estudiantes;"}
-  comparar="filas-sin-orden"
-  pistas={["SELECT dice qué columnas quieres y FROM, de qué tabla salen.", "Separa las columnas con comas, en el orden en que deben aparecer en el resultado."]}
+  solucion={"SELECT nombre, correo FROM estudiantes;"}
+  comparar={"filas-sin-orden"}
+  pistas={["Ejecuta el código inicial para ver qué columnas tiene la tabla estudiantes.","Después de SELECT van solo las columnas pedidas, separadas por comas."]}
 />
 
 <Debrief>
-La consulta debe traer solo las columnas necesarias para responder la pregunta.
+```sql
+SELECT nombre, correo FROM estudiantes;
+```
+
+`SELECT *` es para mirar; para entregar, nombra las columnas. Así el resultado muestra justo lo que se pidió y no cambia si mañana alguien agrega columnas a la tabla.
 </Debrief>

@@ -1,37 +1,45 @@
 ---
-titulo: "CTE con WITH: ordena tu consulta antes de que explote"
+titulo: "CTE con WITH: consultas por pasos"
 tiempo: 16
 ---
 
 <Concepto>
-WITH define una tabla temporal con nombre, llamada CTE (common table expression), que solo existe durante esa consulta.
+Una subconsulta dentro de otra dentro de otra se vuelve difícil de leer. `WITH` resuelve eso: le pone nombre a un paso intermedio arriba de la consulta, y después lo usas como si fuera una tabla. A eso se le llama CTE (Common Table Expression).
 
-Es la misma idea que una subconsulta en FROM, pero más fácil de leer cuando la consulta tiene varios pasos.
+<Sintaxis lenguaje="sql" codigo={"WITH nombre_paso AS (\n  SELECT ...\n)\nSELECT ... FROM nombre_paso;"} />
 
-<Sintaxis lenguaje="sql" codigo={"WITH nombre_cte AS (\n  SELECT columnas FROM tabla\n)\nSELECT * FROM nombre_cte;"} />
+**Declarar el paso.** `WITH`, el nombre, `AS` y la consulta entre paréntesis. Después viene la consulta principal, que lo usa en su `FROM`.
 
-**Para qué sirve en la vida real.** WITH ordena consultas largas para que no parezcan spaghetti SQL. Le pones nombre a un paso intermedio.
+<SqlEjemplo consulta={"WITH por_estado AS (\n  SELECT estado, COUNT(*) AS inscripciones\n  FROM inscripciones\n  GROUP BY estado\n)\nSELECT * FROM por_estado;"} />
 
-**Cómo pensarlo sin sufrir.** Primero declaras resumen; luego haces SELECT desde resumen como si fuera una tabla.
+**Filtrar y ordenar el resultado del paso.** En la consulta principal puedes usar `WHERE`, `ORDER BY` y `JOIN` sobre el CTE como sobre cualquier tabla.
 
-**WITH declara la tabla temporal.** Todo lo que va entre parentesis después de AS es una consulta normal; su resultado se puede usar como si fuera una tabla en el SELECT de abajo.
+<SqlEjemplo consulta={"WITH por_estado AS (\n  SELECT estado, COUNT(*) AS inscripciones\n  FROM inscripciones\n  GROUP BY estado\n)\nSELECT estado, inscripciones\nFROM por_estado\nWHERE inscripciones >= 2\nORDER BY inscripciones DESC;"} />
 
-<SqlEjemplo consulta={"WITH resumen AS (\n  SELECT curso_id, AVG(nota) AS promedio\n  FROM inscripciones\n  GROUP BY curso_id\n)\nSELECT * FROM resumen;"} />
-
-**Se puede filtrar el resultado del CTE.** El SELECT final trata a resumen como cualquier tabla: puede filtrar con WHERE, ordenar, o unir con JOIN.
-
-**Por que no es solo una subconsulta en FROM.** La diferencia es legibilidad: el nombre queda arriba, separado de la consulta final, en vez de anidado dentro del FROM.
+**Por qué no una subconsulta.** Hace lo mismo que la subconsulta en `FROM`, pero se lee de arriba hacia abajo, como una receta: primero calculo esto, después lo uso. Puedes declarar varios pasos separados por comas, y cada uno puede usar los anteriores. En consultas reales de varias etapas, es la forma más usada.
 </Concepto>
 
 <SqlTask
   id="cte-with"
-  enunciado={"Reescribe el promedio por curso usando WITH. Muestra curso_id y promedio solo para cursos con promedio 5.5 o más, ordenados de mayor a menor."}
-  inicial={"SELECT curso_id, AVG(nota) AS promedio FROM inscripciones GROUP BY curso_id;"}
-  solucion={"WITH resumen AS (SELECT curso_id, ROUND(AVG(nota), 2) AS promedio FROM inscripciones GROUP BY curso_id) SELECT curso_id, promedio FROM resumen WHERE promedio >= 5.5 ORDER BY promedio DESC;"}
-  comparar="filas-en-orden"
-  pistas={["WITH le pone nombre a la consulta del promedio por curso, antes del SELECT principal.", "Redondea el promedio a 2 decimales dentro del WITH; filtra y ordena en el SELECT de afuera."]}
+  enunciado={"Con un CTE, resume a los estudiantes por ciudad: cuántos hay (estudiantes) y su edad promedio redondeada a 1 decimal (edad_promedio). Muestra ciudad, estudiantes y edad_promedio solo de las ciudades con 2 o más estudiantes, de la edad promedio más alta a la más baja."}
+  inicial={"SELECT ciudad, edad FROM estudiantes;"}
+  solucion={"WITH por_ciudad AS (\n  SELECT ciudad, COUNT(*) AS estudiantes, ROUND(AVG(edad), 1) AS edad_promedio\n  FROM estudiantes\n  GROUP BY ciudad\n)\nSELECT ciudad, estudiantes, edad_promedio\nFROM por_ciudad\nWHERE estudiantes >= 2\nORDER BY edad_promedio DESC;"}
+  comparar={"filas-en-orden"}
+  pistas={["El paso del WITH agrupa estudiantes por ciudad, con la cantidad y la edad promedio.","La consulta principal lee de ese paso, filtra con WHERE y ordena.","\"2 o más\" incluye el 2."]}
 />
 
 <Debrief>
-El CTE resumen calcula el promedio por curso una sola vez; la consulta final solo filtra y ordena sobre ese resultado, igual que la subconsulta en FROM de la lección anterior pero más legible.
+```sql
+WITH por_ciudad AS (
+  SELECT ciudad, COUNT(*) AS estudiantes, ROUND(AVG(edad), 1) AS edad_promedio
+  FROM estudiantes
+  GROUP BY ciudad
+)
+SELECT ciudad, estudiantes, edad_promedio
+FROM por_ciudad
+WHERE estudiantes >= 2
+ORDER BY edad_promedio DESC;
+```
+
+Temuco tiene el estudiantado de mayor edad (24 años en promedio) y Concepción el más joven (21). La Serena queda fuera: con una sola persona, su "promedio" sería la edad de esa persona.
 </Debrief>

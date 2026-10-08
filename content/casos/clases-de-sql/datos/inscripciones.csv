@@ -9,3 +9,5 @@ id,estudiante_id,curso_id,nota,estado
 1008,8,102,6,aprobado
 1009,1,103,5.7,aprobado
 1010,4,105,4.6,riesgo
+1011,9,106,,en curso
+1012,2,101,5.8,aprobado

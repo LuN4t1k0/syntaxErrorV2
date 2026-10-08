@@ -1,39 +1,44 @@
 ---
-titulo: "CASE WHEN: crea categorias desde la consulta"
+titulo: "CASE WHEN: categorías desde la consulta"
 tiempo: 14
 ---
 
 <Concepto>
-CASE WHEN evalúa condiciones en orden y devuelve un valor distinto según cual se cumpla primero.
+`CASE` crea una columna nueva a partir de reglas: "si la nota es 6 o más, 'destacado'; si es 4 o más, 'aprobado'; si no, 'reprobado'". Es el `if` de SQL, y sirve para segmentar sin tocar los datos.
 
-Es la forma de crear categorias o etiquetas directamente desde una consulta, sin tener que procesar los datos después.
+<Sintaxis lenguaje="sql" codigo={"CASE\n  WHEN condición_1 THEN 'valor_1'\n  WHEN condición_2 THEN 'valor_2'\n  ELSE 'valor_por_defecto'\nEND AS nombre_columna"} />
 
-<Sintaxis lenguaje="sql" codigo={"CASE\n  WHEN condicion1 THEN valor1\n  WHEN condicion2 THEN valor2\n  ELSE valor_por_defecto\nEND AS alias"} />
+**Se revisa en orden.** SQL prueba cada `WHEN` de arriba hacia abajo y usa el primero que se cumple; los siguientes ya no se miran. Por eso la segunda condición puede ser más simple: ya sabe que la primera no se cumplió.
 
-**Para qué sirve en la vida real.** CASE WHEN crea etiquetas útiles directamente en SQL: junior, intermedio, senior, riesgo, premium, lo que necesites.
+<SqlEjemplo consulta={"SELECT titulo, horas,\n       CASE\n         WHEN horas < 20 THEN 'corto'\n         WHEN horas <= 30 THEN 'medio'\n         ELSE 'largo'\n       END AS duracion\nFROM cursos;"} />
 
-**Cómo pensarlo sin sufrir.** SQL revisa los WHEN en orden y se queda con el primero verdadero. ELSE cubre todo lo que queda.
+**ELSE cubre el resto.** Todo lo que no cumplió ningún `WHEN` toma el valor del `ELSE`. Sin `ELSE`, esas filas quedan en `NULL`.
 
-**CASE evalúa en orden.** Revisa cada WHEN de arriba hacia abajo y se queda con el primero que sea verdadero.
+**Es una columna más.** Lleva alias, se puede ordenar y se puede agrupar: `GROUP BY` sobre una columna `CASE` cuenta cuántos hay en cada segmento.
 
-<SqlEjemplo consulta={"CASE WHEN edad < 21 THEN 'junior' WHEN edad <= 23 THEN 'intermedio' ELSE 'senior' END"} />
-
-**ELSE cubre el resto.** Si ninguna condición se cumple, se usa el valor de ELSE. Sin ELSE, esas filas quedarían con NULL.
-
-**Se usa como una columna más.** El resultado de CASE se puede nombrar con AS y aparece como cualquier otra columna del SELECT.
-
-**Útil para segmentar.** Es la forma más común de crear categorias de negocio (alto, medio, bajo) directamente en SQL.
+**Ordenar con empates.** Si ordenas por una columna con valores repetidos, la base no garantiza en qué orden quedan las filas empatadas. Agrega una segunda columna al `ORDER BY` para desempatar.
 </Concepto>
 
 <SqlTask
   id="case-when"
-  enunciado={"Clasifica a cada estudiante por edad y muestra nombre, edad y grupo_edad: 'junior' si tiene menos de 21, 'intermedio' si tiene 21 a 23, y 'senior' si tiene más de 23. Ordena por edad."}
-  inicial={"SELECT nombre, edad FROM estudiantes ORDER BY edad;"}
-  solucion={"SELECT nombre, edad, CASE WHEN edad < 21 THEN 'junior' WHEN edad <= 23 THEN 'intermedio' ELSE 'senior' END AS grupo_edad FROM estudiantes ORDER BY edad;"}
-  comparar="filas-en-orden"
-  pistas={["CASE revisa las condiciones en orden y se queda con la primera que se cumple.", "Si la primera condición ya tomó a los menores de 21, la segunda solo necesita revisar el límite de arriba."]}
+  enunciado={"Clasifica a cada estudiante por edad en grupo_edad: 'junior' si tiene menos de 21 años, 'intermedio' si tiene entre 21 y 23 (ambos incluidos) y 'senior' si tiene más de 23. Muestra nombre, edad y grupo_edad, ordenados por edad y, si empatan, por nombre."}
+  inicial={"SELECT nombre, edad FROM estudiantes ORDER BY edad, nombre;"}
+  solucion={"SELECT nombre, edad, CASE WHEN edad < 21 THEN 'junior' WHEN edad <= 23 THEN 'intermedio' ELSE 'senior' END AS grupo_edad FROM estudiantes ORDER BY edad, nombre;"}
+  comparar={"filas-en-orden"}
+  pistas={["CASE revisa las condiciones en orden y se queda con la primera que se cumple.","Si la primera condición ya tomó a los menores de 21, la segunda solo necesita el límite de arriba.","Entre 21 y 23 \"ambos incluidos\": 23 es intermedio."]}
 />
 
 <Debrief>
-CASE evalúa las condiciones en orden: menor a 21 es junior, de 21 a 23 (inclusive) es intermedio por la segunda condición edad &lt;= 23, y el resto cae en ELSE como senior.
+```sql
+SELECT nombre, edad,
+       CASE
+         WHEN edad < 21 THEN 'junior'
+         WHEN edad <= 23 THEN 'intermedio'
+         ELSE 'senior'
+       END AS grupo_edad
+FROM estudiantes
+ORDER BY edad, nombre;
+```
+
+El borde es el 23: con `edad < 23`, Martín Silva y Florencia Vera quedarían como senior. El `nombre` en el `ORDER BY` desempata a quienes tienen la misma edad, para que el orden sea siempre el mismo.
 </Debrief>

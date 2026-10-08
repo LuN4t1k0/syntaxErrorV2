@@ -1,45 +1,47 @@
 ---
 titulo: "Filtros con WHERE"
-tiempo: 14
+tiempo: 12
 ---
 
 <Concepto>
-WHERE decide que filas pasan al resultado y cuales quedan fuera.
+`WHERE` filtra filas: de toda la tabla, se queda solo con las que cumplen una condición. Es la diferencia entre "todos los cursos" y "los cursos intermedios de más de 25 horas".
 
-Cuando una pregunta tiene varias condiciones, AND exige que todas se cumplan al mismo tiempo.
+<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla\nWHERE condición;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columnas\nFROM tabla\nWHERE condicion;"} />
+**Comparar texto.** El texto va entre comillas simples y tiene que coincidir exactamente, con tildes incluidas.
 
-**Para qué sirve en la vida real.** WHERE sirve para no traer toda la base cuando solo necesitas algunos casos. Es el guardia de la puerta.
+<SqlEjemplo consulta={"SELECT titulo, nivel FROM cursos WHERE nivel = 'Intermedio';"} />
 
-**Cómo pensarlo sin sufrir.** Primero eliges la tabla, luego WHERE deja pasar solo las filas que cumplen la regla.
+**Comparar números.** Los números van sin comillas. Los operadores son `=`, `<>` (distinto), `>`, `<`, `>=` y `<=`. Fíjate si el límite se incluye: "25 o más" es `>= 25`; "más de 25" es `> 25`.
 
-**Filtrar por texto.** Los textos se comparan entre comillas simples.
+<SqlEjemplo consulta={"SELECT titulo, horas FROM cursos WHERE horas >= 25;"} />
 
-<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes WHERE ciudad = 'Santiago';"} />
+**AND: las dos condiciones.** Una fila pasa solo si cumple ambas.
 
-**Filtrar por número.** Con números puedes usar =, &lt;>, >, &lt;, >= y &lt;=.
+<SqlEjemplo consulta={"SELECT titulo, nivel, horas FROM cursos WHERE nivel = 'Intermedio' AND horas >= 25;"} />
 
-<SqlEjemplo consulta={"SELECT nombre, edad FROM estudiantes WHERE edad >= 21;"} />
+**OR: una u otra.** Una fila pasa si cumple al menos una. Cuando mezcles `AND` y `OR`, usa paréntesis para dejar claro qué va con qué.
 
-**Combinar con AND.** AND deja pasar solo filas que cumplen todas las condiciones.
+<SqlEjemplo consulta={"SELECT titulo, nivel FROM cursos WHERE nivel = 'Básico' OR nivel = 'Avanzado';"} />
 
-<SqlEjemplo consulta={"SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = 'Santiago' AND edad >= 21;"} />
-
-**Usar OR.** OR deja pasar filas si se cumple al menos una condición.
-
-<SqlEjemplo consulta={"SELECT nombre, ciudad FROM estudiantes WHERE ciudad = 'Santiago' OR ciudad = 'Concepción';"} />
+**El orden de las cláusulas.** Primero `SELECT`, después `FROM` y después `WHERE`. Escritas en otro orden, la consulta da error.
 </Concepto>
 
 <SqlTask
   id="where-filtros"
-  enunciado={"Encuentra estudiantes de Santiago que tengan 21 años o más. Muestra nombre, edad y ciudad."}
+  enunciado={"La sede de Santiago organiza un taller para mayores de edad legal de la escuela: estudiantes de Santiago con 21 años o más. Muestra su nombre, edad y ciudad."}
   inicial={"SELECT nombre, edad, ciudad FROM estudiantes;"}
   solucion={"SELECT nombre, edad, ciudad FROM estudiantes WHERE ciudad = 'Santiago' AND edad >= 21;"}
-  comparar="filas-sin-orden"
-  pistas={["El filtro va en WHERE, después de FROM.", "Las dos condiciones tienen que cumplirse a la vez: ¿qué operador exige eso? Ojo, que 21 también cuenta."]}
+  comparar={"filas-sin-orden"}
+  pistas={["El filtro va en WHERE, después de FROM.","Las dos condiciones tienen que cumplirse a la vez.","21 años también cuenta: revisa si tu comparación incluye el 21."]}
 />
 
 <Debrief>
-El filtro combina una condición de texto (ciudad) con una numérica (edad) usando AND.
+```sql
+SELECT nombre, edad, ciudad
+FROM estudiantes
+WHERE ciudad = 'Santiago' AND edad >= 21;
+```
+
+Tres personas cumplen las dos condiciones. Con `OR` aparecerían casi todas, y con `> 21` se perdería quien tiene exactamente 21: los límites son donde más se equivocan los filtros.
 </Debrief>

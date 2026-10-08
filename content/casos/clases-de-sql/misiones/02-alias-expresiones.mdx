@@ -4,38 +4,39 @@ tiempo: 12
 ---
 
 <Concepto>
-AS permite darle a una columna o expresión un nombre más claro para el resultado de una consulta.
+Una consulta no solo copia columnas: también puede calcular valores nuevos a partir de ellas, y ponerles nombres claros a las columnas del resultado. Nada de eso cambia la tabla: el cálculo existe solo en lo que devuelve la consulta.
 
-También puedes crear valores calculados al vuelo, sin guardarlos en la tabla.
+<Sintaxis lenguaje="sql" codigo={"SELECT columna AS nombre_nuevo,\n       expresión AS otro_nombre\nFROM tabla;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columna AS alias, columna + 1 AS calculo\nFROM tabla;"} />
+**Renombrar con AS.** `AS` le da otro nombre a una columna del resultado. Sirve para que quien lea el reporte entienda qué es cada cosa.
 
-**Para qué sirve en la vida real.** Los alias hacen que un resultado sea entendible para humanos. Sin alias, una columna calculada puede quedar con nombre de hechizo raro.
+<SqlEjemplo consulta={"SELECT titulo AS curso, nivel AS dificultad FROM cursos;"} />
 
-**Cómo pensarlo sin sufrir.** AS es una etiqueta temporal: no cambia la tabla, solo el nombre que se ve en el resultado.
+**Calcular con una expresión.** Puedes operar con las columnas: `+`, `-`, `*` y `/`. El cálculo se hace fila por fila.
 
-**Renombrar una columna.** El alias aparece solo en el resultado y no cambia el nombre real de la columna.
+<SqlEjemplo consulta={"SELECT titulo, horas, horas * 60 AS minutos FROM cursos;"} />
 
-<SqlEjemplo consulta={"SELECT nombre, edad AS edad_actual FROM estudiantes;"} />
+**Siempre con alias.** Sin `AS`, la columna calculada aparece con un nombre automático como `horas * 60`, difícil de leer y de usar después. Ponle siempre un nombre a lo que calculas.
 
-**Crear una expresión.** Los operadores aritméticos calculan un valor nuevo por cada fila.
-
-<SqlEjemplo consulta={"SELECT nombre, edad + 1 AS edad_proximo_anio FROM estudiantes;"} />
-
-**Por que usar AS.** Sin alias, una expresión puede quedar con un titulo difícil de leer.
-
-**AS como estilo.** Algunos motores dejan omitir AS, pero escribirlo mejora la lectura.
+**Los nombres de los alias.** Escríbelos en minúsculas, con `_` entre palabras y sin tildes ni espacios: `horas_semanales`, no `Horas Semanales`.
 </Concepto>
 
 <SqlTask
   id="alias-expresiones"
-  enunciado={"Muestra el nombre, la edad actual (como edad_actual) y la edad que tendrán el próximo año (como edad_proximo_anio)."}
+  enunciado={"Para un mensaje de cumpleaños, muestra de cada estudiante: su nombre, su edad actual con el nombre edad_actual y la edad que tendrá el próximo año con el nombre edad_proximo_anio."}
   inicial={"SELECT nombre, edad FROM estudiantes;"}
   solucion={"SELECT nombre, edad AS edad_actual, edad + 1 AS edad_proximo_anio FROM estudiantes;"}
-  comparar="filas-sin-orden"
-  pistas={["El alias va después de la columna o del cálculo, con AS y el nombre nuevo.", "La edad del próximo año es una expresión: la edad más 1."]}
+  comparar={"filas-sin-orden"}
+  pistas={["El alias va después de la columna o del cálculo: columna AS nombre_nuevo.","La edad del próximo año es una expresión: la edad más 1."]}
 />
 
 <Debrief>
-edad_actual es un alias directo; edad_proximo_anio es una expresión calculada sumando 1.
+```sql
+SELECT nombre,
+       edad AS edad_actual,
+       edad + 1 AS edad_proximo_anio
+FROM estudiantes;
+```
+
+Escribir cada columna en su propia línea no cambia el resultado, pero hace que una consulta larga se lea mucho mejor. La tabla `estudiantes` sigue igual: `edad_proximo_anio` existe solo en este resultado.
 </Debrief>

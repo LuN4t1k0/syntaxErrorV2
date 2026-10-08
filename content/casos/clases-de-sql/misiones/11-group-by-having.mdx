@@ -1,45 +1,48 @@
 ---
 titulo: "GROUP BY y HAVING"
-tiempo: 18
+tiempo: 16
 ---
 
 <Concepto>
-GROUP BY calcula un resumen por cada grupo.
+`GROUP BY` separa las filas en grupos según una columna y calcula las agregaciones dentro de cada grupo. En vez de un promedio para toda la tabla, obtienes un promedio por curso, por ciudad o por estado. Es la tabla dinámica de SQL.
 
-HAVING filtra grupos después de calcularlos.
+<Sintaxis lenguaje="sql" codigo={"SELECT columna_grupo, AGREGACION(columna) AS alias\nFROM tabla\nGROUP BY columna_grupo\nHAVING condición_sobre_el_grupo;"} />
 
-<Sintaxis lenguaje="sql" codigo={"SELECT columna, COUNT(*)\nFROM tabla\nGROUP BY columna\nHAVING condicion;"} />
+**Un resumen por grupo.** Cada grupo produce una fila. En el `SELECT` van la columna del grupo y agregaciones; nada más.
 
-**Para qué sirve en la vida real.** GROUP BY arma resúmenes por grupo. Es pasar de lista de notas a ranking por curso.
+<SqlEjemplo consulta={"SELECT ciudad, COUNT(*) AS estudiantes FROM estudiantes GROUP BY ciudad;"} />
 
-**Cómo pensarlo sin sufrir.** WHERE filtra filas antes de agrupar; HAVING filtra grupos después de calcular COUNT o AVG.
+**Varias agregaciones por grupo.** Igual que en la lección anterior, pero calculadas dentro de cada grupo.
 
-**Un resumen por curso.** GROUP BY separa las filas por valor de una columna.
+<SqlEjemplo consulta={"SELECT ciudad, COUNT(*) AS estudiantes, ROUND(AVG(edad), 1) AS edad_promedio FROM estudiantes GROUP BY ciudad;"} />
 
-<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo;"} />
+**WHERE filtra filas, HAVING filtra grupos.** `WHERE` decide qué filas entran a los grupos, antes de agrupar. `HAVING` decide qué grupos salen en el resultado, después de calcular. Por eso una condición sobre `COUNT(*)` o `AVG(...)` solo puede ir en `HAVING`.
 
-**Más agregaciones.** Cada función se calcula por grupo.
+<SqlEjemplo consulta={"SELECT ciudad, COUNT(*) AS estudiantes\nFROM estudiantes\nWHERE edad >= 21\nGROUP BY ciudad\nHAVING COUNT(*) >= 2;"} />
 
-<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo;"} />
-
-**HAVING.** HAVING puede usar COUNT(*) porque se evalúa después de agrupar.
-
-<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo\nHAVING COUNT(*) > 1;"} />
-
-**ORDER BY.** También puedes ordenar grupos por un alias calculado.
-
-<SqlEjemplo consulta={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio\nFROM inscripciones AS i\nJOIN cursos AS c ON c.id = i.curso_id\nGROUP BY c.titulo\nHAVING COUNT(*) > 1\nORDER BY promedio DESC;"} />
+**El orden de las cláusulas.** `SELECT`, `FROM`, `JOIN`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY` y `LIMIT`. El `ORDER BY` puede usar el alias de una agregación.
 </Concepto>
 
 <SqlTask
   id="group-by-having"
-  enunciado={"Calcula titulo, inscritos y promedio por curso. Muestra solo cursos con más de una inscripción y ordena por promedio descendente."}
-  inicial={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo;"}
-  solucion={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo HAVING COUNT(*) > 1 ORDER BY promedio DESC;"}
-  comparar="filas-en-orden"
-  pistas={["Primero agrupa por curso; el JOIN con cursos trae el título.", "Para filtrar grupos según cuántas filas tienen no sirve WHERE: se usa la cláusula que va justo después de GROUP BY."]}
+  enunciado={"Por cada curso, muestra titulo, inscritos (cuántas inscripciones tiene) y promedio (la nota promedio, redondeada a 2 decimales). Muestra solo los cursos con más de una inscripción, ordenados del promedio más bajo al más alto, para revisar primero los cursos con más dificultades."}
+  inicial={"SELECT c.titulo, i.nota FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id;"}
+  solucion={"SELECT c.titulo, COUNT(*) AS inscritos, ROUND(AVG(i.nota), 2) AS promedio FROM inscripciones AS i JOIN cursos AS c ON c.id = i.curso_id GROUP BY c.titulo HAVING COUNT(*) > 1 ORDER BY promedio ASC;"}
+  comparar={"filas-en-orden"}
+  pistas={["Agrupa por el título del curso; el JOIN con cursos ya lo trae.","Para filtrar según cuántas filas tiene cada grupo no sirve WHERE: va en HAVING, después de GROUP BY.","\"Más de una\" no incluye el 1."]}
 />
 
 <Debrief>
-HAVING COUNT(*) > 1 descarta los cursos con una sola inscripción después de agrupar.
+```sql
+SELECT c.titulo,
+       COUNT(*) AS inscritos,
+       ROUND(AVG(i.nota), 2) AS promedio
+FROM inscripciones AS i
+JOIN cursos AS c ON c.id = i.curso_id
+GROUP BY c.titulo
+HAVING COUNT(*) > 1
+ORDER BY promedio ASC;
+```
+
+Quedan cuatro cursos: Datos para decisiones encabeza la lista con 4.85 y SQL inicial la cierra con 6.33. Los cursos con una sola inscripción quedan fuera: con un solo dato, un promedio dice poco sobre el curso. Y sin `ORDER BY`, el orden de los grupos depende de la base: podría coincidir hoy por casualidad y cambiar mañana.
 </Debrief>
