@@ -27,7 +27,8 @@ test("Ctrl+K abre la búsqueda en cualquier página y Enter lleva al primer resu
 });
 
 test("el botón Buscar abre la ventana, marca las lecciones y lleva a todos los resultados", async ({ page }) => {
-  await page.goto("/");
+  // La landing tiene su propio encabezado, sin búsqueda: el botón Buscar está en el encabezado del resto del sitio.
+  await page.goto("/rutas");
   await page.getByRole("banner").getByRole("link", { name: "Buscar" }).click();
   const ventana = page.getByRole("dialog", { name: "Buscar en syntaxError.cl" });
   await ventana.getByLabel("Busca rutas, casos, misiones o lecciones").fill("inner join");
@@ -42,7 +43,8 @@ test("el botón Buscar abre la ventana, marca las lecciones y lleva a todos los 
 });
 
 test("Escape cierra la ventana de búsqueda", async ({ page }) => {
-  await page.goto("/");
+  // La landing tiene su propio encabezado, sin búsqueda: el botón Buscar está en el encabezado del resto del sitio.
+  await page.goto("/rutas");
   await page.getByRole("banner").getByRole("link", { name: "Buscar" }).click();
   const ventana = page.getByRole("dialog", { name: "Buscar en syntaxError.cl" });
   await expect(ventana).toBeVisible();
