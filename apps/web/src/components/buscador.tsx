@@ -29,7 +29,7 @@ export function Buscador({ indice }: { indice: EntradaBusqueda[] }) {
           maxLength={100}
           autoFocus
           placeholder="Por ejemplo: WHERE, promedio o ventas"
-          className="h-11 w-full rounded-md border border-border bg-background px-3 text-base font-normal text-foreground outline-none focus:border-primary"
+          className="field min-h-11 text-base font-normal"
         />
       </label>
       {consulta.trim() === "" ? null : resultados.length === 0 ? (

@@ -13,7 +13,7 @@ test("el panel lleva a la siguiente misión pendiente", async ({ page }) => {
   await page.locator('input[name="name"]').fill("Antonia Vidal");
   await page.locator('input[name="email"]').fill(`continuar-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   await expect(page.getByRole("link", { name: "Continuar misión" })).toHaveCount(0);
 

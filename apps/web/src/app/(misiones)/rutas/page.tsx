@@ -15,7 +15,7 @@ export default async function RutasPage() {
   const [rutas, casos] = await Promise.all([rutasParaSelector(puedeBeta), casosParaConstruir()]);
   return (
     <main className="mx-auto grid max-w-5xl gap-6 px-4 py-12 sm:px-6">
-      <p className="font-mono text-sm font-bold text-primary">{"> ls rutas/"}</p>
+      <p className="font-mono text-sm font-bold text-accent">{"> ls rutas/"}</p>
       <h1 className="text-3xl font-black">Rutas</h1>
       <SelectorRutas rutas={rutasParaSelectorUi(rutas, casos)} sesion={Boolean(userId)} accion="Empezar" />
     </main>

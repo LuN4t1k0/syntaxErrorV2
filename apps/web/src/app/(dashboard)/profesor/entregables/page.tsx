@@ -26,8 +26,8 @@ export default async function EntregablesPage({ searchParams }: { searchParams: 
 
   return (
     <main className="mx-auto grid max-w-4xl gap-6 px-4 py-12 sm:px-6">
-      <nav className="text-sm"><Link className="font-bold text-primary hover:underline" href="/profesor">← Panel docente</Link></nav>
-      <p className="font-mono text-sm font-bold text-primary">{"> git review"}</p>
+      <nav className="text-sm"><Link className="font-bold text-accent hover:underline" href="/profesor">← Panel docente</Link></nav>
+      <p className="font-mono text-sm font-bold text-accent">{"> git review"}</p>
       <h1 className="text-3xl font-black">Entregables por revisar</h1>
       <p className="leading-7 text-muted-foreground">
         La plataforma ya verificó que cada repositorio es público, tiene README y los archivos del caso. Abre el repositorio y ponle un puntaje de 1 a 3 en cada dimensión de la rúbrica: con 2 o más en las tres se aprueba; con un 1 se piden cambios, y esa dimensión necesita un comentario sobre qué corregir.
@@ -51,7 +51,7 @@ export default async function EntregablesPage({ searchParams }: { searchParams: 
               <div className="grid gap-1">
                 <p className="font-bold">{`${entregable.caso.titulo} · ${entregable.estudiante.nombre ?? entregable.estudiante.email}`}</p>
                 <p className="text-xs text-muted-foreground">{`${entregable.estudiante.email} · enviado el ${fecha(entregable.enviadoEn)}`}</p>
-                <a className="w-fit font-bold text-primary hover:underline" href={entregable.url} target="_blank" rel="noopener noreferrer">Abrir el repositorio</a>
+                <a className="w-fit font-bold text-accent hover:underline" href={entregable.url} target="_blank" rel="noopener noreferrer">Abrir el repositorio</a>
               </div>
               <FormularioRevision entregableId={entregable.id} rubrica={rubricaDe(entregable.caso.slug)} />
             </li>

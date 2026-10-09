@@ -46,7 +46,7 @@ export function SeccionEliminar({ tieneClave }: { tieneClave: boolean }) {
         </Button>
       </div>
       {mensaje ? (
-        <p role="alert" className="text-sm font-bold text-destructive">
+        <p role="alert" className="text-sm font-bold text-error-text">
           {mensaje}
         </p>
       ) : null}

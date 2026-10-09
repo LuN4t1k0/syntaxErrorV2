@@ -5,7 +5,7 @@ import { unidad } from "@/lib/unidad";
 import { SeccionTerminal } from "./terminal";
 
 const MARCA: Record<CasoAvance["estado"], string> = { completo: "✓", en_curso: "▶", pendiente: "·" };
-const COLOR: Record<CasoAvance["estado"], string> = { completo: "text-emerald-600 dark:text-emerald-400", en_curso: "text-primary", pendiente: "text-muted-foreground" };
+const COLOR: Record<CasoAvance["estado"], string> = { completo: "text-emerald-600 dark:text-emerald-400", en_curso: "text-accent", pendiente: "text-muted-foreground" };
 const ESTADO_LECCION = { aprobada: "aprobada", en_curso: "en curso", sin_empezar: "sin empezar" } as const;
 
 function fecha(valor: Date | null): string {
@@ -17,7 +17,7 @@ function Lecciones({ caso, modo, trabadas }: { caso: CasoAvance; modo: "admin" |
   return (
     <ol className="grid gap-1 border-l border-border pl-4">
       {caso.lecciones.map((leccion, indice) => (
-        <li key={leccion.slug} className={cn("flex flex-wrap gap-x-3", trabadas.has(leccion.href) ? "font-bold text-red-600 dark:text-red-400" : leccion.estado === "aprobada" ? "text-emerald-600 dark:text-emerald-400" : leccion.estado === "en_curso" ? "text-primary" : "text-muted-foreground")}>
+        <li key={leccion.slug} className={cn("flex flex-wrap gap-x-3", trabadas.has(leccion.href) ? "font-bold text-red-600 dark:text-red-400" : leccion.estado === "aprobada" ? "text-emerald-600 dark:text-emerald-400" : leccion.estado === "en_curso" ? "text-accent" : "text-muted-foreground")}>
           <Link href={leccion.href} className="hover:underline">{`${String(indice + 1).padStart(2, "0")} ${leccion.titulo}`}</Link>
           <span>{ESTADO_LECCION[leccion.estado]}</span>
           {modo === "admin" && leccion.intentos > 0 ? <span>{`${leccion.intentos} ${leccion.intentos === 1 ? "intento" : "intentos"} · ${leccion.fallidos} ${leccion.fallidos === 1 ? "fallido" : "fallidos"}`}</span> : null}

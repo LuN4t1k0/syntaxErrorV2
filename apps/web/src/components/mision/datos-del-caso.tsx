@@ -15,7 +15,7 @@ export function DatosDelCaso({ caso, datos }: { caso: string; datos: Tabla[] }) 
       <ul className="grid gap-2">
         {datos.map((tabla) => (
           <li key={tabla.nombre} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <a href={`/casos/${caso}/datos/${tabla.nombre}.csv`} download className="font-mono font-bold text-primary hover:underline">{`${tabla.nombre}.csv`}</a>
+            <a href={`/casos/${caso}/datos/${tabla.nombre}.csv`} download className="font-mono font-bold text-accent hover:underline">{`${tabla.nombre}.csv`}</a>
             <span className="text-sm text-muted-foreground">{`${tabla.filas.length} filas · separado por ${separadorDe(tabla)} · ${Object.keys(tabla.filas[0] ?? {}).join(", ")}`}</span>
           </li>
         ))}

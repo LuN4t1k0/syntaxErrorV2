@@ -13,7 +13,7 @@ async function registrarse(page: Page, callbackUrl: string): Promise<string> {
   await page.locator('input[name="name"]').fill("Valentina Muñoz");
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   return email;
 }
 

@@ -52,7 +52,7 @@ export function ConfirmarToken({
             </Button>
           </div>
           {estado === "error" ? (
-            <p role="alert" className="text-sm font-bold text-destructive">
+            <p role="alert" className="text-sm font-bold text-error-text">
               {mensaje}
             </p>
           ) : null}

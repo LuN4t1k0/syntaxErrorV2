@@ -49,7 +49,7 @@ export function usePython(): ContextoPython {
 }
 
 export function EstadoPython({ estado, onReintentar }: { estado: FaseCarga; onReintentar: () => void }) {
-  if (estado === "listo") return <p className="text-sm font-bold text-primary">Python listo</p>;
+  if (estado === "listo") return <p className="text-sm font-bold text-accent">Python listo</p>;
   if (estado === "error") {
     return <div role="alert" className="flex flex-wrap items-center gap-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm"><span>No pudimos cargar Python. Revisa tu conexión; lo que escribiste se mantiene.</span><Button type="button" size="sm" variant="secondary" onClick={onReintentar}>Reintentar</Button></div>;
   }

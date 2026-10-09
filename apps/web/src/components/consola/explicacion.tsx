@@ -3,7 +3,7 @@ import type { Aviso, ErrorExplicado } from "@syntaxerror/engines/consola";
 export function ExplicacionError({ error }: { error: ErrorExplicado }) {
   return (
     <div role="alert" className="grid gap-1 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm leading-6">
-      <p className="font-bold text-destructive">{error.linea ? `Línea ${error.linea}: ${error.mensaje}` : error.mensaje}</p>
+      <p className="font-bold text-error-text">{error.linea ? `Línea ${error.linea}: ${error.mensaje}` : error.mensaje}</p>
       {error.sugerencia ? <p>{error.sugerencia}</p> : null}
       {error.original && error.original !== error.mensaje ? (
         <details>

@@ -42,7 +42,7 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
   return (
     <section className="card grid gap-4 p-5" aria-label="Tutor">
       <header className="flex items-center justify-between gap-2">
-        <p className="font-mono text-sm font-bold text-primary">{"> tutor"}</p>
+        <p className="font-mono text-sm font-bold text-accent">{"> tutor"}</p>
         <Button type="button" variant="ghost" size="sm" onClick={() => setAbierto(false)}>
           Cerrar
         </Button>
@@ -51,7 +51,7 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
 
       {sesion === "no" ? (
         <p className="text-sm">
-          <Link className="font-bold text-primary hover:underline" href={`/login?callbackUrl=${encodeURIComponent(`/casos/${caso}/${mision}`)}`}>
+          <Link className="font-bold text-accent hover:underline" href={`/login?callbackUrl=${encodeURIComponent(`/casos/${caso}/${mision}`)}`}>
             Entra para preguntarle al tutor
           </Link>
         </p>
@@ -71,7 +71,7 @@ export function Tutor({ caso, mision }: { caso: string; mision: string }) {
                 rows={3}
                 maxLength={500}
                 required
-                className="w-full resize-y rounded-md border border-border bg-background p-3 text-sm font-normal leading-6 text-foreground outline-none focus:border-primary"
+                className="field resize-y font-normal leading-6"
               />
             </label>
             <div>

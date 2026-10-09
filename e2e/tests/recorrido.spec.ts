@@ -38,7 +38,7 @@ test("un repositorio sin README no pasa, y con un 1 en la r√∫brica la observaci√
   await page.locator('input[name="name"]').fill("Fernanda Lagos");
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   for (const [mision, tarea] of [["01-clientes-de-regiones", "clientes-fuera-de-santiago"], ["02-total-de-ventas", "total-marzo"], ["03-ticket-promedio", "ticket-promedio"]]) {
     const respuesta = await page.request.post("/api/progreso", {

@@ -13,7 +13,7 @@ test("el tutor responde con el contexto de la misión y reutiliza la respuesta",
   await page.locator('input[name="name"]').fill("Ignacia Pérez");
   await page.locator('input[name="email"]').fill(`tutor-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
 
   await page.goto(MISION_SQL);

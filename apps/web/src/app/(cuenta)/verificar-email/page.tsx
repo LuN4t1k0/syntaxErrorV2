@@ -15,7 +15,7 @@ export default function VerificarEmailPage() {
           exito={
             <p>
               Tu email quedó confirmado.{" "}
-              <Link className="font-bold text-primary hover:underline" href="/dashboard">
+              <Link className="font-bold text-accent hover:underline" href="/dashboard">
                 Ir a tu panel
               </Link>
             </p>

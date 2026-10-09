@@ -142,7 +142,7 @@ export function BusquedaRapida() {
               {estado === "cargando" ? <p className="p-3 text-sm text-muted-foreground">Cargando...</p> : null}
               {estado === "error" ? (
                 <p role="status" className="p-3 text-sm text-muted-foreground">
-                  <span className="typographic-glitch font-mono font-black text-primary" data-text="SEARCH_OFFLINE:">
+                  <span className="typographic-glitch font-mono font-black text-accent" data-text="SEARCH_OFFLINE:">
                     SEARCH_OFFLINE:
                   </span>{" "}
                   La búsqueda no está disponible por ahora.
@@ -150,7 +150,7 @@ export function BusquedaRapida() {
               ) : null}
               {estado === "listo" && hayConsulta && resultados.length === 0 ? (
                 <p role="status" className="p-3 text-sm text-muted-foreground">
-                  <span className="typographic-glitch font-mono font-black text-primary" data-text="NO_MATCH_FOUND:">
+                  <span className="typographic-glitch font-mono font-black text-accent" data-text="NO_MATCH_FOUND:">
                     NO_MATCH_FOUND:
                   </span>{" "}
                   {`No encontramos resultados para «${consulta.trim()}».`}
@@ -180,7 +180,7 @@ export function BusquedaRapida() {
             </div>
             {hayConsulta && estado === "listo" ? (
               <div className="border-t border-border px-4 py-2 text-sm">
-                <Link href={`/buscar?q=${encodeURIComponent(consulta.trim())}`} onClick={cerrar} className="font-bold text-primary hover:underline">
+                <Link href={`/buscar?q=${encodeURIComponent(consulta.trim())}`} onClick={cerrar} className="font-bold text-accent hover:underline">
                   Ver todos los resultados
                 </Link>
               </div>

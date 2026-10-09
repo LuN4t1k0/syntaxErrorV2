@@ -30,8 +30,8 @@ export function FormularioReporteAdmin({ reporteId, esError }: { reporteId: stri
   return (
     <form className="grid gap-3" onSubmit={responder}>
       {esError ? <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={util} onChange={(evento) => setUtil(evento.target.checked)} />Fue un error real (suma 25 puntos)</label> : null}
-      <label className="grid gap-1 text-sm font-bold">Asunto<input value={asunto} onChange={(evento) => setAsunto(evento.target.value)} maxLength={150} className="h-10 rounded-md border border-border bg-background px-3 text-sm font-normal text-foreground" /></label>
-      <label className="grid gap-1 text-sm font-bold">Respuesta<textarea value={cuerpo} onChange={(evento) => setCuerpo(evento.target.value)} rows={3} maxLength={4000} className="w-full resize-y rounded-md border border-border bg-background p-3 text-sm font-normal leading-6 text-foreground outline-none focus:border-primary" /></label>
+      <label className="grid gap-1 text-sm font-bold">Asunto<input value={asunto} onChange={(evento) => setAsunto(evento.target.value)} maxLength={150} className="field font-normal" /></label>
+      <label className="grid gap-1 text-sm font-bold">Respuesta<textarea value={cuerpo} onChange={(evento) => setCuerpo(evento.target.value)} rows={3} maxLength={4000} className="field resize-y font-normal leading-6" /></label>
       <div className="flex flex-wrap gap-2">
         <Button type="submit" size="sm" disabled={enviando}>Responder y resolver</Button>
         <Button type="button" size="sm" variant="ghost" disabled={enviando} onClick={() => void resolver(false)}>Resolver sin responder</Button>

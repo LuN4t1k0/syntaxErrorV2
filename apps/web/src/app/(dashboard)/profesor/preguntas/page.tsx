@@ -29,8 +29,8 @@ export default async function PreguntasDocentePage({ searchParams }: { searchPar
   return (
     <main className="mx-auto grid max-w-4xl gap-6 px-4 py-12 sm:px-6">
       <RefrescarConAvisos eventos={[EVENTO_PREGUNTA_NUEVA]} />
-      <nav className="text-sm" aria-label="Volver al panel docente"><Link className="font-bold text-primary hover:underline" href="/profesor">← Panel docente</Link></nav>
-      <p className="font-mono text-sm font-bold text-primary">{"> git pull origin preguntas"}</p>
+      <nav className="text-sm" aria-label="Volver al panel docente"><Link className="font-bold text-accent hover:underline" href="/profesor">← Panel docente</Link></nav>
+      <p className="font-mono text-sm font-bold text-accent">{"> git pull origin preguntas"}</p>
       <h1 className="text-3xl font-black">Preguntas de estudiantes</h1>
       <p className="leading-7 text-muted-foreground">
         {usuario.rol === "admin"
@@ -43,7 +43,7 @@ export default async function PreguntasDocentePage({ searchParams }: { searchPar
             key={vista.texto}
             href={vista.valor ? `/profesor/preguntas?estado=${vista.valor}` : "/profesor/preguntas"}
             aria-current={estado === vista.valor ? "page" : undefined}
-            className={estado === vista.valor ? "font-bold text-foreground" : "font-bold text-primary hover:underline"}
+            className={estado === vista.valor ? "font-bold text-foreground" : "font-bold text-accent hover:underline"}
           >
             {estado === vista.valor ? `${vista.texto} (${resultado.total})` : vista.texto}
           </Link>

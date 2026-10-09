@@ -109,8 +109,8 @@ export function PanelCaso({
       {casoPendiente ? (
         <p role="status" className="card p-4 text-sm leading-6">
           Puedes recorrer este caso, pero sus tareas se habilitan al completar{" "}
-          <Link className="font-bold text-primary hover:underline" href={`/casos/${casoPendiente.slug}`}>{`«${casoPendiente.titulo}»`}</Link>.
-          {progreso && !progreso.sesion ? <> <Link className="font-bold text-primary hover:underline" href={volverAqui}>Entrar</Link></> : null}
+          <Link className="font-bold text-accent hover:underline" href={`/casos/${casoPendiente.slug}`}>{`«${casoPendiente.titulo}»`}</Link>.
+          {progreso && !progreso.sesion ? <> <Link className="font-bold text-accent hover:underline" href={volverAqui}>Entrar</Link></> : null}
         </p>
       ) : null}
       <ol className="grid gap-3">
@@ -126,7 +126,7 @@ export function PanelCaso({
                 <span className="grid min-w-0 gap-0.5">
                   <span className="block font-mono text-xs text-muted-foreground">{`${unidad(tipo).Nombre} ${indice + 1} · ${mision.tiempo} min${mision.sinGuia ? " · sin guía" : ""}`}</span>
                   <span className="block font-bold">{mision.titulo}</span>
-                  {actual ? <span className="font-mono text-xs font-black text-primary">{empezado ? "Continuar aquí →" : "Empieza aquí →"}</span> : null}
+                  {actual ? <span className="font-mono text-xs font-black text-accent">{empezado ? "Continuar aquí →" : "Empieza aquí →"}</span> : null}
                 </span>
                 <EtiquetaEstado estado={estados[indice]} testId={`estado-${mision.slug}`} />
               </Link>
@@ -139,7 +139,7 @@ export function PanelCaso({
         <section className="card grid gap-3 p-5">
           <h2 className="text-xl font-black">Tu avance</h2>
           {progreso?.completo ? (
-            <p role="status" className="font-bold text-primary">Clases completas: ya puedes seguir con el caso siguiente de la ruta.</p>
+            <p role="status" className="font-bold text-accent">Clases completas: ya puedes seguir con el caso siguiente de la ruta.</p>
           ) : (
             <p className="text-sm text-muted-foreground">Aprueba todas las lecciones para completar las clases y habilitar el caso siguiente.</p>
           )}
@@ -148,12 +148,12 @@ export function PanelCaso({
       <section className="card grid gap-4 p-5">
         <h2 className="text-xl font-black">Tu entregable</h2>
         <p className="leading-7 text-muted-foreground">{entregable}</p>
-        {progreso?.completo ? <p role="status" className="font-bold text-primary">Caso completo</p> : null}
+        {progreso?.completo ? <p role="status" className="font-bold text-accent">Caso completo</p> : null}
         {progreso?.certificados.length ? (
           <ul className="grid gap-2">
             {progreso.certificados.map((certificado) => (
               <li key={certificado.codigo}>
-                <Link className="font-bold text-primary hover:underline" href={`/certificados/${certificado.codigo}`}>
+                <Link className="font-bold text-accent hover:underline" href={`/certificados/${certificado.codigo}`}>
                   Ver certificado de {certificado.tipo === "ruta" ? "ruta" : "caso"}: {certificado.titulo}
                 </Link>
               </li>
@@ -162,18 +162,18 @@ export function PanelCaso({
         ) : null}
 
         {!progreso ? null : !progreso.sesion ? (
-          <p className="text-sm">Para enviar tu entregable necesitas una cuenta. <Link className="font-bold text-primary hover:underline" href={volverAqui}>Entrar</Link></p>
+          <p className="text-sm">Para enviar tu entregable necesitas una cuenta. <Link className="font-bold text-accent hover:underline" href={volverAqui}>Entrar</Link></p>
         ) : revision?.estado === "aprobado" ? (
           <div className="grid gap-3 text-sm leading-6">
             <p>
-              Entregable aprobado: <a className="font-bold text-primary hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
+              Entregable aprobado: <a className="font-bold text-accent hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
             </p>
             <ResultadoRevision revision={revision} />
           </div>
         ) : revision?.estado === "pendiente" ? (
           <p role="status" className="text-sm leading-6">
             {`Tu entregable está en revisión. Te responderemos en un plazo de ${PLAZO_REVISION_DIAS_HABILES} días hábiles y te avisaremos por email. Enviaste: `}
-            <a className="font-bold text-primary hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
+            <a className="font-bold text-accent hover:underline" href={progreso.entregable ?? "#"} target="_blank" rel="noopener noreferrer">{progreso.entregable}</a>
           </p>
         ) : !todasAprobadas ? (
           <p className="text-sm text-muted-foreground">Aprueba todas las misiones, incluida la misión sin guía, para enviar tu entregable a revisión.</p>

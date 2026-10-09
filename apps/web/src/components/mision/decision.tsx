@@ -31,7 +31,7 @@ export function Decision({ pregunta, opciones }: { pregunta: string; opciones: O
 
   return (
     <section className="card grid gap-4 p-5">
-      <p className="font-mono text-sm font-bold text-primary">{"> decisión"}</p>
+      <p className="font-mono text-sm font-bold text-accent">{"> decisión"}</p>
       <p className="font-bold leading-7">{pregunta}</p>
       {orden ? (
         <ul className="grid gap-2">
@@ -49,7 +49,7 @@ export function Decision({ pregunta, opciones }: { pregunta: string; opciones: O
           })}
         </ul>
       ) : <p className="text-sm text-muted-foreground">Cargando opciones…</p>}
-      {ganados > 0 ? <p role="status" className="text-sm font-bold text-primary">{`+${ganados} puntos`}</p> : null}
+      {ganados > 0 ? <p role="status" className="text-sm font-bold text-accent">{`+${ganados} puntos`}</p> : null}
       {elegida !== null ? <div><Button type="button" variant="ghost" size="sm" onClick={() => setElegida(null)}>Elegir otra vez</Button></div> : null}
     </section>
   );

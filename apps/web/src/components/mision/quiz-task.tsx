@@ -46,7 +46,7 @@ export function QuizTask({ id, enunciado, preguntas, pistas }: { id: string; enu
                     </label>
                   ))}
                 </fieldset>
-                {revisar ? <p className="text-sm font-bold text-destructive">Revisa esta pregunta.</p> : null}
+                {revisar ? <p className="text-sm font-bold text-error-text">Revisa esta pregunta.</p> : null}
                 {mostrarExplicaciones ? <p className="text-sm text-muted-foreground">{pregunta.explicacion}</p> : null}
               </li>
             );

@@ -15,7 +15,7 @@ export default function ConfirmarEmailPage() {
           exito={
             <p>
               Tu email cambió. Desde ahora entras con el nuevo. Si tenías la sesión abierta, vuelve a{" "}
-              <Link className="font-bold text-primary hover:underline" href="/login">
+              <Link className="font-bold text-accent hover:underline" href="/login">
                 entrar
               </Link>{" "}
               para verlo en tu cuenta.

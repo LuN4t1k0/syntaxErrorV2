@@ -15,7 +15,7 @@ export default async function MetricasCasoPage({ params }: { params: Promise<{ c
   if (!metricas) notFound();
   return (
     <main className="grid gap-6">
-      <nav className="text-sm" aria-label="Volver"><Link className="font-bold text-primary hover:underline" href="/admin/contenido">← Contenido</Link></nav>
+      <nav className="text-sm" aria-label="Volver"><Link className="font-bold text-accent hover:underline" href="/admin/contenido">← Contenido</Link></nav>
       <h1 className="text-3xl font-black">{metricas.caso.titulo}</h1>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">

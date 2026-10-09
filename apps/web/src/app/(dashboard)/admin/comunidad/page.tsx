@@ -34,7 +34,7 @@ export default async function ComunidadAdminPage({ searchParams }: Parametros) {
             {solicitudes.filas.map((s) => (
               <li key={s.id} className="card flex flex-wrap items-center justify-between gap-3 p-4">
                 <span>
-                  <Link className="block font-bold text-primary hover:underline" href={`/admin/usuarios/${s.userId}`}>
+                  <Link className="block font-bold text-accent hover:underline" href={`/admin/usuarios/${s.userId}`}>
                     {s.nombre ?? s.email}
                   </Link>
                   <span className="block text-sm text-muted-foreground">{`${s.email} · ${fecha(s.creadaEn)}`}</span>

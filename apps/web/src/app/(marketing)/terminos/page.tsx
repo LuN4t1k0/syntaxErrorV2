@@ -18,10 +18,10 @@ export default function TerminosPage() {
       <div className="mt-10 max-w-7xl space-y-6">
         <TerminalWindow title="> cat 01_aceptacion.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[ACCEPTANCE]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[ACCEPTANCE]:</span>{" "}
             Al crear una cuenta o usar syntaxError.cl, aceptas estos términos
             y nuestra{" "}
-            <Link href="/privacidad" className="text-primary underline">
+            <Link href="/privacidad" className="text-accent underline">
               Política de Privacidad
             </Link>
             . Si no estás de acuerdo, la plataforma no es para ti -- así de
@@ -31,13 +31,13 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 02_que_es_esto.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[WHAT_IS_THIS]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[WHAT_IS_THIS]:</span>{" "}
             syntaxError.cl es una plataforma educativa con cursos de
             tecnología -- programación, bases de datos, Excel, y más --
             completamente gratis. El objetivo es acortar la brecha de
             conocimiento para gente que está entrando a tecnología o
             reconvirtiéndose laboralmente.{" "}
-            <span className="font-bold text-success">
+            <span className="font-bold text-success-text">
               Los cursos son gratis y van a seguir siéndolo.
             </span>
           </p>
@@ -45,7 +45,7 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 03_tu_cuenta.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[YOUR_ACCOUNT]:</span>
+            <span className="font-mono font-bold text-accent">[YOUR_ACCOUNT]:</span>
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-foreground">
             <li>Eres responsable de mantener tu contraseña en secreto.</li>
@@ -53,7 +53,7 @@ export default function TerminosPage() {
             <li>
               Si tienes menos de 14 años, necesitas el consentimiento de tu
               representante legal (ver{" "}
-              <Link href="/privacidad" className="text-primary underline">
+              <Link href="/privacidad" className="text-accent underline">
                 Política de Privacidad
               </Link>
               ).
@@ -67,7 +67,7 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 04_uso_aceptable.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[ACCEPTABLE_USE]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[ACCEPTABLE_USE]:</span>{" "}
             Al usar la plataforma, te comprometes a NO:
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-foreground">
@@ -84,7 +84,7 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 05_propiedad_intelectual.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[IP]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[IP]:</span>{" "}
             El contenido de los cursos -- material, ejercicios, videos,
             código de ejemplo -- es propiedad de syntaxError.cl o de sus
             autores. Puedes usarlo para tu aprendizaje personal sin problema.
@@ -95,7 +95,7 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 06_certificados.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[CERTIFICATES]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[CERTIFICATES]:</span>{" "}
             Los certificados que emitimos acreditan que completaste un curso
             acá. No son un título profesional oficial ni una garantía de que
             vas a conseguir trabajo -- eso depende de mucho más que un PDF.
@@ -104,7 +104,7 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 07_disponibilidad.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[UPTIME]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[UPTIME]:</span>{" "}
             Ofrecemos la plataforma &quot;tal cual&quot; y &quot;según
             disponibilidad&quot;. Es un proyecto educativo gratuito, así que
             no podemos prometer que nunca se va a caer, y el contenido de los
@@ -114,7 +114,7 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 08_limitacion_responsabilidad.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[LIABILITY]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[LIABILITY]:</span>{" "}
             En la medida que lo permita la ley, no somos responsables por
             daños indirectos derivados de usar o no poder usar la plataforma.
           </p>
@@ -122,14 +122,14 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 09_ley_aplicable.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[GOVERNING_LAW]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[GOVERNING_LAW]:</span>{" "}
             Estos términos se rigen por las leyes de la República de Chile.
           </p>
         </TerminalWindow>
 
         <TerminalWindow title="> cat 10_changelog.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[CHANGELOG]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[CHANGELOG]:</span>{" "}
             Podemos actualizar estos términos de vez en cuando. Cualquier
             cambio se publica en esta misma página, con fecha nueva.
           </p>
@@ -137,9 +137,9 @@ export default function TerminosPage() {
 
         <TerminalWindow title="> cat 11_contacto.sh">
           <p className="leading-relaxed text-foreground">
-            <span className="font-mono font-bold text-primary">[CONTACT]:</span>{" "}
+            <span className="font-mono font-bold text-accent">[CONTACT]:</span>{" "}
             ¿Preguntas sobre estos términos?{" "}
-            <a className="text-primary underline" href="mailto:privacidad@syntaxerror.cl">
+            <a className="text-accent underline" href="mailto:privacidad@syntaxerror.cl">
               privacidad@syntaxerror.cl
             </a>
             .
@@ -148,17 +148,17 @@ export default function TerminosPage() {
       </div>
 
       <div className="mt-8 max-w-7xl space-y-1 border-t border-dashed border-border pt-6 text-foreground">
-        <p className="text-success">
+        <p className="text-success-text">
           ✔ 11/11 secciones cargadas sin errores. Estas son las reglas del
           entorno -- cortas, sin trampa.
         </p>
         <p className="mt-3">
           Preguntas:{" "}
-          <a className="text-primary underline" href="mailto:privacidad@syntaxerror.cl">
+          <a className="text-accent underline" href="mailto:privacidad@syntaxerror.cl">
             privacidad@syntaxerror.cl
           </a>
         </p>
-        <p className="font-mono font-bold text-primary">
+        <p className="font-mono font-bold text-accent">
           sudo exit --status=0
           <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-primary align-middle" />
         </p>

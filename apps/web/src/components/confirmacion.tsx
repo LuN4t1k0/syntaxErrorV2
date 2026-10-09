@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { Button } from "@syntaxerror/ui/components/button";
 
 type Variante = "primary" | "destructive";
@@ -24,37 +24,45 @@ export function Confirmacion({
   onConfirmar: () => void;
   onCancelar: () => void;
 }) {
+  const dialogo = useRef<HTMLDialogElement>(null);
+  const tituloId = useId();
   useEffect(() => {
-    if (!abierta) return;
-    const alPresionar = (evento: KeyboardEvent) => {
-      if (evento.key === "Escape") onCancelar();
-    };
-    window.addEventListener("keydown", alPresionar);
-    return () => window.removeEventListener("keydown", alPresionar);
-  }, [abierta, onCancelar]);
+    if (abierta && dialogo.current && !dialogo.current.open)
+      dialogo.current.showModal();
+  }, [abierta]);
 
   if (!abierta) return null;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-background/80 p-4 backdrop-blur-sm">
-      <section role="dialog" aria-modal="true" aria-labelledby="confirmacion-titulo" className="card grid w-full max-w-md gap-4 border-primary/40 bg-surface p-5 shadow-2xl">
-        <header className="grid gap-1">
-          <p className="font-mono text-xs font-bold text-primary">{"> confirmar"}</p>
-          <h2 id="confirmacion-titulo" className="text-xl font-black">
-            {titulo}
-          </h2>
-        </header>
-        <div className="text-sm leading-6 text-muted-foreground">{descripcion}</div>
-        <div className="flex flex-wrap justify-end gap-2">
-          {/* El foco parte en Cancelar: con el teclado se llega directo a los botones y lo seguro es no hacer nada. */}
-          <Button type="button" variant="ghost" onClick={onCancelar} autoFocus>
-            {cancelar}
-          </Button>
-          <Button type="button" variant={variante} onClick={onConfirmar}>
-            {confirmar}
-          </Button>
-        </div>
-      </section>
-    </div>
+    <dialog
+      ref={dialogo}
+      aria-labelledby={tituloId}
+      onCancel={(evento) => {
+        evento.preventDefault();
+        onCancelar();
+      }}
+      className="confirm-dialog card border-primary/40 shadow-2xl"
+    >
+      <header className="grid gap-1">
+        <p className="font-mono text-xs font-bold text-accent">
+          {"> confirmar"}
+        </p>
+        <h2 id={tituloId} className="text-xl font-bold tracking-tight">
+          {titulo}
+        </h2>
+      </header>
+      <div className="text-sm leading-6 text-muted-foreground">
+        {descripcion}
+      </div>
+      <div className="flex flex-wrap justify-end gap-2">
+        {/* El foco parte en Cancelar: con el teclado se llega directo a los botones y lo seguro es no hacer nada. */}
+        <Button type="button" variant="ghost" onClick={onCancelar} autoFocus>
+          {cancelar}
+        </Button>
+        <Button type="button" variant={variante} onClick={onConfirmar}>
+          {confirmar}
+        </Button>
+      </div>
+    </dialog>
   );
 }

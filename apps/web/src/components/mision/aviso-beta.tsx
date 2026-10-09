@@ -9,7 +9,7 @@ export function AvisoBeta({ sesion, volverA, className = "" }: { sesion: boolean
       {sesion ? null : (
         <>
           {" ¿Eres probador? "}
-          <Link className="font-bold text-primary hover:underline" href={`/login?callbackUrl=${encodeURIComponent(volverA)}`}>
+          <Link className="font-bold text-accent hover:underline" href={`/login?callbackUrl=${encodeURIComponent(volverA)}`}>
             Entra con tu cuenta
           </Link>
           .

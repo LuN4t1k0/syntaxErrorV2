@@ -25,22 +25,22 @@ export default async function ProfesorPage({ searchParams }: { searchParams: Pro
   return (
     <main className="mx-auto grid max-w-4xl gap-8 px-4 py-12 sm:px-6">
       <header className="grid gap-2">
-        <p className="font-mono text-sm font-bold text-primary">{"> sudo -u docente"}</p>
+        <p className="font-mono text-sm font-bold text-accent">{"> sudo -u docente"}</p>
         <h1 className="text-3xl font-black">Panel docente</h1>
         <p className="leading-7 text-muted-foreground">
           Crea clases, comparte su código y sigue el avance de tus estudiantes.{" "}
-          <Link className="font-bold text-primary hover:underline" href="/profesor/preguntas">Ver las preguntas de tus estudiantes</Link>{" · "}
-          <Link className="font-bold text-primary hover:underline" href="/profesor/entregables">Revisar entregables</Link>
+          <Link className="font-bold text-accent hover:underline" href="/profesor/preguntas">Ver las preguntas de tus estudiantes</Link>{" · "}
+          <Link className="font-bold text-accent hover:underline" href="/profesor/entregables">Revisar entregables</Link>
         </p>
       </header>
 
       <section className="grid gap-3">
         <h2 className="text-xl font-black">Tus clases</h2>
         <nav className="flex flex-wrap gap-4 text-sm" aria-label="Clases activas o archivadas">
-          <Link href="/profesor" aria-current={estado === "activa" ? "page" : undefined} className={estado === "activa" ? "font-bold text-foreground" : "font-bold text-primary hover:underline"}>
+          <Link href="/profesor" aria-current={estado === "activa" ? "page" : undefined} className={estado === "activa" ? "font-bold text-foreground" : "font-bold text-accent hover:underline"}>
             {`Activas (${resultado.activas})`}
           </Link>
-          <Link href="/profesor?vista=archivadas" aria-current={estado === "archivada" ? "page" : undefined} className={estado === "archivada" ? "font-bold text-foreground" : "font-bold text-primary hover:underline"}>
+          <Link href="/profesor?vista=archivadas" aria-current={estado === "archivada" ? "page" : undefined} className={estado === "archivada" ? "font-bold text-foreground" : "font-bold text-accent hover:underline"}>
             {`Archivadas (${resultado.archivadas})`}
           </Link>
         </nav>

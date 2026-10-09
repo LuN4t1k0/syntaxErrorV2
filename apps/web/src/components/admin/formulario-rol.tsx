@@ -28,7 +28,7 @@ export function FormularioRol({ userId, rolActual }: { userId: string; rolActual
     <form className="flex flex-wrap items-end gap-3" onSubmit={guardar}>
       <label className="grid gap-1 text-sm font-bold">
         Rol
-        <select value={rol} onChange={(evento) => setRol(evento.target.value as Rol)} className="h-10 rounded-md border border-border bg-background px-3 text-sm font-normal text-foreground">
+        <select value={rol} onChange={(evento) => setRol(evento.target.value as Rol)} className="field font-normal">
           {OPCIONES.map((opcion) => <option key={opcion} value={opcion}>{ETIQUETAS_ROL[opcion]}</option>)}
         </select>
       </label>

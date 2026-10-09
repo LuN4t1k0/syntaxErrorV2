@@ -32,7 +32,7 @@ export default async function UsuariosAdminPage({ searchParams }: { searchParams
           <tbody>
             {resultado.filas.map((fila) => (
               <tr key={fila.id} className="border-b border-border">
-                <td className="p-2"><Link className="font-bold text-primary hover:underline" href={`/admin/usuarios/${fila.id}`}>{fila.email}</Link></td>
+                <td className="p-2"><Link className="font-bold text-accent hover:underline" href={`/admin/usuarios/${fila.id}`}>{fila.email}</Link></td>
                 <td className="p-2">{fila.nombre ?? "—"}</td>
                 <td className="p-2">{ETIQUETAS_ROL[fila.rol]}{fila.probador ? <span className="badge ml-2">Probador</span> : null}</td>
                 <td className="p-2">{fila.verificado ? "Sí" : "No"}</td>

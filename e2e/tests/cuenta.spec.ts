@@ -9,12 +9,16 @@ function emailNuevo(prefijo: string): string {
   return `${prefijo}-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`;
 }
 
-async function registrarse(page: Page, email: string, nombre = "Josefa Morales") {
+async function registrarse(
+  page: Page,
+  email: string,
+  nombre = "Josefa Morales",
+) {
   await page.goto("/registro");
   await page.locator('input[name="name"]').fill(nombre);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill(CLAVE);
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   await cerrarBienvenida(page);
 }
@@ -27,10 +31,14 @@ async function entrar(page: Page, email: string, clave: string) {
 }
 
 function seccion(page: Page, titulo: string) {
-  return page.locator("section", { has: page.getByRole("heading", { name: titulo, exact: true }) });
+  return page.locator("section", {
+    has: page.getByRole("heading", { name: titulo, exact: true }),
+  });
 }
 
-test("al registrarse llega el email de confirmación y el enlace confirma la cuenta", async ({ page }) => {
+test("al registrarse llega el email de confirmación y el enlace confirma la cuenta", async ({
+  page,
+}) => {
   const email = emailNuevo("verifica");
   await registrarse(page, email);
   await expect(page.getByText("Confirma tu email:")).toBeVisible();
@@ -41,10 +49,16 @@ test("al registrarse llega el email de confirmación y el enlace confirma la cue
   await expect(page.getByText("Tu email quedó confirmado.")).toBeVisible();
 
   await page.goto("/dashboard");
-  await expect(page.getByRole("button", { name: "Reenviar email" })).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Reenviar email" }),
+  ).toHaveCount(0);
 });
 
-test("completar el caso emite el certificado, se verifica en público y aparece en el portafolio", async ({ page, ip, nuevaPagina }) => {
+test("completar el caso emite el certificado, se verifica en público y aparece en el portafolio", async ({
+  page,
+  ip,
+  nuevaPagina,
+}) => {
   const email = emailNuevo("certificado");
   await registrarse(page, email);
 
@@ -62,9 +76,13 @@ test("completar el caso emite el certificado, se verifica en público y aparece 
   }
 
   await page.goto("/casos/demo-motor");
-  await page.getByLabel("Enlace a tu repositorio de GitHub").fill("https://github.com/josefa/demo-motor");
+  await page
+    .getByLabel("Enlace a tu repositorio de GitHub")
+    .fill("https://github.com/josefa/demo-motor");
   await page.getByRole("button", { name: "Enviar a revisión" }).click();
-  await expect(page.getByText("Tu entregable está en revisión.", { exact: false })).toBeVisible();
+  await expect(
+    page.getByText("Tu entregable está en revisión.", { exact: false }),
+  ).toBeVisible();
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
   await aprobarEntregable(admin, email);
@@ -74,15 +92,22 @@ test("completar el caso emite el certificado, se verifica en público y aparece 
   const codigo = new URL(page.url()).pathname.split("/").pop();
   expect(codigo).toMatch(/^[A-HJ-NP-Za-km-z2-9]{12}$/);
 
-  const [pdf] = await Promise.all([page.waitForEvent("download"), page.getByRole("link", { name: "Descargar PDF" }).click()]);
+  const [pdf] = await Promise.all([
+    page.waitForEvent("download"),
+    page.getByRole("link", { name: "Descargar PDF" }).click(),
+  ]);
   expect(pdf.suggestedFilename()).toBe(`certificado-${codigo}.pdf`);
   const rutaPdf = await pdf.path();
   expect(rutaPdf).toBeTruthy();
   expect(readFileSync(rutaPdf!).subarray(0, 5).toString()).toBe("%PDF-");
 
   await page.goto(`/verificar/${codigo}`);
-  await expect(page.getByRole("heading", { name: "Certificado válido" })).toBeVisible();
-  await expect(page.getByText("Demo del motor: ventas de marzo", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Certificado válido" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Demo del motor: ventas de marzo", { exact: true }),
+  ).toBeVisible();
   await esperarEmail(email, "Obtuviste un certificado");
 
   const usuario = `josefa-${Date.now()}`;
@@ -92,13 +117,22 @@ test("completar el caso emite el certificado, se verifica en público y aparece 
   await portafolio.getByLabel("Tu usuario").fill(usuario);
   await portafolio.getByRole("button", { name: "Guardar portafolio" }).click();
   await expect(portafolio.getByText("Portafolio guardado.")).toBeVisible();
+  await expect(portafolio.getByRole("status")).toContainText(
+    "Portafolio guardado.",
+  );
 
   await page.goto(`/p/${usuario}`);
-  await expect(page.getByRole("heading", { name: "Josefa Morales" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Ver entregable" })).toHaveAttribute("href", "https://github.com/josefa/demo-motor");
+  await expect(
+    page.getByRole("heading", { name: "Josefa Morales" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Ver entregable" }),
+  ).toHaveAttribute("href", "https://github.com/josefa/demo-motor");
 });
 
-test("cambiar el email pide confirmación desde el correo nuevo y avisa al anterior", async ({ page }) => {
+test("cambiar el email pide confirmación desde el correo nuevo y avisa al anterior", async ({
+  page,
+}) => {
   const email = emailNuevo("antes");
   const nuevo = emailNuevo("despues");
   await registrarse(page, email);
@@ -108,13 +142,17 @@ test("cambiar el email pide confirmación desde el correo nuevo y avisa al anter
   await cambio.getByLabel("Nuevo email").fill(nuevo);
   await cambio.getByLabel("Contraseña actual").fill(CLAVE);
   await cambio.getByRole("button", { name: "Enviar confirmación" }).click();
-  await expect(cambio.getByText(`Te enviamos un enlace a ${nuevo}.`, { exact: false })).toBeVisible();
+  await expect(
+    cambio.getByText(`Te enviamos un enlace a ${nuevo}.`, { exact: false }),
+  ).toBeVisible();
 
   await esperarEmail(email, "Pidieron cambiar el email de tu cuenta");
   const confirmacion = await esperarEmail(nuevo, "Confirma tu nuevo email");
   await page.goto(rutaDelEnlace(confirmacion.texto, "/confirmar-email"));
   await page.getByRole("button", { name: "Confirmar nuevo email" }).click();
-  await expect(page.getByText("Tu email cambió.", { exact: false })).toBeVisible();
+  await expect(
+    page.getByText("Tu email cambió.", { exact: false }),
+  ).toBeVisible();
 
   await page.context().clearCookies();
   await entrar(page, nuevo, CLAVE);
@@ -134,18 +172,22 @@ test("cambiar la contraseña y después eliminar la cuenta", async ({ page }) =>
   await esperarEmail(email, "Tu contraseña fue actualizada");
 
   const eliminar = seccion(page, "Eliminar cuenta");
-  await eliminar.getByLabel("Escribe tu contraseña para confirmar").fill("otra-clave-456");
+  await eliminar
+    .getByLabel("Escribe tu contraseña para confirmar")
+    .fill("otra-clave-456");
   await eliminar.getByRole("button", { name: "Eliminar mi cuenta" }).click();
   await expect(page).toHaveURL("http://localhost:3000/");
   await esperarEmail(email, "Tu cuenta fue eliminada");
 
   await entrar(page, email, "otra-clave-456");
-  await expect(page.getByText("Email o password incorrectos.")).toBeVisible();
+  await expect(page.getByText("Email o contraseña incorrectos.")).toBeVisible();
 });
 
 test("un código que no existe no se verifica", async ({ page }) => {
   await page.goto("/verificar/NoExiste2345");
-  await expect(page.getByRole("heading", { name: "Código no encontrado" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Código no encontrado" }),
+  ).toBeVisible();
 });
 
 test("recuperar la contraseña desde el login", async ({ page }) => {
@@ -155,10 +197,14 @@ test("recuperar la contraseña desde el login", async ({ page }) => {
 
   await page.goto("/login");
   await page.getByRole("link", { name: "¿Olvidaste tu contraseña?" }).click();
-  await expect(page.getByRole("heading", { name: "Recuperar contraseña" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Recuperar contraseña" }),
+  ).toBeVisible();
   await page.getByLabel("Email").fill(email);
   await page.getByRole("button", { name: "Enviarme el enlace" }).click();
-  await expect(page.getByText("Si hay una cuenta con ese email", { exact: false })).toBeVisible();
+  await expect(
+    page.getByText("Si hay una cuenta con ese email", { exact: false }),
+  ).toBeVisible();
 
   const mensaje = await esperarEmail(email, "Restablece tu contraseña");
   await page.goto(rutaDelEnlace(mensaje.texto, "/restablecer-clave"));

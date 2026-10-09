@@ -10,13 +10,25 @@ import { AvisoBeta } from "./aviso-beta";
 import { useMision, type Bloqueo } from "./mision-provider";
 
 function AvisoBloqueo({ bloqueo, caso }: { bloqueo: Bloqueo; caso: string }) {
-  const clase = "rounded-md border border-border bg-surface-raised p-3 text-sm leading-6";
-  if (bloqueo.tipo === "beta") return <AvisoBeta sesion={bloqueo.sesion} volverA={`/casos/${caso}`} className={clase} />;
+  const clase =
+    "rounded-md border border-border bg-surface-raised p-3 text-sm leading-6";
+  if (bloqueo.tipo === "beta")
+    return (
+      <AvisoBeta
+        sesion={bloqueo.sesion}
+        volverA={`/casos/${caso}`}
+        className={clase}
+      />
+    );
   if (bloqueo.tipo === "mision") {
     return (
       <p role="status" className={clase}>
         Para resolver esta tarea, primero aprueba la misión{" "}
-        <Link className="font-bold text-primary hover:underline" href={`/casos/${caso}/${bloqueo.mision.slug}`}>{`«${bloqueo.mision.titulo}»`}</Link>. Puedes leerla igual.
+        <Link
+          className="font-bold text-accent hover:underline"
+          href={`/casos/${caso}/${bloqueo.mision.slug}`}
+        >{`«${bloqueo.mision.titulo}»`}</Link>
+        . Puedes leerla igual.
       </p>
     );
   }
@@ -24,15 +36,28 @@ function AvisoBloqueo({ bloqueo, caso }: { bloqueo: Bloqueo; caso: string }) {
     return (
       <p role="status" className={clase}>
         Para resolver este caso necesitas una cuenta y haber completado{" "}
-        <Link className="font-bold text-primary hover:underline" href={`/casos/${bloqueo.caso.slug}`}>{`«${bloqueo.caso.titulo}»`}</Link>.{" "}
-        <Link className="font-bold text-primary hover:underline" href={`/login?callbackUrl=${encodeURIComponent(`/casos/${caso}`)}`}>Entrar</Link>
+        <Link
+          className="font-bold text-accent hover:underline"
+          href={`/casos/${bloqueo.caso.slug}`}
+        >{`«${bloqueo.caso.titulo}»`}</Link>
+        .{" "}
+        <Link
+          className="font-bold text-accent hover:underline"
+          href={`/login?callbackUrl=${encodeURIComponent(`/casos/${caso}`)}`}
+        >
+          Entrar
+        </Link>
       </p>
     );
   }
   return (
     <p role="status" className={clase}>
       Este caso se habilita al completar{" "}
-      <Link className="font-bold text-primary hover:underline" href={`/casos/${bloqueo.caso.slug}`}>{`«${bloqueo.caso.titulo}»`}</Link>. Puedes leer la misión igual.
+      <Link
+        className="font-bold text-accent hover:underline"
+        href={`/casos/${bloqueo.caso.slug}`}
+      >{`«${bloqueo.caso.titulo}»`}</Link>
+      . Puedes leer la misión igual.
     </p>
   );
 }
@@ -71,19 +96,26 @@ export function PanelTarea({
   return (
     <section className="card grid gap-4 p-5">
       <header className="flex flex-wrap items-center justify-between gap-2">
-        <p className="font-mono text-sm font-bold text-primary">{`> ${titulo}`}</p>
-        {aprobada ? <Badge>Aprobada</Badge> : null}
+        <p className="font-mono text-sm font-bold text-accent">{`> ${titulo}`}</p>
+        {aprobada ? <Badge className="badge-success">Aprobada</Badge> : null}
       </header>
       {enunciado ? <p className="leading-7">{enunciado}</p> : null}
       {bloqueo ? <AvisoBloqueo bloqueo={bloqueo} caso={caso} /> : null}
       {/* Leer sí, resolver no: con bloqueo (o mientras carga el progreso) los controles quedan desactivados. */}
-      <fieldset disabled={deshabilitada} className="grid min-w-0 gap-4 border-0 p-0">
+      <fieldset
+        disabled={deshabilitada}
+        className="grid min-w-0 gap-4 border-0 p-0"
+      >
         <TareaDeshabilitada.Provider value={deshabilitada}>
           {children}
           <div className="flex flex-wrap gap-3">
             {acciones}
             {pistasVistas < disponibles ? (
-              <Button type="button" variant="ghost" onClick={() => setPistasVistas((vistas) => vistas + 1)}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setPistasVistas((vistas) => vistas + 1)}
+              >
                 Ver pista
               </Button>
             ) : null}
@@ -95,12 +127,21 @@ export function PanelTarea({
       ) : null}
       {pistasVistas > 0 ? (
         <ol className="grid list-decimal gap-1 pl-5 text-sm text-muted-foreground">
-          {pistas.slice(0, pistasVistas).map((pista) => <li key={pista}>{pista}</li>)}
+          {pistas.slice(0, pistasVistas).map((pista) => (
+            <li key={pista}>{pista}</li>
+          ))}
         </ol>
       ) : null}
       {resultado ? (
-        <p role="status" className={resultado.aprobada ? "rounded-md border border-primary/40 bg-primary/10 p-3 text-sm font-bold" : "rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm font-bold text-destructive"}>
-          {resultado.aprobada ? "¡Tarea aprobada!" : (resultado.diagnostico ?? "Todavía no. Revisa tu respuesta.")}
+        <p
+          role="status"
+          className={
+            resultado.aprobada ? "notice notice-success" : "notice notice-error"
+          }
+        >
+          {resultado.aprobada
+            ? "¡Tarea aprobada!"
+            : (resultado.diagnostico ?? "Todavía no. Revisa tu respuesta.")}
         </p>
       ) : null}
     </section>

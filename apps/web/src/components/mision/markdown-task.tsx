@@ -41,7 +41,7 @@ export function MarkdownTask({ id, enunciado, documento, inicial, requisitos, pi
         <p className="font-bold">{`Tu ${documento} debe tener`}</p>
         <ul className="grid gap-1 leading-6">
           {requisitos.map((requisito) => (
-            <li key={requisito} className={cumplidos.has(requisito) ? "text-primary" : "text-muted-foreground"}>
+            <li key={requisito} className={cumplidos.has(requisito) ? "text-accent" : "text-muted-foreground"}>
               {`${cumplidos.has(requisito) ? "✓" : "○"} ${motor ? motor.describirRequisitoMarkdown(requisito) : requisito}`}
             </li>
           ))}

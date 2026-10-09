@@ -80,7 +80,7 @@ export function componentesMision(caso: Caso): MDXComponents {
     // Listas y enlaces de Markdown: Tailwind les quita las viñetas, los números y el color por defecto.
     ul: ({ children }: PropsMdx) => <ul className="grid list-disc gap-1 pl-6">{children}</ul>,
     ol: ({ children }: PropsMdx) => <ol className="grid list-decimal gap-1 pl-6">{children}</ol>,
-    a: ({ children, href }: PropsMdx) => <a href={typeof href === "string" ? href : undefined} className="text-primary underline underline-offset-2 hover:text-primary-hover">{children}</a>,
+    a: ({ children, href }: PropsMdx) => <a href={typeof href === "string" ? href : undefined} className="text-accent underline underline-offset-2 hover:text-primary-hover">{children}</a>,
     // Las tablas de Markdown: con borde y desplazamiento horizontal en pantallas angostas.
     table: ({ children }: PropsMdx) => (
       <div className="overflow-x-auto rounded-md border border-border">

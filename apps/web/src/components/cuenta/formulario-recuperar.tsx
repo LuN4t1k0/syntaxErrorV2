@@ -28,7 +28,7 @@ export function FormularioRecuperar() {
         <Input type="email" value={email} onChange={(evento) => setEmail(evento.target.value)} required autoComplete="email" />
       </Label>
       <div>
-        <Button type="submit" disabled={enviando}>
+        <Button size="form" className="w-full" type="submit" disabled={enviando}>
           Enviarme el enlace
         </Button>
       </div>

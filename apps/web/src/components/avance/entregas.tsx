@@ -5,7 +5,7 @@ import type { EntregaAvance } from "@/lib/avance/datos";
 import { SeccionTerminal } from "./terminal";
 
 const ESTADO: Record<EntregaAvance["estado"], { texto: string; color: string }> = {
-  pendiente: { texto: "en revisión", color: "text-primary" },
+  pendiente: { texto: "en revisión", color: "text-accent" },
   aprobado: { texto: "aprobada", color: "text-emerald-600 dark:text-emerald-400" },
   observado: { texto: "con observaciones", color: "text-red-600 dark:text-red-400" },
 };

@@ -14,7 +14,7 @@ const MENSAJES: Record<string, string> = {
   prohibido: "No puedes revisar este entregable.",
 };
 
-const AREA = "w-full resize-y rounded-md border border-border bg-background p-3 text-sm font-normal leading-6 text-foreground outline-none focus:border-primary";
+const AREA = "field resize-y font-normal leading-6";
 
 export function FormularioRevision({ entregableId, rubrica }: { entregableId: string; rubrica: Rubrica }) {
   const router = useRouter();

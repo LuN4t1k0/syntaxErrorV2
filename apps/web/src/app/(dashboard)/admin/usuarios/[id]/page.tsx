@@ -32,7 +32,7 @@ export default async function UsuarioAdminPage({ params }: { params: Promise<{ i
   const esPropia = perfil.id === admin.id;
   return (
     <main className="grid gap-6">
-      <nav className="text-sm" aria-label="Volver"><Link className="font-bold text-primary hover:underline" href="/admin/usuarios">← Usuarios</Link></nav>
+      <nav className="text-sm" aria-label="Volver"><Link className="font-bold text-accent hover:underline" href="/admin/usuarios">← Usuarios</Link></nav>
       <SeccionTerminal comando="whoami" etiqueta="Perfil">
         <h1 className="font-sans text-3xl font-black">{perfil.nombre ?? perfil.email}</h1>
         <p>{`${perfil.email} · ${ETIQUETAS_ROL[perfil.rol]}${perfil.probador ? " · probador" : ""} · ${perfil.verificado ? "email confirmado" : "email sin confirmar"}`}</p>

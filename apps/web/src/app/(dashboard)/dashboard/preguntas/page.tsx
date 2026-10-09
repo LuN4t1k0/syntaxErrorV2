@@ -5,6 +5,8 @@ import { RefrescarConAvisos } from "@/components/avisos/refrescar-con-avisos";
 import { ListaPreguntas } from "@/components/comunidad/lista-preguntas";
 import { preguntasDelEstudiante } from "@/lib/preguntas-profesor";
 import { obtenerUsuarioId } from "@/lib/sesion";
+import { EmptyState } from "@/components/empty-state";
+import { PageIntro } from "@/components/page-intro";
 
 export const metadata = { title: "Tus preguntas" };
 
@@ -15,10 +17,19 @@ export default async function MisPreguntasPage() {
   return (
     <main className="mx-auto grid max-w-3xl gap-6 px-4 py-12 sm:px-6">
       <RefrescarConAvisos eventos={[EVENTO_PREGUNTA_RESPONDIDA]} />
-      <p className="font-mono text-sm font-bold text-primary">{"> git log --preguntas"}</p>
-      <h1 className="text-3xl font-black">Tus preguntas</h1>
+      <PageIntro
+        comando="> git log --preguntas"
+        titulo="Tus preguntas"
+        descripcion="Tus dudas y las respuestas de docentes quedan juntas para que puedas retomarlas."
+      />
       {preguntas.length === 0 ? (
-        <p className="text-muted-foreground">Todavía no preguntas nada. En cada misión puedes preguntarle a un docente.</p>
+        <EmptyState
+          codigo="Sin preguntas"
+          titulo="Pregunta cuando lo necesites"
+          descripcion="Cada misión tiene un espacio para consultar a un docente. Tu pregunta y su respuesta aparecerán aquí."
+          href="/dashboard"
+          accion="Ir a tus lecciones"
+        />
       ) : (
         <ListaPreguntas preguntas={preguntas} modo="estudiante" />
       )}

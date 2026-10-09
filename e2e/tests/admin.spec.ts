@@ -6,7 +6,7 @@ async function registrarse(page: Page, nombre: string): Promise<string> {
   await page.locator('input[name="name"]').fill(nombre);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   await cerrarBienvenida(page);
   return email;
@@ -21,11 +21,49 @@ async function entrarComoAdmin(page: Page) {
   await expect(page).toHaveURL(/\/dashboard/);
 }
 
-test("una solicitud docente aprobada da acceso docente y llega un mensaje", async ({ page, nuevaPagina }) => {
+test("administración indica la sección actual y conserva acceso móvil al resto", async ({
+  page,
+}) => {
+  await entrarComoAdmin(page);
+  await page.setViewportSize({ width: 320, height: 740 });
+  await page.goto("/admin");
+  const menu = page.getByRole("navigation", { name: "Administración" });
+  await expect(menu.getByRole("link", { name: "Resumen" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  const ajuste = page
+    .getByRole("button", {
+      name: /Liberar el orden para todos|Volver al orden normal/,
+    })
+    .first();
+  await ajuste.click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Cancelar" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await menu.getByRole("link", { name: "Usuarios" }).click();
+  await expect(menu.getByRole("link", { name: "Usuarios" })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - innerWidth,
+    ),
+  ).toBeLessThanOrEqual(0);
+});
+
+test("una solicitud docente aprobada da acceso docente y llega un mensaje", async ({
+  page,
+  nuevaPagina,
+}) => {
   const email = await registrarse(page, "Rocío Tapia");
   await page.goto("/perfil");
   await page.getByRole("button", { name: "Pedir acceso docente" }).click();
-  await expect(page.getByText("Tu solicitud de acceso docente está en revisión.")).toBeVisible();
+  await expect(
+    page.getByText("Tu solicitud de acceso docente está en revisión."),
+  ).toBeVisible();
 
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
@@ -47,7 +85,8 @@ async function buscarSolicitudPendiente(admin: Page, email: string) {
     await admin.goto(`/admin/comunidad?solicitudes=${pagina}`);
     const solicitud = admin.locator("li", { hasText: email });
     if ((await solicitud.count()) > 0) return solicitud;
-    if ((await admin.getByText("No hay solicitudes pendientes.").count()) > 0) break;
+    if ((await admin.getByText("No hay solicitudes pendientes.").count()) > 0)
+      break;
   }
   throw new Error(`No se encontró la solicitud pendiente: ${email}`);
 }
@@ -64,7 +103,10 @@ async function buscarReportePendiente(admin: Page, descripcion: string) {
   throw new Error(`No se encontró el reporte pendiente: ${descripcion}`);
 }
 
-test("un reporte resuelto con respuesta llega como mensaje y queda en la bitácora", async ({ page, nuevaPagina }) => {
+test("un reporte resuelto con respuesta llega como mensaje y queda en la bitácora", async ({
+  page,
+  nuevaPagina,
+}) => {
   await registrarse(page, "Diego Salinas");
   const descripcion = `El filtro de rutas no responde en el celular (${Date.now()}).`;
   await page.goto("/reportar?pagina=%2Frutas");
@@ -84,17 +126,24 @@ test("un reporte resuelto con respuesta llega como mensaje y queda en la bitáco
   await expect(page.getByText("Gracias, ya lo corregimos.")).toBeVisible();
 
   await admin.goto("/admin/bitacora?accion=report_resolved");
-  await expect(admin.getByRole("cell", { name: "Reporte resuelto" }).first()).toBeVisible();
+  await expect(
+    admin.getByRole("cell", { name: "Reporte resuelto" }).first(),
+  ).toBeVisible();
 });
 
-test("administración elimina una cuenta y su sesión abierta se cierra", async ({ page, nuevaPagina }) => {
+test("administración elimina una cuenta y su sesión abierta se cierra", async ({
+  page,
+  nuevaPagina,
+}) => {
   const email = await registrarse(page, "Paula Ríos");
 
   const admin = await nuevaPagina();
   await entrarComoAdmin(admin);
   await admin.goto(`/admin/usuarios?q=${encodeURIComponent(email)}`);
   await admin.getByRole("link", { name: email }).click();
-  await admin.getByLabel("Escribe el email de la cuenta para confirmar").fill(email);
+  await admin
+    .getByLabel("Escribe el email de la cuenta para confirmar")
+    .fill(email);
   await admin.getByRole("button", { name: "Eliminar cuenta" }).click();
   await expect(admin).toHaveURL(/\/admin\/usuarios$/);
 
@@ -102,9 +151,13 @@ test("administración elimina una cuenta y su sesión abierta se cierra", async 
   await expect(page).toHaveURL(/\/login/);
 });
 
-test("una cuenta estudiante no puede entrar a administración", async ({ page }) => {
+test("una cuenta estudiante no puede entrar a administración", async ({
+  page,
+}) => {
   await registrarse(page, "Tomás Pino");
   const respuesta = await page.goto("/admin");
   expect(respuesta?.status()).toBe(404);
-  await expect(page.getByRole("link", { name: "Administración" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Administración" })).toHaveCount(
+    0,
+  );
 });

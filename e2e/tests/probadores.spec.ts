@@ -48,7 +48,7 @@ test("un admin marca a una persona como probadora y ella hace la ruta en el orde
   await page.goto("/rutas/data-analyst");
   const mapa = page.getByRole("list", { name: "Mapa de la ruta Data Analyst" });
   await expect(mapa.getByRole("link", { name: /Minimarkets del Sur.*: disponible$/ })).toBeVisible();
-  await expect(mapa.getByText("LOCKED")).toHaveCount(0);
+  await expect(mapa.getByText("Bloqueado", { exact: true })).toHaveCount(0);
 });
 
 test("la administración muestra el interruptor del orden de las rutas", async ({ page }) => {

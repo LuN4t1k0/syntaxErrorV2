@@ -4,7 +4,7 @@ import { Button, buttonVariants } from "./button";
 
 describe("buttonVariants", () => {
   it("usa la variante primary por defecto", () => {
-    expect(buttonVariants()).toContain("bg-primary");
+    expect(buttonVariants()).toContain("btn-primary");
   });
 
   it("deja que className sobrescriba clases de tailwind en conflicto", () => {
@@ -18,7 +18,7 @@ describe("Button", () => {
   it("renderiza un boton con las clases de la variante", () => {
     const html = renderToStaticMarkup(<Button variant="secondary">Entrar</Button>);
     expect(html).toContain("<button");
-    expect(html).toContain("bg-surface");
+    expect(html).toContain("btn-secondary");
     expect(html).toContain("Entrar");
   });
 });

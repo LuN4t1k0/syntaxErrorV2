@@ -21,7 +21,7 @@ export default async function PortafolioPage({ params }: Parametros) {
   return (
     <main className="mx-auto grid max-w-5xl gap-10 px-4 py-14 sm:px-6 lg:px-8">
       <section className="grid gap-3">
-        <p className="font-mono text-sm font-bold text-primary">{`/p/${portafolio.usuario}`}</p>
+        <p className="font-mono text-sm font-bold text-accent">{`/p/${portafolio.usuario}`}</p>
         <h1 className="text-4xl font-black">{portafolio.nombre}</h1>
         <p className="max-w-2xl leading-7 text-muted-foreground">
           Casos completados y certificados verificables en syntaxError.cl.
@@ -41,7 +41,7 @@ export default async function PortafolioPage({ params }: Parametros) {
                   <p className="text-sm text-muted-foreground">{caso.empresa} · {caso.cargo}</p>
                 </div>
                 {caso.entregable ? (
-                  <Link className="text-sm font-bold text-primary hover:underline" href={caso.entregable}>
+                  <Link className="text-sm font-bold text-accent hover:underline" href={caso.entregable}>
                     Ver entregable
                   </Link>
                 ) : null}

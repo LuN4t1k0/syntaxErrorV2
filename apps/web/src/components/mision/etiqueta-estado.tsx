@@ -3,7 +3,7 @@ import type { EstadoVisibleMision } from "@/lib/progreso/estados";
 
 const ESTADOS: Record<EstadoVisibleMision, { texto: string; clase: string; Icono: LucideIcon }> = {
   pendiente: { texto: "Pendiente", clase: "border-border bg-surface-raised text-muted-foreground", Icono: Circle },
-  en_curso: { texto: "En curso", clase: "border-primary bg-primary/10 text-primary", Icono: CircleDot },
+  en_curso: { texto: "En curso", clase: "border-primary bg-primary/10 text-accent", Icono: CircleDot },
   aprobada: { texto: "Aprobada", clase: "border-success bg-success/15 text-foreground", Icono: Check },
   bloqueada: { texto: "Bloqueada", clase: "border-border bg-background text-muted-foreground", Icono: Lock },
 };

@@ -1,4 +1,12 @@
-import { GraduationCap, LayoutDashboard, Mail, Shield, SquareTerminal, UserRound } from "lucide-react";
+import { SiteBrand } from "./site-brand";
+import {
+  GraduationCap,
+  LayoutDashboard,
+  Mail,
+  Shield,
+  SquareTerminal,
+  UserRound,
+} from "lucide-react";
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
@@ -24,35 +32,42 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="mr-auto flex items-center gap-2 font-black text-foreground">
-          <span className="flex size-8 items-center justify-center rounded-md bg-primary font-mono text-sm text-primary-foreground">
-            {"{}"}
-          </span>
-          <span className="hidden sm:inline">syntaxError.cl</span>
-        </Link>
+      <div className="site-header-inner">
+        <div className="mr-auto shrink-0">
+          <SiteBrand compact />
+        </div>
 
         {user ? (
-          <nav className="flex items-center gap-1" aria-label="Principal">
-            <Link className="nav-link" href="/dashboard">
+          <nav className="site-header-nav" aria-label="Principal">
+            <Link className="nav-link" href="/dashboard" aria-label="Tu panel">
               <LayoutDashboard size={16} />
-              <span className="hidden sm:inline">Dashboard</span>
+              <span className="hidden lg:inline">Tu panel</span>
             </Link>
-            <Link className="nav-link" href="/dashboard/mensajes" aria-label={noLeidos > 0 ? `Mensajes, ${noLeidos} sin leer` : "Mensajes"}>
+            <Link
+              className="nav-link"
+              href="/dashboard/mensajes"
+              aria-label={
+                noLeidos > 0 ? `Mensajes, ${noLeidos} sin leer` : "Mensajes"
+              }
+            >
               <Mail size={16} />
-              <span className="hidden sm:inline">Mensajes</span>
+              <span className="hidden lg:inline">Mensajes</span>
               {noLeidos > 0 ? <span className="badge">{noLeidos}</span> : null}
             </Link>
             {actual && esDocente(actual) ? (
-              <Link className="nav-link" href="/profesor">
+              <Link className="nav-link" href="/profesor" aria-label="Docencia">
                 <GraduationCap size={16} />
-                <span className="hidden sm:inline">Docencia</span>
+                <span className="hidden lg:inline">Docencia</span>
               </Link>
             ) : null}
             {actual?.rol === "admin" ? (
-              <Link className="nav-link" href="/admin">
+              <Link
+                className="nav-link"
+                href="/admin"
+                aria-label="Administración"
+              >
                 <Shield size={16} />
-                <span className="hidden sm:inline">Administración</span>
+                <span className="hidden lg:inline">Administración</span>
               </Link>
             ) : null}
           </nav>
@@ -61,7 +76,9 @@ export async function SiteHeader() {
         {/* El mensaje del creador de la plataforma, con el mismo enlace que tenía la v1. */}
         <Link className="nav-link" href="/lun4t1k0" aria-label="El origen">
           <SquareTerminal size={16} />
-          <span className="hidden font-mono lg:inline">{"> sudo ./run_bio"}</span>
+          <span className="hidden font-mono xl:inline">
+            {"> sudo ./run_bio"}
+          </span>
         </Link>
         <BusquedaRapida />
         <ThemeToggle />
@@ -76,8 +93,12 @@ export async function SiteHeader() {
             </summary>
             <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-surface shadow-2xl">
               <div className="border-b border-border px-3 py-3">
-                <strong className="block truncate text-sm">{user.name ?? "Estudiante"}</strong>
-                <span className="block truncate text-xs text-muted-foreground">{user.email}</span>
+                <strong className="block truncate text-sm">
+                  {user.name ?? "Estudiante"}
+                </strong>
+                <span className="block truncate text-xs text-muted-foreground">
+                  {user.email}
+                </span>
               </div>
               <Link
                 href="/perfil"

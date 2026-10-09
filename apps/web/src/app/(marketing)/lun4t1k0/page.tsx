@@ -17,13 +17,13 @@ export default function OrigenPage() {
 
           <div className="mt-6 space-y-1 border-l-4 border-primary bg-primary/10 p-4 font-mono text-sm text-foreground">
             <p>
-              <span className="text-primary">[PROFILE]:</span> Cristian Venegas (Ingeniero Informático & Magíster PUC)
+              <span className="text-accent">[PROFILE]:</span> Cristian Venegas (Ingeniero Informático & Magíster PUC)
             </p>
             <p>
-              <span className="text-primary">[ALIAS]:</span> LuN4t!k0 (Code Lover, Maestro Pokemon Nivel 42, Gamer)
+              <span className="text-accent">[ALIAS]:</span> LuN4t!k0 (Code Lover, Maestro Pokemon Nivel 42, Gamer)
             </p>
             <p>
-              <span className="text-primary">[LINKEDIN]:</span>{" "}
+              <span className="text-accent">[LINKEDIN]:</span>{" "}
               <a
                 href="https://www.linkedin.com/in/cristian-venegas-595844a2/"
                 target="_blank"
@@ -39,13 +39,13 @@ export default function OrigenPage() {
             <p>
               A primera vista, mi perfil puede parecer el clásico flujo estructurado: Ingeniero Informático con un
               Magíster de la Pontificia Universidad Católica. Pero si excavamos un poco en los logs de mi vida, encuentras
-              a <span className="font-bold text-primary">LuN4t!k0</span>, un apasionado que pasa horas frente a la pantalla
+              a <span className="font-bold text-accent">LuN4t!k0</span>, un apasionado que pasa horas frente a la pantalla
               picando código, resolviendo problemas.
             </p>
 
             <p>
               Creé esta plataforma con una misión directa y sin rodeos:{" "}
-              <span className="font-bold text-primary">
+              <span className="font-bold text-accent">
                 ayudarte a encontrar el camino hacia tu primer trabajo, tu próximo desafío o tu reconversión laboral
                 definitiva
               </span>
@@ -56,14 +56,14 @@ export default function OrigenPage() {
 
             <p>
               Porque programar no es simplemente sentarse a tirar líneas de código en un editor de texto.{" "}
-              <span className="font-bold text-success">Es el arte de solucionar problemas reales</span>, ya sea para ti o
+              <span className="font-bold text-success-text">Es el arte de solucionar problemas reales</span>, ya sea para ti o
               para los demás, con el único fin de hacer la vida de las personas más simple. No se trata de automatizar para
               que la humanidad deje de trabajar, sino de liberar su tiempo para que puedan invertirlo en cosas mucho
               mejores.
             </p>
 
             <p>
-              Y aquí es donde entra <span className="text-primary">syntaxError.cl</span>. ¿Por qué elegí este nombre?
+              Y aquí es donde entra <span className="text-accent">syntaxError.cl</span>. ¿Por qué elegí este nombre?
               Porque un error de sintaxis es lo más común cuando estás partiendo, pero no es una muralla infranqueable. Es
               solo una señal del sistema que te avisa que algo no va bien y que debes detenerte un segundo a repensar la
               solución. Nada más. A veces programar se siente endiabladamente complicado y frustrante... ¡Y adivina qué! Lo
@@ -73,7 +73,7 @@ export default function OrigenPage() {
             <p>
               Por suerte, hoy contamos con el apoyo de la Inteligencia Artificial. Es como tener un ayudante integrado que
               hace todo el trabajo repetitivo por ti. Pero ojo,{" "}
-              <span className="font-bold text-primary">siempre hay un &quot;pero&quot;</span>: tú debes saber exactamente
+              <span className="font-bold text-accent">siempre hay un &quot;pero&quot;</span>: tú debes saber exactamente
               qué es lo que está haciendo esa máquina. Somos los humanos los que debemos tener siempre la última palabra y
               la decisión final sobre el sistema. Por eso, aquí aprenderás a pensar fuera de la caja, dentro de la caja, al
               lado, arriba, en un círculo, un cuadrado, un grafo o un objeto de forma plástica.
@@ -87,7 +87,7 @@ export default function OrigenPage() {
 
             <p>
               Para cerrar este bloque y volver a lo que nos convoca, quiero dejarte las reglas de este entorno claras de
-              inmediato: <span className="font-bold text-primary">esta plataforma es 100% gratuita</span>. Sin trucos, sin
+              inmediato: <span className="font-bold text-accent">esta plataforma es 100% gratuita</span>. Sin trucos, sin
               telemetría oculta y sin vender tus datos a nadie. Es gratis porque yo aprendí en internet gracias a la
               generosidad de muchos entusiastas y creadores de contenido al principio de mi carrera. Ahora que Dios y la
               vida me han dado la oportunidad de crecer, quiero devolver un poco de ese conocimiento a quienes también están
@@ -102,7 +102,7 @@ export default function OrigenPage() {
 
             <p>
               Como no podré estar físicamente a tu lado en cada momento que te estanques, te dejé configurado un ayudante
-              en el entorno: <span className="font-bold text-primary">una pequeña IA disponible las 24 horas</span> para
+              en el entorno: <span className="font-bold text-accent">una pequeña IA disponible las 24 horas</span> para
               resolver tus consultas sobre programación, desarrollo y ciencia de datos.
             </p>
 
@@ -110,13 +110,13 @@ export default function OrigenPage() {
           </div>
 
           <div className="mt-8 space-y-1 border-t border-dashed border-border pt-6 text-foreground">
-            <p className="text-success">✔ Sistema listo para producción. El conocimiento está libre de bloqueos.</p>
+            <p className="text-success-text">✔ Sistema listo para producción. El conocimiento está libre de bloqueos.</p>
             <p className="mt-3">
               Abrazo virtual,
               <br />
               <strong>LuN4t!k0</strong>
               <br />
-              <span className="font-mono font-bold text-primary">
+              <span className="font-mono font-bold text-accent">
                 sudo init success_story
                 <span className="ml-1 inline-block h-4 w-2 animate-pulse bg-primary align-middle" />
               </span>

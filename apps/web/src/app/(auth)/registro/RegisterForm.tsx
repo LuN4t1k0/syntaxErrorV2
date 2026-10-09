@@ -5,10 +5,9 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@syntaxerror/ui/components/button";
-import { Card } from "@syntaxerror/ui/components/card";
 import { Input } from "@syntaxerror/ui/components/input";
 import { Label } from "@syntaxerror/ui/components/label";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { AccesoCard } from "@/components/cuenta/acceso-card";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -27,109 +26,122 @@ export function RegisterForm() {
     const email = String(formData.get("email") ?? "");
     const password = String(formData.get("password") ?? "");
 
-    const response = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: String(formData.get("name") ?? ""),
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: String(formData.get("name") ?? ""),
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        setError(
+          response.status === 409
+            ? "Ese email ya está registrado."
+            : "No se pudo crear la cuenta.",
+        );
+        return;
+      }
+
+      const result = await signIn("credentials", {
         email,
         password,
-      }),
-    });
+        redirect: false,
+        callbackUrl,
+      });
 
-    if (!response.ok) {
+      if (!result || result.error) {
+        router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+        return;
+      }
+
+      router.push(result.url ?? callbackUrl);
+    } catch {
+      setError("No pudimos conectar. Revisa tu conexión e intenta de nuevo.");
+    } finally {
       setLoading(false);
-      setError(
-        response.status === 409
-          ? "Ese email ya esta registrado."
-          : "No se pudo crear la cuenta."
-      );
-      return;
     }
-
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl,
-    });
-
-    setLoading(false);
-
-    if (!result || result.error) {
-      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-      return;
-    }
-
-    router.push(result.url ?? callbackUrl);
-    router.refresh();
   }
 
   async function onGoogleSignIn() {
     setGoogleLoading(true);
     setError(null);
-    await signIn("google", { callbackUrl });
+    try {
+      await signIn("google", { callbackUrl });
+    } catch {
+      setError("No pudimos abrir Google. Intenta de nuevo.");
+    } finally {
+      setGoogleLoading(false);
+    }
   }
 
   return (
-    <Card className="relative w-full max-w-md p-6 shadow-2xl sm:p-8">
-      <div className="absolute right-4 top-4">
-        <ThemeToggle />
-      </div>
+    <AccesoCard
+      titulo="Crear cuenta"
+      descripcion="Tu cuenta es gratis. Aprende practicando y guarda cada paso de tu avance."
+      etiqueta="Empieza por una oportunidad"
+    >
       <form className="grid gap-5" onSubmit={onSubmit}>
-      <div>
-        <p className="section-kicker">Nueva cuenta</p>
-        <h1 className="mt-3 text-3xl font-black">Crear cuenta</h1>
-      </div>
-      <Label>
-        Nombre
-        <Input name="name" type="text" autoComplete="name" required />
-      </Label>
-      <Label>
-        Email
-        <Input name="email" type="email" autoComplete="email" required />
-      </Label>
-      <Label>
-        Password
-        <Input
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          minLength={8}
-          required
-        />
-      </Label>
-      {error ? (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm font-bold text-destructive">
-          {error}
+        <Label>
+          Nombre
+          <Input name="name" type="text" autoComplete="name" required />
+        </Label>
+        <Label>
+          Email
+          <Input name="email" type="email" autoComplete="email" required />
+        </Label>
+        <Label>
+          Contraseña
+          <Input
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            minLength={8}
+            aria-describedby="clave-ayuda"
+            required
+          />
+        </Label>
+        <p id="clave-ayuda" className="-mt-3 text-xs text-muted-foreground">
+          Usa al menos 8 caracteres.
         </p>
-      ) : null}
-      <Button type="submit" disabled={loading}>
-        {loading ? "Creando..." : "Crear y entrar"}
-      </Button>
-      <div className="flex items-center gap-3 text-xs font-bold uppercase text-muted-foreground">
-        <span className="h-px flex-1 bg-border" />
-        o
-        <span className="h-px flex-1 bg-border" />
-      </div>
-      <Button
-        type="button"
-        variant="secondary"
-        onClick={onGoogleSignIn}
-        disabled={googleLoading}
-      >
-        {googleLoading ? "Abriendo Google..." : "Registrarse con Google"}
-      </Button>
-      <p className="text-sm text-muted-foreground">
-        Ya tienes cuenta?{" "}
-        <Link
-          className="font-black text-primary hover:underline"
-          href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+        {error ? (
+          <p
+            role="alert"
+            className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm font-bold text-error-text"
+          >
+            {error}
+          </p>
+        ) : null}
+        <Button size="form" type="submit" disabled={loading}>
+          {loading ? "Creando..." : "Crear cuenta gratis"}
+        </Button>
+        <div className="flex items-center gap-3 text-xs font-bold uppercase text-muted-foreground">
+          <span className="h-px flex-1 bg-border" />
+          o
+          <span className="h-px flex-1 bg-border" />
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="form"
+          onClick={onGoogleSignIn}
+          disabled={googleLoading}
         >
-          Entrar
-        </Link>
-      </p>
+          {googleLoading ? "Abriendo Google..." : "Registrarse con Google"}
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          ¿Ya tienes cuenta?{" "}
+          <Link
+            className="font-black text-accent hover:underline"
+            href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+          >
+            Entrar
+          </Link>
+        </p>
       </form>
-    </Card>
+    </AccesoCard>
   );
 }

@@ -86,7 +86,7 @@ export function AsistenteFlotante({ caso }: { caso: string }) {
       {abierto ? (
         <section aria-label="Asistente del curso" className="grid max-h-[min(36rem,calc(100svh-6rem))] w-[min(calc(100vw-2rem),24rem)] grid-rows-[auto_1fr_auto] overflow-hidden rounded-lg border border-border bg-surface shadow-2xl">
           <header className="flex items-center justify-between gap-2 border-b border-border px-4 py-3">
-            <h2 className="font-mono text-sm font-black text-primary">{"> asistente_"}</h2>
+            <h2 className="font-mono text-sm font-black text-accent">{"> asistente_"}</h2>
             <button type="button" onClick={() => setAbierto(false)} aria-label="Cerrar el asistente" className="text-muted-foreground hover:text-foreground">
               <X size={18} />
             </button>
@@ -96,7 +96,7 @@ export function AsistenteFlotante({ caso }: { caso: string }) {
               Pregúntame sobre programación, SQL, planillas, Python, Power BI o datos. No resuelvo las tareas: para eso están las pistas y el tutor de cada misión.
             </p>
             {sesion === "no" ? (
-              <Link className="font-bold text-primary hover:underline" href={`/login?callbackUrl=${encodeURIComponent(ruta)}`}>
+              <Link className="font-bold text-accent hover:underline" href={`/login?callbackUrl=${encodeURIComponent(ruta)}`}>
                 Entra para preguntarle al asistente
               </Link>
             ) : (
@@ -119,7 +119,7 @@ export function AsistenteFlotante({ caso }: { caso: string }) {
                 required
                 aria-label="Tu pregunta al asistente"
                 placeholder="Escribe tu pregunta"
-                className="min-w-0 flex-1 rounded-md border border-border bg-background px-3 py-2 text-base text-foreground outline-none focus:border-primary sm:text-sm"
+                className="field min-w-0 flex-1 text-base sm:text-sm"
               />
               <button
                 type="submit"

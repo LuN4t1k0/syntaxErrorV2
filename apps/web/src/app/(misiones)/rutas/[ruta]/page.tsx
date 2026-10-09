@@ -36,9 +36,9 @@ export default async function RutaPage({ params }: Parametros) {
     unidades: caso.misiones.length,
   }));
   return (
-    <main className="mx-auto grid max-w-3xl gap-8 px-4 py-12 sm:px-6">
+    <main className="mx-auto grid grid-cols-1 max-w-3xl gap-8 px-4 py-12 sm:px-6">
       <header className="grid gap-3">
-        <p className="font-mono text-sm font-bold text-primary">{`$ git log --graph --reverse ${ruta.slug}`}</p>
+        <p className="font-mono text-sm font-bold text-accent">{`$ git log --graph --reverse ${ruta.slug}`}</p>
         <h1 className="text-3xl font-black">{ruta.titulo}</h1>
         <p className="text-sm font-bold text-muted-foreground">{ruta.cargo}</p>
         <p className="leading-7 text-muted-foreground">{ruta.descripcion}</p>

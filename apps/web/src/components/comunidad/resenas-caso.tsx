@@ -94,7 +94,7 @@ export function ResenasCaso({ caso }: { caso: string }) {
               onChange={(evento) => setComentario(evento.target.value)}
               rows={3}
               maxLength={1000}
-              className="w-full resize-y rounded-md border border-border bg-background p-3 text-sm font-normal leading-6 text-foreground outline-none focus:border-primary"
+              className="field resize-y font-normal leading-6"
             />
           </label>
           <div>

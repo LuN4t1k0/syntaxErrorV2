@@ -13,6 +13,7 @@ import { enlacePortafolio } from "@/lib/cuenta/enlaces";
 import { estadoDocencia } from "@/lib/docentes";
 import { sugerirUsuario } from "@/lib/portafolio";
 import { obtenerUsuarioActual } from "@/lib/sesion";
+import { PageIntro } from "@/components/page-intro";
 
 export const metadata = { title: "Tu perfil" };
 
@@ -24,12 +25,17 @@ export default async function PerfilPage() {
   const perfil = await obtenerPerfil(getDb(), userId);
   if (!perfil) redirect("/login?callbackUrl=/perfil");
   const actual = await obtenerUsuarioActual();
-  const docencia = actual ? await estadoDocencia(getDb(), actual) : "puede_solicitar";
+  const docencia = actual
+    ? await estadoDocencia(getDb(), actual)
+    : "puede_solicitar";
 
   return (
     <main className="mx-auto grid max-w-3xl gap-6 px-4 py-12 sm:px-6">
-      <p className="font-mono text-sm font-bold text-primary">{"> cat ~/.perfil"}</p>
-      <h1 className="text-3xl font-black">Tu perfil</h1>
+      <PageIntro
+        comando="> cat ~/.perfil"
+        titulo="Tu perfil"
+        descripcion="Mantén tus datos al día y decide cómo compartir tu trabajo con otras personas."
+      />
 
       <Seccion titulo="Datos de la cuenta">
         <p className="text-sm text-muted-foreground">
@@ -50,11 +56,16 @@ export default async function PerfilPage() {
         {perfil.tieneClave ? (
           <FormularioClave />
         ) : (
-          <p className="text-sm text-muted-foreground">Entras con Google, así que tu cuenta no tiene contraseña.</p>
+          <p className="text-sm text-muted-foreground">
+            Entras con Google, así que tu cuenta no tiene contraseña.
+          </p>
         )}
       </Seccion>
 
-      <Seccion titulo="Portafolio público" descripcion="Elige un usuario y decide si quieres mostrar tus casos completados y certificados.">
+      <Seccion
+        titulo="Portafolio público"
+        descripcion="Elige un usuario y decide si quieres mostrar tus casos completados y certificados."
+      >
         <FormularioPortafolio
           publicoActual={perfil.portafolioPublico}
           usuarioActual={perfil.usuario}

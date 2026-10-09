@@ -15,7 +15,7 @@ export function SeccionDocencia({ estadoInicial }: { estadoInicial: EstadoDocenc
     return (
       <p className="text-sm">
         Tienes acceso docente.{" "}
-        <Link className="font-bold text-primary hover:underline" href="/profesor">Ir a tu panel docente</Link>
+        <Link className="font-bold text-accent hover:underline" href="/profesor">Ir a tu panel docente</Link>
       </p>
     );
   }

@@ -26,9 +26,9 @@ export default async function ClasePage({ params }: { params: Promise<{ id: stri
 
   return (
     <main className="mx-auto grid max-w-5xl gap-8 px-4 py-12 sm:px-6">
-      <nav className="text-sm"><Link className="font-bold text-primary hover:underline" href="/profesor">← Panel docente</Link></nav>
+      <nav className="text-sm"><Link className="font-bold text-accent hover:underline" href="/profesor">← Panel docente</Link></nav>
       <header className="grid gap-2">
-        <p className="font-mono text-sm font-bold text-primary">{"> clase"}</p>
+        <p className="font-mono text-sm font-bold text-accent">{"> clase"}</p>
         <h1 className="text-3xl font-black">{clase.titulo}</h1>
       </header>
 

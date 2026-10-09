@@ -15,7 +15,7 @@ export function TailActividad({ eventos, ahora }: { eventos: EventoAvance[]; aho
           {eventos.map((evento, indice) => (
             <li key={indice} className="flex flex-wrap gap-x-3">
               <span className="w-20 shrink-0 text-muted-foreground">{haceCuanto(evento.fecha, ahora)}</span>
-              <span className="w-10 shrink-0 font-bold text-primary">{ETIQUETA[evento.tipo]}</span>
+              <span className="w-10 shrink-0 font-bold text-accent">{ETIQUETA[evento.tipo]}</span>
               {evento.href ? <Link href={evento.href} className="hover:underline">{evento.texto}</Link> : <span>{evento.texto}</span>}
             </li>
           ))}

@@ -32,7 +32,7 @@ export default async function CasoPage({ params }: Parametros) {
   return (
     <main className="mx-auto grid max-w-4xl gap-8 px-4 py-12 sm:px-6">
       <header className="grid gap-3">
-        <p className="font-mono text-sm font-bold text-primary">{esClases ? "> clases" : `> caso: ${caso.empresa}`}</p>
+        <p className="font-mono text-sm font-bold text-accent">{esClases ? "> clases" : `> caso: ${caso.empresa}`}</p>
         <h1 className="text-3xl font-black">{caso.titulo}</h1>
         <p className="leading-7 text-muted-foreground">
           {esClases

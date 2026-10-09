@@ -9,7 +9,7 @@ export function EditorCodigo({ etiqueta, valor, onCambio, filas = 6 }: { etiquet
         onChange={(evento) => onCambio(evento.target.value)}
         rows={filas}
         spellCheck={false}
-        className="w-full resize-y rounded-md border border-border bg-background p-3 font-mono text-sm font-normal leading-6 text-foreground outline-none focus:border-primary"
+        className="field resize-y font-mono font-normal leading-6"
       />
     </label>
   );

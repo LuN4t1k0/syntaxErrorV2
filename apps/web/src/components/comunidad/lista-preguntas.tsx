@@ -10,7 +10,7 @@ export function ListaPreguntas({ preguntas, modo }: { preguntas: FilaPregunta[];
       {preguntas.map((pregunta) => (
         <li key={pregunta.id} className={pregunta.estado === "pendiente" ? "card grid gap-3 border-primary p-4" : "card grid gap-3 p-4"}>
           <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-            <Link className="font-bold text-primary hover:underline" href={`/casos/${pregunta.caso.slug}/${pregunta.mision.slug}`}>
+            <Link className="font-bold text-accent hover:underline" href={`/casos/${pregunta.caso.slug}/${pregunta.mision.slug}`}>
               {`${pregunta.caso.titulo} · ${pregunta.mision.titulo}`}
             </Link>
             <span className="badge">{pregunta.estado === "pendiente" ? "Pendiente" : "Respondida"}</span>
@@ -23,7 +23,7 @@ export function ListaPreguntas({ preguntas, modo }: { preguntas: FilaPregunta[];
           <p className="whitespace-pre-wrap leading-7">{pregunta.texto}</p>
           {pregunta.respuesta ? (
             <div className="grid gap-1 rounded-md border border-primary/30 p-3">
-              <p className="text-xs font-bold text-primary">Respuesta</p>
+              <p className="text-xs font-bold text-accent">Respuesta</p>
               <p className="whitespace-pre-wrap text-sm leading-6">{pregunta.respuesta}</p>
             </div>
           ) : modo === "docente" ? (

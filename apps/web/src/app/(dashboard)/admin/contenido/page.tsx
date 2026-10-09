@@ -15,7 +15,7 @@ export default async function ContenidoAdminPage() {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
           <thead><tr className="border-b border-border"><th className="p-2">Caso</th><th className="p-2">Rutas</th><th className="p-2">Inscripciones</th><th className="p-2">Completados</th></tr></thead>
-          <tbody>{filas.map((fila) => <tr key={fila.slug} className="border-b border-border"><td className="p-2"><Link className="font-bold text-primary hover:underline" href={`/admin/contenido/${fila.slug}`}>{fila.titulo}</Link></td><td className="p-2">{fila.rutas.length === 0 ? "Sin ruta" : fila.rutas.map((ruta) => `${ruta.titulo} (${ruta.estado})`).join(", ")}</td><td className="p-2">{fila.inscritos}</td><td className="p-2">{fila.completados}</td></tr>)}</tbody>
+          <tbody>{filas.map((fila) => <tr key={fila.slug} className="border-b border-border"><td className="p-2"><Link className="font-bold text-accent hover:underline" href={`/admin/contenido/${fila.slug}`}>{fila.titulo}</Link></td><td className="p-2">{fila.rutas.length === 0 ? "Sin ruta" : fila.rutas.map((ruta) => `${ruta.titulo} (${ruta.estado})`).join(", ")}</td><td className="p-2">{fila.inscritos}</td><td className="p-2">{fila.completados}</td></tr>)}</tbody>
         </table>
       </div>
     </main>

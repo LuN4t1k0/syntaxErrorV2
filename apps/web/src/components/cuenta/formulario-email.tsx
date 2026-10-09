@@ -4,14 +4,17 @@ import { useState, type FormEvent } from "react";
 import { Button } from "@syntaxerror/ui/components/button";
 import { Input } from "@syntaxerror/ui/components/input";
 import { Label } from "@syntaxerror/ui/components/label";
+import { Feedback } from "@syntaxerror/ui/components/feedback";
 import { enviarJson } from "@/lib/cuenta/cliente";
 
 const ERRORES: Record<string, string> = {
   mismo_email: "Ese ya es tu email.",
   email_en_uso: "Ese email ya lo usa otra cuenta.",
   clave_incorrecta: "La contraseña actual no es correcta.",
-  rate_limited: "Hiciste muchos intentos. Espera un rato antes de volver a intentar.",
-  cola_no_disponible: "No pudimos enviar el email de confirmación. Intenta de nuevo en unos minutos.",
+  rate_limited:
+    "Hiciste muchos intentos. Espera un rato antes de volver a intentar.",
+  cola_no_disponible:
+    "No pudimos enviar el email de confirmación. Intenta de nuevo en unos minutos.",
   invalido: "Revisa que el email esté bien escrito.",
 };
 
@@ -19,6 +22,7 @@ export function FormularioEmail({ tieneClave }: { tieneClave: boolean }) {
   const [nuevoEmail, setNuevoEmail] = useState("");
   const [claveActual, setClaveActual] = useState("");
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [fallo, setFallo] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
   async function pedir(evento: FormEvent<HTMLFormElement>) {
@@ -27,14 +31,16 @@ export function FormularioEmail({ tieneClave }: { tieneClave: boolean }) {
     const respuesta = await enviarJson(
       "/api/cuenta/email",
       "POST",
-      tieneClave ? { nuevoEmail, claveActual } : { nuevoEmail }
+      tieneClave ? { nuevoEmail, claveActual } : { nuevoEmail },
     );
     setEnviando(false);
     setMensaje(
       respuesta.ok
         ? `Te enviamos un enlace a ${nuevoEmail.trim()}. Ábrelo para confirmar el cambio.`
-        : ((respuesta.error && ERRORES[respuesta.error]) ?? "No pudimos pedir el cambio. Intenta de nuevo.")
+        : ((respuesta.error && ERRORES[respuesta.error]) ??
+            "No pudimos pedir el cambio. Intenta de nuevo."),
     );
+    setFallo(!respuesta.ok);
     if (respuesta.ok) setClaveActual("");
   }
 
@@ -68,9 +74,7 @@ export function FormularioEmail({ tieneClave }: { tieneClave: boolean }) {
         </Button>
       </div>
       {mensaje ? (
-        <p role="status" className="text-sm font-bold">
-          {mensaje}
-        </p>
+        <Feedback tipo={fallo ? "error" : "success"}>{mensaje}</Feedback>
       ) : null}
     </form>
   );

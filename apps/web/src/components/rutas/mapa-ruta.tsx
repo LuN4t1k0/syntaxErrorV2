@@ -33,12 +33,12 @@ function Decoracion({ children, tono }: { children: React.ReactNode; tono: "head
 function Estado({ pieza }: { pieza: PiezaMapa }) {
   // Sin encogerse ni partirse: en un teléfono la etiqueta queda junto al título, completa.
   const base = "shrink-0 whitespace-nowrap font-mono text-[11px] font-black uppercase";
-  if (pieza.estado === "completo") return <span className={`${base} text-foreground`}>✔ merged</span>;
-  if (pieza.estado === "en_revision") return <span className={`${base} text-foreground`}>PR en revisión</span>;
+  if (pieza.estado === "completo") return <span className={`${base} text-foreground`} title="merged">✔ Completado</span>;
+  if (pieza.estado === "en_revision") return <span className={`${base} text-foreground`} title="Pull request">En revisión</span>;
   if (pieza.estado === "bloqueado") {
     return (
-      <span className={`${base} typographic-glitch text-muted-foreground`} data-text="LOCKED">
-        LOCKED
+      <span className={`${base} text-muted-foreground`} title="LOCKED">
+        Bloqueado
       </span>
     );
   }
@@ -75,20 +75,20 @@ function Commit({ pieza, mensaje, decoraciones }: { pieza: PiezaMapa; mensaje: s
     <Link
       href={`/casos/${pieza.slug}`}
       aria-label={`${pieza.titulo}: ${etiquetaEstado(pieza)}`}
-      className={`card grid min-w-0 flex-1 gap-1.5 p-4 hover:border-primary ${pieza.estado === "bloqueado" ? "opacity-70" : ""} ${aqui ? "border-primary ring-2 ring-primary/50" : ""}`}
+      className={`card grid min-w-0 grid-cols-1 flex-1 gap-1.5 p-4 hover:border-primary ${pieza.estado === "bloqueado" ? "opacity-70" : ""} ${aqui ? "border-primary ring-2 ring-primary/50" : ""}`}
     >
       <span className="flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground">
         <span>{pieza.hash}</span>
         {decoraciones}
-        {aqui ? <span className="rounded border border-primary px-1 font-mono text-[11px] font-bold leading-5 text-primary">Estás aquí</span> : null}
+        {aqui ? <span className="rounded border border-primary px-1 font-mono text-[11px] font-bold leading-5 text-accent">Estás aquí</span> : null}
         <span className="min-w-0 truncate">{mensaje}</span>
       </span>
-      <span className="flex items-start justify-between gap-3">
+      <span className="flex flex-wrap items-start justify-between gap-2">
         <span className="font-black leading-snug">{pieza.titulo}</span>
         <Estado pieza={pieza} />
       </span>
       <span className="text-sm text-muted-foreground">{detalle}</span>
-      {accion ? <span className="font-mono text-xs font-black text-primary">{accion}</span> : null}
+      {accion ? <span className="font-mono text-xs font-black text-accent">{accion}</span> : null}
       {conAvance ? (
         <span className="grid gap-1">
           <span className="h-1.5 overflow-hidden rounded-full bg-surface-raised">
@@ -167,7 +167,7 @@ export function MapaRuta({ ruta, piezas }: Props) {
   const release = resumen.completa ? "completo" : "release";
 
   return (
-    <div className="grid gap-6">
+    <div className="grid min-w-0 grid-cols-1 gap-6">
       {ruta.beta && sesion !== "cargando" ? (
         sesion === "con" && conBeta ? (
           <p role="status" className="card p-4 text-sm leading-6">
@@ -185,19 +185,19 @@ export function MapaRuta({ ruta, piezas }: Props) {
         </div>
       ) : sesion === "sin" ? (
         <p className="card p-4 text-sm leading-6">
-          <span className="font-mono font-bold text-primary">{"$ git config user.name "}</span>
+          <span className="font-mono font-bold text-accent">{"$ git config user.name "}</span>
           <span className="text-muted-foreground">sin configurar. </span>
-          <Link className="font-bold text-primary hover:underline" href={`/registro?callbackUrl=${encodeURIComponent(`/rutas/${ruta.slug}`)}`}>
+          <Link className="font-bold text-accent hover:underline" href={`/registro?callbackUrl=${encodeURIComponent(`/rutas/${ruta.slug}`)}`}>
             Crea tu cuenta
           </Link>{" "}
-          para guardar tu avance y ver dónde está tu HEAD.
+          para guardar tu avance y retomar tu siguiente paso.
         </p>
       ) : (
         <div className="h-14" aria-hidden="true" />
       )}
 
       <Leyenda />
-      <ol className="grid" aria-label={`Mapa de la ruta ${ruta.titulo}`}>
+      <ol className="grid min-w-0 grid-cols-1" aria-label={`Mapa de la ruta ${ruta.titulo}`}>
         {etapas.map((etapa, indice) => {
           const clases = etapa.clases;
           const caso = etapa.caso;
@@ -239,7 +239,7 @@ export function MapaRuta({ ruta, piezas }: Props) {
         })}
         <li className="flex gap-1">
           <Carril main={linea(release)} nodo={{ carril: "main", clase: resumen.completa ? NODO.completo : "border-warning bg-background", actual: false }} />
-          <div className={`card grid min-w-0 flex-1 gap-1.5 border-warning p-4 ${resumen.completa ? "" : "opacity-80"}`}>
+          <div className={`card grid min-w-0 grid-cols-1 flex-1 gap-1.5 border-warning p-4 ${resumen.completa ? "" : "opacity-80"}`}>
             <span className="flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <span>{hashCorto(`${ruta.slug}-release`)}</span>
               <Decoracion tono="tag">tag: v1.0</Decoracion>
@@ -248,7 +248,7 @@ export function MapaRuta({ ruta, piezas }: Props) {
             <span className="font-black">{`Certificado ${ruta.titulo}`}</span>
             <span className="text-sm text-muted-foreground">
               {resumen.completa ? (
-                <Link className="font-bold text-primary hover:underline" href="/dashboard">
+                <Link className="font-bold text-accent hover:underline" href="/dashboard">
                   Ver tu certificado en el panel
                 </Link>
               ) : (
@@ -283,9 +283,9 @@ function Leyenda() {
     ["main", "la ruta, de arriba hacia abajo"],
     ["clases/...", "una rama de clases: aprendes ahí y se fusiona en el caso que lo aplica"],
     ["HEAD -> tú", "dónde estás"],
-    ["✔ merged", "completado"],
-    ["PR en revisión", "tus misiones están listas; falta que aprueben tu entregable"],
-    ["LOCKED", "se habilita al completar lo anterior"],
+    ["✔ Completado", "merged: ya completaste este paso"],
+    ["En revisión", "tus misiones están listas; falta que aprueben tu entregable"],
+    ["Bloqueado", "se habilita al completar lo anterior"],
     ["tag: v1.0", "el certificado de la ruta"],
   ];
   return (

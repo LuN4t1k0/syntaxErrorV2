@@ -38,7 +38,7 @@ export function FormularioRestablecer() {
     return (
       <p role="status" className="leading-7">
         Tu contraseña quedó guardada.{" "}
-        <Link className="font-bold text-primary hover:underline" href="/login">
+        <Link className="font-bold text-accent hover:underline" href="/login">
           Entrar
         </Link>
       </p>
@@ -52,12 +52,12 @@ export function FormularioRestablecer() {
         <Input type="password" value={claveNueva} onChange={(evento) => setClaveNueva(evento.target.value)} required minLength={8} autoComplete="new-password" />
       </Label>
       <div>
-        <Button type="submit" disabled={estado === "enviando"}>
+        <Button size="form" className="w-full" type="submit" disabled={estado === "enviando"}>
           Guardar contraseña
         </Button>
       </div>
       {error ? (
-        <p role="alert" className="text-sm font-bold text-destructive">
+        <p role="alert" className="text-sm font-bold text-error-text">
           {error}{" "}
           <Link className="underline" href="/recuperar-clave">
             Pedir otro enlace

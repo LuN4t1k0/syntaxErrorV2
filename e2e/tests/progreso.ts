@@ -211,7 +211,7 @@ export async function registrarse(page: Page, nombre: string): Promise<string> {
   await page.locator('input[name="name"]').fill(nombre);
   await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   await cerrarBienvenida(page);
   return email;
