@@ -7,26 +7,24 @@ async function registrarseSinCerrar(page: Page, nombre: string) {
   await page.locator('input[name="name"]').fill(nombre);
   await page.locator('input[name="email"]').fill(`bienvenida-${Date.now()}-${Math.floor(Math.random() * 1e6)}@correo.cl`);
   await page.locator('input[name="password"]').fill("clave-segura-123");
-  await page.getByRole("button", { name: "Crear y entrar" }).click();
+  await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
   const terminal = page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" });
   await expect(terminal).toBeVisible();
   return terminal;
 }
 
-test("una estudiante nueva elige su ruta con el teclado, llega al mapa y la terminal no vuelve a aparecer", async ({ page }) => {
+test("una estudiante nueva elige su ruta con el teclado, llega a la primera lección y la terminal no vuelve a aparecer", async ({ page }) => {
   const terminal = await registrarseSinCerrar(page, "Florencia Huenchumil");
   await expect(terminal.getByText("> hola, Florencia. iniciando syntaxError.cl…")).toBeVisible();
   const prompt = terminal.getByLabel("Prompt de bienvenida");
   await expect(prompt).toBeFocused();
-  await expect(terminal.getByText("florencia@syntaxerror.cl:~$").first()).toBeVisible();
   // Data Analyst es la primera ruta abierta: queda seleccionada y se elige con Enter.
   await expect(terminal.getByRole("option", { selected: true })).toContainText("data-analyst/");
   await prompt.press("Enter");
 
-  await expect(page).toHaveURL(/\/rutas\/data-analyst$/);
-  const aqui = page.getByRole("list", { name: "Mapa de la ruta Data Analyst" }).getByRole("link", { name: /Herramientas del oficio/ });
-  await expect(aqui).toContainText("Estás aquí");
+  await expect(page).toHaveURL(/\/casos\/herramientas-del-oficio\/01-tu-primer-repositorio$/);
+  await expect(page.getByRole("heading", { name: /Tu primer repositorio/ })).toBeVisible();
 
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { name: "Hola, Florencia Huenchumil" })).toBeVisible();
@@ -34,7 +32,8 @@ test("una estudiante nueva elige su ruta con el teclado, llega al mapa y la term
   const continuar = page.getByRole("region", { name: "Continuar" });
   await expect(continuar).toContainText("Tu ruta: Data Analyst");
   await expect(continuar).toContainText("Empieza por Herramientas del oficio");
-  await expect(continuar.getByRole("link", { name: "Empezar" })).toHaveAttribute("href", "/rutas/data-analyst");
+  await expect(continuar.getByRole("link", { name: "Empezar" })).toHaveAttribute("href", "/casos/herramientas-del-oficio/01-tu-primer-repositorio");
+  await expect(continuar.getByRole("link", { name: "Ver el mapa de la ruta" })).toHaveAttribute("href", "/rutas/data-analyst");
   await expect(page.getByRole("region", { name: "Tus rutas" })).toContainText("tu ruta");
 
   // "¿Cómo funciona?" la vuelve a mostrar, y salir con explorar no cambia la ruta elegida.

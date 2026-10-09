@@ -16,6 +16,7 @@ export type RutaSelector = {
   totalCasos: number;
   totalClases: number;
   primerPaso: string | null;
+  primerPasoHref: string | null;
   leak: string;
 };
 
@@ -49,7 +50,7 @@ export function SelectorRutas({ rutas, sesion, accion = "Elegir" }: { rutas: Rut
 
   return (
     <div className="grid gap-4">
-      {error ? <p role="status" className="text-sm font-bold text-destructive">{error}</p> : null}
+      {error ? <p role="status" className="text-sm font-bold text-error-text">{error}</p> : null}
       <ul className="grid gap-4 md:grid-cols-2">
         {visibles.map((ruta) =>
           ruta.estadoVigente === "filtrada" ? (

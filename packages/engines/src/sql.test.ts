@@ -50,6 +50,11 @@ describe("ejecutarSql", () => {
     expect(ejecutarSql(crearBaseSql(tablas), consulta)).toEqual([{ count: 2, Total: 2 }]);
   });
 
+  it("permite ordenar por un alias reservado como total", () => {
+    const consulta = "SELECT ciudad, COUNT(*) AS total FROM clientes GROUP BY ciudad ORDER BY total DESC";
+    expect(ejecutarSql(crearBaseSql(tablas), consulta)[0]).toEqual({ ciudad: "Santiago", total: 2 });
+  });
+
   it("redondea decimales para comparar sin ruido de punto flotante", () => {
     expect(ejecutarSql(crearBaseSql(tablas), "SELECT 0.1 + 0.2 AS total")).toEqual([{ total: 0.3 }]);
   });

@@ -28,7 +28,11 @@ describe("estadoContinuar", () => {
     expect(estadoContinuar({ ...base, puedeBeta: false, todoVisible: true, casoPendiente: null, elegida: analista })).toMatchObject({ tipo: "empezar" });
   });
 
-  it("sin ruta ni avance, toca elegir", () => {
+  it("sin ruta ni avance, si hay una sola disponible invita a empezar", () => {
+    expect(estadoContinuar({ ...base, rutas: [otra], casoPendiente: null, elegida: null })).toEqual({ tipo: "empezar", ruta: otra });
+  });
+
+  it("sin ruta ni avance, con varias disponibles toca elegir", () => {
     expect(estadoContinuar({ ...base, casoPendiente: null, elegida: null })).toEqual({ tipo: "elegir" });
   });
 });

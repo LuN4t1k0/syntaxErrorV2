@@ -47,8 +47,15 @@ const ALIAS_RESERVADOS = new Set([
 ]);
 
 function protegerAlias(sentencia: string): string {
-  return sentencia.replace(/\bAS\s+([A-Za-z_][A-Za-z0-9_]*)\b/gi, (coincidencia, alias: string) =>
-    ALIAS_RESERVADOS.has(alias.toLowerCase()) ? `AS \`${alias}\`` : coincidencia
+  const aliasesProtegidos: string[] = [];
+  const conAlias = sentencia.replace(/\bAS\s+([A-Za-z_][A-Za-z0-9_]*)\b/gi, (coincidencia, alias: string) => {
+    if (!ALIAS_RESERVADOS.has(alias.toLowerCase())) return coincidencia;
+    aliasesProtegidos.push(alias);
+    return `AS \`${alias}\``;
+  });
+  return aliasesProtegidos.reduce(
+    (actual, alias) => actual.replace(new RegExp(`\\b(ORDER\\s+BY\\s+(?:[^;]*?,\\s*)?)${alias}\\b`, "gi"), `$1\`${alias}\``),
+    conAlias
   );
 }
 

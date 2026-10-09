@@ -38,5 +38,7 @@ export function estadoContinuar({
     };
   }
   if (elegida) return usable(elegida) ? { tipo: "empezar", ruta: elegida } : { tipo: "pausa", ruta: elegida };
+  const disponibles = rutas.filter(usable);
+  if (disponibles.length === 1) return { tipo: "empezar", ruta: disponibles[0] };
   return { tipo: "elegir" };
 }

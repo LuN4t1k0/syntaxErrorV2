@@ -1,0 +1,74 @@
+{
+  "revision": 2,
+  "current": {
+    "h1": "Aprende datos resolviendo trabajos reales. Gratis.",
+    "cta": {
+      "x": 526.015625,
+      "y": 1062.859375,
+      "width": 231.859375,
+      "height": 42
+    },
+    "mobileCta": {
+      "x": 79.0625,
+      "y": 1238.859375,
+      "width": 231.859375,
+      "height": 42
+    }
+  },
+  "checks": [
+    {
+      "width": 320,
+      "theme": "dark",
+      "overflow": false,
+      "ctaBottom": 644
+    },
+    {
+      "width": 320,
+      "theme": "light",
+      "overflow": false,
+      "ctaBottom": 644
+    },
+    {
+      "width": 390,
+      "theme": "dark",
+      "overflow": false,
+      "ctaBottom": 589
+    },
+    {
+      "width": 390,
+      "theme": "light",
+      "overflow": false,
+      "ctaBottom": 589
+    },
+    {
+      "width": 768,
+      "theme": "dark",
+      "overflow": false,
+      "ctaBottom": 712
+    },
+    {
+      "width": 768,
+      "theme": "light",
+      "overflow": false,
+      "ctaBottom": 712
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "overflow": false,
+      "ctaBottom": 721
+    },
+    {
+      "width": 1440,
+      "theme": "light",
+      "overflow": false,
+      "ctaBottom": 721
+    }
+  ],
+  "demo": "Antofagasta $574.000",
+  "dialog": "open, Escape close",
+  "faq": "passed",
+  "theme": "passed",
+  "reducedMotion": "auto",
+  "consoleErrors": []
+}

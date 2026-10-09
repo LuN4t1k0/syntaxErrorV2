@@ -12,9 +12,7 @@ const AYUDA = [
   "también sirven cd <ruta>, start <ruta>, salir y exit",
 ];
 
-// Cuánto espera cada línea del arranque. Con movimiento reducido todo aparece de una vez.
-const PASO_MS = 420;
-const TECLA_MS = 45;
+const PASO_MS = 200;
 
 export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { nombre: string; handle: string; rutas: RutaSelector[]; inicialAbierta: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -23,16 +21,15 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
   const router = useRouter();
   const rutasMenu = useMemo(() => rutas.filter((ruta) => ruta.estadoVigente !== "oculta" && ruta.estadoVigente !== "borrador"), [rutas]);
   const elegibles = rutasMenu.filter((ruta) => ruta.estadoVigente === "publicada" || ruta.estadoVigente === "beta");
+  const filtradas = rutasMenu.filter((ruta) => ruta.estadoVigente === "filtrada");
   const arranque = useMemo(() => inicio(nombre), [nombre]);
   const [abierta, setAbierta] = useState(inicialAbierta);
-  // La primera vez, `explorar` guarda que ya la vio. Si se vuelve a abrir desde "¿Cómo funciona?", solo se cierra.
   const [primeraVez, setPrimeraVez] = useState(inicialAbierta);
   const [entrada, setEntrada] = useState("");
-  const [seleccion, setSeleccion] = useState(() => Math.max(0, rutasMenu.findIndex((ruta) => ruta.estadoVigente === "publicada" || ruta.estadoVigente === "beta")));
+  const [seleccion, setSeleccion] = useState(0);
   const [mostradas, setMostradas] = useState(0);
-  const [tecleado, setTecleado] = useState("");
   const [lineas, setLineas] = useState<Linea[]>([]);
-  const listo = mostradas >= arranque.length && tecleado === COMANDO_INICIAL;
+  const listo = mostradas >= arranque.length;
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -41,21 +38,15 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
     if (!abierta && dialog.open) dialog.close();
   }, [abierta]);
 
-  // El arranque: las líneas salen una tras otra y después la terminal teclea sola `ls rutas/`.
   useEffect(() => {
     if (!abierta) return;
     setMostradas(0);
-    setTecleado("");
     setLineas([]);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setMostradas(arranque.length);
-      setTecleado(COMANDO_INICIAL);
       return;
     }
-    const pendientes: number[] = [];
-    arranque.forEach((_, indice) => pendientes.push(window.setTimeout(() => setMostradas(indice + 1), PASO_MS * (indice + 1))));
-    const desde = PASO_MS * (arranque.length + 1);
-    [...COMANDO_INICIAL].forEach((_, indice) => pendientes.push(window.setTimeout(() => setTecleado(COMANDO_INICIAL.slice(0, indice + 1)), desde + TECLA_MS * indice)));
+    const pendientes = arranque.map((_, indice) => window.setTimeout(() => setMostradas(indice + 1), PASO_MS * (indice + 1)));
     return () => pendientes.forEach((id) => window.clearTimeout(id));
   }, [abierta, arranque]);
 
@@ -65,7 +56,7 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
 
   useEffect(() => {
     finRef.current?.scrollIntoView({ block: "end" });
-  }, [mostradas, tecleado, lineas, listo]);
+  }, [mostradas, lineas, listo]);
 
   function escribir(...nuevas: Linea[]) {
     setLineas((actuales) => [...actuales, ...nuevas]);
@@ -95,12 +86,12 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
       escribir({ texto: `acceso denegado: ${ruta.slug} · ${ruta.leak} · la ruta sigue compilando. Pronto se activa.`, tipo: "error" });
       return;
     }
-    escribir({ texto: `❯ ${ruta.titulo} · ${ruta.cargo}` });
+    escribir({ texto: `> ${ruta.titulo} · ${ruta.cargo}` });
     if (!(await guardar(ruta.slug))) return;
-    escribir({ texto: "[ok] ruta guardada en tu cuenta", tipo: "ok" }, { texto: `[ok] abriendo el mapa: primer paso ${ruta.primerPaso ?? ruta.titulo}`, tipo: "ok" });
+    escribir({ texto: "[ok] ruta guardada · abriendo tu primera lección", tipo: "ok" });
     setPrimeraVez(false);
     setAbierta(false);
-    router.push(`/rutas/${ruta.slug}`);
+    router.push(ruta.primerPasoHref ?? `/rutas/${ruta.slug}`);
   }
 
   async function explorar() {
@@ -117,7 +108,13 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
     const slug = slugOriginal.replace(/\/$/, "");
     const ruta = rutasMenu.find((candidata) => candidata.slug === slug);
     if (!ruta) return escribir({ texto: `cat: ${slug}: no existe`, tipo: "error" });
-    if (ruta.estadoVigente === "filtrada") return escribir({ texto: `${ruta.leak} · ${ruta.titulo} · ${ruta.cargo}` }, { texto: ruta.teaser ?? ruta.descripcion }, { texto: `[${ruta.slug.toUpperCase()}] :: buffer_corrupt`, tipo: "muted" });
+    if (ruta.estadoVigente === "filtrada") {
+      return escribir(
+        { texto: `${ruta.leak} · ${ruta.titulo} · ${ruta.cargo}` },
+        { texto: ruta.teaser ?? ruta.descripcion },
+        { texto: `[${ruta.slug.toUpperCase()}] :: buffer_corrupt`, tipo: "muted" }
+      );
+    }
     escribir({ texto: `${ruta.titulo} · ${ruta.cargo}` }, { texto: ruta.descripcion, tipo: "muted" });
   }
 
@@ -128,7 +125,7 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
     const [accion, ...resto] = comando.split(/\s+/);
     const arg = resto.join(" ");
     if (accion === "help" || accion === "ayuda") escribir(...AYUDA.map((texto) => ({ texto })));
-    else if (accion === "ls") escribir({ texto: "rutas/ · usa ↑ ↓ y Enter, o toca una ruta", tipo: "muted" });
+    else if (accion === "ls") escribir(...rutasMenu.map((ruta) => ({ texto: `${ruta.slug}/ · ${ruta.estadoVigente === "filtrada" ? `${ruta.leak} · compilando` : ruta.cargo}`, tipo: ruta.estadoVigente === "filtrada" ? "muted" as const : "ok" as const })));
     else if (accion === "cat" && arg) ficha(arg);
     else if (["elegir", "cd", "start"].includes(accion) && arg) void elegir(arg);
     else if (["explorar", "exit", "salir"].includes(accion)) void explorar();
@@ -139,7 +136,7 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
   function tecla(evento: React.KeyboardEvent<HTMLInputElement>) {
     if (evento.key === "ArrowDown") {
       evento.preventDefault();
-      setSeleccion((valor) => Math.min(rutasMenu.length - 1, valor + 1));
+      setSeleccion((valor) => Math.min(Math.max(0, elegibles.length - 1), valor + 1));
     } else if (evento.key === "ArrowUp") {
       evento.preventDefault();
       setSeleccion((valor) => Math.max(0, valor - 1));
@@ -148,15 +145,15 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
       if (entrada.trim()) {
         ejecutar(entrada);
         setEntrada("");
-      } else if (rutasMenu[seleccion]) {
-        void elegir(rutasMenu[seleccion].slug);
+      } else if (elegibles[seleccion]) {
+        void elegir(elegibles[seleccion].slug);
       }
     }
   }
 
   return (
     <>
-      <button type="button" className="font-bold text-primary hover:underline" onClick={() => setAbierta(true)}>
+      <button type="button" className="font-bold text-accent hover:underline" onClick={() => setAbierta(true)}>
         ¿Cómo funciona?
       </button>
       <dialog
@@ -191,23 +188,16 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
                 </p>
               )
             )}
-            {mostradas >= arranque.length ? (
-              <p className="text-zinc-400">
-                {`${prompt(handle)} ${tecleado}`}
-                {listo ? null : <span className="welcome-terminal__cursor" aria-hidden="true" />}
-              </p>
-            ) : null}
           </div>
           {listo ? (
             <>
-              <div role="listbox" aria-label="Rutas" className="mt-3 grid gap-1">
-                {rutasMenu.map((ruta, indice) => (
+              <div role="listbox" aria-label="Rutas" className="mt-3 grid gap-2">
+                {elegibles.map((ruta, indice) => (
                   <button
                     key={ruta.slug}
                     type="button"
                     role="option"
                     aria-selected={indice === seleccion}
-                    aria-disabled={ruta.estadoVigente === "filtrada"}
                     className={`welcome-terminal__option ${indice === seleccion ? "is-selected" : ""}`}
                     onClick={() => {
                       setSeleccion(indice);
@@ -215,25 +205,28 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
                     }}
                   >
                     <span aria-hidden="true" className="welcome-terminal__arrow">{indice === seleccion ? "❯" : " "}</span>
-                    {ruta.estadoVigente === "filtrada" ? (
-                      <>
-                        <span className="typographic-glitch leak-course-title welcome-terminal__slug" data-text={`${ruta.slug}/`}>{`${ruta.slug}/`}</span>
-                        <span className="upcoming-leak-meta">{`${ruta.leak} / NO_ACTIVADO`}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="welcome-terminal__slug font-bold">{`${ruta.slug}/`}</span>
-                        <span className="text-zinc-400">{ruta.cargo}</span>
-                        <span className={ruta.estadoVigente === "beta" ? "text-amber-300" : "text-emerald-400"}>{ruta.estadoVigente === "beta" ? "[beta]" : "[abierta]"}</span>
-                      </>
-                    )}
+                    <span className="welcome-terminal__slug font-bold">{`${ruta.slug}/`}</span>
+                    <span className="text-zinc-400">{ruta.cargo}</span>
+                    <span className={ruta.estadoVigente === "beta" ? "text-amber-300" : "text-emerald-400"}>{ruta.estadoVigente === "beta" ? "[beta]" : "[abierta]"}</span>
+                    <span className="ml-auto rounded border border-emerald-400/35 px-2 py-0.5 text-xs font-bold text-emerald-300">↵ empezar</span>
                   </button>
                 ))}
               </div>
+              {filtradas.length > 0 ? (
+                <div className="mt-4 grid gap-1 border-t border-zinc-800 pt-3 text-xs">
+                  {filtradas.map((ruta) => (
+                    <p key={ruta.slug} className="flex flex-wrap gap-2 text-zinc-500">
+                      <span className="typographic-glitch leak-course-title" data-text={`${ruta.slug}/`}>{`${ruta.slug}/`}</span>
+                      <span>{ruta.leak}</span>
+                      <span>compilando</span>
+                    </p>
+                  ))}
+                </div>
+              ) : null}
               <p className="mt-3 text-zinc-400">
                 {elegibles.length === 0
                   ? "> las rutas están compilando. te avisamos cuando abra la primera. escribe explorar para entrar."
-                  : "Usa ↑ ↓ y Enter para elegir, o escribe elegir <ruta>. help muestra los comandos."}
+                  : "Enter elige la ruta seleccionada. Los comandos siguen disponibles si quieres escribir."}
               </p>
               <div className="mt-2 grid gap-1">
                 {lineas.map((linea, indice) => (
@@ -241,7 +234,7 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
                 ))}
               </div>
               <div className="mt-3 flex items-center gap-2">
-                <label htmlFor="prompt-bienvenida" className="font-bold text-primary">
+                <label htmlFor="prompt-bienvenida" className="font-bold text-accent">
                   <span className="hidden sm:inline">{prompt(handle)}</span>
                   <span className="sm:hidden">~$</span>
                 </label>
@@ -266,7 +259,7 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
                 ))}
               </div>
               <p className="mt-4 text-xs text-zinc-500">
-                ¿Vienes por una clase de tu docente o solo a mirar? Escribe <span className="text-zinc-300">explorar</span>.
+                <button type="button" className="text-zinc-300 underline" onClick={() => void explorar()}>ver el panel primero</button>
               </p>
             </>
           ) : null}
@@ -276,8 +269,6 @@ export function TerminalBienvenida({ nombre, handle, rutas, inicialAbierta }: { 
     </>
   );
 }
-
-const COMANDO_INICIAL = "ls rutas/";
 
 function prompt(handle: string) {
   return `${handle}@syntaxerror.cl:~$`;
@@ -293,9 +284,8 @@ function claseLinea(linea: Linea): string {
 function inicio(nombre: string): LineaArranque[] {
   return [
     { texto: `hola, ${nombre}. iniciando syntaxError.cl…` },
-    { clave: "rutas", texto: "eliges un oficio: cada ruta te prepara para un cargo" },
-    { clave: "casos", texto: "resuelves problemas de empresas chilenas, misión por misión" },
-    { clave: "ayudas", texto: "pistas si te trabas, tutor IA y asistente para conceptos" },
-    { clave: "cierre", texto: "entregable → portafolio → certificado verificable" },
+    { clave: "aprendes", texto: "clases cortas con práctica" },
+    { clave: "resuelves", texto: "casos de empresas chilenas" },
+    { clave: "demuestras", texto: "portafolio y certificado verificable" },
   ];
 }
