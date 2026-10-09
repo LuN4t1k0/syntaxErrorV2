@@ -1,0 +1,76 @@
+<style>
+  .sx { background:#0a0a0b; color:#f4f4f5; font-family: ui-sans-serif, system-ui, sans-serif; border-radius:10px; padding:14px; font-size:11px; line-height:1.45; }
+  .sx .mono { font-family: ui-monospace, Menlo, monospace; }
+  .sx .p { color:#a78bfa; } .sx .ok { color:#34d399; } .sx .muted { color:#a1a1aa; }
+  .sx .box { border:1px solid #27272a; border-radius:6px; padding:8px; background:#111113; }
+  .sx .btn { display:inline-block; background:#7c3aed; color:white; font-weight:800; border-radius:6px; padding:6px 10px; }
+  .sx .hero { border:1px dashed #3f3f46; border-radius:6px; padding:10px; text-align:center; color:#a1a1aa; }
+  .sx .glitch { color:#71717a; text-decoration: line-through; }
+  .sx .row { display:flex; gap:8px; } .sx .row > * { flex:1; }
+  .sx h4 { margin:0 0 4px; color:#fff; font-size:12px; }
+  .sx .sec { margin-top:10px; }
+</style>
+
+<h2>¿Qué va debajo de la terminal?</h2>
+<p class="subtitle">El hero ya está decidido (A). Ahora: cuánto contenido sigue al bajar. Menos = más simple; más = responde dudas antes de registrarse.</p>
+
+<div class="cards">
+  <div class="card" data-choice="corta" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="sx">
+        <div class="hero mono">[ hero A: titular + terminal jugable + $ ./start ]</div>
+        <div class="sec row mono">
+          <div class="box"><span class="p">[01]</span> aprendes<br><span class="muted">clases cortas con práctica</span></div>
+          <div class="box"><span class="p">[02]</span> resuelves<br><span class="muted">casos de empresas chilenas</span></div>
+          <div class="box"><span class="p">[03]</span> demuestras<br><span class="muted">portafolio + certificado</span></div>
+        </div>
+        <div class="sec box mono">
+          <div><span class="p">$ ls rutas/</span></div>
+          <div><span class="ok">data-analyst/</span> abierta · 6 casos · <span class="btn" style="padding:2px 6px">empezar</span></div>
+          <div class="glitch">ciberseguridad/ cloud-devops/ full-stack/ ia-aplicada/</div><div class="muted">LEAK · compilando</div>
+        </div>
+        <div class="sec" style="text-align:center"><span class="btn">$ ./start · Crear cuenta gratis</span></div>
+      </div>
+    </div>
+    <div class="card-body"><h3>Corta</h3><p>Hero + 3 pasos + rutas (la abierta destacada, las demás en glitch) + un botón final. Se lee en 20 segundos.</p></div>
+  </div>
+
+  <div class="card" data-choice="media" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="sx">
+        <div class="hero mono">[ hero A ]</div>
+        <div class="sec row mono">
+          <div class="box"><span class="p">[01]</span> aprendes</div><div class="box"><span class="p">[02]</span> resuelves</div><div class="box"><span class="p">[03]</span> demuestras</div>
+        </div>
+        <div class="sec box">
+          <h4 class="mono"><span class="p">$ cat data-analyst/</span></h4>
+          <div class="mono muted">Excel → SQL → Python → Power BI → IA · 6 casos · 123 lecciones</div>
+          <div>Para quien parte de cero: no necesitas saber programar.</div>
+        </div>
+        <div class="sec box mono"><span class="glitch">ciberseguridad/ cloud-devops/ full-stack/ ia-aplicada/</span> <span class="muted">· compilando</span></div>
+        <div class="sec box">
+          <h4 class="mono"><span class="p">$ man syntaxerror</span></h4>
+          <div>¿Es gratis? <span class="muted">Sí, todo.</span></div>
+          <div>¿Necesito saber algo? <span class="muted">No, partes de cero.</span></div>
+          <div>¿Necesito instalar algo? <span class="muted">No, todo corre en el navegador.</span></div>
+        </div>
+        <div class="sec" style="text-align:center"><span class="btn">$ ./start · Crear cuenta gratis</span></div>
+      </div>
+    </div>
+    <div class="card-body"><h3>Media</h3><p>Lo de "Corta" + qué aprendes en Data Analyst y 3 preguntas frecuentes (gratis, desde cero, sin instalar). Responde los miedos típicos de un principiante.</p></div>
+  </div>
+</div>
+
+<h3 style="margin-top:28px">Y así se vería el hero A en el celular</h3>
+<div class="sx" style="max-width:300px;margin:8px auto 0">
+  <div class="mono p" style="font-size:10px">SYNTAXERROR_ / v2.0</div>
+  <div style="font-weight:900;font-size:19px;line-height:1.1;margin:4px 0 8px;color:#fff">Aprende datos resolviendo trabajos reales. Gratis.</div>
+  <div class="box mono" style="font-size:10px">
+    <div class="muted"># ¿cuánto vendió cada comuna?</div>
+    <div><span class="p">sql&gt;</span> SELECT comuna, SUM(monto) FROM ventas GROUP BY comuna;</div>
+    <div class="ok">[ok] 2 filas</div>
+    <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap"><span class="btn" style="padding:3px 8px">↵ ejecutar</span><span class="box" style="padding:2px 6px">help</span><span class="box" style="padding:2px 6px">ls rutas</span></div>
+  </div>
+  <div style="margin-top:10px"><span class="btn" style="display:block;text-align:center">$ ./start · Crear cuenta gratis</span></div>
+  <div style="margin-top:6px;text-align:center" class="muted">Ya tengo cuenta</div>
+</div>

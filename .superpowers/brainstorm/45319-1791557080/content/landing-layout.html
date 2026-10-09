@@ -1,0 +1,105 @@
+<style>
+  .sx { background:#0a0a0b; color:#f4f4f5; font-family: ui-sans-serif, system-ui, sans-serif; border-radius:10px; padding:20px; font-size:12px; line-height:1.5; }
+  .sx .mono { font-family: ui-monospace, Menlo, monospace; }
+  .sx .p { color:#a78bfa; }
+  .sx .ok { color:#34d399; }
+  .sx .muted { color:#a1a1aa; }
+  .sx .term { background:#111113; border:1px solid #27272a; border-radius:8px; overflow:hidden; }
+  .sx .bar { display:flex; gap:5px; padding:7px 10px; border-bottom:1px solid #27272a; align-items:center; }
+  .sx .dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+  .sx .body { padding:10px 12px; }
+  .sx .btn { display:inline-block; background:#7c3aed; color:white; font-weight:800; border-radius:6px; padding:7px 12px; font-size:12px; }
+  .sx .btn2 { display:inline-block; border:1px solid #3f3f46; color:#f4f4f5; font-weight:700; border-radius:6px; padding:6px 11px; font-size:12px; }
+  .sx table { border-collapse:collapse; margin-top:4px; }
+  .sx td, .sx th { border:1px solid #27272a; padding:2px 8px; font-size:11px; }
+  .sx h1 { font-weight:900; line-height:1.1; margin:6px 0; color:#fff; }
+  .sx .chip { border:1px solid #3f3f46; border-radius:4px; padding:2px 6px; font-size:10px; color:#c4b5fd; display:inline-block; margin-right:4px; }
+  .sx .steps { display:flex; gap:10px; margin-top:12px; }
+  .sx .step { flex:1; border:1px solid #27272a; border-radius:6px; padding:8px; }
+</style>
+
+<h2>¿Cómo se ordena la landing?</h2>
+<p class="subtitle">Las tres tienen la terminal jugable (mini reto SQL + comandos). Cambia dónde está y cuánto ocupa. Haz clic en la que te guste.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a-centro" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="sx">
+        <div class="mono p" style="text-align:center">SYNTAXERROR_ / v2.0</div>
+        <h1 style="text-align:center;font-size:22px">Aprende datos resolviendo<br>trabajos reales. Gratis.</h1>
+        <div class="term" style="margin:10px auto;max-width:92%">
+          <div class="bar"><span class="dot" style="background:#ef4444"></span><span class="dot" style="background:#f59e0b"></span><span class="dot" style="background:#10b981"></span><span class="mono muted" style="margin-left:6px">invitado@syntaxerror.cl: ~/reto</span></div>
+          <div class="body mono">
+            <div class="muted"># tu primer reto: ¿cuánto vendió cada comuna?</div>
+            <div><span class="p">sql&gt;</span> SELECT comuna, SUM(monto) FROM ventas GROUP BY comuna;</div>
+            <table><tr><th>comuna</th><th>sum</th></tr><tr><td>Temuco</td><td>412.000</td></tr><tr><td>Ñuñoa</td><td>389.500</td></tr></table>
+            <div class="ok">[ok] 2 filas · lo resolviste en tu navegador</div>
+            <div style="margin-top:6px"><span class="chip">↵ ejecutar</span><span class="chip">help</span><span class="chip">ls rutas</span><span class="chip">./start</span></div>
+          </div>
+        </div>
+        <div style="text-align:center"><span class="btn">$ ./start · Crear cuenta gratis</span> <span class="btn2">Ya tengo cuenta</span></div>
+        <div class="steps mono" style="font-size:10px"><div class="step"><span class="p">[01]</span> aprendes</div><div class="step"><span class="p">[02]</span> resuelves casos</div><div class="step"><span class="p">[03]</span> armas portafolio</div></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A · Terminal al centro</h3>
+      <p>Titular corto arriba, la terminal es el protagonista, el botón justo debajo. Los 3 pasos y las rutas más abajo. Lo primero que ves es "haz algo".</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b-split" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="sx" style="display:flex;gap:14px;align-items:center">
+        <div style="flex:1">
+          <div class="mono p">SYNTAXERROR_ / v2.0</div>
+          <h1 style="font-size:20px">Aprende datos resolviendo trabajos reales. Gratis.</h1>
+          <div class="mono" style="font-size:11px;display:grid;gap:3px;margin:8px 0">
+            <div><span class="p">[01]</span> aprendes con clases cortas</div>
+            <div><span class="p">[02]</span> resuelves casos de empresas</div>
+            <div><span class="p">[03]</span> armas tu portafolio</div>
+          </div>
+          <span class="btn">$ ./start · Crear cuenta</span><div style="margin-top:6px"><span class="btn2">Ya tengo cuenta</span></div>
+        </div>
+        <div class="term" style="flex:1.1">
+          <div class="bar"><span class="dot" style="background:#ef4444"></span><span class="dot" style="background:#f59e0b"></span><span class="dot" style="background:#10b981"></span></div>
+          <div class="body mono" style="font-size:10px">
+            <div class="muted"># ¿cuánto vendió cada comuna?</div>
+            <div><span class="p">sql&gt;</span> SELECT comuna, SUM(monto)…</div>
+            <table><tr><th>comuna</th><th>sum</th></tr><tr><td>Temuco</td><td>412.000</td></tr></table>
+            <div class="ok">[ok] lo resolviste</div>
+            <div style="margin-top:4px"><span class="chip">↵ ejecutar</span><span class="chip">./start</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Texto a la izquierda, terminal a la derecha</h3>
+      <p>Como la portada actual, pero la terminal jugable reemplaza el carrusel y los 3 pasos suben al hero. En el celular la terminal va debajo del botón.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c-todo-terminal" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="sx" style="padding:10px">
+        <div class="term">
+          <div class="bar"><span class="dot" style="background:#ef4444"></span><span class="dot" style="background:#f59e0b"></span><span class="dot" style="background:#10b981"></span><span class="mono muted" style="margin-left:6px">syntaxerror.cl</span></div>
+          <div class="body mono" style="font-size:11px">
+            <div><span class="p">&gt;</span> cat README.md</div>
+            <div style="color:#fff;font-weight:800;font-size:15px;font-family:ui-sans-serif">Aprende datos resolviendo trabajos reales. Gratis.</div>
+            <div><span class="ok">[ok]</span> aprendes &nbsp;<span class="ok">[ok]</span> resuelves casos &nbsp;<span class="ok">[ok]</span> portafolio</div>
+            <div style="margin-top:6px"><span class="p">&gt;</span> ./reto --primero</div>
+            <div><span class="p">sql&gt;</span> SELECT comuna, SUM(monto) FROM ventas GROUP BY comuna;</div>
+            <table><tr><th>comuna</th><th>sum</th></tr><tr><td>Temuco</td><td>412.000</td></tr></table>
+            <div class="ok">[ok] lo resolviste en tu navegador</div>
+            <div style="margin-top:6px"><span class="p">&gt;</span> ./start <span class="muted">← crea tu cuenta y sigue</span></div>
+            <div style="margin-top:8px"><span class="btn">./start · Crear cuenta gratis</span> <span class="btn2">login</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C · Toda la landing es una terminal</h3>
+      <p>Una sola ventana: el README explica qué es, el reto se ejecuta ahí mismo y ./start abre el registro. Lo más "computin", pero el mensaje depende de leer la terminal.</p>
+    </div>
+  </div>
+</div>
