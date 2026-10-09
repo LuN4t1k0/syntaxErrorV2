@@ -125,14 +125,15 @@ test("el enlace de inicio lleva desde la portada a la primera lección", async (
     .fill(`portada-${Date.now()}@correo.cl`);
   await page.getByLabel("Contraseña", { exact: true }).fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
-  const bienvenida = page.getByRole("dialog", {
-    name: "Bienvenida a syntaxError.cl",
-  });
-  await expect(bienvenida).toBeVisible();
-  await expect(
-    bienvenida.getByRole("option", { selected: true }),
-  ).toContainText("data-analyst/");
-  await bienvenida.getByLabel("Prompt de bienvenida").press("Enter");
+  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toHaveCount(0);
+  await page.getByRole("region", { name: "Elige tu ruta" })
+    .getByRole("listitem").filter({ hasText: "Data Analyst" })
+    .getByRole("button", { name: "Elegir" }).click();
+  await expect(page).toHaveURL(/\/rutas\/data-analyst$/);
+  await page.goto("/dashboard");
+  await page.getByRole("region", { name: "Continuar" })
+    .getByRole("link", { name: "Empezar" }).click();
   await expect(page).toHaveURL(
     /\/casos\/herramientas-del-oficio\/01-tu-primer-repositorio$/,
   );

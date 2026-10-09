@@ -1,7 +1,6 @@
 import { expect, test, type Page } from "./fixtures";
 import { entrarComoAdmin } from "./progreso";
 
-// La terminal de bienvenida (spec 2026-10-06): aparece una vez en el panel de cada estudiante nueva.
 async function registrarseSinCerrar(page: Page, nombre: string) {
   await page.goto("/registro?callbackUrl=%2Fdashboard");
   await page.locator('input[name="name"]').fill(nombre);
@@ -9,65 +8,40 @@ async function registrarseSinCerrar(page: Page, nombre: string) {
   await page.locator('input[name="password"]').fill("clave-segura-123");
   await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard/);
-  const terminal = page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" });
-  await expect(terminal).toBeVisible();
-  return terminal;
+  await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "¿Cómo funciona?" })).toHaveCount(0);
 }
 
-test("una estudiante nueva elige su ruta con el teclado, llega a la primera lección y la terminal no vuelve a aparecer", async ({ page }) => {
-  const terminal = await registrarseSinCerrar(page, "Florencia Huenchumil");
-  await expect(terminal.getByText("> hola, Florencia. iniciando syntaxError.cl…")).toBeVisible();
-  const prompt = terminal.getByLabel("Prompt de bienvenida");
-  await expect(prompt).toBeFocused();
-  // Data Analyst es la primera ruta abierta: queda seleccionada y se elige con Enter.
-  await expect(terminal.getByRole("option", { selected: true })).toContainText("data-analyst/");
-  await prompt.press("Enter");
-
-  await expect(page).toHaveURL(/\/casos\/herramientas-del-oficio\/01-tu-primer-repositorio$/);
-  await expect(page.getByRole("heading", { name: /Tu primer repositorio/ })).toBeVisible();
-
+test("una estudiante nueva elige su ruta desde el panel y empieza la primera lección sin consola", async ({ page }) => {
+  await registrarseSinCerrar(page, "Florencia Huenchumil");
+  const elegir = page.getByRole("region", { name: "Elige tu ruta" });
+  await elegir.getByRole("listitem").filter({ hasText: "Data Analyst" }).getByRole("button", { name: "Elegir" }).click();
+  await expect(page).toHaveURL(/\/rutas\/data-analyst$/);
   await page.goto("/dashboard");
   await expect(page.getByRole("heading", { name: "Hola, Florencia Huenchumil" })).toBeVisible();
-  await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toHaveCount(0);
   const continuar = page.getByRole("region", { name: "Continuar" });
   await expect(continuar).toContainText("Tu ruta: Data Analyst");
   await expect(continuar).toContainText("Empieza por Herramientas del oficio");
   await expect(continuar.getByRole("link", { name: "Empezar" })).toHaveAttribute("href", "/casos/herramientas-del-oficio/01-tu-primer-repositorio");
   await expect(continuar.getByRole("link", { name: "Ver el mapa de la ruta" })).toHaveAttribute("href", "/rutas/data-analyst");
   await expect(page.getByRole("region", { name: "Tus rutas" })).toContainText("tu ruta");
-
-  // "¿Cómo funciona?" la vuelve a mostrar, y salir con explorar no cambia la ruta elegida.
-  await page.getByRole("button", { name: "¿Cómo funciona?" }).click();
-  const deNuevo = page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" });
-  await deNuevo.getByLabel("Prompt de bienvenida").fill("explorar");
-  await deNuevo.getByLabel("Prompt de bienvenida").press("Enter");
-  await expect(deNuevo).toBeHidden();
+  await continuar.getByRole("link", { name: "Empezar" }).click();
+  await expect(page).toHaveURL(/\/casos\/herramientas-del-oficio\/01-tu-primer-repositorio$/);
+  await expect(page.getByRole("heading", { name: /Tu primer repositorio/ })).toBeVisible();
+  await page.goto("/dashboard");
   await page.reload();
-  await expect(page.getByRole("region", { name: "Continuar" })).toContainText("Tu ruta: Data Analyst");
+  await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "Continuar" })).toContainText("Data Analyst");
 });
 
-test("en el teléfono: una ruta filtrada responde acceso denegado y explorar entra sin ruta", async ({ page }) => {
+test("en el teléfono: el panel muestra rutas disponibles y futuras sin bloquear con una consola", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  const terminal = await registrarseSinCerrar(page, "Ignacio Catrileo");
-  const caja = await terminal.boundingBox();
-  expect(caja?.width).toBeGreaterThanOrEqual(389);
-
-  const prompt = terminal.getByLabel("Prompt de bienvenida");
-  await prompt.fill("cat ciberseguridad");
-  await prompt.press("Enter");
-  await expect(terminal.getByText("[CIBERSEGURIDAD] :: buffer_corrupt")).toBeVisible();
-  await prompt.fill("elegir ciberseguridad");
-  await prompt.press("Enter");
-  await expect(terminal.getByText(/acceso denegado: ciberseguridad · LEAK_0x/)).toBeVisible();
-  await prompt.press("Escape");
-  await expect(terminal).toBeVisible();
-  await expect(terminal.getByText("la bienvenida no se cierra con Esc")).toBeVisible();
-
-  await terminal.getByRole("button", { name: "explorar sin elegir" }).click();
-  await expect(terminal).toBeHidden();
+  await registrarseSinCerrar(page, "Ignacio Catrileo");
   const elegir = page.getByRole("region", { name: "Elige tu ruta" });
   await expect(elegir.getByRole("heading", { name: "Data Analyst" })).toBeVisible();
   await expect(elegir.getByText("[CIBERSEGURIDAD] :: buffer_corrupt")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
 test("el admin no ve la bienvenida y oculta una ruta filtrada desde /admin/rutas", async ({ page }) => {

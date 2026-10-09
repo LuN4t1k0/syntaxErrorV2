@@ -4,7 +4,6 @@ import { getDb } from "@syntaxerror/db/client";
 import { users } from "@syntaxerror/db/schema";
 import { AvisoVerificacion } from "@/components/cuenta/aviso-verificacion";
 import { SelectorRutas } from "@/components/rutas/selector-rutas";
-import { TerminalBienvenida } from "@/components/rutas/terminal-bienvenida";
 import { auth } from "@/lib/auth";
 import { accesoBeta } from "@/lib/beta";
 import { fechaCertificado } from "@/lib/certificados/formato";
@@ -16,7 +15,6 @@ import { obtenerNivel } from "@/lib/puntos/servicio";
 import { siguientePaso } from "@/lib/progreso/continuar";
 import { listarCasosDelUsuario } from "@/lib/progreso/servicio";
 import { estadoContinuar } from "@/lib/rutas/continuar";
-import { handleBienvenida } from "@/lib/rutas/handle";
 import { progresoPorRuta, rutasParaSelector } from "@/lib/rutas/estado";
 import { rutasParaSelectorUi } from "@/lib/rutas/selector";
 import { unidad } from "@/lib/unidad";
@@ -31,11 +29,6 @@ export default async function DashboardPage() {
   const [cuenta] = userId
     ? await db
         .select({
-          role: users.role,
-          email: users.email,
-          nombre: users.name,
-          usuario: users.usuario,
-          bienvenidaVistaEn: users.bienvenidaVistaEn,
           rutaElegida: users.rutaElegida,
         })
         .from(users)
@@ -104,18 +97,6 @@ export default async function DashboardPage() {
       </div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold tracking-tight">Hola, {name}</h1>
-        {cuenta?.role === "student" ? (
-          <TerminalBienvenida
-            nombre={name.split(/\s+/)[0] ?? "estudiante"}
-            handle={handleBienvenida({
-              usuario: cuenta.usuario,
-              nombre: cuenta.nombre,
-              email: cuenta.email,
-            })}
-            rutas={rutasSelector}
-            inicialAbierta={!cuenta.bienvenidaVistaEn}
-          />
-        ) : null}
       </div>
       {verificar ? <AvisoVerificacion /> : null}
       {paso ? (
