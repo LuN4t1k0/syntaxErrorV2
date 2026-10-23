@@ -44,11 +44,12 @@ const nextConfig: NextConfig = {
       const socket = process.env.NEXT_PUBLIC_CHAT_SOCKET_URL ?? "";
       reglas.push(
         {
-          source: "/((?!_next/|casos/[^/]+/[^/]+).*)",
-          headers: [{ key: "Content-Security-Policy", value: construirCsp({ motores: false, socket }) }],
-        },
-        {
-          source: "/casos/:caso/:mision",
+          // La navegación interna de Next conserva la CSP del documento inicial.
+          // Como las consolas SQL/Python/planilla pueden abrirse desde cualquier ruta,
+          // la política debe permitir sus motores desde el primer documento; de lo
+          // contrario `alasql` falla con "Evaluating a string as JavaScript..."
+          // al llegar a una misión sin recarga completa.
+          source: "/((?!_next/).*)",
           headers: [{ key: "Content-Security-Policy", value: construirCsp({ motores: true, socket }) }],
         }
       );
