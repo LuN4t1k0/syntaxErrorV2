@@ -1,8 +1,10 @@
 import { SiteBrand } from "./site-brand";
 import {
+  BookOpen,
   GraduationCap,
   LayoutDashboard,
   Mail,
+  Route,
   Shield,
   SquareTerminal,
   Trophy,
@@ -45,15 +47,15 @@ export async function SiteHeader() {
           <nav className="site-header-nav" aria-label="Principal">
             <EnlaceNav href="/dashboard" exacto aria-label="Tu panel">
               <LayoutDashboard size={16} />
-              <span className="hidden lg:inline">Tu panel</span>
+              <span className="hidden xl:inline">Tu panel</span>
             </EnlaceNav>
-            <EnlaceNav href="/rutas">
-              <span className="hidden 2xl:inline">Rutas de aprendizaje</span>
-              <span className="2xl:hidden">Rutas</span>
+            <EnlaceNav href="/rutas" aria-label="Rutas de aprendizaje">
+              <Route size={16} />
+              <span className="hidden xl:inline">Rutas</span>
             </EnlaceNav>
-            <EnlaceNav href="/dashboard/clases">
-              <span className="hidden 2xl:inline">Casos y clases</span>
-              <span className="2xl:hidden">Casos</span>
+            <EnlaceNav href="/dashboard/clases" aria-label="Casos y clases">
+              <BookOpen size={16} />
+              <span className="hidden xl:inline">Casos</span>
             </EnlaceNav>
             <EnlaceNav
               href="/dashboard/mensajes"
@@ -62,50 +64,46 @@ export async function SiteHeader() {
               }
             >
               <Mail size={16} />
-              <span className="hidden 2xl:inline">Comunidad / Mensajes</span>
-              <span className="hidden lg:inline 2xl:hidden">Mensajes</span>
+              <span className="hidden xl:inline">Mensajes</span>
               {noLeidos > 0 ? <span className="badge">{noLeidos}</span> : null}
             </EnlaceNav>
             {actual && esDocente(actual) ? (
               <EnlaceNav href="/profesor" aria-label="Docencia">
                 <GraduationCap size={16} />
-                <span className="hidden lg:inline">Docencia</span>
+                <span className="hidden xl:inline">Docencia</span>
               </EnlaceNav>
             ) : null}
             {actual?.rol === "admin" ? (
               <EnlaceNav href="/admin" aria-label="Administración">
                 <Shield size={16} />
-                <span className="hidden lg:inline">Administración</span>
+                <span className="hidden xl:inline">Admin</span>
               </EnlaceNav>
             ) : null}
           </nav>
         ) : null}
 
-        {/* El mensaje del creador de la plataforma, con el mismo enlace que tenía la v1. */}
-        <Link className="nav-link" href="/lun4t1k0" aria-label="El origen">
-          <SquareTerminal size={16} />
-          <span className="hidden font-mono 2xl:inline">
-            {"> sudo ./run_bio"}
-          </span>
-        </Link>
-        <BusquedaRapida />
-        {user ? (
-          <Link className="nav-link" href="/dashboard/avance" aria-label="Tu avance" title="Tu avance">
-            <Trophy size={17} />
+        <div className="site-header-utilidades">
+          {/* El mensaje del creador de la plataforma, con el mismo enlace que tenía la v1. */}
+          <Link className="nav-link" href="/lun4t1k0" aria-label="El origen" title="> sudo ./run_bio">
+            <SquareTerminal size={16} />
           </Link>
-        ) : null}
-        <ThemeToggle />
+          <BusquedaRapida />
+          {user ? (
+            <Link className="nav-link" href="/dashboard/avance" aria-label="Tu avance" title="Tu avance">
+              <Trophy size={16} />
+            </Link>
+          ) : null}
+          <ThemeToggle />
+        </div>
 
         {user ? (
           <details className="relative">
             <summary className="site-header-perfil" aria-label="Abrir menú de perfil">
-              <span className="flex size-10 items-center justify-center rounded-full bg-primary text-sm font-black text-primary-foreground">
-                {initials}
-              </span>
+              <span className="site-header-avatar">{initials}</span>
               {nivel ? (
-                <span className="site-header-nivel hidden 2xl:grid" aria-hidden="true">
-                  <strong className="max-w-32 truncate">{user.name ?? "Estudiante"}</strong>
-                  <small>{`Nivel ${nivel.nivel} • ${nivel.puntos} XP`}</small>
+                <span className="site-header-nivel hidden xl:grid" aria-hidden="true">
+                  <strong>{(user.name ?? "Estudiante").split(/\s+/)[0]}</strong>
+                  <small>{`Nivel ${nivel.nivel} · ${nivel.puntos} XP`}</small>
                 </span>
               ) : null}
             </summary>

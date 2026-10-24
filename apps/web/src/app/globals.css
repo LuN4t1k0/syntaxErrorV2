@@ -199,7 +199,7 @@
     flex-basis: 100%;
     order: 1;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 0.25rem;
     border-top: 1px solid var(--border);
     padding-top: 0.5rem;
@@ -314,32 +314,63 @@
     background: #ef4444;
   }
 
+  .site-header-utilidades {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
   .site-header-perfil {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    margin-left: 0.35rem;
+    padding: 0.2rem 0.6rem 0.2rem 0.2rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
     cursor: pointer;
     list-style: none;
+  }
+
+  .site-header-perfil:hover {
+    border-color: var(--border);
   }
 
   .site-header-perfil::-webkit-details-marker {
     display: none;
   }
 
+  .site-header-avatar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 999px;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
   .site-header-nivel {
     display: grid;
-    line-height: 1.2;
+    line-height: 1.15;
     text-align: left;
+    white-space: nowrap;
   }
 
   .site-header-nivel strong {
+    max-width: 7rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 0.85rem;
   }
 
   .site-header-nivel small {
     color: var(--accent);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 600;
   }
 

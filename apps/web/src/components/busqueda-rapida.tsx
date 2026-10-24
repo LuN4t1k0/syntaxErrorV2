@@ -103,8 +103,8 @@ export function BusquedaRapida() {
         }}
       >
         <Search size={16} />
-        <span className="hidden sm:inline">Buscar</span>
-        <kbd className="hidden rounded border border-border px-1.5 font-mono text-xs text-muted-foreground lg:inline">{atajo}</kbd>
+        <span className="hidden xl:inline">Buscar</span>
+        <kbd className="hidden rounded border border-border px-1.5 font-mono text-xs text-muted-foreground 2xl:inline">{atajo}</kbd>
       </a>
       <dialog
         ref={dialogo}
