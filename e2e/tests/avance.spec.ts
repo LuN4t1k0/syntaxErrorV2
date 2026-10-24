@@ -23,7 +23,7 @@ test("el caso muestra dónde empezar y, al avanzar, dónde continuar, con estado
   await page.goto("/rutas/data-analyst");
   const aqui = page.getByRole("list", { name: "Mapa de la ruta Data Analyst" }).getByRole("link", { name: /Herramientas del oficio/ });
   await expect(aqui).toContainText("Estás aquí");
-  await expect(aqui).toContainText("Continuar →");
+  await expect(aqui).toContainText("Continuar");
   await page.getByText("¿Cómo leer este mapa?").click();
   await expect(page.getByText("se habilita al completar lo anterior")).toBeVisible();
 });

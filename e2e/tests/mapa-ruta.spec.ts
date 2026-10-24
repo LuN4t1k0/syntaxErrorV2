@@ -25,7 +25,7 @@ test("con el Caso 0 completo, el mapa marca lo hecho, dónde está tu HEAD y lo 
 
   await page.goto("/rutas/data-analyst");
   const mapa = page.getByRole("list", { name: "Mapa de la ruta Data Analyst" });
-  await expect(mapa.getByRole("link", { name: "Herramientas del oficio: GitHub y tu portafolio: completo" })).toContainText("✔ Completado");
+  await expect(mapa.getByRole("link", { name: "Herramientas del oficio: GitHub y tu portafolio: completo" })).toContainText("Completado");
   const excel = mapa.getByRole("link", { name: /Clases de Excel.*: siguiente$/ });
   await expect(excel).toContainText("HEAD -> tú");
   await expect(excel).toContainText("0/23 lecciones");

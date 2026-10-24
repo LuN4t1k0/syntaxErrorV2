@@ -6,6 +6,8 @@ import { accesoBeta } from "@/lib/beta";
 import { listarRutasConEstado, mapaVisible } from "@/lib/rutas/estado";
 import { obtenerUsuarioId } from "@/lib/sesion";
 import type { PiezaRuta } from "@/lib/rutas/mapa";
+import "@/components/panel/panel.css";
+import "@/components/rutas/mapa.css";
 
 export const dynamic = "force-dynamic";
 export const dynamicParams = true;
@@ -36,15 +38,19 @@ export default async function RutaPage({ params }: Parametros) {
     unidades: caso.misiones.length,
   }));
   return (
-    <main className="mx-auto grid grid-cols-1 max-w-3xl gap-8 px-4 py-12 sm:px-6">
-      <header className="grid gap-3">
-        <p className="font-mono text-sm font-bold text-accent">{`$ git log --graph --reverse ${ruta.slug}`}</p>
-        <h1 className="text-3xl font-black">{ruta.titulo}</h1>
-        <p className="text-sm font-bold text-muted-foreground">{ruta.cargo}</p>
-        <p className="leading-7 text-muted-foreground">{ruta.descripcion}</p>
-        <p className="text-sm leading-6 text-muted-foreground">
-          Cada clase es una rama: aprendes en ella y se fusiona en el caso que la aplica, en un trabajo real.
-        </p>
+    <main className="panel mx-auto grid max-w-3xl grid-cols-1 gap-8 px-4 py-12 sm:px-6">
+      <header className="mapa-cabeza">
+        <p className="panel-ceja">{`$ git log --graph --reverse ${ruta.slug}`}</p>
+        <h1>{ruta.titulo}</h1>
+        <p className="panel-ruta-cargo">{ruta.cargo}</p>
+        <p className="mapa-cabeza-texto">{ruta.descripcion}</p>
+        {ruta.tecnologias.length > 0 ? (
+          <p className="panel-tecnologias">
+            <span>stack:</span>
+            {ruta.tecnologias.map((tecnologia) => <code key={tecnologia}>{tecnologia}</code>)}
+          </p>
+        ) : null}
+        <p className="mapa-cabeza-nota">Cada clase es una rama: aprendes en ella y se fusiona en el caso que la aplica, en un trabajo real.</p>
       </header>
       <MapaRuta ruta={{ slug: ruta.slug, titulo: ruta.titulo, beta: estado.estadoVigente === "beta" }} piezas={piezas} />
     </main>

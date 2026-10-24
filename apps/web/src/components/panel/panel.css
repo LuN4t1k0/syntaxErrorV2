@@ -125,7 +125,8 @@
 .panel-avance p { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; color: var(--o-muted); font: 0.8125rem var(--o-mono); }
 .panel-avance strong { color: var(--o-cyan); font-weight: 600; }
 .panel-barra { height: 0.5rem; overflow: hidden; border-radius: 999px; background: var(--o-track); }
-.panel-barra > div {
+.panel-barra > * {
+  display: block;
   height: 100%;
   min-width: 0.5rem;
   border-radius: 999px;
@@ -212,6 +213,8 @@
 .panel-ruta h3 a:hover { color: var(--o-accent); }
 .panel-ruta-cargo { margin-top: 0.15rem; color: var(--o-cyan); font: 0.8125rem var(--o-mono); }
 .panel-ruta-cabeza p:not(.panel-ruta-cargo) { margin-top: 0.4rem; max-width: 40rem; color: var(--o-muted); font-size: 0.95rem; line-height: 1.55; }
+.panel-ruta-texto { color: var(--o-muted); font-size: 0.95rem; line-height: 1.55; }
+.panel-titulo-catalogo { font-size: clamp(2.25rem, 5vw, 3.25rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
 .panel-activar { display: grid; justify-items: end; gap: 0.4rem; }
 .panel-activar p { color: #ef4444; font-size: 0.8rem; }
 .panel-tecnologias { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }

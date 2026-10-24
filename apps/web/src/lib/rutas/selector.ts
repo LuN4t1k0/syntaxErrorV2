@@ -26,6 +26,7 @@ export function rutasParaSelectorUi(rutas: RutaConEstado[], casos: Caso[]): Ruta
       totalClases: deLaRuta.filter((caso) => caso.tipo === "clases").length,
       primerPaso: deLaRuta[0]?.titulo ?? null,
       primerPasoHref: primerPasoHref(deLaRuta),
+      tecnologias: ruta.tecnologias,
       leak: `LEAK_0x${(0x11 + Math.max(0, filtradas.indexOf(ruta.slug))).toString(16).toUpperCase()}`,
     };
   });

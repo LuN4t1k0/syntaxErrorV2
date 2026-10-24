@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@syntaxerror/ui/components/button";
+import { iniciales } from "@/lib/panel/contenido";
 
 export type RutaSelector = {
   slug: string;
@@ -18,6 +18,7 @@ export type RutaSelector = {
   primerPaso: string | null;
   primerPasoHref: string | null;
   leak: string;
+  tecnologias?: string[];
 };
 
 export function SelectorRutas({ rutas, sesion, accion = "Elegir" }: { rutas: RutaSelector[]; sesion: boolean; accion?: "Elegir" | "Empezar" }) {
@@ -65,21 +66,30 @@ export function SelectorRutas({ rutas, sesion, accion = "Elegir" }: { rutas: Rut
             </li>
           ) : (
             <li key={ruta.slug}>
-              <article className="card grid h-full gap-3 p-5">
-                <p className="font-mono text-xs font-bold text-muted-foreground">
-                  {ruta.cargo}
-                  {ruta.estadoVigente === "beta" ? <span className="badge ml-2">beta</span> : null}
-                </p>
-                <h3 className="text-xl font-black">{ruta.titulo}</h3>
-                <p className="text-sm leading-6 text-muted-foreground">{ruta.descripcion}</p>
-                <p className="font-mono text-xs text-muted-foreground">
-                  {conteo(ruta)}
-                </p>
+              <article className="panel-card panel-ruta panel-ruta-activa h-full">
+                <div className="panel-ruta-cabeza">
+                  <span className="panel-ruta-sigla" aria-hidden="true">{iniciales(ruta.titulo)}</span>
+                  <div className="min-w-0 flex-1">
+                    <h3>
+                      {ruta.titulo}
+                      {ruta.estadoVigente === "beta" ? <span className="panel-chip">beta</span> : null}
+                    </h3>
+                    <p className="panel-ruta-cargo">{ruta.cargo}</p>
+                  </div>
+                </div>
+                <p className="panel-ruta-texto">{ruta.descripcion}</p>
+                <p className="panel-nota">{conteo(ruta)}</p>
+                {ruta.tecnologias?.length ? (
+                  <p className="panel-tecnologias">
+                    <span>stack:</span>
+                    {ruta.tecnologias.map((tecnologia) => <code key={tecnologia}>{tecnologia}</code>)}
+                  </p>
+                ) : null}
                 <div className="flex flex-wrap gap-2">
-                  <Button type="button" disabled={guardando === ruta.slug} onClick={() => void elegir(ruta.slug)}>
+                  <button type="button" className="panel-boton panel-boton-primario" disabled={guardando === ruta.slug} onClick={() => void elegir(ruta.slug)}>
                     {guardando === ruta.slug ? "Guardando..." : accion}
-                  </Button>
-                  <Link className="btn btn-secondary" href={`/rutas/${ruta.slug}`}>
+                  </button>
+                  <Link className="panel-boton panel-boton-claro" href={`/rutas/${ruta.slug}`}>
                     Ver mapa
                   </Link>
                 </div>

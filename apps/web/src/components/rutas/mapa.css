@@ -1,0 +1,138 @@
+/* El mapa de la ruta como `git log --graph`, con la identidad Obsidian Syntax (tokens --o-* de panel/zona.css).
+   main y las ramas: lo recorrido en violeta, lo que viene punteado; cada tarjeta se viste según su estado. */
+.mapa-cabeza { display: grid; gap: 0.6rem; }
+.mapa-cabeza h1 { margin-top: 0.4rem; font-size: clamp(2.25rem, 5vw, 3.25rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+.mapa-cabeza .panel-ceja { color: var(--o-cyan); text-transform: none; letter-spacing: 0.02em; font-size: 0.8125rem; }
+.mapa-cabeza-texto { max-width: 40rem; color: var(--o-muted); font-size: 1.05rem; line-height: 1.6; }
+.mapa-cabeza-nota { color: var(--o-subtle); font-size: 0.9rem; }
+.mapa-cabeza .panel-tecnologias { margin-top: 0.25rem; }
+
+.mapa-avance-ruta { display: grid; gap: 0.6rem; padding: 1.25rem 1.5rem; }
+.panel-avance-linea { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; color: var(--o-muted); font: 0.8125rem var(--o-mono); }
+.panel-avance-linea strong { color: var(--o-cyan); font-weight: 600; }
+.mapa-avance-detalle { display: flex; gap: 0.5rem; color: var(--o-subtle); font: 0.75rem var(--o-mono); }
+
+.mapa-leyenda { padding: 1rem 1.25rem; font-size: 0.9rem; }
+.mapa-leyenda summary { cursor: pointer; color: var(--o-text); font-weight: 600; }
+.mapa-leyenda dt { color: var(--o-cyan); }
+
+/* Grafo */
+.mapa-carril { position: relative; display: block; flex: none; align-self: stretch; width: 3rem; }
+.mapa-via { position: absolute; inset-block: 0; border-left: 2px solid var(--o-line-strong); }
+.mapa-via-main { left: 11px; }
+.mapa-via-rama { left: 35px; }
+.mapa-linea-hecha { border-left-color: var(--o-button); box-shadow: -1px 0 8px -1px var(--o-glow); }
+.mapa-linea-futura { border-left-style: dashed; border-left-color: var(--o-line-strong); }
+.mapa-curva { stroke: var(--o-line-strong); }
+.mapa-curva.mapa-linea-hecha { stroke: var(--o-button); }
+.mapa-curva.mapa-linea-futura { stroke-dasharray: 4 3; }
+
+.mapa-nodo {
+  position: absolute;
+  top: 1.35rem;
+  display: grid;
+  place-items: center;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--o-line-strong);
+  border-radius: 999px;
+  background: var(--o-bg);
+  color: var(--o-on-button);
+}
+.mapa-nodo-main { left: 4px; }
+.mapa-nodo-rama { left: 28px; }
+.mapa-nodo-completo { border-color: var(--o-button); background: var(--o-button); }
+.mapa-nodo-en_curso,
+.mapa-nodo-en_revision { border-color: var(--o-cyan); background: var(--o-bg); box-shadow: 0 0 10px rgb(76 215 246 / 55%); }
+.mapa-nodo-en_revision { border-color: #f59e0b; }
+.mapa-nodo-disponible { border-color: var(--o-accent); }
+.mapa-nodo-bloqueado,
+.mapa-nodo-release { border-style: dashed; }
+.mapa-nodo-release-hecho { border-color: var(--o-green); background: var(--o-green); }
+.mapa-nodo-pulso { position: absolute; inset: -5px; border: 2px solid var(--o-cyan); border-radius: 999px; opacity: 0.6; }
+@media (prefers-reduced-motion: no-preference) {
+  .mapa-nodo-pulso { animation: mapa-pulso 1.8s ease-out infinite; }
+}
+@keyframes mapa-pulso { from { transform: scale(0.8); opacity: 0.7; } to { transform: scale(1.6); opacity: 0; } }
+
+/* Tarjetas */
+.mapa-commit,
+.mapa-release {
+  position: relative;
+  display: grid;
+  flex: 1;
+  gap: 0.4rem;
+  min-width: 0;
+  overflow: hidden;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--o-line);
+  border-radius: 0.75rem;
+  background: var(--o-panel);
+  transition: border-color 160ms ease, opacity 160ms ease;
+}
+.mapa-commit:hover { border-color: color-mix(in srgb, var(--o-button) 40%, var(--o-line)); }
+.mapa-commit-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; color: var(--o-subtle); font: 0.75rem var(--o-mono); }
+.mapa-commit-cabeza { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.5rem; }
+.mapa-commit-titulo { font-size: 1.08rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; }
+.mapa-commit-detalle { color: var(--o-muted); font-size: 0.9rem; }
+.mapa-commit-nota { color: var(--o-subtle); font: 0.75rem var(--o-mono); }
+
+.mapa-deco { padding: 0 0.35rem; border: 1px solid var(--o-line-strong); border-radius: 4px; color: var(--o-text); font: 600 0.6875rem/1.25rem var(--o-mono); }
+.mapa-deco-head { border-color: var(--o-cyan); color: var(--o-cyan); }
+.mapa-deco-rama { border-color: color-mix(in srgb, var(--o-green) 55%, transparent); color: var(--o-green); }
+.mapa-deco-tag { border-color: color-mix(in srgb, #f59e0b 60%, transparent); color: #f59e0b; }
+.mapa-deco-aqui { border-color: transparent; background: var(--o-button); color: var(--o-on-button); }
+
+.mapa-estado { display: inline-flex; flex: none; align-items: center; gap: 0.3rem; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--o-soft); color: var(--o-subtle); font: 500 0.6875rem var(--o-mono); letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+.mapa-estado-hecho { background: color-mix(in srgb, #00a572 20%, transparent); color: var(--o-green); }
+.mapa-estado-revision { background: color-mix(in srgb, #f59e0b 18%, transparent); color: #f59e0b; }
+
+.mapa-commit-completo { border-color: color-mix(in srgb, var(--o-green) 30%, var(--o-line)); }
+.mapa-commit-bloqueado { opacity: 0.62; }
+.mapa-commit-bloqueado:hover { opacity: 0.85; }
+.mapa-commit-en_curso,
+.mapa-commit-en_revision {
+  padding: 1.25rem 1.5rem;
+  border-color: color-mix(in srgb, var(--o-button) 45%, var(--o-line));
+  box-shadow: 0 0 40px -16px var(--o-glow);
+}
+.mapa-commit-en_curso::before,
+.mapa-commit-en_revision::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--o-button), var(--o-cyan), transparent);
+}
+.mapa-commit-en_curso .mapa-commit-titulo,
+.mapa-commit-en_revision .mapa-commit-titulo { font-size: 1.3rem; font-weight: 700; }
+.mapa-commit-aqui { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.25rem; margin-top: 0.5rem; }
+.mapa-avance { display: flex; flex: 1; align-items: center; gap: 0.75rem; min-width: min(100%, 14rem); color: var(--o-subtle); font: 0.75rem var(--o-mono); }
+.mapa-avance .panel-barra { flex: 1; max-width: 16rem; height: 0.375rem; }
+.mapa-avance > span:last-child { white-space: nowrap; }
+.mapa-commit-aqui .panel-boton-primario { min-height: 2.4rem; padding: 0.4rem 1.25rem; }
+
+/* El certificado al final de main */
+.mapa-release { border-style: dashed; border-color: color-mix(in srgb, #f59e0b 40%, var(--o-line)); }
+.mapa-release-hecho { border-style: solid; border-color: color-mix(in srgb, var(--o-green) 45%, var(--o-line)); }
+.mapa-sello {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  margin-block: 0.4rem;
+  padding: 1rem 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--o-inset);
+  color: var(--o-subtle);
+}
+.mapa-sello svg { position: absolute; top: 50%; left: 50%; translate: -50% -50%; opacity: 0.18; color: #f59e0b; }
+.mapa-release-hecho .mapa-sello svg { color: var(--o-green); opacity: 0.35; }
+.mapa-sello strong { position: relative; color: var(--o-muted); font: 600 0.75rem var(--o-mono); letter-spacing: 0.12em; }
+.mapa-sello span { position: relative; font: 0.6875rem var(--o-mono); text-transform: uppercase; letter-spacing: 0.1em; }
+
+@media (max-width: 480px) {
+  .mapa-commit,
+  .mapa-release { padding: 0.9rem 1rem; }
+  .mapa-commit-aqui .panel-boton-primario { width: 100%; }
+}
