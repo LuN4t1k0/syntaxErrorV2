@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Link from "next/link";
 import { eq, sql } from "drizzle-orm";
 import {
@@ -67,6 +67,51 @@ function Barra({ valor, etiqueta, max = 100 }: { valor: number; etiqueta: string
     <div className="panel-barra" role="progressbar" aria-label={etiqueta} aria-valuemin={0} aria-valuemax={max} aria-valuenow={valor}>
       <div style={{ width: `${porcentaje(valor, max)}%` }} />
     </div>
+  );
+}
+
+// Dónde quedaste y un clic para volver: una ceja, el nombre de la lección, una acción y el avance.
+function TarjetaContinuar({
+  contexto,
+  titulo,
+  descripcion,
+  accion,
+  mapa,
+  avance,
+}: {
+  contexto: string;
+  titulo: string;
+  descripcion: ReactNode;
+  accion: { href: string; texto: string };
+  mapa: string | null;
+  avance: { etiqueta: string; texto: string; valor: number; max: number } | null;
+}) {
+  return (
+    <section className="panel-card panel-siguiente" aria-label="Continuar">
+      <div className="panel-siguiente-cuerpo">
+        <div className="min-w-0">
+          <p className="panel-ceja">{`> continuar · ${contexto}`}</p>
+          <h2>{titulo}</h2>
+          {descripcion ? <p className="panel-descripcion">{descripcion}</p> : null}
+        </div>
+        <div className="panel-acciones">
+          <Link href={accion.href} className="panel-boton panel-boton-primario">
+            {accion.texto}
+          </Link>
+          {mapa ? (
+            <Link href={mapa} className="panel-enlace">
+              Ver mapa de ruta
+            </Link>
+          ) : null}
+        </div>
+      </div>
+      {avance ? (
+        <div className="panel-siguiente-avance">
+          <Barra etiqueta={avance.etiqueta} valor={avance.valor} max={avance.max} />
+          <span>{avance.texto}</span>
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -210,103 +255,49 @@ export default async function DashboardPage() {
       {verificar ? <AvisoVerificacion /> : null}
 
       {paso ? (
-        <section className="panel-card panel-siguiente" aria-label="Continuar">
-          <div className="panel-siguiente-cabeza">
-            <p className="panel-comando">
-              {continuar.tipo === "paso" && continuar.ruta ? `> git checkout ${continuar.ruta.slug} --continue` : "> git checkout --continue"}
-              <span className="panel-cursor" aria-hidden="true" />
-            </p>
-            <span className="panel-etiqueta-paso"><span className="panel-punto" aria-hidden="true" /> Tu siguiente paso inmediato</span>
-          </div>
-          <div className="panel-siguiente-cuerpo">
-            <div>
-              <p className="panel-modulo">
-                {(() => {
-                  const Icono = ICONO_HERRAMIENTA[casoPaso ? herramientaDelCaso(casoPaso) : "caso"];
-                  return <Icono size={16} aria-hidden="true" />;
-                })()}
-                {`${esClases(paso.caso.slug) ? "Módulo" : "Caso"}: ${paso.caso.titulo}${continuar.tipo === "paso" && continuar.ruta ? ` (${continuar.ruta.titulo} path)` : ""}`}
-              </p>
-              {paso.tipo === "mision" ? (
-                <>
-                  <h2>
-                    {`${unidad(esClases(paso.caso.slug) ? "clases" : "caso").Nombre} en progreso: `}
-                    <span>{paso.mision.titulo}</span>
-                  </h2>
-                  {misionPaso && resumenLeccion(misionPaso) ? <p className="panel-descripcion">{resumenLeccion(misionPaso)}</p> : null}
-                </>
-              ) : (
-                <>
-                  <h2>
-                    Tu caso está casi listo: <span>{paso.caso.titulo}</span>
-                  </h2>
-                  <p className="panel-descripcion">Aprobaste todas las misiones. Te falta enlazar tu entregable para completarlo.</p>
-                </>
-              )}
-              {casoPaso && avancePaso ? (
-                <div className="panel-avance">
-                  <p>
-                    <span>
-                      {indicePaso >= 0
-                        ? `${unidad(casoPaso.tipo).Nombre} ${indicePaso + 1} de ${casoPaso.misiones.length}`
-                        : `${avancePaso.misionesAprobadas} de ${avancePaso.totalMisiones} aprobadas`}
-                    </span>
-                    <strong>{`${porcentaje(avancePaso.misionesAprobadas, avancePaso.totalMisiones)}% completado`}</strong>
-                  </p>
-                  <Barra
-                    etiqueta={`Avance en ${casoPaso.titulo}`}
-                    valor={avancePaso.misionesAprobadas}
-                    max={avancePaso.totalMisiones}
-                  />
-                </div>
-              ) : null}
-            </div>
-            <div className="panel-acciones">
-              <Link href={paso.href} className="panel-boton panel-boton-primario">
-                <Play size={16} aria-hidden="true" />
-                {paso.tipo === "mision" ? `Continuar ${unidad(esClases(paso.caso.slug) ? "clases" : "caso").nombre} ahora` : "Ir al caso"}
-                <Zap size={16} aria-hidden="true" />
-              </Link>
-              {continuar.tipo === "paso" && continuar.ruta ? (
-                <Link href={`/rutas/${continuar.ruta.slug}`} className="panel-boton panel-boton-claro">
-                  <MapaIcono size={16} aria-hidden="true" /> Mapa de ruta
-                </Link>
-              ) : null}
-            </div>
-          </div>
-        </section>
+        <TarjetaContinuar
+          contexto={paso.caso.titulo}
+          titulo={paso.tipo === "mision" ? paso.mision.titulo : `Tu caso está casi listo: ${paso.caso.titulo}`}
+          descripcion={
+            paso.tipo === "mision"
+              ? (misionPaso ? resumenLeccion(misionPaso) : null)
+              : "Aprobaste todas las misiones. Te falta enlazar tu entregable para completarlo."
+          }
+          accion={{
+            href: paso.href,
+            texto: paso.tipo === "mision" ? `Continuar ${unidad(esClases(paso.caso.slug) ? "clases" : "caso").nombre}` : "Ir al caso",
+          }}
+          mapa={continuar.tipo === "paso" && continuar.ruta ? `/rutas/${continuar.ruta.slug}` : null}
+          avance={
+            casoPaso && avancePaso
+              ? {
+                  etiqueta: `Avance en ${casoPaso.titulo}`,
+                  texto: `${indicePaso >= 0 ? `${unidad(casoPaso.tipo).nombre} ${indicePaso + 1} de ${casoPaso.misiones.length}` : `${avancePaso.misionesAprobadas} de ${avancePaso.totalMisiones} aprobadas`} · ${porcentaje(avancePaso.misionesAprobadas, avancePaso.totalMisiones)}%`,
+                  valor: avancePaso.misionesAprobadas,
+                  max: avancePaso.totalMisiones,
+                }
+              : null
+          }
+        />
       ) : null}
 
       {continuar.tipo === "empezar" ? (
-        <section className="panel-card panel-siguiente" aria-label="Continuar">
-          <div className="panel-siguiente-cabeza">
-            <p className="panel-comando">
-              {`> git checkout ${continuar.ruta.slug} --continue`}
-              <span className="panel-cursor" aria-hidden="true" />
-            </p>
-            <span className="panel-etiqueta-paso"><span className="panel-punto" aria-hidden="true" /> Tu siguiente paso inmediato</span>
-          </div>
-          <div className="panel-siguiente-cuerpo">
-            <div>
-              <p className="panel-modulo"><Rocket size={16} aria-hidden="true" /> {`Ruta: ${continuar.ruta.titulo}`}</p>
-              <h2>
-                Comienza tu primera lección{rutaUi(continuar.ruta.slug)?.primerPaso ? <>: <span>{rutaUi(continuar.ruta.slug)?.primerPaso}</span></> : null}
-              </h2>
-              <p className="panel-descripcion">
-                Tu ruta: <strong>{continuar.ruta.titulo}</strong>
-                {rutaUi(continuar.ruta.slug)?.primerPaso ? <> · Empieza por <strong>{rutaUi(continuar.ruta.slug)?.primerPaso}</strong>.</> : null}
-              </p>
-            </div>
-            <div className="panel-acciones">
-              <Link href={rutaUi(continuar.ruta.slug)?.primerPasoHref ?? `/rutas/${continuar.ruta.slug}`} className="panel-boton panel-boton-primario">
-                <Play size={16} aria-hidden="true" /> {elegida ? "Empezar" : "Empezar tu primera lección"} <Zap size={16} aria-hidden="true" />
-              </Link>
-              <Link href={`/rutas/${continuar.ruta.slug}`} className="panel-boton panel-boton-claro">
-                <MapaIcono size={16} aria-hidden="true" /> Mapa de ruta
-              </Link>
-            </div>
-          </div>
-        </section>
+        <TarjetaContinuar
+          contexto={continuar.ruta.titulo}
+          titulo={rutaUi(continuar.ruta.slug)?.primerPaso ?? "Tu primera lección"}
+          descripcion={
+            <>
+              Tu ruta: <strong>{continuar.ruta.titulo}</strong>
+              {rutaUi(continuar.ruta.slug)?.primerPaso ? <> · Empieza por <strong>{rutaUi(continuar.ruta.slug)?.primerPaso}</strong>.</> : null}
+            </>
+          }
+          accion={{
+            href: rutaUi(continuar.ruta.slug)?.primerPasoHref ?? `/rutas/${continuar.ruta.slug}`,
+            texto: elegida ? "Empezar" : "Empezar tu primera lección",
+          }}
+          mapa={`/rutas/${continuar.ruta.slug}`}
+          avance={null}
+        />
       ) : null}
 
       <div className="panel-columnas">
