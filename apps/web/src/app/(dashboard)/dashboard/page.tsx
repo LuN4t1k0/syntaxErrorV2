@@ -43,6 +43,7 @@ import { resumenPractica } from "@/lib/practica/servicio";
 import { calcularNivel, nombreNivel, PUNTOS_POR_NIVEL } from "@/lib/puntos/niveles";
 import { obtenerNivel, PUNTOS } from "@/lib/puntos/servicio";
 import { siguientePaso } from "@/lib/progreso/continuar";
+import { opcionesDeProgreso } from "@/lib/progreso/orden";
 import { listarCasosDelUsuario } from "@/lib/progreso/servicio";
 import { estadoContinuar } from "@/lib/rutas/continuar";
 import { progresoPorRuta, rutasParaSelector } from "@/lib/rutas/estado";
@@ -150,7 +151,8 @@ export default async function DashboardPage() {
   const contenidoCaso = (slug: string): Caso | undefined => casos.find((caso) => caso.slug === slug);
   // Las clases se cuentan en lecciones; el progreso guardado no sabe el tipo, el contenido sí.
   const esClases = (slug: string) => contenidoCaso(slug)?.tipo === "clases";
-  const paso = userId ? await siguientePaso(db, userId, publicados) : null;
+  // El siguiente paso respeta el orden de la ruta: un caso bloqueado lleva al que lo desbloquea.
+  const paso = userId ? await siguientePaso(db, userId, publicados, await opcionesDeProgreso(db, userId)) : null;
   const continuar = estadoContinuar({
     casoPendiente: paso?.caso.slug ?? null,
     elegida,
