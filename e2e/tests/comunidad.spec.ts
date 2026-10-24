@@ -49,7 +49,7 @@ test("una decisión acertada y una misión aprobada suman puntos en el panel", a
   await reportado;
 
   await page.goto("/dashboard");
-  await expect(page.getByText("15 puntos")).toBeVisible();
+  await expect(page.getByText("15 XP acumulados")).toBeVisible();
 });
 
 test("un reporte se envía con la página desde donde se abrió", async ({

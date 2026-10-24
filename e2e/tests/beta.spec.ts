@@ -13,7 +13,7 @@ test("una ruta en beta avisa que está en beta y no se indexa", async ({ page })
 test("los admins encuentran las rutas en beta en su panel; un estudiante no", async ({ page, nuevaPagina }) => {
   await registrarse(page, "Rocío Fuentes");
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Tus casos y clases" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tus casos prácticos y clases" })).toBeVisible();
   await expect(page.getByRole("region", { name: "Rutas en beta" })).toHaveCount(0);
 
   const admin = await nuevaPagina();

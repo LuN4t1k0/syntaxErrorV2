@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  FileCode2,
+  FileText,
+  FolderOpen,
+  Lightbulb,
+  SquareKanban,
+} from "lucide-react";
 import { auth } from "@/lib/auth";
 import { incluirBorradores } from "@/lib/contenido";
 import { listarRutasConEstado } from "@/lib/rutas/estado";
@@ -7,6 +14,7 @@ import { estadoPortada } from "@/lib/portada/disponibilidad";
 import { DemoPortada } from "@/components/portada/demo-portada";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { EnlaceReportar } from "@/components/comunidad/enlace-reportar";
+import { clasesFuentes } from "@/lib/fuentes";
 import "@/components/portada/landing.css";
 
 export const metadata = {
@@ -27,7 +35,7 @@ export default async function HomePage() {
   const textoRegistro = disponible ? "Empezar gratis" : "Crear cuenta gratis";
 
   return (
-    <div className="landing-home">
+    <div className={`landing-home ${clasesFuentes}`}>
       <Link className="skip" href="#contenido">
         Saltar al contenido
       </Link>
@@ -46,6 +54,8 @@ export default async function HomePage() {
           <nav aria-label="Principal">
             <Link href="#como">Cómo aprendes</Link>
             <Link href="#ruta">La ruta</Link>
+            <Link href="#portfolio">Portafolio</Link>
+            <Link href="#faq">Preguntas frecuentes</Link>
           </nav>
           <div className="nav-actions">
             <div className="theme-control">
@@ -84,7 +94,7 @@ export default async function HomePage() {
               <Link className="button" href="/registro">
                 {textoRegistro} <span aria-hidden="true">↗</span>
               </Link>
-              <Link className="text-link" href="#demo">
+              <Link className="button ghost" href="#demo">
                 Probar un ejemplo <span aria-hidden="true">↓</span>
               </Link>
             </div>
@@ -113,6 +123,7 @@ export default async function HomePage() {
         />
         {disponible ? (
           <section
+            id="portfolio"
             className="section portfolio"
             aria-labelledby="portfolio-title"
           >
@@ -140,28 +151,35 @@ export default async function HomePage() {
               aria-label="Ejemplo de entregable del curso"
             >
               <div className="file-head">
-                <span>↳ portafolio / ventas</span>
+                <span>
+                  ↳ portafolio / <b>ventas</b>
+                </span>
                 <span>EJEMPLO</span>
               </div>
               <div className="file-body">
                 <div className="eyebrow">SQL · Minimarkets del Sur</div>
-                <h3>
-                  De una pregunta
-                  <br />a una recomendación.
-                </h3>
-                <p>
-                  <strong>La pregunta</strong>
-                  <br />
-                  ¿Cómo cambiaron las ventas de cada local?
-                </p>
-                <p>
-                  <strong>Tu trabajo</strong>
-                  <br />
-                  Consultas SQL, resultados y un README que explique qué
-                  encontraste y qué recomiendas.
-                </p>
+                <h3>De una pregunta a una recomendación.</h3>
+                <div className="file-qa">
+                  <p>
+                    <strong>La pregunta</strong>
+                    <br />
+                    ¿Cómo cambiaron las ventas de cada local?
+                  </p>
+                  <p>
+                    <strong>Tu trabajo</strong>
+                    <br />
+                    Consultas SQL, resultados y un README que explique qué
+                    encontraste y qué recomiendas.
+                  </p>
+                </div>
                 <div className="file-line">
-                  consultas.sql &#160; README.md &#160; hallazgos ↗
+                  <span className="chip">
+                    <FileCode2 size={15} aria-hidden="true" /> consultas.sql
+                  </span>
+                  <span className="chip">
+                    <FileText size={15} aria-hidden="true" /> README.md
+                  </span>
+                  <span className="chip destacado">hallazgos ↗</span>
                 </div>
               </div>
             </article>
@@ -191,9 +209,8 @@ export default async function HomePage() {
       </main>
       <footer className="wrap footer">
         <span>
-          syntaxError.cl
-          <br />
-          Hecho en Chile. Para aprender.
+          <b>syntaxError.cl</b> —
+          <br /> Hecho en Chile. Para aprender.
         </span>
         <Link href="/lun4t1k0" aria-label="El origen">
           &gt; El origen de syntaxError
@@ -235,6 +252,9 @@ function ComoAprendes() {
               Clases con ejemplos y ejercicios para practicar lo que acabas de
               aprender.
             </p>
+            <span className="step-icon" aria-hidden="true">
+              <Lightbulb size={17} />
+            </span>
           </article>
           <article className="step">
             <span className="step-no">[02] resuelve</span>
@@ -243,6 +263,9 @@ function ComoAprendes() {
               Ventas, despachos y decisiones. Casos de práctica inspirados en el
               trabajo de un analista.
             </p>
+            <span className="step-icon" aria-hidden="true">
+              <SquareKanban size={17} />
+            </span>
           </article>
           <article className="step">
             <span className="step-no">[03] demuestra</span>
@@ -251,6 +274,9 @@ function ComoAprendes() {
               Convierte tus análisis en proyectos de portafolio y explica cómo
               llegaste a tus conclusiones.
             </p>
+            <span className="step-icon" aria-hidden="true">
+              <FolderOpen size={17} />
+            </span>
           </article>
         </div>
       </section>
@@ -297,6 +323,10 @@ function RutaPortada({
                 <Link className="button" href="/registro">
                   {textoRegistro} <span aria-hidden="true">↗</span>
                 </Link>
+                <p className="route-status">
+                  <span>status: ruta activa</span>
+                  <b>6 módulos</b>
+                </p>
               </div>
               <ol className="route-list">
                 <li>

@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
   boolean,
+  date,
   index,
   integer,
   jsonb,
@@ -320,6 +321,20 @@ export const transaccionesPuntos = pgTable(
     uniqueIndex("point_transactions_logro_idx").on(table.userId, table.casoId, table.clave),
     index("point_transactions_usuario_idx").on(table.userId),
   ]
+);
+
+// Minutos de práctica por alumno y día (hora de Chile). Cada latido suma uno; el último evita que se cuente dos veces.
+export const tiempoPractica = pgTable(
+  "practice_time",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    dia: date("dia", { mode: "string" }).notNull(),
+    minutos: integer("minutos").notNull().default(0),
+    ultimoLatido: timestamp("ultimo_latido").notNull().defaultNow(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.dia] })]
 );
 
 export const solicitudesDocente = pgTable(

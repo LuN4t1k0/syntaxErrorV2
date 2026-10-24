@@ -39,9 +39,10 @@ test("con los casos 0 y 1 completos: resuelve una lección y, al aprobarlas toda
 
   // En el panel, las clases se cuentan en lecciones y se continúan como lecciones.
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "Tus casos y clases" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tus casos prácticos y clases" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Clases de SQL/ }).filter({ hasText: "1/18 lecciones" })).toBeVisible();
-  await expect(page.getByRole("region", { name: "Continuar" })).toContainText("Sigue con Alias y expresiones calculadas, de Clases de SQL");
+  await expect(page.getByRole("region", { name: "Continuar" })).toContainText("Lección en progreso: Alias y expresiones calculadas");
+  await expect(page.getByRole("region", { name: "Continuar" })).toContainText("Módulo: Clases de SQL");
   await expect(page.getByRole("link", { name: "Continuar lección" })).toHaveAttribute("href", `/casos/${CLASES}/02-alias-expresiones`);
 
   await page.goto("/casos/minimarkets-del-sur");

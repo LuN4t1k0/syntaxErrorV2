@@ -10,6 +10,7 @@ const RUTA: Ruta = {
   descripcion: "Resuelve casos reales con SQL.",
   estado: "publicada",
   casos: ["ventas"],
+  tecnologias: [],
 };
 
 const CASO = {

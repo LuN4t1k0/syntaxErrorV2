@@ -12,20 +12,22 @@ async function registrarseSinCerrar(page: Page, nombre: string) {
   await expect(page.getByRole("button", { name: "¿Cómo funciona?" })).toHaveCount(0);
 }
 
-test("una estudiante nueva elige su ruta desde el panel y empieza la primera lección sin consola", async ({ page }) => {
+test("una estudiante nueva activa su ruta desde el panel y empieza la primera lección sin consola", async ({ page }) => {
   await registrarseSinCerrar(page, "Florencia Huenchumil");
-  const elegir = page.getByRole("region", { name: "Elige tu ruta" });
-  await elegir.getByRole("listitem").filter({ hasText: "Data Analyst" }).getByRole("button", { name: "Elegir" }).click();
-  await expect(page).toHaveURL(/\/rutas\/data-analyst$/);
-  await page.goto("/dashboard");
+  // Sin ruta, el panel muestra las rutas que puedes activar en el mismo formato que las activas.
+  const rutas = page.getByRole("region", { name: "Tus rutas" });
+  await expect(rutas.getByRole("heading", { name: "Activa tu ruta de aprendizaje" })).toBeVisible();
+  await rutas.getByRole("button", { name: "Activar la ruta Data Analyst" }).click();
+  await expect(rutas.getByRole("heading", { name: "Tus rutas de aprendizaje activas" })).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("heading", { name: "Hola, Florencia Huenchumil" })).toBeVisible();
   await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toHaveCount(0);
   const continuar = page.getByRole("region", { name: "Continuar" });
   await expect(continuar).toContainText("Tu ruta: Data Analyst");
   await expect(continuar).toContainText("Empieza por Herramientas del oficio");
   await expect(continuar.getByRole("link", { name: "Empezar" })).toHaveAttribute("href", "/casos/herramientas-del-oficio/01-tu-primer-repositorio");
-  await expect(continuar.getByRole("link", { name: "Ver el mapa de la ruta" })).toHaveAttribute("href", "/rutas/data-analyst");
-  await expect(page.getByRole("region", { name: "Tus rutas" })).toContainText("tu ruta");
+  await expect(continuar.getByRole("link", { name: "Mapa de ruta" })).toHaveAttribute("href", "/rutas/data-analyst");
+  await expect(page.getByRole("region", { name: "Tus rutas" })).toContainText("En curso");
   await continuar.getByRole("link", { name: "Empezar" }).click();
   await expect(page).toHaveURL(/\/casos\/herramientas-del-oficio\/01-tu-primer-repositorio$/);
   await expect(page.getByRole("heading", { name: /Tu primer repositorio/ })).toBeVisible();
@@ -38,9 +40,9 @@ test("una estudiante nueva elige su ruta desde el panel y empieza la primera lec
 test("en el teléfono: el panel muestra rutas disponibles y futuras sin bloquear con una consola", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await registrarseSinCerrar(page, "Ignacio Catrileo");
-  const elegir = page.getByRole("region", { name: "Elige tu ruta" });
-  await expect(elegir.getByRole("heading", { name: "Data Analyst" })).toBeVisible();
-  await expect(elegir.getByText("[CIBERSEGURIDAD] :: buffer_corrupt")).toBeVisible();
+  const rutas = page.getByRole("region", { name: "Tus rutas" });
+  await expect(rutas.getByRole("heading", { name: "Data Analyst" })).toBeVisible();
+  await expect(rutas.getByText("Ruta sugerida: Ciberseguridad")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 

@@ -44,6 +44,7 @@ describe("cargarContenido", () => {
         descripcion: "Ruta de prueba para los tests del cargador.",
         estado: "publicada",
         casos: ["ventas"],
+        tecnologias: [],
       },
     ]);
     const [caso] = contenido.casos;

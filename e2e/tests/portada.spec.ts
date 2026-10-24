@@ -127,11 +127,9 @@ test("el enlace de inicio lleva desde la portada a la primera lección", async (
   await page.getByRole("button", { name: "Crear cuenta gratis" }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("dialog", { name: "Bienvenida a syntaxError.cl" })).toHaveCount(0);
-  await page.getByRole("region", { name: "Elige tu ruta" })
-    .getByRole("listitem").filter({ hasText: "Data Analyst" })
-    .getByRole("button", { name: "Elegir" }).click();
-  await expect(page).toHaveURL(/\/rutas\/data-analyst$/);
-  await page.goto("/dashboard");
+  const rutas = page.getByRole("region", { name: "Tus rutas" });
+  await rutas.getByRole("button", { name: "Activar la ruta Data Analyst" }).click();
+  await expect(rutas).toContainText("En curso");
   await page.getByRole("region", { name: "Continuar" })
     .getByRole("link", { name: "Empezar" }).click();
   await expect(page).toHaveURL(

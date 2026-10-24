@@ -5,15 +5,18 @@ import {
   Mail,
   Shield,
   SquareTerminal,
+  Trophy,
   UserRound,
 } from "lucide-react";
 import Link from "next/link";
 import { getDb } from "@syntaxerror/db/client";
 import { auth } from "@/lib/auth";
 import { contarNoLeidos } from "@/lib/mensajes";
+import { obtenerNivel } from "@/lib/puntos/servicio";
 import { esDocente } from "@/lib/roles";
 import { obtenerUsuarioActual } from "@/lib/sesion";
 import { BusquedaRapida } from "./busqueda-rapida";
+import { EnlaceNav } from "./enlace-nav";
 import { SignOutButton } from "./sign-out-button";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -23,6 +26,7 @@ export async function SiteHeader() {
   // Rol y mensajes se leen desde la base: el JWT no se entera de un cambio de rol.
   const actual = user ? await obtenerUsuarioActual() : null;
   const noLeidos = actual ? await contarNoLeidos(getDb(), actual.id) : 0;
+  const nivel = actual ? await obtenerNivel(getDb(), actual.id) : null;
   const initials = (user?.name ?? user?.email ?? "U")
     .split(/\s+/)
     .map((part) => part[0])
@@ -31,7 +35,7 @@ export async function SiteHeader() {
     .toUpperCase();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
+    <header className="site-header sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-xl">
       <div className="site-header-inner">
         <div className="mr-auto shrink-0">
           <SiteBrand compact />
@@ -39,36 +43,40 @@ export async function SiteHeader() {
 
         {user ? (
           <nav className="site-header-nav" aria-label="Principal">
-            <Link className="nav-link" href="/dashboard" aria-label="Tu panel">
+            <EnlaceNav href="/dashboard" exacto aria-label="Tu panel">
               <LayoutDashboard size={16} />
               <span className="hidden lg:inline">Tu panel</span>
-            </Link>
-            <Link
-              className="nav-link"
+            </EnlaceNav>
+            <EnlaceNav href="/rutas">
+              <span className="hidden 2xl:inline">Rutas de aprendizaje</span>
+              <span className="2xl:hidden">Rutas</span>
+            </EnlaceNav>
+            <EnlaceNav href="/dashboard/clases">
+              <span className="hidden 2xl:inline">Casos y clases</span>
+              <span className="2xl:hidden">Casos</span>
+            </EnlaceNav>
+            <EnlaceNav
               href="/dashboard/mensajes"
               aria-label={
                 noLeidos > 0 ? `Mensajes, ${noLeidos} sin leer` : "Mensajes"
               }
             >
               <Mail size={16} />
-              <span className="hidden lg:inline">Mensajes</span>
+              <span className="hidden 2xl:inline">Comunidad / Mensajes</span>
+              <span className="hidden lg:inline 2xl:hidden">Mensajes</span>
               {noLeidos > 0 ? <span className="badge">{noLeidos}</span> : null}
-            </Link>
+            </EnlaceNav>
             {actual && esDocente(actual) ? (
-              <Link className="nav-link" href="/profesor" aria-label="Docencia">
+              <EnlaceNav href="/profesor" aria-label="Docencia">
                 <GraduationCap size={16} />
                 <span className="hidden lg:inline">Docencia</span>
-              </Link>
+              </EnlaceNav>
             ) : null}
             {actual?.rol === "admin" ? (
-              <Link
-                className="nav-link"
-                href="/admin"
-                aria-label="Administración"
-              >
+              <EnlaceNav href="/admin" aria-label="Administración">
                 <Shield size={16} />
                 <span className="hidden lg:inline">Administración</span>
-              </Link>
+              </EnlaceNav>
             ) : null}
           </nav>
         ) : null}
@@ -76,20 +84,30 @@ export async function SiteHeader() {
         {/* El mensaje del creador de la plataforma, con el mismo enlace que tenía la v1. */}
         <Link className="nav-link" href="/lun4t1k0" aria-label="El origen">
           <SquareTerminal size={16} />
-          <span className="hidden font-mono xl:inline">
+          <span className="hidden font-mono 2xl:inline">
             {"> sudo ./run_bio"}
           </span>
         </Link>
         <BusquedaRapida />
+        {user ? (
+          <Link className="nav-link" href="/dashboard/avance" aria-label="Tu avance" title="Tu avance">
+            <Trophy size={17} />
+          </Link>
+        ) : null}
         <ThemeToggle />
 
         {user ? (
           <details className="relative">
-            <summary
-              className="flex size-10 cursor-pointer list-none items-center justify-center rounded-md bg-primary text-sm font-black text-primary-foreground"
-              aria-label="Abrir menú de perfil"
-            >
-              {initials}
+            <summary className="site-header-perfil" aria-label="Abrir menú de perfil">
+              <span className="flex size-10 items-center justify-center rounded-full bg-primary text-sm font-black text-primary-foreground">
+                {initials}
+              </span>
+              {nivel ? (
+                <span className="site-header-nivel hidden 2xl:grid" aria-hidden="true">
+                  <strong className="max-w-32 truncate">{user.name ?? "Estudiante"}</strong>
+                  <small>{`Nivel ${nivel.nivel} • ${nivel.puntos} XP`}</small>
+                </span>
+              ) : null}
             </summary>
             <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-md border border-border bg-surface shadow-2xl">
               <div className="border-b border-border px-3 py-3">

@@ -1,0 +1,114 @@
+/* Identidad Obsidian Syntax (Stitch · Rediseño Web Moderno) para toda la zona del alumno: los mismos tokens
+   que la portada (components/portada/landing.css). Los tokens globales se redirigen aquí para que las
+   tarjetas, botones e insignias existentes hablen el mismo idioma sin tocar cada página. */
+.zona-obsidiana {
+  --o-bg: #0a0a0f;
+  --o-band: #131318;
+  --o-panel: #12131a;
+  --o-raised: #1b1b20;
+  --o-soft: #2a292f;
+  --o-track: #35343a;
+  --o-inset: #08090d;
+  --o-text: #e4e1e9;
+  --o-muted: #cbc3d7;
+  --o-subtle: #958ea0;
+  --o-line: rgb(255 255 255 / 8%);
+  --o-line-strong: rgb(255 255 255 / 12%);
+  --o-button: #a078ff;
+  --o-button-hover: #d0bcff;
+  --o-on-button: #23005c;
+  --o-accent: #d0bcff;
+  --o-violet: #a855f7;
+  --o-cyan: #4cd7f6;
+  --o-green: #4edea3;
+  --o-orange: #fb923c;
+  --o-glow: rgb(160 120 255 / 45%);
+  --o-sans: var(--font-geist), Geist, Inter, ui-sans-serif, system-ui, sans-serif;
+  --o-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --background: var(--o-bg);
+  --surface: var(--o-panel);
+  --surface-raised: var(--o-raised);
+  --surface-soft: var(--o-band);
+  --border: var(--o-line-strong);
+  --foreground: var(--o-text);
+  --muted-foreground: var(--o-subtle);
+  --primary: var(--o-button);
+  --primary-hover: var(--o-button-hover);
+  --primary-foreground: var(--o-on-button);
+  --accent: var(--o-accent);
+  --success-text: var(--o-green);
+  --brand-green: var(--o-green);
+  --font-sans: var(--o-sans);
+  --font-mono: var(--o-mono);
+  --radius-md: 0.25rem;
+
+  min-height: 100svh;
+  background:
+    radial-gradient(circle at 18% 0%, rgb(160 120 255 / 7%), transparent 32rem),
+    radial-gradient(circle at 88% 12%, rgb(3 181 211 / 6%), transparent 28rem),
+    var(--o-bg);
+  color: var(--o-text);
+  font-family: var(--o-sans);
+  -webkit-font-smoothing: antialiased;
+}
+:root[data-theme="light"] .zona-obsidiana {
+  --o-bg: #faf8ff;
+  --o-band: #f2f3ff;
+  --o-panel: #ffffff;
+  --o-raised: #f4f3fb;
+  --o-soft: #eaedff;
+  --o-track: #e1e0ec;
+  --o-inset: #f7f6fc;
+  --o-text: #131b2e;
+  --o-muted: #464554;
+  --o-subtle: #6b6878;
+  --o-line: #e1dfeb;
+  --o-line-strong: #d0cede;
+  --o-button: #6d3bd7;
+  --o-button-hover: #5516be;
+  --o-on-button: #ffffff;
+  --o-accent: #5516be;
+  --o-violet: #7c3aed;
+  --o-cyan: #006c8a;
+  --o-green: #006c49;
+  --o-orange: #c2410c;
+  --o-glow: rgb(109 59 215 / 28%);
+}
+
+.zona-obsidiana .btn-primary { box-shadow: 0 0 24px -6px var(--o-glow); }
+.zona-obsidiana .card { border-color: var(--o-line); }
+
+/* Encabezado: como el de la portada. */
+.zona-obsidiana .site-header {
+  border-color: var(--o-line);
+  background: color-mix(in srgb, var(--o-bg) 88%, transparent);
+  backdrop-filter: blur(12px);
+}
+.zona-obsidiana .site-brand { font: 700 15px var(--o-mono); letter-spacing: 0; }
+.zona-obsidiana .site-brand .text-accent { color: var(--o-cyan); }
+.zona-obsidiana .site-brand__icon {
+  width: auto;
+  height: auto;
+  padding: 4px 7px;
+  border: 1px solid var(--o-line-strong);
+  border-radius: 6px;
+  background: var(--o-raised);
+  color: var(--o-text);
+  font: 600 14px var(--o-mono);
+}
+.zona-obsidiana .nav-link { border-radius: 4px; color: var(--o-muted); font-weight: 500; }
+.zona-obsidiana .nav-link:hover { background: rgb(255 255 255 / 4%); color: var(--o-text); }
+:root[data-theme="light"] .zona-obsidiana .nav-link:hover { background: var(--o-soft); }
+.zona-obsidiana .nav-link[aria-current="page"] {
+  background: var(--o-button);
+  color: var(--o-on-button);
+  font-weight: 600;
+  box-shadow: 0 0 24px -6px var(--o-glow);
+}
+.zona-obsidiana .site-header-nivel small { color: var(--o-cyan); font-family: var(--o-mono); }
+
+/* Pie */
+.zona-obsidiana footer { border-color: var(--o-line); }
+.zona-obsidiana footer p { font-family: var(--o-mono); }
+.zona-obsidiana .estado-sistema[data-estado="ok"] { color: var(--o-green); }

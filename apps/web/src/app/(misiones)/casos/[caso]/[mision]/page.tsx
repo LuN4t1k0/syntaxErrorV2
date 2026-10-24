@@ -5,6 +5,7 @@ import { archivosPython, paquetesPython } from "@syntaxerror/content/datos";
 import { tareasDeMision } from "@syntaxerror/content/publicacion";
 import { AsistenteFlotante } from "@/components/ia/asistente-flotante";
 import { componentesMision } from "@/components/mision/componentes";
+import { LatidoPractica } from "@/components/mision/latido-practica";
 import { MisionProvider } from "@/components/mision/mision-provider";
 import { PreguntaDocente } from "@/components/mision/pregunta-docente";
 import { Tutor } from "@/components/mision/tutor";
@@ -78,6 +79,7 @@ export default async function MisionPage({ params }: Parametros) {
         {siguiente ? <Link className="text-accent hover:underline" href={`/casos/${caso.slug}/${siguiente.slug}`}>{`${siguiente.titulo} →`}</Link> : null}
       </nav>
       <AsistenteFlotante caso={caso.slug} />
+      <LatidoPractica />
     </main>
   );
 }

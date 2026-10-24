@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calcularNivel } from "./niveles";
+import { calcularNivel, nombreNivel } from "./niveles";
 
 describe("calcularNivel", () => {
   it("sube un nivel cada 100 puntos", () => {
@@ -11,5 +11,23 @@ describe("calcularNivel", () => {
 
   it("nunca baja de nivel 1 con puntos negativos", () => {
     expect(calcularNivel(-20)).toEqual({ puntos: 0, nivel: 1, faltan: 100 });
+  });
+});
+
+describe("nombreNivel", () => {
+  it("nombra cada tramo con una unidad de información", () => {
+    expect(nombreNivel(1)).toBe("Bit");
+    expect(nombreNivel(2)).toBe("Bit");
+    expect(nombreNivel(3)).toBe("Byte");
+    expect(nombreNivel(9)).toBe("Kilobyte");
+    expect(nombreNivel(10)).toBe("Megabyte");
+    expect(nombreNivel(19)).toBe("Gigabyte");
+    expect(nombreNivel(23)).toBe("Terabyte");
+    expect(nombreNivel(24)).toBe("Petabyte");
+    expect(nombreNivel(80)).toBe("Petabyte");
+  });
+
+  it("un nivel fuera de rango usa el primer tramo", () => {
+    expect(nombreNivel(0)).toBe("Bit");
   });
 });

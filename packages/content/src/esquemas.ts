@@ -24,6 +24,8 @@ export const rutaSchema = z.object({
   // beta: solo probadores y admins. filtrada: se muestra como filtración, pero no abre mapa.
   estado: z.enum(["publicada", "beta", "filtrada", "borrador"]),
   casos: z.array(slug).default([]),
+  // Las herramientas que se practican en la ruta, para mostrarlas en el panel.
+  tecnologias: z.array(texto).default([]),
 }).superRefine((ruta, ctx) => {
   if ((ruta.estado === "publicada" || ruta.estado === "beta") && ruta.casos.length === 0) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ["casos"], message: "la ruta necesita al menos un caso" });

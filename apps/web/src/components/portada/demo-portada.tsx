@@ -34,19 +34,21 @@ export function DemoPortada({ textoRegistro }: { textoRegistro: string }) {
         </div>
         <div className="terminal-body">
           <div className="eyebrow">Una pequeña prueba. Sin cuenta.</div>
-          <h2 id="demo-title">
-            Los datos cuentan algo.
-            <br />
-            Descúbrelo.
-          </h2>
+          <h2 id="demo-title">Los datos cuentan algo. Descúbrelo.</h2>
           <p className="intro">
-            Una tienda vende en cuatro comunas.
-            <br />
-            ¿En cuál vendió más? Vamos a averiguarlo.
+            Una tienda vende en cuatro comunas. ¿En cuál vendió más? Vamos a
+            averiguarlo.
           </p>
           <ul className="data-list" aria-label="Ventas totales por comuna">
             {(resuelto ? ordenadas : filas).map(({ comuna, total }) => (
-              <li className="data-row" key={comuna}>
+              <li
+                className={
+                  resuelto && comuna === mayor.comuna
+                    ? "data-row lider"
+                    : "data-row"
+                }
+                key={comuna}
+              >
                 <span>{comuna}</span>
                 <div className="bar-track" aria-hidden="true">
                   <div
@@ -99,13 +101,12 @@ export function DemoPortada({ textoRegistro }: { textoRegistro: string }) {
               mayor a menor.
             </span>
           </details>
+          <p className="caption caption-demo">
+            No necesitas entender el código para empezar. Eso lo aprendemos
+            paso a paso.
+          </p>
         </div>
       </section>
-      <p className="caption">
-        No necesitas entender el código para empezar.
-        <br />
-        Eso lo aprendemos paso a paso.
-      </p>
     </div>
   );
 }

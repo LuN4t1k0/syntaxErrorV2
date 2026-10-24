@@ -267,11 +267,87 @@
     color: var(--muted-foreground);
     font-size: 0.875rem;
     font-weight: 700;
+    white-space: nowrap;
   }
 
   .nav-link:hover {
     color: var(--foreground);
     background: var(--surface-raised);
+  }
+
+  /* La sección en la que estás: como el botón activo del diseño de Stitch. */
+  .nav-link[aria-current="page"] {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 1px 3px rgb(19 27 46 / 12%);
+  }
+
+  .estado-sistema {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--muted-foreground);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+
+  .estado-sistema > span {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: var(--muted-foreground);
+  }
+
+  .estado-sistema[data-estado="ok"] {
+    color: var(--success-text);
+  }
+
+  .estado-sistema[data-estado="ok"] > span {
+    background: #10b981;
+  }
+
+  .estado-sistema[data-estado="falla"] {
+    color: var(--error-text);
+  }
+
+  .estado-sistema[data-estado="falla"] > span {
+    background: #ef4444;
+  }
+
+  .site-header-perfil {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .site-header-perfil::-webkit-details-marker {
+    display: none;
+  }
+
+  .site-header-nivel {
+    display: grid;
+    line-height: 1.2;
+    text-align: left;
+  }
+
+  .site-header-nivel strong {
+    font-size: 0.85rem;
+  }
+
+  .site-header-nivel small {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+
+  @media (min-width: 1024px) {
+    .site-header-nav {
+      flex: 1;
+      justify-content: center;
+    }
   }
 
   .page-container {

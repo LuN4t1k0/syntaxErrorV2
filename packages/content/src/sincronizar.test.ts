@@ -27,6 +27,7 @@ function contenido(): Contenido {
         descripcion: "Ruta de prueba",
         estado: "publicada",
         casos: ["ventas"],
+        tecnologias: [],
       },
     ],
     casos: [

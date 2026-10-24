@@ -9,6 +9,11 @@ describe("rutaSchema", () => {
     expect(rutaSchema.safeParse({ ...base, estado: "borrador", casos: [] }).success).toBe(true);
   });
 
+  it("las tecnologías de la ruta son opcionales", () => {
+    expect(rutaSchema.parse({ ...base, estado: "filtrada" }).tecnologias).toEqual([]);
+    expect(rutaSchema.parse({ ...base, estado: "filtrada", tecnologias: ["SQL", "Excel"] }).tecnologias).toEqual(["SQL", "Excel"]);
+  });
+
   it("una ruta publicada o en beta necesita al menos un caso", () => {
     for (const estado of ["publicada", "beta"]) {
       const resultado = rutaSchema.safeParse({ ...base, estado, casos: [] });
